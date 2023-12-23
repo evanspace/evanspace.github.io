@@ -1,0 +1,18 @@
+@charset 'utf-8';
+
+
+.fontColor,
+.owl-nav > div:hover {
+	color: #420943;
+}
+
+.borderColor {
+	border-color: #420943;
+}
+
+.backgroundColor,
+.owl-dots .active,
+.nav .navList a:hover,
+.owl-dots .owl-dot:hover {
+	background: #420943;
+}

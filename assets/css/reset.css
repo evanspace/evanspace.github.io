@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+html { font-family: Helvetica,"Microsoft YaHei","宋体",Arial,sans-serif; }
+
+body, section，div, article，aside，header，footer, summary, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, form, fieldset, input, button, textarea, p, th, td, figure { padding: 0; margin: 0; }
+
+* { outline: none; }
+
+*, *:before, *:after { box-sizing: border-box; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+fieldset, img, button { border: 0; background: none; color: inherit; }
+
+img { width: 100%; display: block; }
+
+a { text-decoration:none; display: block; color: inherit; }
+
+ul, ol, li { list-style:none; }
+
+i, s { font-style: normal; }
+
+caption, th { text-align: left; }
+
+h1, h2, h3, h4, h5, h6 { font-family: inherit; color: inherit; font-weight: 500; font-size: 1em; }
+
+input, button, textarea, select, optgroup, option { font-family: inherit; font-size: inherit; font-style: inherit; font-weight: inherit; border: none; }
+
+input, button, textarea, select { font-size: 100%; }
+

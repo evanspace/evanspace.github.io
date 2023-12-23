@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xml>
+
+    <nav>
+        <chinese>
+            <li>首页</li>
+            <li>项目</li>
+            <li>插件</li>
+            <li>JS-技巧</li>
+            <li>CSS-技巧</li>
+            <li>个人履历</li>
+            <li>关于</li>
+            <li>技能</li>
+        </chinese>
+        <english>
+        	<li>HOME</li>
+            <li>PROJECT</li>
+            <li>PLUG-IN</li>
+            <li>JS-SPECIAL</li>
+            <li>CSS-SPECIAL</li>
+            <li>RESUME</li>
+            <li>ABOUT</li>
+            <li>SKILL</li>
+        </english>
+    </nav>
+
+    <headline>
+    	<chinese>
+    		<li>参与项目</li>
+    		<li>插件</li>
+    		<li>JS-技巧</li>
+    		<li>CSS-技巧</li>
+    		<li>我的履历</li>
+    		<li>我的信息</li>
+    		<li>我的技能</li>
+    	</chinese>
+    	<english>
+    		<li>PROJECT</li>
+    		<li>PLUG-IN</li>
+    		<li>JS-SPECIAl</li>
+    		<li>CSS-SPECIAl</li>
+    		<li>MY RESUME</li>
+    		<li>ABOUT ME</li>
+    		<li>MY SKILLS</li>
+    	</english>
+    </headline>
+
+    <project>
+    	<name>
+			<chinese>
+				<li>深圳市黒漂网络科技有限公司</li>
+				<li>深圳市拎包游网络科技有限公司</li>
+				<li>深圳市享美网络科技有限公司</li>
+				<li>深圳市钱大人网络科技有限公司</li>
+			</chinese>
+			<english>
+				<li>Shenzhen Heipiao network technology corporation</li>
+				<li>Shenzhen Linbaoyou network technology corporation</li>
+				<li>Shenzhen Shinymate network technology corporation</li>
+				<li>Shenzhen Qiandaren network technology corporation</li>
+			</english>
+		</name>
+		<genre>
+			<chinese>
+				<li>互联网 + 钓鱼</li>
+				<li>旅游管理</li>
+				<li>医疗美容,海外代购</li>
+				<li>数据分析、机器人投顾</li>
+			</chinese>
+			<english>
+				<li>internet + fishing</li>
+				<li>travel control</li>
+				<li>medical cosmetology, Sell Abroad</li>
+				<li>data analysis、Robot investment adviser</li>
+			</english>
+		</genre>
+    </project>
+	
+	<plugIn>
+		<name>
+			<chinese>
+				<li>图片轮播</li>
+				<li>PC 端日历</li>
+				<li>移动端滑动日期</li>
+			</chinese>
+			<english>
+				<li>Carousel picture</li>
+				<li>PC Calendar</li>
+				<li>Mobile Slide Date</li>
+			</english>
+		</name>
+		<genre>
+			<chinese>
+				<li>轮播插件</li>
+				<li>日历插件</li>
+				<li>日期插件</li>
+			</chinese>
+			<english>
+				<li>Carousel Plugin</li>
+				<li>Calendar Plugin</li>
+				<li>Date Plugin</li>
+			</english>
+		</genre>
+	</plugIn>
+
+	<JsSpecial>
+		<name>
+			<chinese>
+				<li>3D 滑动圆环</li>
+				<li>平面拖拽</li>
+				<li>图片放大镜</li>
+				<li>计算器</li>
+				<li>人物奔跑</li>
+				<li>定时器</li>
+				<li>手风琴</li>
+				<li>跳棋</li>
+				<li>仿京东</li>
+				<li>跟随窗口</li>
+				<li>轮播图片</li>
+				<li>随机数</li>
+			</chinese>
+			<english>
+				<li>3D Slip Ring</li>
+				<li>Plane Drag</li>
+				<li>Photoloupe</li>
+				<li>calculator</li>
+				<li>People Running</li>
+				<li>timer</li>
+				<li>accordion</li>
+				<li>Checkers</li>
+				<li>Imitation JD</li>
+				<li>Follow</li>
+				<li>Carousel</li>
+				<li>random number</li>
+			</english>
+		</name>
+		<genre>
+			<chinese>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+				<li>JS 技巧</li>
+			</chinese>
+			<english>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+				<li>JS Special</li>
+			</english>
+		</genre>
+	</JsSpecial>
+
+	<CssSpecial>
+		<name>
+			<chinese>
+				<li>加载动画</li>
+				<li>图标</li>
+				<li>3D 图像</li>
+				<li>时钟</li>
+				<li>易拉罐</li>
+				<li>三级菜单</li>
+			</chinese>
+			<english>
+				<li>Load Animation</li>
+				<li>icon</li>
+				<li>3D graphic</li>
+				<li>clock</li>
+				<li>ring-pull can</li>
+				<li>multilevel Menu</li>
+			</english>
+		</name>
+		<genre>
+			<chinese>
+				<li>CSS 技巧</li>
+				<li>CSS 技巧</li>
+				<li>CSS 技巧</li>
+				<li>CSS 技巧</li>
+				<li>CSS 技巧</li>
+				<li>CSS 技巧</li>
+			</chinese>
+			<english>
+				<li>CSS Special</li>
+				<li>CSS Special</li>
+				<li>CSS Special</li>
+				<li>CSS Special</li>
+				<li>CSS Special</li>
+				<li>CSS Special</li>
+			</english>
+		</genre>
+	</CssSpecial>
+
+	<resume>
+		<htitle>
+			<chinese>
+				<li>工作经验</li>
+				<li>教育经历</li>
+			</chinese>
+			<english>
+				<li>WORK EXPERIENCE</li>
+				<li>MY EDUCATION</li>
+			</english>
+		</htitle>
+				
+		<name>
+			<title>
+				<chinese>
+					<li>深圳市黒漂网络科技有限公司</li>
+					<li>深圳市拎包游网络科技有限公司</li>
+					<li>深圳市享美网络科技有限公司</li>
+					<li>深圳市钱大人网络科技有限公司</li>
+					<li>湖南信息科学职业学院</li>
+					<li>德安县第一中学</li>
+				</chinese>
+				<english>
+					<li>Shenzhen Heipiao network technology corporation</li>
+					<li>Shenzhen Linbaoyou network technology corporation</li>
+					<li>Shenzhen Shinymate network technology corporation</li>
+					<li>Shenzhen Qiandaren network technology corporation</li>
+					<li>Hunan Institute of Information Technology</li>
+					<li>De'an county of First Middle School</li>county
+				</english>
+			</title>
+			<subtitle>
+				<chinese>
+					<li>前端开发</li>
+					<li>前端开发</li>
+					<li>前端开发</li>
+					<li>前端开发</li>
+					<li>大学大专</li>
+					<li>初中,高中</li>
+				</chinese>
+				<english>
+					<li>Front End Developer</li>
+					<li>Front End Developer</li>
+					<li>Front End Developer</li>
+					<li>Front End Developer</li>
+					<li>college</li>
+					<li>junior high,senior high</li>
+				</english>
+			</subtitle>			
+		</name>
+		<content>
+			<chinese>
+				<li>
+					公司主营互联网 + 钓鱼。<br></br>
+					在公司主要负责前端页面的代码编写,维护和更新,以及配合后端人员调用和调式接口。
+				</li>
+				<li>
+					公司主营境外旅游。<br></br>
+					在公司主要负责前端页面的代码编写,维护和更新,以及配合后端人员进行交互。
+				</li>
+				<li>
+					公司主营海外整容、美容咨询和代购。<br></br>
+					在公司主要负责所有前端页面的代码编写,维护和更新,以及配合后端人员进行交互。
+				</li>
+				<li>
+					公司主营大数据分析、机器人投顾服务。<br></br>
+					在公司主要负责配合团队人员编写前端页面代码,以及维护与更新。
+				</li>
+				<li>
+					学校位于湖南省长沙市<br></br>						
+					在学校就读软件技术专业,完成大学教育学习。
+				</li>
+				<li>
+					学校位于江西省九江市<br></br>
+					在学校完成初中,高中的九年义务教育学习。
+				</li>
+			</chinese>
+			<english>
+				<li>
+					Our main overseas tour.<br></br>
+					I mainly responsible for in the company of Front End The code of the page write, Maintain and update, and cooperate with the back-end call and interface type
+				</li>
+				<li>
+					Our main overseas tour.<br></br>
+					I mainly responsible for in the company of Front End The code of the page write, Maintain and update, and match up with back-end personnel proceed interaction
+				</li>
+				<li>
+					Our main Overseas face-lifting、Beauty consultation and act as purchasing agency。<br></br>
+					I mainly responsible for in the company of all Front End The code of the page write, Maintain and update, and match up with back-end personnel proceed interaction
+				</li>
+				<li>
+					Our main data analysis、Robot investment adviser。<br></br>
+					The company is mainly responsible for cooperate with team members of Front End The code of the page write, Maintain and update。
+				</li>
+				<li>
+					The school in Changsha city, Hunan province.<br></br>
+					I in school of software technology specialty, Finish college education study。
+				</li>
+				<li>
+					The school is located in Jiujiang in Jiangxi province.<br></br>
+					I finished junior high school, in school the nine-year compulsory education of high school learning
+				</li>
+			</english>
+		</content>
+
+		<maximList>
+			<chinese>
+				<li>不要只因一次挫败,就放弃你原来决心想达到的目的。</li>
+				<li>凡是决心取得胜利的人是从来不说“不可能”的。</li>
+				<li>生活若无波折险阻,就会过于平淡无奇。</li>
+			</chinese>
+			<english>
+				<li>Do not, for one repulse, forgo the purpose that you resolved to effort.</li>
+				<li>The man who has made up his mind to win will never say " Impossible".</li>
+				<li>Life would be too smooth if it had no rubs in it.</li>
+			</english>
+		</maximList>
+	</resume>
+
+	<about>
+		<title>
+			<chinese>
+				<li>我的故事</li>
+				<li>个人信息</li>
+				<li>生活照</li>
+				<li>我的爱好</li>
+			</chinese>
+			<english>
+				<li>MY STORY</li>
+				<li>PERSONAL INFO</li>
+				<li>LIFE PHOTO</li>
+				<li>MY HOBBIES</li>
+			</english>
+		</title>
+		<hobbies>
+			<chinese>
+				<li>音乐</li>
+				<li>编程</li>
+				<li>购物</li>
+				<li>旅行</li>
+				<li>运动</li>
+				<li>游戏</li>
+				<li>种植</li>
+				<li>看书</li>
+			</chinese>
+			<english>
+				<li>music</li>
+				<li>Coding</li>
+				<li>shopping</li>
+				<li>travel</li>
+				<li>sport</li>
+				<li>Gaming</li>
+				<li>plant</li>
+				<li>book</li>
+			</english>
+		</hobbies>
+		<story>
+			<chinese>
+				我叫 Evan ,来自江西九江,虽然在大学浑浑噩噩的过来,但是出校后,还是喜欢接触编程的世界,成为一个程序员,我喜欢编写代码的感觉,当项目或某个页面完成时,那种成就感只有程序员能理解,原来我是喜欢编程的,只是在大学时没有深入的了解,有点遗憾！不过,我是一个喜欢挑战的人,努力钻研技术,提高自身的编程水平,做出更好的作品！<br></br><br></br>
+				工作之余,我喜欢做些自己喜欢的小作品,或者学习更广的技术！
+			</chinese>
+			<english>
+				My name is Evan, From jiangxi jiujiang, While in college the unexamined, But after the school, Still like to contact The world of programming, become one programmer, I like the feeling of writing code, When the project, or a page is complete, Kind of a sense of achievement only programmers can understand, Originally I like programming, Just when I was in college without understanding, Was a little disappointed ! only, I am a like a challenge, endeavour to perfect one's skill, Raise the level of their own programming, Make better work !<br></br><br></br>
+				after work, I like to do their own work, Or learn more technology ! 
+			</english>
+		</story>
+	</about>
+
+	<skill>
+		<content>
+			<chinese>如有需要,敬请联系！！！</chinese>
+			<english>If necessary, please contact ！！！</english>
+		</content>
+		<contact>
+			<chinese>联系我！</chinese>
+			<english>contact ME ！</english>
+		</contact>
+	</skill>
+
+	<info>
+		<title>
+			<chinese>
+				<li>姓名：</li>
+				<li>年龄：</li>
+				<li>手机：</li>
+				<li>邮箱：</li>
+				<li>住址：</li>
+			</chinese>
+			<english>
+				<li>Name：</li>
+				<li>Age：</li>
+				<li>Phone：</li>
+				<li>Email：</li>
+				<li>Adress：</li>
+			</english>
+		</title>
+		<value>
+			<chinese>
+				<li>Evan</li>
+				<li>26 岁</li>
+				<li><a href="tel:+8615079292785">+86 150-7929-2785</a></li>
+				<li>evan2016@vip.qq.com</li>
+				<li>深圳市龙华区,民治街道,樟坑一区</li>
+			</chinese>
+			<english>
+				<li>Evan</li>
+				<li>26 Years Old</li>
+				<li><a href="tel:+8615079292785">+86 150-7929-2785</a></li>
+				<li>evan2016@vip.qq.com</li>
+				<li>LongHua District of Shenzhen,MinZhi Sub-district,樟坑一区</li>
+			</english>
+		</value>
+	</info>
+</xml>
+

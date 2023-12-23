@@ -1,0 +1,224 @@
+@charset 'utf-8';
+@media screen and (max-width: 1240px) {
+    .navBar,
+    #project .projectWrap,
+    #resume .resumeWrap,
+    #resume .educationWrap,
+    #plugIn .plugInWrap,
+    #JsSpecial .JsSpecialWrap,
+    #CssSpecial .CssSpecialWrap,
+    #about .aboutWrap,
+    #skill .skillWrap,
+    #skill .contactWrap {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 1050px) {
+    .navBar {
+        width: 768px;
+    }
+    .nav {
+        width: 100%;
+        margin-right: 0;
+        transition: all 0.3s;
+    }
+    .nav ul {
+        margin: 20px auto;
+        /*display: none;*/
+        background: rgba(55, 55, 55, 0.8);
+    }
+    .nav li {
+        float: none;
+    }
+    .nav li a {
+        margin-top: 8px;
+    }
+    .nav li:hover {
+        background: rgba(55, 55, 55, 1);
+    }
+    .nav .openNav {
+        display: block;
+    }
+    #project .projectList li {
+        width: 50%;
+    }
+    #plugIn .plugInList li,
+    #JsSpecial .JsSpecialList li,
+    #CssSpecial .CssSpecialList li {
+        width: 33.3333%;
+    }
+    #plugIn .plugInList ul {
+        margin-left: 0;
+    }
+    #resume .maxim {
+        height: 300px;
+    }
+    #resume .maximBack {
+        height: 280px;
+        margin-top: 10px;
+    }
+    #resume .maximBack .subHead h1 {
+        margin-top: 20px;
+    }
+    #about .spacer .story {
+        width: 100%;
+    }
+    #about .spacer .story .liWrap {
+        height: auto;
+        margin-bottom: 20px;
+    }
+    #about .spacer .info,
+    #about .spacer .picture {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .navBar {
+        width: 100%;
+    }
+    #project .projectList li {
+        width: 100%;
+    }
+    #plugIn .plugInList li,
+    #JsSpecial .JsSpecialList li,
+    #CssSpecial .CssSpecialList li {
+        width: 50%;
+    }
+    .separation {
+        display: none;
+    }
+    #resume .maxim {
+        height: 240px;
+    }
+    #resume .maximBack {
+        height: 220px;
+    }
+    #resume .maximBack .maximWrap {
+        width: 100%;
+        margin-top: 20px;
+    }
+    #maximList .item {
+        padding: 0 10px;
+    }
+    #resume .experience,
+    #resume .education {
+        width: 100%;
+    }
+    #resume .label .subHead,
+    #about .label .subHead {
+        padding: 8px 12px;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+    #about .spacer .li {
+        width: 100%;
+    }
+    #about .liWrap {
+        height: auto;
+        margin-bottom: 20px;
+        padding-right: 0;
+    }
+    #about .picture {
+        display: none;
+    }
+    #backTop {
+        bottom: 20px;
+        right: 0;
+    }
+    #hobbieSlider .item {
+        padding: 10px 0;
+    }
+    #hobbieSlider .item i {
+        font-size: 20px;
+    }
+    #skill .skillList {
+        padding-top: 20px;
+    }
+    #skill .skillList .item {
+        width: 50%;
+        margin-bottom: 20px;
+    }
+    #skill .contactMe {
+        padding: 20px 0;
+    }
+    .contactWrap {
+        font-size: 14px;
+    }
+    .contactWrap .contactMeBtn {
+        padding: 8px 12px;
+        display: inline-block;
+        float: none;
+    }
+    .contactWrap .text {
+        float: none;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .page {
+        padding: 100px 0;
+    }
+    #resume .experience .fa,
+    #resume .education .fa {
+        right: 10px;
+        top: 10px;
+        left: auto;
+        font-size: 50px;
+    }
+    #resume .textWrap {
+        width: 100%;
+    }
+    #resume .companyName,
+    #resume .schoolName {
+        border-left-width: 1px;
+        border-left-style: solid;
+    }
+    #home .meImg {
+        width: 100px;
+        height: 100px;
+        border-width: 2px;
+        border-radius: 50px;
+    }
+    #home .professional {
+        font-size: 16px;
+    }
+    #resume .resumeHead,
+    #project .projectHead,
+    #plugIn .plugInHead,
+    #JsSpecial .JsSpecialHead,
+    #CssSpecial .CssSpecialHead,
+    #about .aboutHead,
+    #skill .skillHead {
+        font-size: 18px;
+    }
+    #resume .resumeHead h1,
+    #project .projectHead h1,
+    #plugIn .plugInHead h1,
+    #JsSpecial .JsSpecialHead h1,
+    #CssSpecial .CssSpecialHead h1,
+    #about .aboutHead h1,
+    #skill .skillHead h1 {
+        padding: 10px 15px;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    /*#plugIn .plugInList li,
+    #JsSpecial .JsSpecialList li,
+    #CssSpecial .CssSpecialList li {
+        width: 100%;
+        padding: 0 15px;
+    }*/
+    #project .projectList .fontColor {
+        margin-top: 30px;
+        font-size: 16px;
+    }    
+    #plugIn .plugInList .fontColor,
+    #JsSpecial .JsSpecialList .fontColor,
+    #CssSpecial .CssSpecialList .fontColor {
+        margin-top: 20px;
+        font-size: 16px;
+    }
+}
