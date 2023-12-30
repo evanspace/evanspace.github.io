@@ -1,5 +1,5 @@
 
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, /* createWebHistory, */ createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import { constantRoutes } from './routes'
 import { useAuthStore } from '@/stores'
 
@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = constantRoutes
 // 1.返回一个 router 实列，为函数，里面有配置项（对象） history
 const router = createRouter( {
   // 去除vue访问页面时的#/
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior( _to, _from, savedPosition ) {
     // savedPosition 会在你使用浏览器前进或后退按钮时候生效
