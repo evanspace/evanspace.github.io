@@ -16,7 +16,7 @@
     <div class="right-menu">
 
       <!-- 下拉企业列表 -->
-      <transition name="el-zoom-in-center">
+      <transition name="el-zoom-in-center" v-if="userStore.showProject">
         <div class="project-select">
           <el-select 
             v-model="projectId" 

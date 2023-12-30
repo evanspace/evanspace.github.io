@@ -1,0 +1,21 @@
+
+.page {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.border {
+  width: 100px;
+  height: 100px;
+  border-width: 3px;
+  border-color: #0099ff;
+}
+
+$types: solid dashed dotted double groove;
+
+@for $i from 1 through length( $types ) {
+  .border:nth-child(#{ $i }) {
+    border-style: nth($types, $i );
+  }
+}

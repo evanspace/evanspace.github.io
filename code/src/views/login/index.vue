@@ -89,8 +89,6 @@
 
     </div>
 
-    <!-- <particle :length="300" /> -->
-
   </div>
 </template>
 
@@ -99,7 +97,6 @@ import { User, Lock, Key } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores'
 import { Api } from '@/config'
 import topTitle from './title.vue'
-// import particle from './particle.vue'
 import { base } from '@/router/utils'
 
 defineComponent( {

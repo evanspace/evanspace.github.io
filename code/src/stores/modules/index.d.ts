@@ -58,6 +58,7 @@ interface UserInfo {
 declare interface UserStore {
   token: string
   showAvatar: boolean
+  showProject: boolean
   userInfo: UserInfo
   powers: Array<string>
   config: object

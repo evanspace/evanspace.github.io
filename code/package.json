@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-    "@tinymce/tinymce-vue": "^5.1.1",
     "axios": "^1.4.0",
     "echarts": "^5.4.3",
     "element-plus": "^2.3.7",

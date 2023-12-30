@@ -27,6 +27,7 @@ const token = params.TOKEN || cookie[ tokenKey ] || getSession( tokenKey )
 const userStore: UserStore = {
   token,
   showAvatar: true,
+  showProject: false,
   changePassword: false,
 
   userInfo: {
