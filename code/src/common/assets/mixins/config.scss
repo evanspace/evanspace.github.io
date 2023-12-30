@@ -1,0 +1,10 @@
+// 命名前缀
+$namespace: 'e' !default;
+// 拼接字符
+$common-separator: '-' !default;
+// 元素拼接符号（一般用于分层）
+$element-separator: '__' !default;
+// 修饰符号（一般用于内容层或元素）
+$modifier-separator: '--' !default;
+// 状态前缀
+$state-prefix: 'is-' !default;

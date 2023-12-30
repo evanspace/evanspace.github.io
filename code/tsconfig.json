@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+
+    // 当使用第三方库时 需要配置这个选项。否则会有红色波浪线错误提示
+    "types":[
+      "node",
+      "mockjs",
+      "element-plus"
+    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    // "moduleResolution": "bundler",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "preserve",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    "baseUrl": "./",// 解析非相对模块的基础地址，默认是当前目录
+    "paths": {
+      // 路径映射，相对于baseUrl
+      "@/*": [ "src/*" ],
+      "@common/*": [ "src/common/*" ],
+      "@utils/*": [ "src/common/utils/*" ],
+      "@assets/*": [ "src/common/assets/*" ],
+      "@axios": [ "src/common/service/index.ts" ]
+    },
+
+    // 解决引入 js 报红问题
+    "noImplicitAny": false,
+    "allowJs": true
+
+  },
+  // 定义希望被编译的文件所在的目录 ** 代表任意目录 * 代表任意文件
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.d.ts", 
+    "src/**/*.tsx", 
+    "src/**/*.vue",
+    "src/env.d.ts",
+    "./types/auto-imports.d.ts" // 和 AutoImport dts保持一致 引入即可
+  ],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

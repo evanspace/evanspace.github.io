@@ -1,0 +1,128 @@
+// 侧边栏样式
+#app {
+  .main-container {
+    position: relative;
+    min-height: 100%;
+    transition: margin-left .28s;
+    margin-left: var(--side-bar-width);
+  }
+  .sidebar-container {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--side-bar-width);
+    height: 100%;
+    z-index: 1001;
+    position: fixed;
+    overflow: hidden;
+    font-size: 0px;
+    transition: width .3s;
+    text-transform: capitalize;
+    background-color: var(--el-menu-bg-color);
+    .horizontal-collapse-transition {
+      transition: 0s width ease-in-out, 0s padding-left ease-in-out, 0s padding-right ease-in-out;
+    }
+    .el-scrollbar__bar.is-vertical {
+      right: 0px;
+    }
+    .el-scrollbar {
+      height: 100%;
+    }
+    &.has-logo {
+      .el-scrollbar {
+        height: calc( 100vh - var(--header-nav-height) );
+      }
+    }
+    .is-horizontal {
+      display: none;
+    }
+  }
+  .hide-sidebar {
+    .sidebar-container {
+      width: var(--side-bar-min-width);
+    }
+    .main-container {
+      margin-left: var(--side-bar-min-width);
+    }
+  }
+  .without-animation {
+    .main-container,
+    .sidebar-container {
+      transition: none;
+    }
+  }
+  .hide-tags-view {
+    .app-main {
+      padding-top: var(--header-nav-height);
+    }
+    &.hide-navbar {
+      .app-main {
+        padding-top: 0;
+      }
+    }
+  }
+  .hide-navbar {
+    .app-main {
+      padding-top: var(--tags-view-height);
+    }
+  }
+}
+
+@mixin after {
+  &::after {
+    top: 50%;
+    left: 0;
+    width: 3px;
+    height: 0;
+    translate: 0 -50%;
+    background-color: var(--el-menu-active-border-color);
+    content: '';
+    position: absolute;
+    transition: height .3s;
+  }
+  &:not(.is-active) {
+    --el-menu-active-border-color: var(--el-menu-hover-border-color);
+    &:hover {
+      &::after {
+        height: 100%;
+      }
+    }
+  }
+  &.is-active {
+    background-color: var(--el-menu-hover-bg-color);
+    &::after {
+      height: 100%;
+    }
+  }
+}
+.scrollbar-wrapper {
+  .el-menu {
+    &-item {
+      @include after()
+    }
+  }
+}
+
+// when menu collapsed
+.el-menu--vertical {
+  // the scroll bar appears when the subMenu is too long
+  > .el-menu--popup {
+    max-height: 100vh;
+    overflow-y: auto;
+    .el-menu {
+      &-item {
+        @include after()
+      }
+    }
+    &::-webkit-scrollbar-track-piece {
+      background: #d3dce6;
+    }
+    &::-webkit-scrollbar {
+      width: var(--scroll-width);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--scroll-color);
+      border-radius: 20px;
+    }
+  }
+}

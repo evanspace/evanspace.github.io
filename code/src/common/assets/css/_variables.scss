@@ -1,0 +1,42 @@
+
+
+:root {
+  --text-color: #606266;
+  // font-family: 'Blinker', 'Fira Sans', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  --font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  --bg-color: #fff;
+  --link-color: var(--el-color-primary);
+
+  // --el-menu-bg-color: #143649;
+  // --el-menu-text-color: #f4f4f5;
+  // --el-menu-active-color: #409EFF;
+  // --el-menu-border-color: #1f2d3d;
+  // --el-menu-hover-bg-color: #001528;
+  // --el-menu-active-border-color: #00e994;
+
+  --logo-bg-color: #25b795;
+  --header-bg-color: #111f3f;
+
+  --side-bar-width: 180px;
+  --side-bar-min-width: 64px;
+
+  --header-nav-height: 60px;
+  --tags-view-height: 34px;
+
+  --border-shadow: 0px 1px 21px 0px rgba(38, 46, 45, 0.1);
+
+  --scroll-width: 6px;
+  --scroll-height: 6px;
+  --scroll-color: #eee;
+  --scroll-hover-color: #ccc;
+}
+
+.dark {
+  --bg-color: #121212;
+  --logo-bg-color: #2f3149;
+}
+
+
+
+
+

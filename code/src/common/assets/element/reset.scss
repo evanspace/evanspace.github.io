@@ -1,0 +1,94 @@
+@use '../mixins/mixins.scss' as *;
+
+// element-plus 覆盖样式
+@include b( table ) {
+  @include e( (
+    query,
+    control,
+    main
+  ) ) {
+    .el-form-item {
+      margin-right: 8px;
+      margin-bottom: 5px;
+      vertical-align: top;
+    }
+
+    .el-input--small {
+      --el-input-width: 100px
+    }
+  }
+
+  .el-collapse-item {
+    &__header {
+      height: 36px;
+    }
+    &__content {
+      padding-bottom: 0;
+    }
+  }
+
+  @include e( main ) {
+    .el-link + .el-link {
+      margin-left: 5px;
+    }
+  }
+}
+
+@include b( dialog ) {
+  &.el-dialog {
+    --el-dialog-padding-primary: 10px;
+    .el-dialog {
+      &__header {
+        margin-right: 0;
+        border-bottom: 1px solid var(--el-border-color);
+      }
+      &__headerbtn {
+        top: 0;
+        // width: 45px;
+        height: 45px;
+      }
+      &__title {
+        position: relative;
+        --el-border-width: 2px;
+        &::after {
+          top: calc( 100% + var(--el-dialog-padding-primary) - ( var(--el-border-width) / 2 ) + 1px);
+          left: 0;
+          width: 100%;
+          height: var(--el-border-width);
+          content: '';
+          position: absolute;
+          background-color: #00a0e9;
+        }
+      }
+      &__footer {
+        padding: 0;
+      }
+    }
+  }
+
+  .el-form {
+    &--inline {
+      .el-form-item {
+        vertical-align: top;
+      }
+    }
+    &-item {
+      vertical-align: top;
+      &--small {
+        $magin-right: 8px;
+        width: calc(var(--span-width) - #{ $magin-right });
+        margin-right: $magin-right;
+      }
+    }
+  }
+}
+
+@include b( tree ) {
+  .el-tree-node {
+    &.is-current {
+      & > .el-tree-node__content {
+        background-color: var(--el-tree-node-hover-bg-color);
+      }
+    }
+  }
+}

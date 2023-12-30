@@ -1,0 +1,112 @@
+@use 'sass:map';
+@use '@assets/css/mixin.scss' as *;
+@use '@assets/mixins/mixins.scss' as *;
+@use '@assets/mixins/var.scss' as *;
+
+
+$name: 'login-page' !default;
+
+$variables: () !default;
+$variables: map.merge(
+  $variables,
+  (
+    'box-shadow': var(--el-box-shadow),
+    'border-color': var(--el-border-color),
+    'bg-color': var(--el-bg-color),
+  )
+);
+
+@include block( $name ) {
+  @include set-component-css-var( $name, $variables );
+  @include bg-image('/imgs/login-bg-default.jpg');
+
+  height: 100%;
+
+  @include ele( panel ) {
+    width: 70%;
+    z-index: 3;
+    @include center;
+  }
+
+  @include ele( left ) {
+    opacity: .8;
+  }
+
+  @include mod( right_form ) {
+    padding: 50px 30px;
+    overflow: hidden;
+    transition: all .3s;
+    box-shadow: getCssVar( $name, 'box-shadow' );
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    .bg {
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px solid getCssVar( $name, 'border-color' );
+      z-index: -1;
+      opacity: .3;
+      position: absolute;
+      border-radius: 10px;
+      background-color: getCssVar( $name, 'bg-color' );
+    }
+    .title {
+      position: relative;
+      font-size: 1em;
+      line-height: 1.8;
+      background-image: -webkit-linear-gradient( bottom, #00ff84, #0703fd 50%, #ff00f2 ); 
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+
+      &::after {
+        top: 100%;
+        left: 0;
+        width: 45px;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background: #028bff;
+      }
+    }
+    .form {
+      width: 260px;
+      margin-top: 20px;
+
+      :deep( .el-input__inner ) {
+        border-color: transparent;
+        border-radius: 0;
+
+        &:focus {
+          border-color: #409eff;
+        }
+      }
+
+      .el-input {
+        // margin-top: 18px;
+      }
+    }
+    .btn-wrap {
+      text-align: center;
+      .btn {
+        color: #fff;
+        width: 100%;
+        cursor: pointer;
+        padding: 10px;
+        display: inline-block;
+        transition: all .15s;
+        border-radius: 3px;
+        text-transform: uppercase;
+        background-color: #2f43f9;
+        &:hover {
+          opacity: .95;
+          box-shadow: 0px 1px 10px 0 #0003;
+        }
+        &:active {
+          opacity: .85;
+          box-shadow: 0px 1px 5px 0 rgba(86, 84, 84, 0.2);
+        }
+      } 
+    }
+  }
+}

@@ -1,0 +1,71 @@
+@use 'config';
+// 拼接变量名称
+// joinVarName( ( 'button', 'text-color' ) ) => '--el-button-text-color'
+@function joinVarName( $list ) {
+  $name: '--' + config.$namespace;
+  @each $item in $list {
+    @if $item != '' {
+      $name: $name + '-' + $item;
+    }
+  }
+  @return $name;
+}
+
+// 获取css变量名
+// getCssVarName('button', 'text-color' ) => '--el-button-text-color'
+@function getCssVarName( $args... ) {
+  @return joinVarName( $args );
+}
+
+// 获取css 变量
+// getCssVar( 'button', 'text-color' ) => var(--el-button-text-color )
+@function getCssVar( $args... ) {
+  @return var( #{ joinVarName( $args ) } );
+}
+
+// 选择器转换做字符串
+@function selectorToString( $selector ) {
+  $selector: inspect( $selector );
+  $selector: str-slice( $selector, 2, -2);
+  @return $selector;
+}
+
+// 包含修饰符号
+@function containsModifier( $selector ) {
+  $selector: selectorToString( $selector );
+  // 返回 substring 子字符串第一次在 string 中出现的位置。
+  @if str-index( $selector, config.$modifier-separator ) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+// 包含状态标志
+@function containWhenFlag( $selector ) {
+  $selector: selectorToString( $selector );
+
+  @if str-index( $selector, '.' + config.$state-prefix ) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+// 包含伪类
+@function containPseudoClass( $selector ) {
+  $selector: selectorToString( $selector );
+
+  @if str-index( $selector, ':' ) {
+    @return true;
+  } @else {
+    @return false;
+  }
+}
+
+// 命中所有特殊嵌套规则
+@function hitAllSpecialNestRule( $selector ) {
+  @return containsModifier( $selector ) or 
+    containWhenFlag( $selector ) or
+    containPseudoClass( $selector );
+}

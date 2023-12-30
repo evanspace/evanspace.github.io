@@ -1,0 +1,29 @@
+
+
+@mixin form-reset {
+  .el-form {
+    &-item {
+      margin-right: 12px;
+      margin-bottom: 0;
+    }
+  }
+  .e-form-filter {
+    --filter-width: 100px;
+    width: var(--filter-width);
+  }
+  .el-input,
+  .el-input__wrapper {
+    --el-input-width: min( 100%, var(--filter-width) );
+    --el-date-editor-width: var(--filter-width);
+    --el-input-bg-color: var(--main-bg-color);
+    --el-input-text-color: #fff;
+    --el-text-color-primary: #fff;
+    --el-text-color-regular: #fff;
+    --el-text-color-placeholder: #fff;
+    --el-input-border-radius: 6px;
+    --el-date-editor-daterange-width: 230px;
+    ::-webkit-input-placeholder {
+      color: rgba($color: #fff, $alpha: .5); 
+    }
+  }
+}

@@ -1,0 +1,73 @@
+
+// 文字大小
+$font-sizes: () !default;
+$font-sizes: map-merge(
+  (
+    xs: 12px,
+    sm: 14px,
+    md: 16px,
+    lg: 18px,
+    xl: 24px,
+    xxl: 32px,
+    xxxl: 56px,
+
+    2x: 2em,
+    3x: 3em,
+    4x: 4em,
+    small: 0.8em,
+  ),
+  $font-sizes
+);
+
+@each $key, $val in $font-sizes {
+  .font-#{$key} {
+    font-size: $val;
+  }
+}
+
+
+// 边距
+$margin-base: (
+  xs: 4px,
+  sm: 8px,
+  md: 16px,
+  lg: 24px,
+  xl: 32px,
+);
+$margin-type: (
+  '': (
+    'left', 'right', 'top', 'bottom'
+  ),
+  t: (
+    'top',
+  ),
+  b: (
+    'bottom'
+  ),
+  tb: (
+    'top', 'bottom'
+  ),
+  l: (
+    'left'
+  ),
+  r: (
+    'right'
+  ),
+  lr: (
+    'left', 'right'
+  ),
+);
+@each $key, $items in $margin-type {
+  @each $type, $margin in $margin-base {
+    .m#{ $key }-#{ $type } {
+      @each $val in $items {
+        margin-#{ $val }: $margin;
+      }
+    }
+    .p#{ $key }-#{ $type } {
+      @each $val in $items {
+        padding-#{ $val }: $margin;
+      }
+    }
+  }
+}

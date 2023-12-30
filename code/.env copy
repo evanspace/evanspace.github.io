@@ -1,0 +1,10 @@
+# api 前路径
+VITE_API_BEFORE_PATH = '/api'
+
+# 路由基础路径
+VITE_ROUTE_BASE = '/app'
+
+# 静态资源路径
+VITE_BEFORE_STATIC_PATH = ''
+
+VITE_APP_TITLE = 'Vite App'
