@@ -15,6 +15,11 @@ export default {
 
     css: 'css',
     border: 'border',
+    flex: 'flex',
+    clip: 'clip',
+    path: 'path',
+    polygon: 'polygon',
+
     media: 'media',
     musicPlayer: 'music player',
   },

@@ -7,6 +7,7 @@
  * @version: V
 * */
 import layout from '@/layout/index.vue'
+import indexPage from '@/pages/index.vue'
 
 // 路由基本路径/多处使用
 export const base = import.meta.env.VITE_ROUTE_BASE
@@ -14,6 +15,7 @@ export const base = import.meta.env.VITE_ROUTE_BASE
 // 生产路由
 const createRoutes = ( pages, components ) => {
   const newPageComps: any[] = []
+  const mk = '_'
   // 对象装数组
   Object.entries( pages ).forEach( ( [ path, meta ]: any ) => {
     let pageJs = path
@@ -22,12 +24,12 @@ const createRoutes = ( pages, components ) => {
     path = path || '/'
     // 获取路由层级
     const names = path.split( '/' ).filter( Boolean )
-    const name = names.join( '_' ) || 'index'
+    const name = names.join( mk ) || 'index'
     // 对应组件路径
     const compPath = pageJs.replace( 'page.js', 'index.vue' )
     const cop = {
       path: base + path,
-      component: components[ compPath ] || layout,
+      component: components[ compPath ] || indexPage,
       name,
       meta,
       redirect: null
@@ -37,6 +39,7 @@ const createRoutes = ( pages, components ) => {
       delete meta.redirect
     }
     let parent, pi
+    // console.log( names )
     names.forEach( ( name, index ) => {
       // 第一个为一级
       if ( index == 0 ) {
@@ -56,20 +59,22 @@ const createRoutes = ( pages, components ) => {
           // 一级目录
           if ( names.length == 1 ) {
             Object.keys( cop ).forEach( key => {
-              newPageComps[ pi ][ key ] = cop[ key ]
+              newPageComps[ pi ][ key ] = key == 'component' ? layout : cop[ key ]
             } )
           }
         }
         parent = newPageComps[ pi ]
       } else {
         // 没有子级 添加空数组
-        if ( !newPageComps[ pi ].children ) {
-          newPageComps[ pi ].children = []
+        if ( !parent.children ) {
+          parent.children = []
         }
+        const nm = names.slice( 0, index + 1 ).join( mk )
         // 子级中查找层级未找到则添加
-        const i = parent.children.findIndex( it => it.name == name )
+        const i = parent.children.findIndex( it => it.name == nm )
         if ( i < 0 ) {
-          newPageComps[ pi ].children.push( cop )
+          console.log( nm, i )
+          parent.children.push( cop )
         } else {
           // 找到则接续添加到子级
           parent = parent.children[ i ]
@@ -79,7 +84,6 @@ const createRoutes = ( pages, components ) => {
   } )
   return newPageComps
 }
-
 
 // 动态导出 pages文件下路由配置
 export const exportPagesRoutesConfig = () => {

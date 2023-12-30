@@ -9,13 +9,17 @@
       :index="resolvePath( onlyOneChild.path )" 
       @click="menuItemClick( item )"
     >
-      <item-li :icon="onlyOneChild.meta.icon || item.meta.icon" :title="onlyOneChild.meta.title" />
+      <el-icon v-if="onlyOneChild.meta.icon || item.meta.icon"><svg-icon :name="onlyOneChild.meta.icon || item.meta.icon"></svg-icon></el-icon>
+      <template #title>
+        <span>{{ hasI18n ? $t( `route.${ onlyOneChild.meta.title }` ) : onlyOneChild.meta.title }}</span>
+      </template>
     </el-menu-item>
   </template>
 
   <el-sub-menu v-else ref="subMenu" :index="resolvePath( item.path )" teleported>
-    <template #title>
-      <item-li v-if="item.meta" :icon="item.meta && item.meta.icon" :title="item.meta.title" />
+    <template #title v-if="item.meta">
+      <el-icon v-if="item.meta.icon"><svg-icon :name="item.meta.icon"></svg-icon></el-icon>
+      <span>{{ hasI18n ? $t( `route.${ item.meta.title }` ) : item.meta.title }}</span>
     </template>
     <template v-for="child in item.children" :key="child.path">
       <sidebar-item
@@ -30,8 +34,10 @@
 <script lang="ts" setup>
 import path from 'path-browserify'
 import { isExternal } from '@utils/validate'
-import itemLi from './item.vue'
 import { useAppStore, useUserStore } from '@/stores'
+
+const appStore = useAppStore()
+const hasI18n = computed( () => appStore.i18n )
 
 const props = defineProps( {
   item: {
@@ -101,7 +107,6 @@ const resolvePath = ( routePath: any ) => {
   return path.resolve( props.basePath, routePath )
 }
 
-const appStore = useAppStore()
 const userStore = useUserStore()
 const router = useRouter()
 

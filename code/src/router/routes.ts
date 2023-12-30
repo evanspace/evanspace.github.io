@@ -76,7 +76,7 @@ export const constantRoutes = [
 
 // 动态导出路由配置
 const exportAsyncRoutes = exportPagesRoutesConfig()
-
+console.log( exportAsyncRoutes )
 export const asyncRoutes = [
   ...exportAsyncRoutes,
 ]

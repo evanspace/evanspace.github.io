@@ -15,6 +15,11 @@ export default {
 
     css: '样式',
     border: '边框',
+    flex: '伸缩盒',
+    clip: '裁切',
+    path: '路径',
+    polygon: '多边形',
+
     media: '多媒体',
     musicPlayer: '音乐播放器',
   },
