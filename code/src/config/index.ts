@@ -25,7 +25,7 @@ const domian = hostname.split('.').slice(-3).join('.') //根域名
 const Api = {
   apiRoot,
   base: {
-    title: 'This Is A Test System',
+    title: 'Vue3 + Ts 前端训练基地',
     webname: webname,
     domian: String( domian ), // 根域名
   },
