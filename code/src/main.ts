@@ -18,7 +18,7 @@ import common from './common'
 import components from './components'
 
 // 自定义覆盖样式
-import './assets/css/reset.scss'
+import './assets/css/index.scss'
 
 
 /* 权限控制 */

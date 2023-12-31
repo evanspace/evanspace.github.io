@@ -22,6 +22,13 @@ export default {
 
     media: '多媒体',
     musicPlayer: '音乐播放器',
+
+    canvas: '画布',
+    characterRain: '字符雨',
+    fireworks: '烟花',
+
+    animation: '动画',
+    linearBorder: '渐变边框',
   },
 
   user: {

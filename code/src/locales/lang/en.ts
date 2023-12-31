@@ -22,6 +22,13 @@ export default {
 
     media: 'media',
     musicPlayer: 'music player',
+
+    canvas: 'canvas',
+    characterRain: 'character Rain',
+    fireworks: 'fireworks',
+
+    animation: 'animation',
+    linearBorder: 'linear Border',
   },
 
   user: {
