@@ -354,9 +354,12 @@ const onAssinSong = ( index = 0 ) => {
 
   lrcObj.active = -1
   new MusicFileLoader().load( lrc, data => {
-    console.log( data )
     Object.keys( data ).forEach( key => {
       lrcObj[ key ] = data[ key ]
+    } )
+  }, void 0, () => {
+    Object.keys( lrcObj ).forEach( key => {
+      lrcObj[ key ] = key == 'lrc' ? [] : key == 'active' ? 0 : ''
     } )
   } )
 
@@ -371,7 +374,6 @@ const onAssinSong = ( index = 0 ) => {
 const onFast = ( seconds = 0 ) => {
   mysong.value.currentTime += seconds
   calcProcess()
-
 }
 
 // 音量
@@ -391,7 +393,6 @@ const onVolume = ( step = .1 ) => {
 // 麦克风
 let stream: any
 const onGetMicrophone = () => {
-  // 本地地址 才可
   if ( !navigator.mediaDevices ) {
     console.log('获取麦克风失败!')
     return
