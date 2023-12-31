@@ -33,6 +33,8 @@ export default {
 
     monitor: '监控',
     eleIntersection: '元素交集',
+
+    drag: '拖拽',
   },
 
   user: {

@@ -32,7 +32,9 @@ export default {
     linearBorder: 'linear Border',
 
     monitor: 'monitor',
-    eleIntersection:'Element intersection'
+    eleIntersection:'Element intersection',
+
+    drag: 'drag',
   },
 
   user: {
