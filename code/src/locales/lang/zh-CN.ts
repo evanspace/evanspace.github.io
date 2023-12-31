@@ -30,6 +30,7 @@ export default {
 
     animation: '动画',
     linearBorder: '渐变边框',
+    hash: '地址栏',
 
     monitor: '监控',
     eleIntersection: '元素交集',

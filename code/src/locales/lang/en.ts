@@ -30,6 +30,7 @@ export default {
 
     animation: 'animation',
     linearBorder: 'linear Border',
+    hash: 'hash',
 
     monitor: 'monitor',
     eleIntersection:'Element intersection',
