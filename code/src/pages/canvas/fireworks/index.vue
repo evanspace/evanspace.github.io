@@ -8,7 +8,17 @@
 </template>
 
 <script lang="ts" setup>
-const balls = ref( [] )
+interface Ball {
+  step: number
+  max: number
+  x: number
+  y: number
+  // 方向
+  dirx: number
+  diry: number
+  color: string
+}
+const balls = ref<Array<Ball>>( [] )
 
 const pageRef = ref()
 const canvas = ref()

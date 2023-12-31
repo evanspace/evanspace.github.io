@@ -32,30 +32,30 @@
           <tbody>
             <tr>
               <td rowspan="4">上午</td>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
 
             <tr>
               <td rowspan="4">下午</td>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
             <tr>
-              <td data-drop="copy" v-for="i in 7"></td>
+              <td data-drop="copy" v-for="_i in 7"></td>
             </tr>
           </tbody>
         </table>
