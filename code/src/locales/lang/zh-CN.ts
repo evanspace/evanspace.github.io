@@ -29,6 +29,9 @@ export default {
 
     animation: '动画',
     linearBorder: '渐变边框',
+
+    monitor: '监控',
+    eleIntersection: '元素交集',
   },
 
   user: {

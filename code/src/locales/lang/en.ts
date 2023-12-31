@@ -29,6 +29,9 @@ export default {
 
     animation: 'animation',
     linearBorder: 'linear Border',
+
+    monitor: 'monitor',
+    eleIntersection:'Element intersection'
   },
 
   user: {
