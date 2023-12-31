@@ -22,6 +22,7 @@ export default {
 
     media: 'media',
     musicPlayer: 'music player',
+    videoAutoPlay: 'video auto play',
 
     canvas: 'canvas',
     characterRain: 'character Rain',

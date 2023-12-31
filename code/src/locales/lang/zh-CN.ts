@@ -22,6 +22,7 @@ export default {
 
     media: '多媒体',
     musicPlayer: '音乐播放器',
+    videoAutoPlay: '视频自动播放',
 
     canvas: '画布',
     characterRain: '字符雨',
