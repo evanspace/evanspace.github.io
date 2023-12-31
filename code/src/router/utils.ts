@@ -7,7 +7,7 @@
  * @version: V
 * */
 import layout from '@/layout/index.vue'
-import indexPage from '@/pages/index.vue'
+import indexPage from '@/layout/page.vue'
 
 // 路由基本路径/多处使用
 export const base = import.meta.env.VITE_ROUTE_BASE
@@ -16,8 +16,15 @@ export const base = import.meta.env.VITE_ROUTE_BASE
 const createRoutes = ( pages, components ) => {
   const newPageComps: any[] = []
   const mk = '_'
+  // 排序，防止层级错乱
+  const list = Object.entries( pages ).sort( ( a, b ) => {
+    const a1 = a[ 0 ].split( '/' ).length
+    const b1 = b[ 0 ].split( '/' ).length
+    return a1 - b1
+  } )
+  
   // 对象装数组
-  Object.entries( pages ).forEach( ( [ path, meta ]: any ) => {
+  list.forEach( ( [ path, meta ]: any ) => {
     let pageJs = path
     // 截取有效路由
     path = path.replace( '../pages', '' ).replace( '/page.js', '' )
@@ -39,15 +46,14 @@ const createRoutes = ( pages, components ) => {
       delete meta.redirect
     }
     let parent, pi
-    // console.log( names )
     names.forEach( ( name, index ) => {
       // 第一个为一级
       if ( index == 0 ) {
         pi = newPageComps.findIndex( it => it.name == name )
         // 未找到则 push
         if ( pi === -1 ) {
-          // 深拷贝防污染
-          const copy = { ...cop }
+          // 深拷贝防污染、使用主布局组件
+          const copy = { ...cop, component: layout }
           // 非一级目录
           if ( names.length > 1 ) {
             copy.path = `/${ name }`
@@ -59,7 +65,7 @@ const createRoutes = ( pages, components ) => {
           // 一级目录
           if ( names.length == 1 ) {
             Object.keys( cop ).forEach( key => {
-              newPageComps[ pi ][ key ] = key == 'component' ? layout : cop[ key ]
+              newPageComps[ pi ][ key ] = cop[ key ]
             } )
           }
         }
@@ -73,7 +79,6 @@ const createRoutes = ( pages, components ) => {
         // 子级中查找层级未找到则添加
         const i = parent.children.findIndex( it => it.name == nm )
         if ( i < 0 ) {
-          console.log( nm, i )
           parent.children.push( cop )
         } else {
           // 找到则接续添加到子级
