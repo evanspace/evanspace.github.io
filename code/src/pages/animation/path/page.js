@@ -1,4 +1,4 @@
 export default {
-  title: 'css',
+  title: 'path',
   noRedirect: true
 }
