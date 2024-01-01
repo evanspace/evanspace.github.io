@@ -64,6 +64,18 @@ const list = ref<Array<List>>( [
       flexWrap: 'wrap',
     },
     items: [ {}, {}, {}, {}, {}, {}, {}, {} ]
+  }, {
+    title: '流式布局',
+    style: {
+      gap: '10px',
+      flexWrap: 'wrap'
+    },
+    items: [
+      // 1 2 3px -> 1 放大因子，分配剩余空间，2 收缩因子，3px 初始大小，不会因空间不足缩小
+      { style: { flex: '1 0 200px'  } },
+      { style: { flex: '1 1 300px'  } },
+      { style: { flex: '1 0 400px'  } },
+    ]
   }
 ] )
 
