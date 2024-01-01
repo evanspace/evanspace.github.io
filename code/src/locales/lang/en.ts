@@ -18,6 +18,7 @@ export default {
     flex: 'flex',
     clip: 'clip',
     path: 'path',
+    coffeeCup: 'coffee cup',
     polygon: 'polygon',
 
     media: 'media',

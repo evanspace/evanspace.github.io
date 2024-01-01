@@ -18,6 +18,7 @@ export default {
     flex: '伸缩盒',
     clip: '裁切',
     path: '路径',
+    coffeeCup: '咖啡杯',
     polygon: '多边形',
 
     media: '多媒体',
