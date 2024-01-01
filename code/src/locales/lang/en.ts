@@ -19,6 +19,7 @@ export default {
     clip: 'clip',
     path: 'path',
     coffeeCup: 'coffee cup',
+    multiplePaths: 'Multiple paths',
     polygon: 'polygon',
 
     media: 'media',

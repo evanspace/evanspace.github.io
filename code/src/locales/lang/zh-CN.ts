@@ -19,6 +19,7 @@ export default {
     clip: '裁切',
     path: '路径',
     coffeeCup: '咖啡杯',
+    multiplePaths: '多种路径',
     polygon: '多边形',
 
     media: '多媒体',
