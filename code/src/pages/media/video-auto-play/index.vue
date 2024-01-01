@@ -5,7 +5,7 @@
       <div class="modal" v-show="!play">
         <el-button type="primary" @click="onPlay">打开声音</el-button>
       </div>
-      <video src="/video/005.mp4" ref="video" loop></video>
+      <video src="/video/005.mp4" ref="video" loop controls></video>
     </div>
 
     <div class="bg"></div>
