@@ -23,22 +23,25 @@ export default {
     polygon: '多边形',
     pseudo: '伪元素',
 
-    media: '多媒体',
-    musicPlayer: '音乐播放器',
-    videoAutoPlay: '视频自动播放',
-
-    canvas: '画布',
-    characterRain: '字符雨',
-    fireworks: '烟花',
-
     animation: '动画',
     linearBorder: '渐变边框',
     hash: '地址栏',
 
+    media: '多媒体',
+    musicPlayer: '音乐播放器',
+    videoAutoPlay: '视频自动播放',
+
+    drag: '拖拽',
+
     monitor: '监控',
     eleIntersection: '元素交集',
 
-    drag: '拖拽',
+    event: '事件',
+    mousePointing: '鼠标指向',
+
+    canvas: '画布',
+    characterRain: '字符雨',
+    fireworks: '烟花',
   },
 
   user: {

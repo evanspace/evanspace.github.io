@@ -23,22 +23,25 @@ export default {
     polygon: 'polygon',
     pseudo: 'pseudo-element',
 
-    media: 'media',
-    musicPlayer: 'music player',
-    videoAutoPlay: 'video auto play',
-
-    canvas: 'canvas',
-    characterRain: 'character Rain',
-    fireworks: 'fireworks',
-
     animation: 'animation',
     linearBorder: 'linear Border',
     hash: 'hash',
 
+    media: 'media',
+    musicPlayer: 'music player',
+    videoAutoPlay: 'video auto play',
+
+    drag: 'drag',
+
     monitor: 'monitor',
     eleIntersection:'Element intersection',
 
-    drag: 'drag',
+    event: 'event',
+    mousePointing: 'Mouse pointing',
+
+    canvas: 'canvas',
+    characterRain: 'character Rain',
+    fireworks: 'fireworks',
   },
 
   user: {
