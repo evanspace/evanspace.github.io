@@ -21,6 +21,7 @@ export default {
     coffeeCup: '咖啡杯',
     multiplePaths: '多种路径',
     polygon: '多边形',
+    pseudo: '伪元素',
 
     media: '多媒体',
     musicPlayer: '音乐播放器',

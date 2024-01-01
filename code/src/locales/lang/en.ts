@@ -21,6 +21,7 @@ export default {
     coffeeCup: 'coffee cup',
     multiplePaths: 'Multiple paths',
     polygon: 'polygon',
+    pseudo: 'pseudo-element',
 
     media: 'media',
     musicPlayer: 'music player',
