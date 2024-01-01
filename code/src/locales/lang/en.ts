@@ -22,6 +22,7 @@ export default {
     multiplePaths: 'Multiple paths',
     polygon: 'polygon',
     pseudo: 'pseudo-element',
+    corrugation: 'corrugation',
 
     animation: 'animation',
     linearBorder: 'linear Border',

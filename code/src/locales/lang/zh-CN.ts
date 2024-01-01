@@ -22,6 +22,7 @@ export default {
     multiplePaths: '多种路径',
     polygon: '多边形',
     pseudo: '伪元素',
+    corrugation: '波纹',
 
     animation: '动画',
     linearBorder: '渐变边框',
