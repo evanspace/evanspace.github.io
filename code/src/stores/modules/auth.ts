@@ -41,7 +41,7 @@ function sortRoutes( routes: any[] ) {
     }
   } )
   return routes.sort( ( a: any, b: any ) => {
-    return a.meta.order - b.meta.order
+    return ( a.meta.order || 0 ) - ( b.meta.order || 0)
   } )
 }
 

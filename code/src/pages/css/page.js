@@ -1,5 +1,6 @@
 export default {
   title: 'css',
   icon: 'm-css',
-  noRedirect: true
+  noRedirect: true,
+  order: 10,
 }

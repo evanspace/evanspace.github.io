@@ -1,4 +1,6 @@
 export default {
   title: 'canvas',
-  icon: 'm-csv'
+  icon: 'm-csv',
+  noRedirect: true,
+  order: 60,
 }
