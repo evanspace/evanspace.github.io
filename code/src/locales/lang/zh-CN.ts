@@ -28,6 +28,9 @@ export default {
     linearBorder: '渐变边框',
     hash: '地址栏',
 
+    carousel: '轮播',
+    entryDirection: '进入方向',
+
     media: '多媒体',
     musicPlayer: '音乐播放器',
     videoAutoPlay: '视频自动播放',

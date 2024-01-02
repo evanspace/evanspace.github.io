@@ -28,6 +28,9 @@ export default {
     linearBorder: 'linear Border',
     hash: 'hash',
 
+    carousel: 'carousel',
+    entryDirection: 'entry-direction',
+
     media: 'media',
     musicPlayer: 'music player',
     videoAutoPlay: 'video auto play',
