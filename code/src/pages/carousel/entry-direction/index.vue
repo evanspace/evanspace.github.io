@@ -25,6 +25,7 @@ const boxRef = ref<HTMLDivElement>()
 
 const onMouseEnter = ( e ) => {
   const dom = boxRef.value
+  if ( !dom ) return
   const rect = dom.getBoundingClientRect()
   // 计算判断正切角度
   const theta = Math.atan2( rect.height, rect.width )
