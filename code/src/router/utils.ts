@@ -36,7 +36,7 @@ const createRoutes = ( pages, components ) => {
     const compPath = pageJs.replace( 'page.js', 'index.vue' )
     const cop = {
       path: base + path,
-      component: components[ compPath ] || indexPage,
+      component: components[ compPath ],
       name,
       meta,
       redirect: null
@@ -53,7 +53,10 @@ const createRoutes = ( pages, components ) => {
         // 未找到则 push
         if ( pi === -1 ) {
           // 深拷贝防污染、使用主布局组件
-          const copy = { ...cop, component: layout }
+          const copy = { ...cop }
+          if ( !copy.component ) {
+            copy.component = layout
+          }
           // 非一级目录
           if ( names.length > 1 ) {
             copy.path = `/${ name }`
@@ -65,7 +68,7 @@ const createRoutes = ( pages, components ) => {
           // 一级目录
           if ( names.length == 1 ) {
             Object.keys( cop ).forEach( key => {
-              newPageComps[ pi ][ key ] = cop[ key ]
+              newPageComps[ pi ][ key ] = cop[ key ] || indexPage
             } )
           }
         }
