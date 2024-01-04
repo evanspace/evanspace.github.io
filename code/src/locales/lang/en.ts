@@ -27,6 +27,7 @@ export default {
     animation: 'animation',
     linearBorder: 'linear Border',
     hash: 'hash',
+    loading: 'loading',
 
     carousel: 'carousel',
     entryDirection: 'entry-direction',
