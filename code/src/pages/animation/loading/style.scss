@@ -1,0 +1,134 @@
+
+.page {
+  --color: #00ff00;
+  // display: grid;
+  // Grid 或 Flexbox 中可以同时沿着块级和内联方向对齐元素
+  // place-items: center;
+}
+
+.demo {
+  height: 120px;
+  margin: 10px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  border-radius: 5px;
+  justify-content: center;
+  background-color: #000;
+  box-shadow: 0 0 10px rgba($color: #000000, $alpha: .6);
+}
+
+@mixin shadow () {
+  background-color: var(--color);
+  box-shadow: 
+    0 0 5px var(--color),
+    0 0 15px var(--color),
+    0 0 30px var(--color),
+    0 0 50px var(--color);
+}
+.dashed {
+  gap: 20px;
+  display: flex;
+  position: relative;
+  align-items: center;
+  span {
+    width: 10px;
+    height: 30px;
+    position: relative;
+    &:before {
+      content: '';
+      inset: 0;
+      width: 10px;
+      height: 30px;
+      position: absolute;
+      @include shadow;
+      animation: anim 5s linear infinite;
+      animation-delay: calc(var(--i) * 0.1s);
+    }
+    @keyframes anim {
+      0%, 20% {
+        rotate: 0deg;
+        @include shadow;
+      }
+      40% {
+        rotate: 90deg;
+        filter: hue-rotate(0deg);
+        @include shadow;
+        transform-origin: bottom;
+      }
+      80% {
+        rotate: 90deg;
+        filter: hue-rotate(360deg);
+        @include shadow;
+        transform-origin: bottom;
+      }
+      90% {
+        rotate: 0deg; 
+        box-shadow: none;
+        background-color: #000;
+      }
+      90.1%, 100% {
+        box-shadow: #000;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.cylinder {
+  $s: 6;
+  $n: 10;
+  $d: 360 / $n;
+  $ms: $s / $n;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin-top: 10px;
+  perspective: 500px;
+  transform-style: preserve-3d;
+  transform: rotateX(50deg) rotateZ(0deg);
+  animation: barRotate #{ $s }s linear infinite;
+  animation-delay: #{ -$s / 2 }s;
+  .bar {
+    top: 0px;
+    left: calc(50% - 10px);
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    transform-style: preserve-3d;
+    transform-origin: 50% 50px;
+    @for $i from 1 through $n {
+      &:nth-child( #{ $i } ) {
+        transform: rotate(#{ $d * $i }deg);
+        i {
+          animation-delay: #{ $ms * -$i }s;
+        }
+      }
+    }
+
+    i {
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      position: absolute;
+      animation: barHeight #{ $s }s linear infinite;
+      border-radius: 50%;
+      background-color: #fff;
+      @for $i from 1 through 20 {
+        &:nth-child( #{ $i } ) {
+          transform: translateZ(#{ $i }px);
+        }
+      }
+      @keyframes barHeight {
+        25%, 70% {
+          transform: translateZ(0);
+        }
+      }
+    }
+  }
+  @keyframes barRotate {
+    100% {
+      transform: rotateX(50deg) rotateZ(360deg);;
+    }
+  }
+}
