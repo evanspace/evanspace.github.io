@@ -174,7 +174,8 @@ export default ( { mode } ) => {
         // 打包分割
         manualChunks: ( id ) => {
           if ( id.includes( 'node_modules' ) ) {
-            return id.toString().split( 'node_modules/' )[ 1 ].split( '/' )[ 0 ].toString()
+            // return id.toString().split( 'node_modules/' )[ 1 ].split( '/' )[ 0 ].toString()
+            return 'vendor'
           }
           if ( id.includes( 'src/common' ) ) {
             return 'common'
