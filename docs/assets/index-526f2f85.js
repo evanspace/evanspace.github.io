@@ -1,0 +1,1 @@
+import{_ as s}from"./common-56c79a53.js";import{o as a,e as o,p as r,i as d,f as n}from"./vendor-a4b88890.js";const t={},c={class:"index"},e=[(s=>(r("data-v-a78333c3"),s=s(),d(),s))((()=>n("div",{class:"sword"},null,-1)))];const i=s(t,[["render",function(s,r){return a(),o("div",c,e)}],["__scopeId","data-v-a78333c3"]]);export{i as default};
