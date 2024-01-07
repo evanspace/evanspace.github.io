@@ -23,6 +23,7 @@ export default {
     polygon: 'polygon',
     pseudo: 'pseudo-element',
     corrugation: 'corrugation',
+    grid: 'grid',
 
     animation: 'animation',
     linearBorder: 'linear Border',

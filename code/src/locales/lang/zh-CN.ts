@@ -23,6 +23,7 @@ export default {
     polygon: '多边形',
     pseudo: '伪元素',
     corrugation: '波纹',
+    grid: '网格',
 
     animation: '动画',
     linearBorder: '渐变边框',
