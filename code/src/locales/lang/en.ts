@@ -24,6 +24,7 @@ export default {
     pseudo: 'pseudo-element',
     corrugation: 'corrugation',
     grid: 'grid',
+    text: 'text',
 
     animation: 'animation',
     linearBorder: 'linear Border',

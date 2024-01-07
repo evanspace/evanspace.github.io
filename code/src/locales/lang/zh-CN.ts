@@ -24,6 +24,7 @@ export default {
     pseudo: '伪元素',
     corrugation: '波纹',
     grid: '网格',
+    text: '文字',
 
     animation: '动画',
     linearBorder: '渐变边框',
