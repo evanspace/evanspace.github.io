@@ -22,7 +22,7 @@
 ```html
   <link rel='preload' href='https://www.unpkg.com/vue@3.4.5/dist/vue.global.js'/>
   <!-- 字体 -->
-  <link rel='preload' as='font' href='字体库连接' />
+  <link rel='preload' as='font' href='字体库链接' />
 ```
 
 ## 3.预连接 `Preconnect`
