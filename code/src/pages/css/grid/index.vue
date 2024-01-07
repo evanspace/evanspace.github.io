@@ -29,7 +29,8 @@
   text-transform: capitalize;
   // 网格列数和大小
   grid-template-columns: 30% 35% 35%;
-  grid-template-rows: 150px 150px 150px 150px;
+  // 网格行数和大小 repat(a, b) a：重复个数 b：高度
+  grid-template-rows: repeat(4, 150px);
   // 网格布局
   grid-template-areas: 
     'header header header'
@@ -39,7 +40,7 @@
   ;
 
   @media ( max-width: 768px ) {
-    grid-template-rows: 100px 120px 200px 100px 100px 100px;
+    grid-template-rows: 100px 120px 200px repeat(3, 100px);
     grid-template-columns: 100%;
     grid-template-areas: 
       'header'
