@@ -20,5 +20,56 @@
 5. 暴露自定义的渲染 API
 6. 支持碎片（`Fragment`）(模板中可以有多个根节点)
 7. 支持 `Teleport` （传送门）
-8. 支持 `<script setup>`
+8. 支持 `<script setup>` 语法糖，任何在其中声明的顶层绑定（包括变量,方法,`import`导入的东西）都可以在 `template` 中直接使用，不在需要 `return`,节省代码
 9. 全局 API 改动
+    - `Vue.use()` -> `app.use()`
+    - `Vue.mixin()` -> `app.mixin()`
+    - `Vue.component()` -> `app.component()`
+    - `Vue.directive()` -> `app.directive()`
+    - `Vue.prototype` -> `app.config.globalProperties`
+10. 新的响应式 API
+    - `reactive()` 实现响应式数据的方法
+    - `ref()` 接受一个内部值，返回一个ref 对象，这个对象是响应式的、可更改的，且只有一个指向其内部值的属性 `.value`
+    - `watchEffect()` 自动收集响应式的依赖（当有响应式对象发生改变时则触发此方法）
+    - `watch()` 监听一个或多个响应式数据，并在数据变化时执行回调函数
+11. 新的生命周期钩子
+    - `onBeforeMount` 挂载到 `DOM` 之前
+    - `onMounted` `DOM` 渲染后 
+    - `onBeforeUpdate` 更新组件前
+    - `onUpdated` 更新组件后
+    - `onBeforeUnmount` 卸载销毁前
+    - `onUnmounted` 卸载销毁后
+    - `onErrorCaptured` 捕获错误，通过返回 false 来阻止错误继续向上传递
+    - `onRenderTracked` 当页面有一个update的时候，会生成一个`event`对象，通过`event`对象查看代码/程序的问题所在
+    - `onRenderTriggered` 可以展示变化值的信息，`old`和`new`的值
+    - `onActivated` 组件被激活时
+    - `onDeactivated` 组件被移除时
+    - `onServerPrefetch` 服务端渲染时调用
+    - `onBeforeRouteLeave` 离开路由时
+    - `onBeforeRouteUpdate` 更新路由时
+    - `onBeforeRouteEnter` 进入路由时
+    - `onRouteEnter` 进入路由时
+    - `onRouteUpdate` 更新路由时
+    - `onRouteLeave` 离开路由时
+    - `onLazyLoad` 懒加载时
+    - `onTransitionBeforeEnter` 进入过渡前
+    - `onTransitionEnter` 进入过渡时
+    - `onTransitionLeave` 离开过渡时
+    - `onTransitionAfterEnter` 进入过渡后
+    - `onTransitionAfterLeave` 离开过渡后
+    - `onTransitionCancel` 过渡被取消时
+    - `onTransitionCancelled` 过渡被取消时
+    - `onTransitionError` 过渡发生错误时
+12. 新的内置组件
+    - `fragment` 新的特性,通过使用 `<>` 和 `</>` 将多个子元素包裹起来
+    - `teleport` 是一个内置组件，它可以将一个组件内部的一部分模板“传送”到该组件的 `DOM` 结构外层的位置去
+    - `suspense` 等待异步组件时渲染一些额外内容，让应用有更好的用户体验
+13. 新的全局 API
+    - `createApp()` 创建应用
+    - `defineComponent()` 创建动态组件
+    - `defineAsyncComponent()` 异步加载组件
+    - `defineCustomElement()` 自定义元素
+    - `getCurrentInstance()` 获取当前实例上下文
+    - `registerRuntimeCompiler()`
+    - `transition()`
+    - `transition-group()`
