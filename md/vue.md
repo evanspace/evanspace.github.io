@@ -70,6 +70,10 @@
     - `defineAsyncComponent()` 异步加载组件
     - `defineCustomElement()` 自定义元素
     - `getCurrentInstance()` 获取当前实例上下文
-    - `registerRuntimeCompiler()`
-    - `transition()`
-    - `transition-group()`
+    - `registerRuntimeCompiler()` 依赖注入编译函数
+    - `provide()` 父组件提供数据（属性名、值）、值可为响应式 
+    - `inject()` 后代组件接受数据（属性名、默认值）
+    - `useAttrs()` 获取组件的属性
+    - `useSlots()` 获取插槽内容
+    - `useCssModule()` 获取样式 在 `<style>` 上增加 `module` 属性，即`<style module> ` ,不是用方法获取默认使用 `$style.className`
+    - `useCssVars()` 获取动态样式变量
