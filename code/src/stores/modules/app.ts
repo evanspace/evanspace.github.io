@@ -26,7 +26,7 @@ if ( skin == 'dark' ) {
 const locale = i18n.global.locale.value
 
 // 是否正式环境
-const ISPROD = env.NODE_ENV == 'production'
+const ISPROD = env.VITE_MODE == 'production'
 
 const sidebarIsopenKey = 'XXX_SIDEBAR_STATUS'
 const appStore: AppStore = {
