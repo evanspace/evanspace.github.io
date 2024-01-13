@@ -40,13 +40,13 @@
       }
     ```
 
-    - 剪头函数没有 prototype 属性
+    - 剪头函数没有 `prototype` 属性
     ```js
       const foo = () => {};
       console.log( foo.prototype ); // undefined
     ```
 
-    - 剪头函数不能使用 new
+    - 剪头函数不能使用 `new`
     ```js
       const foo = () => {};
       const f = new foo();  // foo is not a constructor
