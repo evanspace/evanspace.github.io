@@ -1,17 +1,20 @@
 
-1. 剪头函数和普通函数
-  - 剪头函数更简洁，消除唯二性，但不具备属性：`this`、`arguments`、`super`、`new.target`
+剪头函数和普通函数
+=
+  1. 剪头函数更简洁，消除唯二性，但不具备属性：`this`、`arguments`、`super`、`new.target`
     - 写法
     ```js
-      ( ...args ) => expression
+      const test = ( ...args ) => args
 
-      (...args) => { body }
+      const test = (...args) => { 
+        return args
+      }
     ```
     - `arguments` 函数内部获取实参数据
     - `super` 指向的是当前对象的原型对象
     - `new.target` 允许监测函数或构造方法是否通过 `new` 运算符的调用（可 `new` 时 返回指向该函数或构造函数，否则为 `undefined`）
 
-  - 表达形式不同
+  2. 表达形式不同
   ```js
     // 没有参数
     const test = () => console.log( 'hello' );
@@ -26,7 +29,7 @@
     }
   ```
 
-  - 重要特性
+  3. 重要特性
     - 箭头函数没有 `arguments`
     ```js
       function foo( n ) {
