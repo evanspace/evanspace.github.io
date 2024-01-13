@@ -30,6 +30,7 @@ export default {
     linearBorder: 'linear Border',
     hash: 'hash',
     loading: 'loading',
+    stroke: 'stroke',
 
     carousel: 'carousel',
     entryDirection: 'entry-direction',

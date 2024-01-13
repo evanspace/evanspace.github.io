@@ -30,6 +30,7 @@ export default {
     linearBorder: '渐变边框',
     hash: '地址栏',
     loading: '加载',
+    stroke: '描边',
 
     carousel: '轮播',
     entryDirection: '进入方向',
