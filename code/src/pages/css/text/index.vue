@@ -2,8 +2,14 @@
   <div class="page">
 
     <div class="wrap">
-      <div class="text">
-        <h1>未来可期</h1>
+      <div class="demo-1">
+        <h1>文字滚动实心</h1>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="demo-2">
+        <h1>文字颜色与背景相反</h1>
       </div>
     </div>
 
@@ -18,25 +24,46 @@
   margin: 5px;
   height: 300px;
   overflow: auto;
+  border: 1px solid #ddd;
+  text-align: center;
   border-radius: 6px;
   background-color: #efefef;
-  .text {
-    height: 400px;
-    h1 {
-      height: 100%;
-      color: transparent;
-      font-size: 72px;
-      font-family: monospace;
-      text-align: center;
-      background: linear-gradient(to bottom, #e41515 50%, transparent 50%);
-      padding-top: 80px;
-      background-size: 100% 400px;
-      background-attachment: fixed;
-      // 背景裁切
-      background-clip: text;
-      // 文字描边
-      -webkit-text-stroke: 2px #e41515;
-    }
+}
+
+h1 {
+  margin: 0;
+}
+.demo-1 {
+  height: 400px;
+  h1 {
+    height: 100%;
+    color: transparent;
+    font-size: 72px;
+    font-family: monospace;
+    background: linear-gradient(to bottom, #e41515 50%, transparent 50%);
+    padding-top: 80px;
+    background-size: 100% 400px;
+    background-attachment: fixed;
+    // 背景裁切
+    background-clip: text;
+    // 文字描边
+    -webkit-text-stroke: 2px #e41515;
+  }
+}
+
+.demo-2 {
+  height: 100%;
+  font-size: 50px;
+  background: linear-gradient(45deg, #000 0, #000 50%, #fff 50%, #fff);
+  line-height: 300px;
+  h1 {
+    color: #fff;
+    // 混合模式
+    mix-blend-mode: difference;
+    transition: all .3s linear;
+  }
+  &:hover h1 {
+    transform: translateX(-200px);
   }
 }
 </style>
