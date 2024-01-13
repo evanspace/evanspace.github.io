@@ -39,6 +39,13 @@
       </div>
     </div>
 
+    <div class="wrap">
+      <div class="demo-4">
+        <video src="/video/005.mp4" autoplay muted loop></video>
+        <h1>视频文字特效</h1>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -90,6 +97,26 @@ h1 {
   }
   &:hover h1 {
     transform: translateX(-200px);
+  }
+}
+
+.demo-4 {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  h1 {
+    inset: 0;
+    font-size: 80px;
+    position: absolute;
+    font-weight: bold;
+    line-height: 300px;
+    background-color: #fff;
+    mix-blend-mode: screen;
   }
 }
 </style>
