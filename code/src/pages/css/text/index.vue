@@ -12,6 +12,32 @@
         <h1>文字颜色与背景相反</h1>
       </div>
     </div>
+    
+
+    <div class="wrap">
+      <div class="demo-3">
+        <svg
+          width="600"
+          height="200"
+        >
+          <path
+            id="path"
+            fill="transparent"
+            stroke="red"
+            stroke-width="1" 
+            d="M 50 120 Q 90 10 130 120 T 210 120 T 290 120 T 370 120 T 450 120 T 530 120"
+          ></path>
+          <text
+            font-size="28"
+            textLength="600"
+          >
+            <textPath href="#path">
+              路径上的文本
+            </textPath>
+          </text>
+        </svg>
+      </div>
+    </div>
 
   </div>
 </template>

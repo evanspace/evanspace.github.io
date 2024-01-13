@@ -1,7 +1,10 @@
 <template>
   <div class="page">
 
-    <svg xmlns="http://www.w3.org/2000/svg" p-id="9729" xmlns:xlink="http://www.w3.org/1999/xlink" width="800" height="200">
+    <svg 
+      width="800" 
+      height="200"
+    >
       <path
         ref="pathRef"
         class="curve"
