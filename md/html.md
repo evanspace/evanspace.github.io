@@ -24,11 +24,12 @@
 
 3. 预连接 `Preconnect`  
   提示用于提前与目标域名握手，完成 `DNS` 寻址，并建立 `TCP` 和 `TLS` 链接  
-  使用 `link` 标签的 `preconnect` 属性值  
+  使用 `link` 标签的 `preconnect` 属性值
   ```html
     <link rel='preconnect' href='https://www.unpkg.com'/>
   ```
-  - `DNS` 查询
+  
+  * `DNS` 查询
     - 通过浏览器的 `DNS` 对照表去分析 www.baidu.com -> 192.xxxx
     - 通过电脑文件 `etc/` 目录下的 `dns` 文件去查找
     - 通过电脑文件 `host` 文件去查找
@@ -36,7 +37,7 @@
       - 根域名服务器查找
       - 顶级域名服务器 com
       - 权威域名服务器 baidu.com
-  - `TCP` 三次握手 `seq` `ack`  
+  * `TCP` 三次握手 `seq` `ack`  
 
 4. `DNS` 预取回 `DNS-Prefecth`  
   和 `Preconnect` 一样，如何需要兼容 `ie`两个都加上即可
