@@ -1,9 +1,10 @@
 `vite` + `ts` 组件类型配置
 =
 1. `src` 目录下创建 `x.d.ts` 文件  
-  如：`element-plus`
   ```ts
+  // 组件库
   /// <reference types="element-plus/global" />
+  // 自定义
   /// <reference types="./common/global.d.ts" />
   ```
   自定义组件的类型声明  
