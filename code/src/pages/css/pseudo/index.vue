@@ -11,6 +11,12 @@
       <div v-else class="box" :class="t">
         <input v-if="t == 'placeholder'" placeholder="placeholder" type="text">
         <p v-else-if="[ 'first-letter', 'first-line', 'selection' ].includes( t )">this is a text! this is a text! this is a text!</p>
+        <div v-else-if="t === 'focus-within'">
+          <input type="text" placeholder="聚焦改变父级属性">
+        </div>
+        <div v-else-if="t === 'has'">
+          <input type="text" :required="true" placeholder="满足条件改变父级属性">
+        </div>
         <template v-else>
           <div class="item"></div>
           <div class="item"></div>
@@ -28,7 +34,8 @@ const list = ref( [
   'after', 'before', 'nth', 
   'first-child', 'last-child', 
   'first-letter', 'first-line',
-  'placeholder', 'marker', 'selection'
+  'placeholder', 'marker', 'selection',
+  'focus-within', 'has'
 ] )
 </script>
   
@@ -48,6 +55,9 @@ const list = ref( [
     height: 10px;
     margin-bottom: 5px;
     background-color: #ddd;
+  }
+  input {
+    width: 100%;
   }
 }
 .after::after {
@@ -69,8 +79,7 @@ const list = ref( [
 .first-line p::first-line {
   color: red;
 }
-.placeholder input {
-  width: 100%;
+.placeholder {
   &::placeholder {
     color: red;
   }
@@ -80,5 +89,13 @@ const list = ref( [
 }
 .selection p::selection {
   color: red;
+}
+.focus-within:focus-within {
+  background-color: red;
+}
+.has:has(input:required)::before {
+  color: red;
+  content: '*';
+  font-size: 20px;
 }
 </style>
