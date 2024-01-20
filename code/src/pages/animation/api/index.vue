@@ -16,7 +16,7 @@ const onClick = ( e ) => {
   pageRef.value.appendChild( pointer )
 
   // 动画结束
-  pointer.addEventListener( 'animationend', e => {
+  pointer.addEventListener( 'animationend', _e => {
     pointer.remove()
   } )
   // 移动
