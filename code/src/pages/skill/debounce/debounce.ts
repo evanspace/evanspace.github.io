@@ -1,11 +1,10 @@
 
-export const debounceRef = ( value, duration ) => {
+export const debounceRef = ( value: any, duration: number = 300 ) => {
   let timer: NodeJS.Timeout
   return customRef( ( track, trigger ) => {
     return {
       // 依赖收集
       get() {
-        console.log( value )
         // 告知 value 值需要被追踪
         track()
         return value

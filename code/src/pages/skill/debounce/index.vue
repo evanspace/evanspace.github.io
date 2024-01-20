@@ -10,7 +10,7 @@
 
 <script lang="ts" setup>
 import { debounceRef } from './debounce'
-const text = debounceRef( '', 300 )
+const text = debounceRef( '', 500 )
 
 </script>
   
