@@ -26,6 +26,9 @@ export default {
     grid: 'grid',
     text: 'text',
 
+    skill: 'JS skill',
+    debounce: 'debounce',
+
     animation: 'animation',
     linearBorder: 'linear Border',
     hash: 'hash',

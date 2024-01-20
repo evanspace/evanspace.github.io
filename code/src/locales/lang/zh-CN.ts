@@ -26,6 +26,9 @@ export default {
     grid: '网格',
     text: '文字',
 
+    skill: 'JS 技巧',
+    debounce: '防抖',
+
     animation: '动画',
     linearBorder: '渐变边框',
     hash: '地址栏',
