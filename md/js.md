@@ -139,49 +139,6 @@
   - 全局会话存在，局部会话不一定存在
   - 全局会话销毁，局部会话必须销毁
 
-防抖和节流
-=
-1. 在操作时限内，只做最后一次处理，不让程序过多“抖动”
-2. 事件处理函数调用频率无限制，会加重浏览器的负担，导致用户体验不友好
-3. `vue3` 自定义 `ref` 防抖
-```vue
-<template>
-  <div class="container">
-    <input type="text" v-model="text">
-    <p>{{ text }}</p>
-  </div>
-</template>
-
-<script lang="ts" setup>
-import { debounceRef } from './debounce'
-const text = debounceRef( '', 500 )
-</script>
-```
-```ts
-// debounce.ts
-export const debounceRef = ( value: any, duration: number = 300 ) => {
-  let timer: NodeJS.Timeout
-  return customRef( ( track, trigger ) => {
-    return {
-      // 依赖收集
-      get() {
-        // 告知 value 值需要被追踪
-        track()
-        return value
-      },
-      // 派发更新
-      set( newVal ) {
-        clearTimeout( timer )
-        timer = setTimeout( () => {
-          value = newVal
-          // 告知 vue 更新界面
-          trigger()
-        }, duration )
-      }
-    }
-  } )
-}
-```
 
 跨域解决方案
 =

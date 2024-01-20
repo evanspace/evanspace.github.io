@@ -155,3 +155,47 @@ MVVM 机制（面向数据编程）
 2. `vue3.0`
   - v-if 比 v-for 优先级更高
     - 同时使用会报错，官方不推荐同时使用，带来不必要的性能浪费，必要情况使用计算数据过滤
+
+防抖
+=
+1. 在操作时限内，只做最后一次处理，不让程序过多“抖动”
+2. 事件处理函数调用频率无限制，会加重浏览器的负担，导致用户体验不友好
+3. `vue3` 自定义 `ref` 防抖
+```vue
+<template>
+  <div class="container">
+    <input type="text" v-model="text">
+    <p>{{ text }}</p>
+  </div>
+</template>
+
+<script lang="ts" setup>
+import { debounceRef } from './debounce'
+const text = debounceRef( '', 500 )
+</script>
+```
+```ts
+// debounce.ts
+export const debounceRef = ( value: any, duration: number = 300 ) => {
+  let timer: NodeJS.Timeout
+  return customRef( ( track, trigger ) => {
+    return {
+      // 依赖收集
+      get() {
+        // 告知 value 值需要被追踪
+        track()
+        return value
+      },
+      // 派发更新
+      set( newVal ) {
+        clearTimeout( timer )
+        timer = setTimeout( () => {
+          value = newVal
+          // 告知 vue 更新界面
+          trigger()
+        }, duration )
+      }
+    }
+  } )
+}
+```
