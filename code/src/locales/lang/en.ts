@@ -35,6 +35,7 @@ export default {
     hash: 'hash',
     loading: 'loading',
     stroke: 'stroke',
+    api: 'api',
 
     carousel: 'carousel',
     entryDirection: 'entry-direction',

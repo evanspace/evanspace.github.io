@@ -35,6 +35,7 @@ export default {
     hash: '地址栏',
     loading: '加载',
     stroke: '描边',
+    api: 'Api',
 
     carousel: '轮播',
     entryDirection: '进入方向',
