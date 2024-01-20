@@ -144,3 +144,14 @@ MVVM 机制（面向数据编程）
         </div>
       </div>
     ```
+    - 使用计算属性过滤
+    ```vue
+      computed: {
+        newList() {
+          return this.list.filter( item => item.status == 1 )
+        }
+      }
+    ```
+2. `vue3.0`
+  - v-if 比 v-for 优先级更高
+    - 同时使用会报错，官方不推荐同时使用，带来不必要的性能浪费，必要情况使用计算数据过滤
