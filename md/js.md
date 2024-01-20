@@ -256,7 +256,4 @@ export default {
   }
 }
 ```
-柯里化
-=
-
   
