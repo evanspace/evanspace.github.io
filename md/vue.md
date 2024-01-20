@@ -105,5 +105,42 @@
     2. 将 `AST` 转化为 `render` 函数
 
 
-MVVM 机制
+MVVM 机制（面向数据编程）
 =
+ - `Model`：存储数据
+ - `View`：视图层负责显示数据
+ - `ViewModel`：`Vue`自带一层（`Vue`内置）不需要代码编写，只需关注 M 层和 V 层
+（视图层和模型层）
+
+1. 工作原理：
+  - 用户与 `View` 进行交互，例如输入表单、点击按钮等
+  - `View` 通过指令和数据绑定将用户的操作反映到 `ViewModel` 中
+  - `ViewModel` 接收到用户的操作后，可以对数据进行处理、验证、发送网络请求等
+  - `ViewModel` 将处理后的数据更新到数据模型中
+  - 数据模型的更新触发 `View` 的重新渲染，用户界面随之更新
+2. 响应式
+  - `vue2.0` 使用 `Object.defineProperty` 对对象劫持，访问或者修改数据时，触发 `getter`/`setter`, 通知变更
+    - 不能直接监听对象属性的添加和移除
+      - `Vue.set( obj, propertyName, value )` / `this.$set( obj, propertyName, value )`
+      - `this.obj = Object.assign( {}, this.obj, { a: 1 } )`
+      - `Vue.delete( obj, key )` / `this.$delete( obj, key )`
+    - 不能直接监听数组已有属性变化、长度修改
+      - `Vue.set( arr, index, newVale )` / `this.$set( arr, index, newVal )` / `arr.splice( index, 1, newVal )`
+      - `arr.splice( newLength )`
+      - 使用 `pop`、`push`、`shift`、`unshift`、`splice`、`sort`、`reverse` 等方法可以监听数组变化
+
+  - vue3.0 使用了 Proxy 对象代理来追踪数据的变化，并在数据发生变化时自动更新相关视图
+    - 兼容性不好
+
+`v-for` 与 `v-if`
+=
+1. `vue2.0`
+  - v-for 比 v-if 优先级更高，每次执行 v-for 都会执行 v-if，一起使用会浪费性能，不建议同时使用
+    - 分层  
+    ```vue
+      <div v-if="flag">
+        <div v-for="item in list" :key="item.id">
+          {{ item.id }}{{ item.name }}
+        </div>
+      </div>
+    ```
