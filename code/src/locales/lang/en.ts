@@ -25,6 +25,7 @@ export default {
     corrugation: 'corrugation',
     grid: 'grid',
     text: 'text',
+    houdini: 'houdini',
 
     skill: 'JS skill',
     debounce: 'debounce',

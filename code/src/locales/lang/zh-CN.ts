@@ -25,6 +25,7 @@ export default {
     corrugation: '波纹',
     grid: '网格',
     text: '文字',
+    houdini: '自定义属性',
 
     skill: 'JS 技巧',
     debounce: '防抖',
