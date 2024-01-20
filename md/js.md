@@ -183,9 +183,79 @@ export const debounceRef = ( value: any, duration: number = 300 ) => {
 }
 ```
 
-跨域常规解决方案
+跨域解决方案
 =
+1. `Jsonp` 
+  - 前端包含两部分（回调函数、数据）
+  ```js
+  // 封装调用
+  function jsonp( url, callback, callbackName = 'callback' ) {
+    const script = document.createElement( 'script' )
+    script.src = `${ url }?callback=${ callbackName }`
+    window[ callbackName ] = ( response ) => {
+    // 处理获得的 Json 数据
+      callback( response )
+      document.body.removeChild( script )
+    }
 
+    document.body.appendChild( script )
+  }
+
+  // 调用
+  jsonp( 'https://api.test.com/api/get', ( response ) => {
+    console.log( response )
+  } )
+  ```
+  - 后端接口
+  ```js
+  const express = require( 'express' )
+  const app = express()
+  app.get('/api/get', ( req, res ) => {
+    // 获取客户端传递过来的回调函数名称
+    const callbackName = req.query.callback
+    // 构造返回的数据对象
+    const data = { message: 'Hello from the server!' }
+    // 将数据转换为字符串形式并包装到回调函数中
+    const responseData = `${ callbackName }( ${ JSON.stringify( data ) } )`
+    // 设置 Content-Type 头部为 application/json
+    res.setHeader( 'Content-Type', 'application/json' )
+    // 发送响应
+    return res.send( responseData )
+  } )
+  // 启动服务器
+  app.listen( 3000, () => console.log( 'Server is running on port 3000' ) )
+  ```
+2. `Nginx` 代理
+```conf
+server {
+  resolver 192.168.0.1;
+  location /api/ {
+    proxy_pass http://api.xx.com;
+  }
+}
+```
+3. `vite` 本地代理
+```ts
+export default {
+  // 配置前端服务地址和端口
+  server: {
+    host: '0.0.0.0', //自定义主机名
+    port: 9002,      //自定义端口
+    // 是否开启 https
+    https: false,
+
+    // 设置反向代理，跨域
+    proxy: {
+    	'/_API_': {
+    		// 后台地址
+    		target: 'http://127.0.0.1:8990/',
+    		changeOrigin: true,
+    		rewrite: path => path.replace(/^\/_API_/, '')
+    	},
+    },
+  }
+}
+```
 柯里化
 =
 
