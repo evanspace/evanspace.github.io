@@ -15,7 +15,7 @@
         @mousemove="onMousemove"
         @mouseleave="onMouseleave"
       >
-        <p>Hello word!</p>
+        <p>Hello world!</p>
         <div class="lamp" v-show="opts.showLamp"></div>
       </div>
     </div>

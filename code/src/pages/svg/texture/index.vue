@@ -97,7 +97,7 @@
 <script lang="ts" setup>
 
 const opts = reactive( {
-  text: 'Hello word!',
+  text: 'Hello world!',
   color: 'rgb(0 0 0)',
   imgIndex: 0,
   imgs: [
