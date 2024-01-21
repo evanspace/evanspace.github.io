@@ -2,7 +2,7 @@
   <div class="page">
     
     <div class="wrap">
-      <h3>扭曲</h3>
+      <h3>X、Y旋转</h3>
       <div 
         class="card"
         :style="{
