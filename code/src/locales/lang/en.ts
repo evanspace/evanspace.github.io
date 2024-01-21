@@ -30,7 +30,8 @@ export default {
 
     skill: 'JS skill',
     debounce: 'debounce',
-    
+    cursorFollow: 'cursor Follow',
+
     svg: 'SVG',
     texture: 'texture',
 
