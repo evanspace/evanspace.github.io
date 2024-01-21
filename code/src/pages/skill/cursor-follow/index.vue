@@ -158,14 +158,14 @@ onBeforeUnmount( () => {
   transform: translate(var(--x, 0px), var(--y, 0px));
   border-radius: 2px;
   background-color: #0a0d2b;
-}
-
-@keyframes flicker {
-  50% {
-    opacity: .3;
-  }
-  0%, 100% {
-    opacity: 1;
+  
+  @keyframes flicker {
+    50% {
+      opacity: .3;
+    }
+    0%, 100% {
+      opacity: 1;
+    }
   }
 }
 </style>
