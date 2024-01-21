@@ -30,6 +30,9 @@ export default {
 
     skill: 'JS skill',
     debounce: 'debounce',
+    
+    svg: 'SVG',
+    texture: 'texture',
 
     animation: 'animation',
     linearBorder: 'linear Border',

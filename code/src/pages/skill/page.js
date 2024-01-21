@@ -2,5 +2,5 @@ export default {
   title: 'skill',
   icon: 'm-js',
   noRedirect: true,
-  order: 10,
+  order: 12,
 }
