@@ -26,6 +26,7 @@ export default {
     grid: 'grid',
     text: 'text',
     houdini: 'houdini',
+    effect: 'effect',
 
     skill: 'JS skill',
     debounce: 'debounce',
