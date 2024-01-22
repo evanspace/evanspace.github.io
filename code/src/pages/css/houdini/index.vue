@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     
-    <div class="card">
+    <div :class="$style.card">
       
       <pre style="font-size: 16px; padding: 10px;">
     @property --deg {
@@ -22,7 +22,7 @@
 <script lang="ts" setup>
 </script>
   
-<style lang="scss">
+<style lang="scss" module>
 @property --deg {
   // 描述符
   syntax: '<angle>';
