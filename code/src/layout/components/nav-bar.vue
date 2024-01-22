@@ -68,7 +68,7 @@
       <div class="use-oper right-menu-item">
         <template v-if="showAvatar">
           <el-avatar v-if="userInfo.avatar" :src="userInfo.avatar" :size="24" />
-          <el-avatar v-else :icon="Avatar" size="24" />
+          <el-avatar v-else :icon="Avatar" :size="24" />
         </template>
         <el-dropdown size="small" trigger="click" popper-class="user-dropdown">
           <span class="username">

@@ -1,0 +1,1 @@
+@property --deg{syntax: "<angle>"; initial-value: 0deg; inherits: true;}._card_1iak7_7{color:#fff;--deg: 0deg;width:300px;height:400px;border:1px solid #ddd;margin:20px auto;border-radius:6px;background-image:linear-gradient(var(--deg),#0099ff,#b0df07);animation:_deg_1iak7_1 2s linear infinite}@keyframes _deg_1iak7_1{to{--deg: 360deg}}
