@@ -31,6 +31,7 @@ export default {
     skill: 'JS 技巧',
     debounce: '防抖',
     cursorFollow: '光标跟随',
+    excess: '过度',
 
     svg: 'SVG',
     texture: '纹理',
