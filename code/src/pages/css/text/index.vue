@@ -79,6 +79,7 @@ h1 {
     background-attachment: fixed;
     // 背景裁切
     background-clip: text;
+    -webkit-background-clip: text;
     // 文字描边
     -webkit-text-stroke: 2px #e41515;
   }

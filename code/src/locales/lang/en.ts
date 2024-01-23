@@ -26,12 +26,13 @@ export default {
     grid: 'grid',
     text: 'text',
     houdini: 'houdini',
-    effect: 'effect',
 
     skill: 'JS skill',
     debounce: 'debounce',
     cursorFollow: 'cursor Follow',
     excess: 'excess',
+    card: 'card',
+    button: 'button',
 
     svg: 'SVG',
     texture: 'texture',

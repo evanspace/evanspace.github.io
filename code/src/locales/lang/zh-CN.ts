@@ -26,12 +26,13 @@ export default {
     grid: '网格',
     text: '文字',
     houdini: '自定义属性',
-    effect: '效果',
 
     skill: 'JS 技巧',
     debounce: '防抖',
     cursorFollow: '光标跟随',
     excess: '过渡',
+    card: '卡片',
+    button: '按钮',
 
     svg: 'SVG',
     texture: '纹理',
