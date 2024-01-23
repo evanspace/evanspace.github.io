@@ -48,7 +48,7 @@ const onPointermove = ( e: PointerEvent ) => {
 .wrap {
   margin: 5px;
   border-radius: 6px;
-  background-color: #0d0c0c;
+  background-color: #222;
   $borderSize: 4px;
   .content {
     --x: 10;
@@ -82,7 +82,7 @@ const onPointermove = ( e: PointerEvent ) => {
     cursor: pointer;
     padding: 5px 10px;
     position: relative;
-    box-shadow: 0 1px #ffffff26 inset;
+    box-shadow: 0 1px rgba($color: #fff, $alpha: .2) inset;
     transition: background-size .2s;
     font-family: sans-serif;
     font-weight: 700;
@@ -103,7 +103,7 @@ const onPointermove = ( e: PointerEvent ) => {
       z-index: -2;
       position: absolute;
       background: var(--bg);
-      box-shadow: 0 1px #ffffff26 inset;
+      box-shadow: 0 1px rgba($color: #fff, $alpha: .2) inset;
       border-radius: 3px;
     }
     span {
