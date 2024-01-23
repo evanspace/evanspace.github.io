@@ -2,7 +2,18 @@
   <div class="page">
     
     <div :class="$style.wrap">
-      <div :class="$style.content">
+      <div 
+        :class="$style.content"
+        :style="{
+          '--x': opts.x,
+          '--y': opts.y,
+          '--xp': opts.xp,
+          '--yp': opts.yp
+        }"
+        @pointermove="onPointermove"
+      >
+        <button><span>Button</span></button>
+        <button><span>Button</span></button>
         <button><span>Button</span></button>
         <button><span>Button</span></button>
       </div>
@@ -12,6 +23,25 @@
 </template>
 
 <script lang="ts" setup>
+
+const opts = reactive( {
+  x: -1000,
+  y: 0,
+  xp: 0,
+  yp: 0
+} )
+
+const onPointermove = ( e: PointerEvent ) => {
+  const dom = e.target as HTMLElement
+  const { x, y } = e
+  const xp = x / dom.clientWidth
+  const yp = y / dom.clientHeight
+  opts.x = x
+  opts.y = y
+  opts.xp = xp
+  opts.yp = yp
+}
+
 </script>
   
 <style lang="scss" module>
@@ -19,45 +49,54 @@
   margin: 5px;
   border-radius: 6px;
   background-color: #0d0c0c;
+  $borderSize: 4px;
   .content {
-    --x: 220;
-    --y: 235;
+    --x: 10;
+    --y: 10;
     --xp: 0.03;
     --yp: 0.71;
     --hue: calc(0 + (var(--xp) * 500));
     --bg: #1a1a1a;
-    --size: 100px;
+    --size: 70px;
     --glow: radial-gradient(
       50% 50% at center,
       hsl(var(--hue) 80% 85%),
       hsl(var(--hue) 80% 70%),
       transparent
-    ) calc((var(--x) * 1px) - var(--size));
+    ) calc(calc(var(--x) * 1px) - calc(var(--size) / 2)) calc(calc(var(--y) * 1px) - calc(var(--size) / 2)) / var(--size) var(--size) no-repeat fixed;
+    // x y / size size 不重复 fixed 定位背景
+    // ) calc(calc(var(--x) * 1px) - calc(var(--size) / 2)) calc(calc(var(--y) * 1px) - calc(var(--size) / 2)) / var(--size) var(--size) no-repeat fixed;
+    --border-radius: 6px;
     
     display: flex;
     min-height: 200px;
     align-items: center;
     justify-content: center;
+    // background: var(--glow);
   }
   button {
-    width: 80px;
-    height: 30px;
-    border: 4px solid transparent;
+    width: 100px;
+    height: 36px;
+    line-height: 30px;
+    border: $borderSize solid transparent;
     cursor: pointer;
     padding: 5px 10px;
     position: relative;
     box-shadow: 0 1px #ffffff26 inset;
-    background: linear-gradient(var(--bg), var(--bg)) padding-box, var(--glow), linear-gradient(#000, #000) border-box;
     transition: background-size .2s;
     font-family: sans-serif;
     font-weight: 700;
-    // 触摸设备上的触摸事件如何被处理
+    background: linear-gradient(var(--bg), var(--bg)) padding-box, var(--glow), linear-gradient(#000, #000) border-box;
+    // 注册的是 触摸事件 按钮的则禁用
     touch-action: none;
     // 左右间距 上下为  margin-block
     margin-inline: 5px;
-    border-radius: 3px;
+    border-radius: var(--border-radius);
     letter-spacing: 2px;
     text-transform: uppercase;
+    &:hover {
+      // --x: inherit;
+    }
     &::before {
       inset: 0;
       content: '';
@@ -78,13 +117,14 @@
       -webkit-background-clip: text;
     }
     &::after {
-      inset: -4px;
+      inset: -$borderSize;
       filter: blur(20px);
-      border: 4px solid transparent;
+      border: $borderSize solid transparent;
+      z-index: -2;
       content: '';
       position: absolute;
       background: var(--glow);
-      border-radius: 3px;
+      border-radius: var(--border-radius);
     }
   }
 }
