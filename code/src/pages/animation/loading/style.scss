@@ -4,18 +4,25 @@
   // display: grid;
   // Grid 或 Flexbox 中可以同时沿着块级和内联方向对齐元素
   // place-items: center;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .demo {
-  height: 120px;
   margin: 10px;
+  margin: 20px auto;
   display: flex;
   position: relative;
+  min-width: 120px;
+  box-shadow: 0 0 10px rgba($color: #000000, $alpha: .6);
+  min-height: 120px;
   align-items: center;
   border-radius: 5px;
   justify-content: center;
   background-color: #000;
-  box-shadow: 0 0 10px rgba($color: #000000, $alpha: .6);
+  i {
+    background-color: #fff;
+  }
 }
 
 @mixin shadow () {
@@ -29,6 +36,7 @@
 .dashed {
   gap: 20px;
   display: flex;
+  padding: 0 40px;
   position: relative;
   align-items: center;
   span {
@@ -75,60 +83,209 @@
   }
 }
 
-.cylinder {
-  $s: 6;
-  $n: 10;
-  $d: 360 / $n;
-  $ms: $s / $n;
-  width: 100px;
-  height: 100px;
-  position: relative;
-  margin-top: 10px;
-  perspective: 500px;
-  transform-style: preserve-3d;
-  transform: rotateX(50deg) rotateZ(0deg);
-  animation: barRotate #{ $s }s linear infinite;
-  animation-delay: #{ -$s / 2 }s;
-  .bar {
-    top: 0px;
-    left: calc(50% - 10px);
-    width: 20px;
-    height: 20px;
-    position: absolute;
+$s: 6;
+:global {
+  :local( .cylinder ) {
+    $n: 10;
+    $d: calc(360 / $n);
+    $ms: calc($s / $n);
+    --s: $s;
+    width: 100px;
+    height: 100px;
+    position: relative;
+    margin-top: 10px;
+    perspective: 500px;
     transform-style: preserve-3d;
-    transform-origin: 50% 50px;
-    @for $i from 1 through $n {
-      &:nth-child( #{ $i } ) {
-        transform: rotate(#{ $d * $i }deg);
-        i {
-          animation-delay: #{ $ms * -$i }s;
-        }
-      }
-    }
-
-    i {
+    transform: rotateX(50deg) rotateZ(0deg);
+    animation-delay: -#{ calc($s / 2) }s;
+    .bar {
+      top: 0px;
+      left: calc(50% - 10px);
       width: 20px;
       height: 20px;
-      border: 1px solid #ccc;
       position: absolute;
-      animation: barHeight #{ $s }s linear infinite;
-      border-radius: 50%;
-      background-color: #fff;
-      @for $i from 1 through 20 {
+      transform-style: preserve-3d;
+      transform-origin: 50% 50px;
+      @for $i from 1 through $n {
         &:nth-child( #{ $i } ) {
-          transform: translateZ(#{ $i }px);
+          transform: rotate(#{ $d * $i }deg);
+          i {
+            animation-delay: #{ $ms * -$i }s;
+          }
         }
       }
-      @keyframes barHeight {
-        25%, 70% {
-          transform: translateZ(0);
+  
+      i {
+        width: 20px;
+        height: 20px;
+        border: 1px solid #ccc;
+        position: absolute;
+        border-radius: 50%;
+        background-color: #fff;
+        @for $i from 1 through 20 {
+          &:nth-child( #{ $i } ) {
+            transform: translateZ(#{ $i }px);
+          }
         }
       }
     }
   }
+}
+
+.cylinder {
+  color: red;
+  padding: 0 20px;
+  animation: barRotate #{ $s }s linear infinite;
   @keyframes barRotate {
     100% {
       transform: rotateX(50deg) rotateZ(360deg);;
     }
+  }
+  i {
+    animation: barHeight #{ $s }s linear infinite;
+    @keyframes barHeight {
+      25%, 70% {
+        transform: translateZ(0);
+      }
+    }
+  }
+}
+
+.demo3 {
+  i {
+    width: 8px;
+    height: 50px;
+    margin: 0 2px;
+    animation: long_short 1.2s ease-in-out infinite;
+    @for $i from 1 through 5 {
+      &:nth-child( #{ $i } ) {
+        animation-delay: #{ 0.1 * $i }s;
+      }
+    }
+  }
+  @keyframes long_short {
+    0%, 40%, 100% {transform: scaleY(0.4);}
+    20% {transform: scaleY(1);}
+  }
+}
+
+.demo4 {
+  i {
+    width: 50px; 
+    height: 50px;
+    border-radius: 50%;
+    animation: shade 1s ease-in-out infinite;
+  }
+  @keyframes shade {
+    0% {transform: scale(0);}
+    100% {transform: scale(1); opacity: 0;}
+  }
+}
+
+.demo5 {
+  i {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    animation: wave 2s ease-in-out infinite;
+    @for $i from 2 through 3 {
+      &:nth-child( #{ $i } ) {
+        animation-delay: #{ 0.5 * $i - 0.5 }s;
+      }
+    }
+  }
+  @keyframes wave {
+    0%, 100% {transform: scale(0);}
+    50% {transform: scale(1);}
+  }
+}
+
+.demo6 {
+  i {
+    top: calc(50% - 5px);
+    left: calc(50% - 5px);
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    background: none;
+    transform-origin: 5px 10px;
+    &:before {
+      width: 10px;
+      height: 10px;
+      content: "";
+      position: absolute;
+      animation: circle 1.2s ease-in-out infinite;
+      background: #fff;
+      border-radius: 50%;
+    }
+    @for $i from 1 through 12 {
+      &:nth-child( #{ $i } ) {
+        transform: rotate(#{ 30 * $i }deg) translateY(-20px);
+        &:before {
+          animation-delay: #{ 0.1 * $i }s;
+        }
+      }
+    }
+  }
+  @keyframes circle {
+    0%, 100% {transform: scale(0);}
+    50% {transform: scale(1);}
+  }
+}
+
+.demo7 {
+  width: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  i {
+    width: 20px;
+    height: 20px;
+    animation: square 2s ease-in-out infinite;
+    &:nth-child( 4 ),
+    &:nth-child( 8 ) {
+      animation-delay: -.2s;
+    }
+    &:nth-child( 1 ),
+    &:nth-child( 5 ),
+    &:nth-child( 9 ) {
+      animation-delay: -.4s;
+    }
+    &:nth-child( 2 ),
+    &:nth-child( 6 ) {
+      animation-delay: -.6s;
+    }
+    &:nth-child( 3 ) {
+      animation-delay: -.8s;
+    }
+  }
+  @keyframes square {
+    0%, 50%, 100% {transform: scale(1);}
+    30% {transform: scale(0);}
+  }
+}
+
+.demo8 {
+  width: 40px;
+  display: flex;
+  flex-wrap: wrap;
+	transform: rotate(45deg);
+  i {
+    width: 20px;
+    height: 20px;
+	  animation: disappear 3s ease-in-out infinite;
+    &:nth-child(2) {
+      animation-delay: -.4s;
+    }
+    &:nth-child(3) {
+      animation-delay: -1.2s;
+    }
+    &:nth-child(4) {
+      animation-delay: -.8s;
+    }
+  }
+  @keyframes disappear{
+    0%, 10% {transform: perspective(140px) rotateX(-180deg);opacity:0}
+    25%, 75% {transform: perspective(140px) rotateX(0deg);opacity:1}
+    90%, 100% {transform: perspective(140px) rotateY(180deg);opacity:0}
   }
 }
