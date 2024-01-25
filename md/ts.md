@@ -11,7 +11,7 @@
   ```ts
   // 组件内部声明 (common/packages/custom/index.d.ts)
   export declare const Custom: import('vue').DefineComponent<{
-    size?: number
+    readonly size: NumberConstructor
   }>
   ```
   ```ts
