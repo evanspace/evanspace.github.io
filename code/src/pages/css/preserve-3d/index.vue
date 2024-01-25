@@ -8,7 +8,7 @@
           <el-radio v-for="it in opts.list" :label="it"></el-radio>
         </el-radio-group>
         <div class="wrap">
-          <div :class="$style.cylinder" :style="{ '--bg-img': `url(./imgs/${ opts.active }.jpg)` }">
+          <div :class="$style.cylinder" :style="{ '--bg-img': `url(/imgs/${ opts.active }.jpg)` }">
             <div v-for="_i in 24" class="item"></div>
           </div>
         </div>
@@ -132,7 +132,7 @@ $circleDeg: calc(360 / $circleLen);
   }
 }
 .cylinder {
-  --bg-img: url(./imgs/08.ipg);
+  --bg-img: url(/imgs/08.ipg);
   width: 1px;
   height: 350px;
   margin: 40px auto;
