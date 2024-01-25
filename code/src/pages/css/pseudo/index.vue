@@ -17,6 +17,12 @@
         <div v-else-if="t === 'has'">
           <input type="text" :required="true" placeholder="满足条件改变父级属性">
         </div>
+        <div v-else-if="t === 'in-range'">
+          <input type="number" value="1" min="0" max="10">
+        </div>
+        <div v-else-if="t === 'out-of-range'">
+          <input type="number" value="11" min="0" max="10">
+        </div>
         <template v-else>
           <div class="item"></div>
           <div class="item"></div>
@@ -35,7 +41,8 @@ const list = ref( [
   'first-child', 'last-child', 
   'first-letter', 'first-line',
   'placeholder', 'marker', 'selection',
-  'focus-within', 'has'
+  'focus-within', 'has',
+  'in-range', 'out-of-range'
 ] )
 </script>
   
@@ -97,5 +104,13 @@ const list = ref( [
   color: red;
   content: '*';
   font-size: 20px;
+}
+.in-range input:in-range {
+  border-color: green;
+  background-color: green;
+}
+.out-of-range input:out-of-range {
+  border-color: red;
+  background-color: red;
 }
 </style>
