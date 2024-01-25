@@ -2,9 +2,12 @@
 性能优化
 =
   - 预取回 `Prefetch`
-  - 御加载 `Preload`
-  - 御连接 `Preconnect`
+  - 预加载 `Preload`
+  - 预渲染 `Prerender`
+  - 预连接 `Preconnect`
   - `DNS`预取回`DNS-Prefetch`
+  - 执行阻止界面解析渲染 `async`
+  - 页面解析完成后执行 `defer`
 
 1. 预取回 `Prefetch`  
   网络空闲的时间预先下载好指定的资源，可以减少用户的等待时间，提高用户体验。  
@@ -22,7 +25,14 @@
     <link rel='preload' as='font' href='字体库链接' />
   ```
 
-3. 预连接 `Preconnect`  
+3. 预渲染 `Prerender`
+  - 用户在打开网页之前提前将网页中资源加载并执行解析渲染工作，使网页真正被打开时以最快的速度呈现出来，理想状态下打开已预渲染的页面几乎是即时展现的。
+  使用 `link` 标签的 `prerender` 属性值  
+  ```html
+    <link rel='prerender' href='https://www.unpkg.com'/>
+  ```
+
+4. 预连接 `Preconnect`  
   提示用于提前与目标域名握手，完成 `DNS` 寻址，并建立 `TCP` 和 `TLS` 链接  
   使用 `link` 标签的 `preconnect` 属性值
   ```html
@@ -39,12 +49,32 @@
       - 权威域名服务器 baidu.com
   * `TCP` 三次握手 `seq` `ack`  
 
-4. `DNS` 预取回 `DNS-Prefecth`  
+5. `DNS` 预取回 `DNS-Prefecth`  
   和 `Preconnect` 一样，如何需要兼容 `ie`两个都加上即可
   使用 `link` 标签的 `prefetch` 属性值  
   ```html
     <link rel='dns-prefetch' href='https://www.unpkg.com'/>
   ```
+
+6. 执行阻止界面解析渲染 `async`
+  - 文档解析时，当遇到有 `async` 属性的 `script` 标签时，则脚本的下载则在后台运行，下载不会阻止DOM解析渲染
+  - 多个 `async` 属性的 `script` 标签，则在后台同时并行下载
+  - `async` 脚本的执行会阻止页面的解析渲染遵循先下载完先执行，执行不按照 `HTML` 页面的中脚本顺序
+  - `async` 脚本的下载和执行不计入 `DOMContentLoaded` 事件统计。
+  ```html
+    <script rel='async' href='https://www.unpkg.com'/>
+  ```
+
+7. 执行阻止界面解析渲染 `defer`
+  - 文档执行时，当遇到有 `defer` 属性的 `script` 标签时，则脚本的下载则在后台运行，下载不会阻止DOM解析渲染
+  - 多个 `defer` 属性的 `script` 标签，则在后台并行下载
+  - 脚本的执行需要等到页面解析完成才能进行
+  - 当页面解析渲染完毕后, 会等到所有的 `defer` 脚本下载完毕并按照顺序执行，执行完毕后会触发 `DOMContentLoaded` 事件
+  - 如果 `defer` 脚本下载较慢，在下载完前, 页面解析渲染已完毕； 等所有的 `defer` 脚本下载完后， 才按照顺序执行 `defer` 脚本。执行完毕后会触发 `DOMContentLoaded` 事件
+  ```html
+    <script rel='defer' href='https://www.unpkg.com'/>
+  ```
+
 
 
 `SSR` 服务端渲染 `SEO` 优化
