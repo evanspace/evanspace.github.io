@@ -60,7 +60,7 @@ CORS
     浏览器发现，这是一个非简单请求，就自动发出一个"预检"请求，要求服务器确认可以这样请求。下面是这个"预检"请求的 `HTTP` 头信息。
     ```conf
       OPTIONS /cors HTTP/1.1
-      Origin: http://api.bob.com
+      Origin: http://api.xxx.com
       Access-Control-Request-Method: PUT
       Access-Control-Request-Headers: X-Custom-Header
       Host: api.alice.com
