@@ -1,11 +1,12 @@
 常用方法
 =
+
 | 执行方法 | 说明 |
-| --- | --- |
-｜ [`structuredClone()`](./js-methods.md#深拷贝) | 深拷贝 |
-｜ [`Object.assign()`](./js-methods.md#浅拷贝) | 浅拷贝 |
-｜ [`Array.from()`](./js-methods.md#对象转数组) | 对象转数组 |
-｜ [`Array.isArray()`](./js-methods.md#判断是否为数组) | 判断是否为数组 |
+|---|---|
+| [`structuredClone()`](./js-methods.md#深拷贝) | 深拷贝 |
+| [`Object.assign()`](./js-methods.md#浅拷贝) | 浅拷贝 |
+| [`Array.from()`](./js-methods.md#对象转数组) | 对象转数组 |
+| [`Array.isArray()`](./js-methods.md#判断是否为数组) | 判断是否为数组 |
 | [`arr.reduce()`](./js-methods.md#数组求和) | 数组求和 |
 
 
