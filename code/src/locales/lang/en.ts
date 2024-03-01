@@ -28,6 +28,9 @@ export default {
     houdini: 'houdini',
     preserve3d: '3D',
 
+    map: 'map',
+    imgMap: 'img map',
+
     skill: 'JS skill',
     debounce: 'debounce',
     cursorFollow: 'cursor Follow',

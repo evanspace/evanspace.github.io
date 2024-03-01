@@ -28,6 +28,9 @@ export default {
     houdini: '自定义属性',
     preserve3d: '3D',
 
+    map: '地图',
+    imgMap: '图片地图',
+
     skill: 'JS 技巧',
     debounce: '防抖',
     cursorFollow: '光标跟随',
