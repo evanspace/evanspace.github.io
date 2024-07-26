@@ -72,6 +72,8 @@ export default {
 
     d3: '3D',
     water: 'water',
+    cssd2: 'CSS 2D',
+    cssd3: 'CSS 3D',
   },
 
   user: {
