@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 /// <reference types="element-plus/global" />
+/// <reference types="./common/global.d.ts" />
+/// <reference types="./components/index.d.ts" />
 
 
 // 解决引入 vue 组件文件错误提示

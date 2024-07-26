@@ -1,7 +1,6 @@
 
 
 
-
 const components = [
 ]
 const install = function( app ) {

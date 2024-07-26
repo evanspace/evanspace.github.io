@@ -1,0 +1,147 @@
+
+.page {
+  --bc: var(--el-border-color-lighter);
+  --size: 50px;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  // background-image: 
+  //   repeating-linear-gradient(0deg,var(--bc) 0,var(--bc) 1px, transparent 1px, transparent), 
+  //   repeating-linear-gradient(90deg,var(--bc) 0,var(--bc) 1px, transparent 1px, transparent);
+  // background-size: var(--size) var(--size);
+}
+
+
+.tools {
+  color: var(--el-text-color-primary);
+  width: 240px;
+  border-right: 2px solid var(--el-border-color);
+  background-color: var(--el-bg-color);
+}
+
+.group {
+  font-size: 14px;
+  .title {
+    font-size: 18px;
+  }
+  .wrap {
+    padding: 10px 0;
+    .item {
+      cursor: pointer;
+    }
+    .name {
+      opacity: .8;
+    }
+  }
+}
+
+
+.line {
+  .item {
+    margin: 5px 0;
+    display: flex;
+    align-items: center;
+  }
+  .pipe {
+    width: 80px;
+    height: 10px;
+    margin-left: 10px;
+    background-color: var(--color)
+  }
+}
+
+.device {
+  .wrap {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .item {
+    width: 50%;
+    text-align: center;
+    .dot {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #5097FF;
+      margin: 30px auto;
+      position: relative;
+      border-radius: 50%;
+      background-color: #98C1FF;
+    }
+  }
+  img {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+.wrapper {
+  position: relative;
+  .drag-info,
+  .device-info {
+    top: 5px;
+    z-index: 1003;
+    position: absolute;
+  }
+  .drag-info {
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+  .device-info {
+    right: 5px;
+    min-width: 220px;
+    max-width: 320px;
+    border-left: 1px solid var(--el-border-color);
+    border-right: 1px solid var(--el-border-color);
+    border-radius: 4px;
+  }
+
+  .parallel {
+    .item {
+      padding: 5px;
+      border: 1px solid var(--el-border-color);
+      border-radius: 4px;
+    }
+  }
+}
+
+
+:global {
+  :local( .page ) {
+    .e-drag--move {
+      border: 1px solid var(--bc);
+      background-image: 
+        repeating-linear-gradient(0deg,var(--bc) 0,var(--bc) 1px, transparent 1px, transparent), 
+        repeating-linear-gradient(90deg,var(--bc) 0,var(--bc) 1px, transparent 1px, transparent);
+      background-size: var(--size) var(--size);
+    }
+    .el-form-item--small {
+      margin-bottom: 8px;
+    }
+    .e-drag.drop-over {
+      box-shadow: inset 0 0 15px var(--el-text-color-primary);
+    }
+  }
+
+  :local( .device-info ) {
+    .el-collapse {
+      &-item__content {
+        overflow: auto;
+        max-height: 500px;
+
+        .el-checkbox {
+          height: 24px;
+          margin-right: 8px;
+        }
+      }
+    }
+    .el-slider {
+      &__runway {
+        margin-right: 5px;
+        margin-left: 10px;
+      }
+      &__input {
+        width: 85px;
+      }
+    }
+  }
+}

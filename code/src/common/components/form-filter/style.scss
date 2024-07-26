@@ -1,0 +1,67 @@
+
+
+
+@use 'sass:map';
+@use '../../assets/mixins/mixins.scss' as *;
+@use '../../assets/mixins/var.scss' as *;
+
+$name: 'form-filter' !default;
+
+$variables: () !default;
+$variables: map.merge(
+  $variables,
+  (
+  )
+);
+
+@include b( $name ) {
+
+  &.file {
+    overflow: hidden;
+    .content {
+      width: 100%;
+      display: flex;
+      overflow: hidden;
+      align-items: center;
+    }
+    .tip {
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+    .file-input {
+      display: none;
+    }
+    .file-info {
+      flex: 1;
+      overflow: hidden;
+      display: inline-flex;
+      &:hover {
+        .el-link {
+          visibility: visible;
+        }
+      }
+    }
+    .file-name {
+      flex: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      .el-icon, span {
+        vertical-align: middle;
+      }
+      .el-icon {
+        margin-right: 3px;
+      }
+    }
+    .el-link {
+      visibility: hidden;
+      margin-left: 5px;
+    }
+    .el-button {
+      margin-right: 5px;
+    }
+  }
+  &.ranger-year {
+    display: flex;
+  }
+}

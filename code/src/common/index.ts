@@ -1,5 +1,8 @@
 
 
+/* 自定义 组件 */
+import components from './components'
+
 /* 自定义 svg 图标 */
 import svgIcon from './icons'
 
@@ -17,8 +20,18 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 import './assets/css/index.scss'
 
 
-const install = function( app: any ) {
+const install = function( app: import('vue').App<any>, opts: import('./index.d').InstallOption = {} ) {
+
+  // for ( const [ key, component ] of Object.entries( elementPlusIconsVue ) ) {
+  //   app.component( key, component )
+  // }
+
+  if ( !opts.namespace ) {
+    opts.namespace = 'e'
+  }
+
   app
+  .use( components, opts )
   .use( svgIcon )
   .use( utils )
 }

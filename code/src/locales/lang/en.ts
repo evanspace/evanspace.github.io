@@ -66,6 +66,9 @@ export default {
     canvas: 'canvas',
     characterRain: 'character Rain',
     fireworks: 'fireworks',
+
+    editor: 'editor',
+    pipe: 'pipe',
   },
 
   user: {

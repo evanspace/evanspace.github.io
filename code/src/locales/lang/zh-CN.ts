@@ -66,6 +66,9 @@ export default {
     canvas: '画布',
     characterRain: '字符雨',
     fireworks: '烟花',
+
+    editor: '编辑器',
+    pipe: '管路',
   },
 
   user: {

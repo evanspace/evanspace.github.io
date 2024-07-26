@@ -17,6 +17,8 @@ import { useAppStore } from './app'
 import { resetRouter } from '@/router'
 import { useTagsStore } from './tags'
 
+import type { UserStore } from './index'
+
 const tokenKey = 'APP_ACCESS_TOKEN'
 const projectkey = 'xxx.current.projId'
 

@@ -1,5 +1,5 @@
 
-declare type AppSkin = 'light' | 'dark' | string
+export type AppSkin = 'light' | 'dark' | string
 
 type Logo = {
   custom: boolean
@@ -29,7 +29,7 @@ type Module = {
   list: Array<any>
 }
 
-declare interface AppStore {
+export interface AppStore {
   i18n: boolean
   language: string
   isEn: boolean
@@ -55,7 +55,7 @@ interface UserInfo {
   avatar: string
 }
 
-declare interface UserStore {
+export interface UserStore {
   token: string
   showAvatar: boolean
   showProject: boolean
@@ -65,4 +65,12 @@ declare interface UserStore {
   projects: Array<any>
   projectId: string
   changePassword: boolean
+}
+
+
+export interface AssetsStore {
+  staticPath: string
+  oss: string
+  origin: string
+  bucket: string
 }

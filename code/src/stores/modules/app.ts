@@ -16,6 +16,7 @@ const env = import.meta.env
 const staticPath = env.VITE_BEFORE_STATIC_PATH
 
 
+import type { AppSkin, AppStore } from './index'
 const skin: AppSkin = getStorage( 'SITE_SKIN' ) || 'light'
 
 if ( skin == 'dark' ) {

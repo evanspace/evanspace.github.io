@@ -1,6 +1,7 @@
 // 全局样式
 @forward './variables.scss';
 @forward './reset.scss';
+@forward '../element/reset.scss';
 @forward './sidebar.scss';
 @forward './class.scss';
 
@@ -43,16 +44,11 @@ html {
 body {
   color: var(--text-color);
   height: 100%;
-  font-weight: 400;
   font-family: var(--font-family);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--bg-color);
-}
-
-button,input,textarea {
-  font-family: 'Blinker', 'Fira Sans', "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  // background-color: var(--main-bg-color);
 }
 
 #app {
@@ -98,7 +94,7 @@ button,input,textarea {
 
 .pointer { cursor: pointer; }
 
-.inline-block { display: block; }
+.inline-block { display: inline-block; }
 
 // 边框
 .br { border: 1px solid var(--border-color); }
@@ -202,13 +198,10 @@ button,input,textarea {
 // 书写方向
 .w-tb-rl {
 	writing-mode: vertical-rl;
-	writing-mode: tb-rl;
 }
 .w-tb-lr {
 	/*从左向右 从右向左是 writing-mode: vertical-rl;*/
 	writing-mode: vertical-lr;
-	/*IE浏览器的从左向右 从右向左是 writing-mode: tb-rl；*/
-	writing-mode: tb-lr;
 }
 
 

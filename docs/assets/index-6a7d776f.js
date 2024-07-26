@@ -1,0 +1,1 @@
+import{_ as o}from"./common-32de8810.js";import{o as n,f as r}from"./vendor-3afc7a9e.js";const s={class:"index"};const e=o({},[["render",function(o,e){return n(),r("div",s," index ")}]]);export{e as default};
