@@ -69,6 +69,9 @@ export default {
 
     editor: '编辑器',
     pipe: '管路',
+
+    d3: '3D',
+    water: '水面',
   },
 
   user: {

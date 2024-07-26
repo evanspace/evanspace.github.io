@@ -69,6 +69,9 @@ export default {
 
     editor: 'editor',
     pipe: 'pipe',
+
+    d3: '3D',
+    water: 'water',
   },
 
   user: {
