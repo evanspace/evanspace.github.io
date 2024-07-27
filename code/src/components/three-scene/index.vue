@@ -82,7 +82,7 @@ const props = withDefaults( defineProps<Props>(), {
 } )
 const appStore = useAppStore()
 const wsStore = useWsStore()
-const notProd = import.meta.env.VITE_MODE !== 'production'
+const notProd = import.meta.env.VITE_MODE !== '--production'
 
 defineOptions( {
   name: 'three-scene',
