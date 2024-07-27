@@ -1,0 +1,117 @@
+
+
+.three-scene {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  overflow: hidden;
+}
+
+.container {
+  height: 100%;
+}
+
+.operation {
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  position: absolute;
+}
+
+.loading {
+  --bg-color: rgba(0, 0, 0, .5);
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  display: flex;
+  position: absolute;
+  transform: translate( -50%, -50% );
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+
+  .progress {
+    width: 60%;
+    display: flex;
+    .bar-out {
+      flex: 1;
+      height: 15px;
+      overflow: hidden;
+      border-radius: 20px;
+      background-color: var( --el-border-color-lighter );
+    }
+    .bar {
+      width: var( --percentage );
+      height: 100%;
+      border-radius: 20px;
+      background-color: var( --el-color-primary );
+      background-image: linear-gradient(45deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%,transparent);
+      background-size: 1.25em 1.25em;
+      animation: striped-flow 30s linear infinite
+    }
+    .text {
+      color: #fff;
+      width: 80px;
+      padding: 0 10px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+  }
+}
+
+@keyframes striped-flow {
+  0% {
+    background-position: -100%
+  }
+  100% {
+    background-position: 100%;
+  }
+}
+
+
+.dialog {
+  z-index: 5;
+  position: absolute;
+}
+
+$dotColor: #174b6e;
+.dot-wrap {
+  --dot-bg-color: #174b6e;
+  font-size: max( 16px, 1em );
+  .dot {
+    top: -100px;
+    color: #fff;
+    width: 3px;
+    height: 3px;
+    cursor: pointer;
+    z-index: 2;
+    position: absolute;
+    font-size: 1em;
+    border-radius: 50%;
+    background-color: var(--dot-bg-color);
+    .bg {
+      left: 1px;
+      width: 1px;
+      height: 30px;
+      bottom: 1px;
+      position: absolute;
+      background-color: var(--dot-bg-color);
+    }
+    .inner {
+      left: 1px;
+      bottom: 30px;
+      border: 1px solid var(--dot-bg-color);
+      padding: .5em;
+      position: absolute;
+      font-size: .86em;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      border-radius: .5em;
+      background-color: rgba($color: $dotColor, $alpha: .45);
+    }
+  }
+}

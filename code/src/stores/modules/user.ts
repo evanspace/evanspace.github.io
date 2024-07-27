@@ -39,6 +39,8 @@ const userStore: UserStore = {
     avatar: '',
   },
 
+  wsIp: '',
+
   powers: [],
   config: {},      // 系统配置
   projects: [],    // 项目

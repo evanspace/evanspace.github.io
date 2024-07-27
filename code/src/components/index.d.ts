@@ -1,7 +1,7 @@
 
 declare module '@vue/runtime-core' {
   export interface ComponentCustomProperties {
-    // EDrag: typeof import('./drag')['EDrag']
+    ThreeScene: typeof import('./three-scene')['ThreeScene']
   }
 }
 

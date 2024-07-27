@@ -103,6 +103,56 @@ export interface RequestPas {
   EndTime: number
   Type: number
   Interval: string
+  
+  projectCode: string
+  groupCode: string
+  type: number | string
+  id: string | number
+}
+
+type ObjectItem = import('@/components/three-scene/index').ObjectItem
+
+
+
+export type PipePath = Pick<import('./index').XYZ, 'x' | 'y'>
+
+
+
+export type PlaneDevice = Pick<ObjectItem, 'name' | 'deviceCode' | 'type' | 'unit' | 'value' | 'status' | 'error'> & {
+  style: Pick<import('./index').XYZ, 'x' | 'y'>
+  color?: string
+  rotate?: number
+  value?: number | string
+}
+
+export type Pipe = {
+  name: string
+  type: string
+  style: Pick<import('./index').XYZ, 'x' | 'y'>
+  paths: PipePath[]
+  width?: number
+  height?: number
+  color?: string
+  status?: number
+  bind?: ( string | string[] | string[][] )[]
+}
+
+// 返回参数
+export interface ReturnPas extends RequestPas {
+  groupName: string
+
+  name: string
+  groupId: string
+  jsonList: ObjectItem[]
+  pipConfig: ObjectItem[]
+  configJson: import('@/components/three-scene/index').Config
+  modelUrl: string
+
+  warn: number
+  pointCode: string
+  pointName: string
+  msg: string
+  
 }
 
 

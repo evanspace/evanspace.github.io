@@ -31,6 +31,7 @@ type ExportDialogType = import('./type').ExportDialogType
 type DialogViewType = import('./type').DialogViewType
 
 type RequestPas = import('./type').RequestPas
+type ReturnPas = import('./type').ReturnPas
 
 type EchartsReqRes = import('./type').EchartsReqRes
 

@@ -65,6 +65,7 @@ export interface UserStore {
   projects: Array<any>
   projectId: string
   changePassword: boolean
+  wsIp: string
 }
 
 
@@ -73,4 +74,31 @@ export interface AssetsStore {
   oss: string
   origin: string
   bucket: string
+}
+
+
+export interface WsStore {
+  lockReconnect: boolean
+  reconnectTime: number
+  reconnectTimes: number
+  times: number
+  deviceWs: string
+  allUrl: string
+  ws: any
+  tt: any
+  time: number
+  timer: any
+  dataMark: number
+  data: Pick<ReturnPas, 'pointName' | 'pointCode' | 'value' | 'warn' | 'msg'>[]
+  dataObj: any
+  otherData: any[]
+
+  groupCode: string
+}
+
+export interface WsInitOpts {
+  projectCode: string
+  groupCode: string
+  isRefresh?: boolean
+  path?: string
 }

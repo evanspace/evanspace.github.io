@@ -1,31 +1,23 @@
 
-type responseBody = {
-  code: number | boolean,
-  msg: string,
+type ResponseBody = {
+  code?: number | boolean,
+  msg?: string,
   data?: any,
-  _header?: object | null
-}
+} | string | any[]
 
-let responseBody: responseBody = {
-  code: 0,
-  msg: '',
-  data: null,
-  _header: null
-}
 
-export const builder = ( data: any, message: string | undefined = 'ok', code: number = 0, headers: object | null ) => {
-  responseBody.msg = message
-  responseBody.code = code
+export const builder = ( data: any, message?: string, code?: number ) => {
+  let responseBody: ResponseBody = {}
   if ( typeof data === 'string' || data instanceof Array ) {
-    responseBody.data = data
+    responseBody = data
   } else {
-    Object.keys( data ).forEach( key => {
-      responseBody[ key ] = data[ key ]
-    } )
-  }
-
-  if ( headers !== null && typeof headers === 'object' && Object.keys( headers ).length > 0 ) {
-    responseBody._header = headers
+    message != void 0 && ( responseBody.msg = message )
+    code != void 0 && ( responseBody.code = code )
+    if ( typeof data == 'object' ) {
+      Object.keys( data ).forEach( key => {
+        responseBody[ key ] = data[ key ]
+      } )
+    }
   }
   return responseBody
 }

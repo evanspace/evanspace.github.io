@@ -14,6 +14,7 @@ const apiBeforePath = env.VITE_API_BEFORE_PATH
 const apiRoot = {
   api: apiBeforePath,
   user: '/mock',
+  monitor: '/mock',
   area: '/mock',
   test: '/mock',
 }
@@ -35,6 +36,11 @@ const Api = {
     logout: '/user/logout',
     getUserInfo: '/user/getUserInfo',
     changePwd: '/user/changePwd',
+  },
+
+  monitor: {
+    init:'',
+    get_config: '/monitor/get_config'
   },
 
   area: {

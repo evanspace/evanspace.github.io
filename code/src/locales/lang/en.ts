@@ -74,6 +74,7 @@ export default {
     water: 'water',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
+    device: 'device',
   },
 
   user: {
