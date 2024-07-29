@@ -127,7 +127,7 @@
               <span class="pt-xs">关联：</span>
               <el-checkbox-group
                 class="f-x"
-                v-model="checkedInfo.bind as string[]"
+                v-model="(checkedInfo.bind as string[])"
                 @change="addRecord"
               >
                 <el-checkbox v-for="item in checkboxList" :value="item.deviceCode">
@@ -152,7 +152,7 @@
                     </el-button>
                     <el-checkbox-group
                       class="f-x"
-                      v-model="its[ 0 ] as string[]"
+                      v-model="its[ 0 ]"
                       @change="addRecord"
                     >
                       <el-checkbox v-for="item in checkboxPumps" :value="item.deviceCode">
@@ -162,7 +162,7 @@
                     <span>阀门：</span>
                     <el-checkbox-group
                       class="f-x"
-                      v-model="its[ 1 ] as string[]"
+                      v-model="its[ 1 ]"
                     >
                       <el-checkbox v-for="item in checkboxValves" :value="item.deviceCode">
                         {{ item.name }}
@@ -191,22 +191,23 @@
       >
         <div class="e-drag__dot-content">
           
-          <t-device
+          <plane-device
             :list="pageOpts.edit.devices"
-            type="devices"
+            :type="types.devices"
             :locked="pageOpts.filters.lockeDev"
             :display="pageOpts.filters.display"
             :hide-type="pageOpts.filters.type"
-            :active="pageOpts.edit.type == 'devices' ? pageOpts.edit.index : -1"
+            :show-name="true"
+            :active="pageOpts.edit.type === types.devices ? pageOpts.edit.index : -1"
             @click="onDotClick"
             @mousedown.stop="onDotMouseDown"
             @mouseup.stop="onDragMouseUp"
-          ></t-device>
+          ></plane-device>
     
           <t-pipe
             ref="pipeRef"
             :list="pageOpts.edit.pipes"
-            type="pipes"
+            :type="types.pipes"
             :locked="pageOpts.filters.lockePipe"
             :animate="pageOpts.filters.animate"
             :display="pageOpts.filters.display"
@@ -214,7 +215,7 @@
             :width="line.width"
             :gap="line.gap"
             :scale="pageOpts.edit.scale"
-            :active="pageOpts.edit.type == 'pipes' ? pageOpts.edit.index : -1"
+            :active="pageOpts.edit.type === types.pipes ? pageOpts.edit.index : -1"
             @click="onDotClick"
             @mousedown.stop="onDotMouseDown"
             @mouseup="onDragMouseUp"
@@ -230,7 +231,6 @@
 <script lang="ts" setup>
 import DATA from './data/index'
 import { DEVICE_TYPE, PIPE_TYPE } from '@/config/key'
-import tDevice from './device.vue'
 import tPipe from './pipe.vue'
 import { getPageOpts } from './data'
 
@@ -253,6 +253,11 @@ watch(
 const pageRef = ref()
 const dragRef = ref()
 const pageOpts = reactive( getPageOpts() )
+
+const types = {
+  devices: 'devices',
+  pipes: 'pipes',
+}
 
 const line = reactive( {
   width: 2,
@@ -486,8 +491,8 @@ const addDevice = ( e, item ) => {
   } )
 }
 
-const onDotClick = ( _type, _item, _index ) => {
-  // console.log( _type, _item, _index )
+const onDotClick = ( _index, _item, _type ) => {
+  // console.log( _index, _item, _type )
 }
 
 const toggleTarget = ( type, index ) => {
@@ -509,7 +514,7 @@ const move = {
   tsp: 0,
   time: 10
 }
-const onDotMouseDown = ( ev, type, _item, index ) => {
+const onDotMouseDown = ( ev, index, _item, type ) => {
   move.isMove = true
   move.tsp = Date.now()
   toggleTarget( type, index )
@@ -572,16 +577,8 @@ const onDragMouseUp = _ev => {
 
 
 
-
-
 const getSrc = item => {
-  const { error, status } = item
-  let folder = error > 0 ? 'error' : ( status > 0 ? 'run' : 'normal' )
-  let type = item.type
-  if ( [ DEVICE_TYPE.LDB, DEVICE_TYPE.LQB ].includes( type ) ) type = 'LDB'
-  else if ( [ DEVICE_TYPE.LXJ ].includes( type ) ) type = 'LXJ'
-  else if ( [ DEVICE_TYPE.LDFM, DEVICE_TYPE.LQFM ].includes( type ) ) type = 'FM'
-  return `${ assetsStore.oss }/img/device/${ folder }/${ type }.png`
+  return assetsStore.getDeviceSrc( item )
 }
 
 // 开始
@@ -912,9 +909,12 @@ onBeforeUnmount( () => {
 </style>
 
 <style lang="scss">
-@import './common.scss';
-.e-drag__dot-content {
-  --dot-color: var(--el-text-color-primary);
-  --dot-text-color: #{ rgba(36, 36, 36, 0.40) };
+.plane-device {
+  --e-text0color: var(--el-text-color-primary);
 }
+// @import './common.scss';
+// .e-drag__dot-content {
+//   --dot-color: var(--el-text-color-primary);
+//   --dot-text-color: #{ rgba(36, 36, 36, 0.40) };
+// }
 </style>

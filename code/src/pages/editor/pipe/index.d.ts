@@ -19,13 +19,7 @@ interface Style {
   y: number
 }
 
-export interface DeviceType {
-  name: string
-  type: string
-  key?: string
-  status?: number
-  error?: number
-}
+export type DeviceType = import('@/components/plane-device/index').DeviceType
 
 export interface Drag {
   width: number
@@ -35,17 +29,7 @@ export interface Drag {
   zIndex: number
 }
 
-export interface Device extends DeviceType {
-  rotate?: number
-  style: Style
-  deviceCode?: string
-  value?: number
-  unit?: string
-  mx?: number
-  my?: number
-  color?: string
-  zIndex: number
-}
+export type Device = import('@/components/plane-device/index').Device
 
 
 export interface Path {
@@ -60,7 +44,7 @@ export interface Pipe extends PipeType {
   width: number
   height: number
   bind?: ( string | string[] | string[][] )[]
-  parallel?: ( string | string[] | string[][] )[]
+  parallel?: string[][][]
   left?: ( string | string[] | string[][] )[]
   right?: ( string | string[] | string[][] )[]
   

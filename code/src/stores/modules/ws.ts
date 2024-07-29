@@ -9,6 +9,7 @@
 
 import { defineStore } from 'pinia'
 import { useUserStore } from './user'
+import { useAssetsStore } from './assets'
 
 import type { WsStore, WsInitOpts } from './index'
 import KEYS, { DEVICE_KEY } from '@/config/key'
@@ -58,10 +59,11 @@ export const useWsStore = defineStore( {
     initSocket( opts: WsInitOpts ) {
       const { projectCode, isRefresh, groupCode, path = 'ws' } = opts
       const userStore = useUserStore()
+      const assetsStore = useAssetsStore()
 
       const { protocol } = window.location
       const wst = protocol === 'https:' ? 'wss' : 'ws'
-      let url = `${ wst }://${ userStore.wsIp }:8998/${ path }?projectCode=${ projectCode }&access_token=${ userStore.token }&groupCode=${ groupCode }`
+      let url = `${ wst }://${ assetsStore.wsIp }:8998/${ path }?projectCode=${ projectCode }&access_token=${ userStore.token }&groupCode=${ groupCode }`
   
       this.groupCode = groupCode
       this.allUrl = url

@@ -17,11 +17,19 @@ declare module 'nprogress'
 
 // 环境变量 TypeScript 的智能提示
 declare interface ImportMetaEnv {
-  readonly VITE_MODE: string
-  readonly VITE_APP_TITLE: string
-  readonly VITE_ROUTE_BASE: string
+  // # api 前路径
   readonly VITE_API_BEFORE_PATH: string
+
+  // # 路由基础路径
+  readonly VITE_ROUTE_BASE: string
+
+  // # 静态资源路径
   readonly VITE_BEFORE_STATIC_PATH: string
+  // # app 标题
+  readonly VITE_APP_TITLE: string
+
+  // # 资源地址
+  readonly VITE_OSS_BUCKET: string
 }
 
 declare interface ImportMeta {

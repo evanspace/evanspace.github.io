@@ -1,13 +1,10 @@
 <template>
-  <div 
-    class="pipes"
+  <div
     ref="pipeRef"
-    :style="{
-      '--lw': getLineW() + 'px'
-    }"
     :class="{
-      'is-locked': locked,
-      'is-pointer': pageOpts.isPointer
+      [ $style.pipes ]: true,
+      [ $style[ 'is-locked' ] ]: locked,
+      [ $style[ 'is-pointer' ] ]: pageOpts.isPointer
     }"
     @mousemove="onPipesMouseMove"
     @mousedown="onPipesMoustDown"
@@ -16,7 +13,6 @@
     <div 
       v-for="( item, index ) in pageOpts.list"
       :key="index"
-      class="pipe-item"
       :style="{
         left: `${ item.style.x }px`,
         top: `${ item.style.y }px`,
@@ -25,13 +21,13 @@
         zIndex: item.zIndex
       }"
       :class="{
-        [ item.type ]: true,
-        [ 'is-active' ]: active == index
+        [ $style.item ]: true,
+        [ $style[ 'is-active' ] ]: active == index
       }"
       v-show="getDisplay( item )"
     >
       <div 
-        class="pipe-item__wrap"
+        :class="$style[ 'item-wrap' ]"
         :style="{
           width: `${ item.width }px`,
           height: `${ item.height }px`,
@@ -83,7 +79,7 @@ import type { Path } from './index'
 const props = withDefaults( defineProps<{
   list: import('./index').Pipe[]
   active: number
-  type: string
+  type?: string
   width?: number
   scale: number
   gap?: number
@@ -97,8 +93,8 @@ const props = withDefaults( defineProps<{
 } )
 
 const emits = defineEmits<{
-  click: [ type: string, item: import('./index').Pipe, index: number ]
-  mousedown: [ e: MouseEvent, type: string, item: import('./index').Pipe, index: number  ]
+  click: [ index: number, item: import('./index').Pipe, type?: string ]
+  mousedown: [ e: MouseEvent, index: number, item: import('./index').Pipe, type?: string  ]
   mouseup: [ e: MouseEvent ]
   change: []
 }>()
@@ -173,7 +169,7 @@ const onPipesMoustDown = ( e: MouseEvent ) => {
   if ( isInside ) {
     e.stopPropagation()
     e.preventDefault()
-    emits( 'mousedown', e, props.type, pageOpts.list[ index ], index )
+    emits( 'mousedown', e, index, pageOpts.list[ index ], props.type )
   }
 }
 
@@ -673,8 +669,8 @@ defineExpose( {
   optimize
 } )
 </script>
-  
-<style lang="scss" scoped>
+
+<style lang="scss" module>
 .pipes {
   &.is-locked {
     z-index: 0;
@@ -684,6 +680,44 @@ defineExpose( {
   &.is-pointer {
     cursor: pointer;
   }
-}
 
+  .item {
+    position: absolute;
+    &.is-active {
+      &::after {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid rgba($color: #f00, $alpha: .3);
+        content: '';
+        position: absolute;
+        pointer-events: none;
+      }
+    }
+    &-wrap {
+      position: relative;
+      canvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      svg {
+        top: 0;
+        left: 0;
+        position: absolute;
+        pointer-events: none;
+        path {
+          // animation: dash 2s linear infinite;
+        }
+        @keyframes dash {
+          to {
+            stroke-dashoffset: 100;
+            // stroke-dasharray: 80 160;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

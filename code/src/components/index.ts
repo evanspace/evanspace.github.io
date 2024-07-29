@@ -1,9 +1,11 @@
 
 import threeScene from './three-scene/index.vue'
+import planeDevice from './plane-device/index.vue'
 
 
 const components = [
-  threeScene
+  threeScene,
+  planeDevice,
 ]
 const install = function( app ) {
   components.forEach( ( component: any ) => {

@@ -82,7 +82,7 @@ const props = withDefaults( defineProps<Props>(), {
 } )
 const appStore = useAppStore()
 const wsStore = useWsStore()
-const notProd = import.meta.env.VITE_MODE !== '--production'
+const notProd = import.meta.env.VITE_MODE !== 'production-'
 
 defineOptions( {
   name: 'three-scene',
@@ -226,11 +226,11 @@ const dotList = computed( () => {
 } )
 
 // 查找满足条件运行设备
-const findFilterDevice = ( filters: ( string | string[] | string[][] )[] = [], devices ) => {
+const findFilterDevice = ( filters: string[][][], devices ) => {
   if ( filters.length == 0 || devices.length == 0 ) return []
   let runDev: import('./index').ObjectItem[] = []
   filters.forEach( item => {
-  if ( item instanceof Array )  {
+    if ( item instanceof Array )  {
       let s: import('./index').ObjectItem[] = []
       const d = item.filter( it => {
         if ( it instanceof Array ) {

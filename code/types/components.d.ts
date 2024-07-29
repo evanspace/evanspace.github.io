@@ -59,6 +59,7 @@ declare module 'vue' {
     IconEpMic: typeof import('~icons/ep/mic')['default']
     IconEpVideoPause: typeof import('~icons/ep/video-pause')['default']
     IconEpVideoPlay: typeof import('~icons/ep/video-play')['default']
+    PlaneDevice: typeof import('./../src/components/plane-device/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ThreeScene: typeof import('./../src/components/three-scene/index.vue')['default']

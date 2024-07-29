@@ -65,7 +65,6 @@ export interface UserStore {
   projects: Array<any>
   projectId: string
   changePassword: boolean
-  wsIp: string
 }
 
 
@@ -74,6 +73,8 @@ export interface AssetsStore {
   oss: string
   origin: string
   bucket: string
+  
+  wsIp?: string
 }
 
 

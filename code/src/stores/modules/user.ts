@@ -13,9 +13,10 @@ import { getSearchParams } from '@utils/win'
 
 import { Api, Axios } from '@/config'
 
-import { useAppStore } from './app'
 import { resetRouter } from '@/router'
+import { useAppStore } from './app'
 import { useTagsStore } from './tags'
+import { useAssetsStore } from './assets'
 
 import type { UserStore } from './index'
 
@@ -39,8 +40,6 @@ const userStore: UserStore = {
     avatar: '',
   },
 
-  wsIp: '',
-
   powers: [],
   config: {},      // 系统配置
   projects: [],    // 项目
@@ -62,6 +61,7 @@ export const useUserStore = defineStore( {
         const { access_token } = res
         const token = access_token
         this.token = token
+        useAssetsStore().updateWsIp( '192.168.1.111' )
         setSession( tokenKey, token )
         return res
       } )
