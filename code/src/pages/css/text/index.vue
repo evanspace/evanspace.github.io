@@ -57,10 +57,10 @@
   margin: 5px;
   height: 300px;
   overflow: auto;
-  border: 1px solid #ddd;
+  border: 1px solid var(--el-border-color);
   text-align: center;
   border-radius: 6px;
-  background-color: #efefef;
+  // background-color: #efefef;
 }
 
 h1 {
@@ -89,7 +89,7 @@ h1 {
   height: 100%;
   font-size: 50px;
   background: linear-gradient(45deg, #000 0, #000 50%, #fff 50%, #fff);
-  line-height: 300px;
+  line-height: 298px;
   h1 {
     color: #fff;
     // 混合模式
@@ -98,6 +98,12 @@ h1 {
   }
   &:hover h1 {
     transform: translateX(-200px);
+  }
+}
+
+.demo-3 {
+  svg {
+    fill: var(--text-color);
   }
 }
 
@@ -116,8 +122,8 @@ h1 {
     position: absolute;
     font-weight: bold;
     line-height: 300px;
-    background-color: #fff;
     mix-blend-mode: screen;
+    background-color: var(--el-bg-color);
   }
 }
 </style>

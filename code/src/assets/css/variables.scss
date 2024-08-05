@@ -3,7 +3,7 @@
 @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 
 :root {
-  
+  --text-color: var(--el-text-color-regular);
 }
 
 .dark {
