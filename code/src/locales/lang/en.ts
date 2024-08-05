@@ -27,6 +27,8 @@ export default {
     text: 'text',
     houdini: 'houdini',
     preserve3d: '3D',
+    transform: 'transform',
+    olympicRings: 'olympic rings',
 
     map: 'map',
     imgMap: 'img map',

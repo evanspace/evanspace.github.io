@@ -27,6 +27,8 @@ export default {
     text: '文字',
     houdini: '自定义属性',
     preserve3d: '3D',
+    transform: '变换',
+    olympicRings: '奥运五环',
 
     map: '地图',
     imgMap: '图片地图',
