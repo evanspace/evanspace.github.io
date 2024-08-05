@@ -87,7 +87,9 @@ const list = ref<Array<List>>( [
 }
 .flex {
   padding: 5px;
-  background-color: #eee;
+  border: 1px solid var(--el-border-color);
+  border-radius: 3px;
+  // background-color: #eee;
 }
 .flex-item {
   width: 50px;
