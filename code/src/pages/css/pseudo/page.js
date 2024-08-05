@@ -1,4 +1,4 @@
 export default {
   title: 'pseudo',
-  order: 11,
+  order: 10,
 }

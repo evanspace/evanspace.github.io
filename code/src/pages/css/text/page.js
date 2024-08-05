@@ -1,3 +1,4 @@
 export default {
-  title: 'text'
+  title: 'text',
+  order: 50
 }

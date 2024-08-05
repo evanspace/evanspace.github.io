@@ -1,3 +1,4 @@
 export default {
-  title: 'grid'
+  title: 'grid',
+  order: 40
 }
