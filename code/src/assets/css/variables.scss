@@ -1,6 +1,6 @@
 
 // 导入暗黑模式样式（不导入则覆盖不了自定义的样式）
-@use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
+// @use "element-plus/theme-chalk/src/dark/css-vars.scss" as *;
 
 :root {
   --text-color: var(--el-text-color-regular);

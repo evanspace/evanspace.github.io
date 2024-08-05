@@ -19,7 +19,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #e9dbbc;
 }
 .cup {
   width: 190px;
@@ -29,7 +28,7 @@
     height: 100%;
     display: flex;
     flex-direction: column-reverse;
-    background-color: rgba($color: #fff, $alpha: .5);
+    background-color: rgba($color: #eee, $alpha: .5);
     clip-path: path('M 0 0 Q 5 132 30 183 Q 90 198 160 183 Q 185 132 190 0 Q 90 20 0 0');
 
     .layer {
