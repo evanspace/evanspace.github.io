@@ -14,6 +14,7 @@ export default {
     changePwd: 'change password',
 
     css: 'css',
+    attribute: 'attribute',
     border: 'border',
     flex: 'flex',
     clip: 'clip',

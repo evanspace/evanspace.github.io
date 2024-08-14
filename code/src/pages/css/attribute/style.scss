@@ -1,0 +1,61 @@
+.page {
+  counter-reset: item;
+}
+
+.item {
+  padding: 10px;
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    &::before {
+      counter-increment: item;
+      content: counter(item) '. ';
+    }
+  }
+  .content {
+    font-size: 14px;
+    line-height: 1.5;
+    padding-left: 20px;
+  }
+  
+  .desc {
+    opacity: 0.5;
+  }
+  
+  .tag {
+    font-size: 16px;
+  }
+}
+
+:global {
+  :local( .page ) {
+    .quotes {
+      &:before {
+        content: open-quote
+      }
+      &:after {
+        content: close-quote
+      }
+    }
+    .counter {
+      counter-reset: wrapper;
+      .sec {
+        counter-reset: cont;
+        .til {
+          font-size: 16px;
+          &::before {
+            counter-increment: wrapper;
+            content: var(--dy-val) counter(wrapper) '. ';
+          }
+        }
+        .li {
+          font-size: 12px;
+          &::before {
+            counter-increment: cont;
+            content: counter(wrapper) '. ' counter(cont) '. ';
+          }
+        }
+      }
+    }
+  }
+}
