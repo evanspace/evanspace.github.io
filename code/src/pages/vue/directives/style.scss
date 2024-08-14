@@ -1,0 +1,14 @@
+.page {
+  counter-reset: page;
+}
+
+.item {
+  padding: 5px 10px;
+  .title {
+    font-size: 16px;
+    &::before {
+      counter-increment: page;
+      content: counter(page) '. ';
+    }
+  }
+}

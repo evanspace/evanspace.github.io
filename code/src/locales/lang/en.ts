@@ -1,11 +1,11 @@
 /* *
- * @description: 
+ * @description:
  * @file: en.ts
  * @author: Evan
  * @date: 2023.07.27 11:22:48
  * @week: 周四
  * @version: V
-* */
+ * */
 export default {
   route: {
     login: 'login',
@@ -61,7 +61,7 @@ export default {
     drag: 'drag',
 
     monitor: 'monitor',
-    eleIntersection:'Element intersection',
+    eleIntersection: 'Element intersection',
 
     event: 'event',
     mousePointing: 'Mouse pointing',
@@ -78,11 +78,14 @@ export default {
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
     device: 'device',
+
+    vue: 'vue',
+    directives: 'directives'
   },
 
   user: {
     home: '@:route.home',
     changePwd: '@:route.changePwd',
-    logout: 'logout',
+    logout: 'logout'
   }
 }
