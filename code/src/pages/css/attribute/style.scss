@@ -29,6 +29,9 @@
 
 :global {
   :local( .page ) {
+    .el-select {
+      --el-select-width: 160px;
+    }
     .quotes {
       &:before {
         content: open-quote
