@@ -1,1 +1,0 @@
-import{_ as s}from"./common-28167f74.js";import{o as a,f as o,p as c,h as n,g as r}from"./vendor-8f5629ee.js";const t={},d={class:"page"},e=[(s=>(c("data-v-079fc84c"),s=s(),n(),s))((()=>r("div",{class:"box"},[r("span",null,"CSS")],-1)))];const f=s(t,[["render",function(s,c){return a(),o("div",d,e)}],["__scopeId","data-v-079fc84c"]]);export{f as default};

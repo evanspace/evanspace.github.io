@@ -1,1 +1,0 @@
-@property --deg{syntax: "<angle>"; initial-value: 0deg; inherits: true;}.card{color:#fff;--deg: 0deg;width:300px;height:400px;border:1px solid #ddd;margin:20px auto;border-radius:6px;background-image:linear-gradient(var(--deg),#0099ff,#b0df07);animation:deg 2s linear infinite}@keyframes deg{to{--deg: 360deg}}

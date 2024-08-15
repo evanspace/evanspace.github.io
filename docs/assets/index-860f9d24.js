@@ -1,1 +1,0 @@
-import{_ as s}from"./common-28167f74.js";import{B as o,o as r,f as a,s as n}from"./vendor-8f5629ee.js";const t={class:"page"};const e=s({},[["render",function(s,e){const c=o("e-drag");return r(),a("div",t,[n(c)])}]]);export{e as default};

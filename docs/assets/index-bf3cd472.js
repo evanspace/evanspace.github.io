@@ -1,1 +1,0 @@
-import{_ as s}from"./common-070a1e41.js";import{o as a,e as o,p as t,j as d,f as r}from"./vendor-e0da98b5.js";const e={},n={class:"page"},c=[(s=>(t("data-v-44b3703d"),s=s(),d(),s))((()=>r("div",{class:"wrap"},[r("div",{class:"text"},[r("h1",null,"未来可期")])],-1)))];const p=s(e,[["render",function(s,t){return a(),o("div",n,c)}],["__scopeId","data-v-44b3703d"]]);export{p as default};
