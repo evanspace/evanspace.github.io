@@ -8,16 +8,16 @@
   </div>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 export default {
   directives: {
     myModel: {
-      mounted(el, binding, vnode) {
-        if ((typeof binding.value) == 'undefined') {
+      mounted(el, binding: any, vnode: VNode) {
+        if (typeof binding.value == 'undefined') {
           return console.error('v-myModel未赋值')
         }
         // 获得组件的实例对象
-        let vm = binding.instance as any
+        let vm = binding.instance
         // 这里是获取input上type属性值
         const type = vnode.props?.type
         let event = ''
@@ -26,27 +26,27 @@ export default {
           case 'text':
             event = 'input'
             targetValue = 'value'
-            break;
+            break
           case 'textarea':
             event = 'input'
             targetValue = 'value'
-            break;
+            break
           case 'checkbox':
             event = 'change'
             targetValue = 'checked'
-            break;
+            break
           case 'radio':
             event = 'change'
             targetValue = 'checked'
-            break;
+            break
           case 'select':
             event = 'change'
             targetValue = 'value'
-            break;
+            break
         }
         el.value = binding.value
         // 给元素添加监听的事件
-        el.addEventListener(event, (e) => {
+        el.addEventListener(event, e => {
           // binding.arg 为v-myModel:value的value、v-myModel:checked的checked,为了修改组件实例下面的value和checked。
           vm[binding.arg || ''] = e.target[targetValue]
         })
@@ -60,6 +60,6 @@ export default {
       value,
       checked
     }
-  },
+  }
 }
 </script>
