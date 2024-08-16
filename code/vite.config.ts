@@ -185,6 +185,10 @@ export default ({ mode }) => {
           return fs
         },
         output: {
+          // 入口文件
+          entryFileNames: 'assets/js/[name]-[hash].js',
+          // 打包文件
+          chunkFileNames: 'assets/js/[name]-[hash].js',
           // 资源文件像 字体，图片等
           assetFileNames: ({ name }) => {
             // 匹配资源文件后缀

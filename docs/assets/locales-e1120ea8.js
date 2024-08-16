@@ -1,1 +1,0 @@
-import{b5 as e}from"./vendor-6db95a6f.js";import{g as a}from"./common-04bb9be1.js";import{d as o,a as s}from"./lang-e64994c5.js";let l=navigator.language.replace(/-(\s*)/,""),t=a("LANGUAGE")||"zhCN";t&&(l=t);const n=e.createI18n({locale:l,legacy:!1,globalInjection:!0,messages:{zhCN:o,en:s}}),r=[{key:"zhCN",title:"中文"},{key:"en",title:"English"}];export{n as i,r as l};
