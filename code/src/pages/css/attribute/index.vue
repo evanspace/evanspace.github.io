@@ -323,11 +323,25 @@ const list = reactive([
   },
   {
     name: 'tabindex',
-    desc: '使用键盘 tab 按键聚焦元素，默认情况下顺序和元素排列顺序一致，如需不一致可以设置此属性'
+    desc: '使用键盘 tab 按键聚焦元素，默认情况下顺序和元素排列顺序一致，如需不一致可以设置此属性',
+    content: `
+      <button tabindex="3">tabindex="3"</button>
+      <button tabindex="2">tabindex="2"</button>
+      <button tabindex="1">tabindex="1"</button>
+    `
   },
   {
     name: 'download',
-    desc: '通常用于超链接，设置此属性后，打开链接会触发下载行为'
+    desc: '通常用于超链接，设置此属性后，打开链接会触发下载行为',
+    tag: 'a',
+    attrs: {
+      href: `${base}/imgs/01.jpg`,
+      download: '自定义名称.jpg',
+      style: {
+        width: '500px'
+      }
+    },
+    content: `<img src="${base}/imgs/01.jpg" />`
   },
   {
     name: 'dir',
