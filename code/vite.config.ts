@@ -179,16 +179,16 @@ export default ({ mode }) => {
           if (id.includes('src/common')) {
             return 'common'
           }
-          const ids = id.toString().split('/')
-          const fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
-          fs == 'index' && ids[ids.length - 1]
-          return fs
+          // const ids = id.toString().split('/')
+          // const fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
+          // fs == 'index' && ids[ids.length - 1]
+          // return fs
         },
         output: {
           // 入口文件
           entryFileNames: 'assets/js/[name]-[hash].js',
           // 打包文件
-          // chunkFileNames: 'assets/js/[name]-[hash].js',
+          chunkFileNames: 'assets/js/[name]-[hash].js',
           // 资源文件像 字体，图片等
           assetFileNames: ({ name }) => {
             // 匹配资源文件后缀
