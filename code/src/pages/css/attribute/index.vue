@@ -8,7 +8,7 @@
           <el-option v-for="it in item.items" :value="it.value" :label="it.label"></el-option>
         </el-select>
         <el-switch
-          v-else
+          v-else-if="item.active != void 0"
           v-model="item.active"
           :active-value="item.activeValue"
           :inactive-value="item.inactiveValue"
@@ -31,6 +31,7 @@
               [item.name]: item.active,
               '--dy-val': item.active
             }"
+            :[item.name]="item.active"
             v-bind="item.attrs"
             v-html="item.content"
           ></component>
@@ -266,6 +267,104 @@ const list = reactive([
         <div class="li">003</div>
       </div>
     `
+  },
+  {
+    name: 'inputmode',
+    desc: '在移动端影响弹出的键盘布局',
+    active: 'text',
+    items: [
+      { label: '默认值(text)', value: 'text' },
+      { label: '电话号码(tel)', value: 'tel' },
+      { label: '地址(url)', value: 'url' },
+      { label: '邮箱(email)', value: 'email' },
+      { label: '数字(numeric)', value: 'numeric' },
+      { label: '小数(decimal)', value: 'decimal' },
+      { label: '搜索(search)', value: 'search' }
+    ],
+    tag: 'input',
+    attrs: {
+      placeholder: '请输入'
+    }
+  },
+  {
+    name: 'poster',
+    desc: '设置视频预览图（封面）',
+    active: `${base}/imgs/01.jpg`,
+    activeValue: `${base}/imgs/01.jpg`,
+    inactiveValue: '',
+    tag: 'video',
+    attrs: {
+      src: `${base}/video/005.mp4`,
+      controls: '',
+      width: 500,
+      height: 260
+    }
+  },
+  {
+    name: 'multiple',
+    desc: '通常用于文件选择和下拉框，多个文件、多个选项',
+    content: `
+      <input type="file" multiple />
+      <select multiple>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    `
+  },
+  {
+    name: 'accesskey',
+    desc: '为元素设置快捷键，当按下快捷键后，可以聚焦元素',
+    tag: 'input',
+    active: 'a',
+    activeValue: 'a',
+    inactiveValue: '',
+    after: 'window 环境下谷歌浏览器，设置属性后，键盘按下 Alt+A 会快速聚焦当前输入框'
+  },
+  {
+    name: 'tabindex',
+    desc: '使用键盘 tab 按键聚焦元素，默认情况下顺序和元素排列顺序一致，如需不一致可以设置此属性'
+  },
+  {
+    name: 'download',
+    desc: '通常用于超链接，设置此属性后，打开链接会触发下载行为'
+  },
+  {
+    name: 'dir',
+    desc: '内部文字排班方向',
+    active: 'ltr',
+    items: [
+      { label: '从左到右(ltr)', value: 'ltr' },
+      { label: '从右到左(rtl)', value: 'rtl' },
+      { label: '自动检测(auto)', value: 'auto' }
+    ],
+    content: ` هذا هو اختبار ! `,
+    attrs: {
+      style: {
+        width: '300px'
+      }
+    }
+  },
+  {
+    name: 'spellcheck',
+    desc: '设置此属性可以开启拼写检查，通常用于富文本编辑',
+    attrs: {
+      spellcheck: 'true',
+      contenteditable: '',
+      style: {
+        flex: 1
+      }
+    },
+    content: 'how ar you'
+  },
+  {
+    name: 'translate',
+    desc: '元素内容是否触发翻译，如何翻译取决于浏览器',
+    tag: 'p',
+    active: 'yes',
+    activeValue: 'yes',
+    inactiveValue: 'no',
+    content: 'how are you'
   }
 ])
 </script>
