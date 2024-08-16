@@ -1,1 +1,0 @@
-import{_ as s}from"./G1-ea28b39c.js";import{_ as t}from"./5-3-5-5-51f32552.js";const a=Object.assign({"./json/G1/index.ts":s}),e=Object.keys(a).map((s=>a[s])),j=Object.assign({"./json/5-3-5-5/index.ts":t}),o=Object.keys(j).map((s=>j[s]));export{o as a,e as l};

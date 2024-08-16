@@ -179,12 +179,12 @@ export default ({ mode }) => {
           if (id.includes('src/common')) {
             return 'common'
           }
-          if (id.includes('src/pages')) {
-            const ids = id.toString().split('/')
-            let fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
-            fs == 'index' && (fs = ids[ids.length - 1])
-            return fs
-          }
+          // if (id.includes('src/pages')) {
+          //   const ids = id.toString().split('/')
+          //   let fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
+          //   fs == 'index' && (fs = ids[ids.length - 1])
+          //   return fs
+          // }
         },
         output: {
           // 入口文件
