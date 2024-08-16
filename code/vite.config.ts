@@ -179,10 +179,14 @@ export default ({ mode }) => {
           if (id.includes('src/common')) {
             return 'common'
           }
-          // const ids = id.toString().split('/')
-          // const fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
-          // fs == 'index' && ids[ids.length - 1]
-          // return fs
+          const ids = id.toString().split('/')
+          let fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()
+          fs == 'index' && (fs = ids[ids.length - 1])
+          if (fs.indexOf('_') == 0) {
+            fs = fs.substring(1)
+          }
+          console.log(fs)
+          return fs
         },
         output: {
           // 入口文件

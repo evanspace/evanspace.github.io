@@ -1,1 +1,0 @@
-import{b as o}from"./mock-273d4049.js";const r={title:"monitor",icon:"m-monitor",noRedirect:!0,order:50},t=[...[{url:"/monitor/get_config",method:"get",response:r=>{const{id:t}=r.query||{};if("123456"==t)return o({id:1,name:"制冷站监测系统"})}}]];export{r as _,t as m};
