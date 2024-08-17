@@ -11,11 +11,9 @@ const checkUpdate = async () => {
     const res = await fetch(url + '?v=' + Date.now(), {
       method: 'head'
     })
-    console.log(res)
     // 网络资源 ETag
     const eTag = res.headers.get('ETag')
     hasUpdate = !!lastETag && eTag !== lastETag
-    console.log(eTag)
     lastETag = eTag as string
   } catch (e) {
     return Promise.reject(e)
