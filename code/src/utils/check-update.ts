@@ -27,6 +27,7 @@ router.beforeEach(async (_to, _from, next) => {
     if (hasUpdate) {
       ElMessageBox.alert('系统有更新，请点击“立即刷新”刷新界面！', '温馨提示', {
         showCancelButton: true,
+        confirmButtonText: '立即刷新',
         callback: (action: Action) => {
           if (action == 'confirm') {
             location.reload()
