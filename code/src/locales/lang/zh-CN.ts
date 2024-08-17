@@ -80,7 +80,10 @@ export default {
     device: '设备',
 
     vue: 'vue',
-    directives: '指令'
+    directives: '指令',
+
+    navigator: 'navigator',
+    share: '分享'
   },
 
   user: {

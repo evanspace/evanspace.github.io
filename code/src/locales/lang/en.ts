@@ -80,7 +80,10 @@ export default {
     device: 'device',
 
     vue: 'vue',
-    directives: 'directives'
+    directives: 'directives',
+
+    navigator: 'navigator',
+    share: 'share'
   },
 
   user: {
