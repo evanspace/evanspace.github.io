@@ -27,6 +27,9 @@ import { viteMockServe } from 'vite-plugin-mock'
 // 打包体积可视化
 import { visualizer } from 'rollup-plugin-visualizer'
 
+// 检查更新
+import { checkUpdate } from './plugin/check-update'
+
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   const env = loadEnv(mode, __dirname)
@@ -39,6 +42,10 @@ export default ({ mode }) => {
     plugins: [
       vue(),
       vueJsx(),
+      checkUpdate({
+        // 相对于插件文件的位置
+        jsonPath: './public/sys/manifest.json'
+      }),
       // gzip
       viteCompression(),
       // 按需导入
