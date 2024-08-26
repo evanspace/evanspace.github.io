@@ -12,12 +12,12 @@ export default class ThreeScene {
   container: HTMLElement
   // 场景
   scene: InstanceType<typeof THREE.Scene>
-  // 相机
-  camera: InstanceType<typeof THREE.PerspectiveCamera>
   // 渲染器
   renderer: InstanceType<typeof THREE.WebGLRenderer>
+  // 相机
+  camera: InstanceType<typeof THREE.PerspectiveCamera>
   // 控制器
-  controls: InstanceType<typeof OrbitControls>
+  controls: InstanceType<typeof OrbitControls> | undefined
   // 动画 id
   animationId: number | undefined
 
@@ -38,17 +38,17 @@ export default class ThreeScene {
     this.options.height = this.container.offsetHeight
     this.scene = new THREE.Scene()
 
+    this.renderer = this.initRenderer()
     this.init()
+    this.camera = this.initCamera()
+    this.controls = this.initControls()
   }
 
   init() {
-    this.initRenderer()
     this.initLight()
     this.initGrid()
     this.initAxes()
     this.initModel()
-    this.initCamera()
-    this.initControls()
   }
 
   // 运行
@@ -102,16 +102,19 @@ export default class ThreeScene {
 
     // 渲染开启阴影 ！！！！
     renderer.shadowMap.enabled = true
-    // 更加柔和的阴影
+    // THREE.BasicShadowMap 性能很好，但质量很差
+    // THREE.PCFShadowMap 性能较差，但边缘更光滑
+    // THREE.PCFSoftShadowMap 性能较差，但边缘更柔软
+    // THREE.VSMShadowMap 更低的性能，更多的约束，可能会产生意想不到的结果
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
     // 设置渲染尺寸
     renderer.setSize(width, height)
     // 设置canvas的分辨率
     renderer.setPixelRatio(window.devicePixelRatio)
-    this.renderer = renderer
     // 画布插入容器
     this.container.appendChild(renderer.domElement)
+    return renderer
   }
 
   // 灯光
@@ -132,7 +135,7 @@ export default class ThreeScene {
       }
 
       if (directionalLight.light2) {
-        const dirLight2 = this.createDirectionalLight()
+        const dirLight2 = this.createDirectionalLight(false)
         dirLight2.position.set(-500, 800, -800)
         this.addObject(dirLight2)
         if (lightHelperVisible) {
@@ -144,12 +147,12 @@ export default class ThreeScene {
   }
 
   // 创建平行光
-  createDirectionalLight(s = 800, size = 4096, near = 1, far = 2000) {
+  createDirectionalLight(castShadow: boolean = true, s = 800, size = 4096, near = 1, far = 2000) {
     const { color, intensity } = this.options.directionalLight
     // 平行光
     const dirLight = new THREE.DirectionalLight(color, intensity)
     dirLight.position.set(500, 800, 800)
-    dirLight.castShadow = true
+    dirLight.castShadow = castShadow
     // 设置阴影贴图模糊度
     dirLight.shadow.camera.radius = 10
     dirLight.shadow.camera.near = near
@@ -169,8 +172,8 @@ export default class ThreeScene {
     const cam = new THREE.PerspectiveCamera(36, width / height, camera.near, camera.far)
     // 相机位置
     cam.position.set(...camera.position)
-    this.camera = cam
     this.addObject(cam)
+    return cam
   }
 
   // 控制器
@@ -184,7 +187,7 @@ export default class ThreeScene {
     })
     // 聚焦坐标
     ctrl.target.set(0, 0, 0)
-    this.controls = ctrl
+    return ctrl
   }
 
   // 网格

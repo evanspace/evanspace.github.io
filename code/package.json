@@ -21,6 +21,8 @@
     "path-to-regexp": "^6.2.1",
     "pinia": "^2.1.7",
     "three": "^0.167.0",
+    "three-bvh-csg": "0.0.16",
+    "three-mesh-bvh": "^0.7.6",
     "three.path": "^1.0.1",
     "vue": "^3.4.6",
     "vue-i18n": "^9.9.0",
