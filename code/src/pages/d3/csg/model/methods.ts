@@ -8,6 +8,7 @@ import {
   DIFFERENCE,
   // @ts-ignore
   HOLLOW_SUBTRACTION,
+  // @ts-ignore
   HOLLOW_INTERSECTION,
   Brush,
   Evaluator
