@@ -152,16 +152,22 @@ export default class ThreeScene {
     // 平行光
     const dirLight = new THREE.DirectionalLight(color, intensity)
     dirLight.position.set(500, 800, 800)
-    dirLight.castShadow = castShadow
-    // 设置阴影贴图模糊度
-    dirLight.shadow.camera.radius = 10
-    dirLight.shadow.camera.near = near
-    dirLight.shadow.camera.far = far
-    dirLight.shadow.camera.top = s
-    dirLight.shadow.camera.right = s
-    dirLight.shadow.camera.left = -s
-    dirLight.shadow.camera.bottom = -s
-    dirLight.shadow.mapSize.set(size, size)
+    if (castShadow) {
+      dirLight.shadow.mapSize.setScalar(size)
+      dirLight.shadow.bias = 1e-5
+      dirLight.shadow.normalBias = 1e-2
+      dirLight.castShadow = castShadow
+      // 设置阴影贴图模糊度
+      const shadowCam = dirLight.shadow.camera
+      shadowCam.radius = 10
+      shadowCam.near = near
+      shadowCam.far = far
+      shadowCam.top = shadowCam.right = s
+      shadowCam.left = shadowCam.bottom = -s
+      // 更新矩阵
+      shadowCam.updateProjectionMatrix()
+    }
+
     return dirLight
   }
 
