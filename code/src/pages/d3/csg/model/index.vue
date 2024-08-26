@@ -11,6 +11,9 @@ import { useResize } from '@/three-scene/hooks/resize'
 const containerRef = ref()
 
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {
+  camera: {
+    position: [0, 80, 300]
+  },
   grid: {
     visible: true
   },
