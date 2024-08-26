@@ -77,6 +77,7 @@ export default {
 
     d3: '3D',
     light: '灯光',
+    effect: '效果',
     water: '水面',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
