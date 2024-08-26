@@ -78,6 +78,7 @@ export default {
     d3: '3D',
     light: 'light',
     effect: 'effect',
+    scene: 'scene',
     water: 'water',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
