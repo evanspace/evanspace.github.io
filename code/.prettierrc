@@ -1,5 +1,5 @@
 {
-  "printWidth": 100,
+  "printWidth": 150,
   "tabWidth": 2,
   "useTabs": false,
   "semi": false,
@@ -10,5 +10,8 @@
   "arrowParens": "avoid",
   "bracketSameLine": false,
   "uppercase": false,
-  "singleAttributePerLine": false
+  "insertPragma": false,
+  "vueIndentScriptAndStyle": false,
+  "singleAttributePerLine": false,
+  "experimentalTernaries": true
 }

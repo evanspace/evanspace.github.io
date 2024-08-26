@@ -1,11 +1,13 @@
-/* *
+/**
+ * @format
  * @description: 中文
  * @file: zh-CN.ts
  * @author: Evan
  * @date: 2023.07.27 11:22:20
  * @week: 周四
  * @version: V
- * */
+ */
+
 export default {
   route: {
     login: '登录',
@@ -74,10 +76,12 @@ export default {
     pipe: '管路',
 
     d3: '3D',
+    light: '灯光',
     water: '水面',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
     device: '设备',
+    hemisphere: '半球',
 
     vue: 'vue',
     directives: '指令',

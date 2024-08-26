@@ -1,11 +1,13 @@
-/* *
+/**
+ * @format
  * @description:
  * @file: en.ts
  * @author: Evan
  * @date: 2023.07.27 11:22:48
  * @week: 周四
  * @version: V
- * */
+ */
+
 export default {
   route: {
     login: 'login',
@@ -74,10 +76,12 @@ export default {
     pipe: 'pipe',
 
     d3: '3D',
+    light: 'light',
     water: 'water',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
     device: 'device',
+    hemisphere: 'hemisphere',
 
     vue: 'vue',
     directives: 'directives',
