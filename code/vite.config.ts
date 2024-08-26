@@ -30,6 +30,10 @@ import { visualizer } from 'rollup-plugin-visualizer'
 // 检查更新
 import { checkUpdate } from './plugin/check-update'
 
+function resolve(url) {
+  return path.resolve(__dirname, url)
+}
+
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   const env = loadEnv(mode, __dirname)
@@ -92,7 +96,7 @@ export default ({ mode }) => {
       // svg
       createSvgIconsPlugin({
         // 指定需要缓存的图标文件夹
-        iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
+        iconDirs: [resolve('src/assets/svg')],
         // 指定symbolId格式
         // symbolId: 'icon-[name]',
         symbolId: 'icon-[dir]-[name]',
@@ -139,13 +143,15 @@ export default ({ mode }) => {
     // 起个别名，在引用资源时，可以用‘@/资源路径’直接访问
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, 'src'),
-        '@common': path.resolve(__dirname, 'src/common'),
-        '@utils': path.resolve(__dirname, 'src/common/utils'),
-        '@assets': path.resolve(__dirname, 'src/common/assets'),
-        '@axios': path.resolve(__dirname, 'src/common/service/index.ts'),
+        '@': resolve('src'),
+        '@common': resolve('src/common'),
+        '@utils': resolve('src/common/utils'),
+        '@assets': resolve('src/common/assets'),
+        '@axios': resolve('src/common/service/index.ts'),
         // 解决直接引入 vue-i8n 控制台警告问题
-        'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
+        'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
+        // 解决控制台警告引入多个实例问题
+        three: resolve('node_modules/three')
       }
     },
     css: {
