@@ -89,6 +89,7 @@ export default {
     simple: '简单',
     model: '模型',
     buffer: '缓冲器',
+    hollow: '空心',
 
     vue: 'vue',
     directives: '指令',

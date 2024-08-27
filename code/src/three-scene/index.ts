@@ -155,7 +155,7 @@ export default class ThreeScene {
     dirLight.position.set(500, 800, 800)
     if (castShadow) {
       dirLight.shadow.mapSize.setScalar(size)
-      dirLight.shadow.bias = 1e-5
+      dirLight.shadow.bias = -1e-5
       dirLight.shadow.normalBias = 1e-2
       dirLight.castShadow = castShadow
       // 设置阴影贴图模糊度

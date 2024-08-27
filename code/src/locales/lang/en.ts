@@ -89,6 +89,7 @@ export default {
     simple: 'simple',
     model: 'model',
     buffer: 'buffer',
+    hollow: 'hollow',
 
     vue: 'vue',
     directives: 'directives',
