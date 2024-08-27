@@ -80,6 +80,7 @@ export default {
     effect: 'effect',
     scene: 'scene',
     csg: 'CSG',
+    example: 'example',
     geometry: 'geometry',
     water: 'water',
     cssd2: 'CSS 2D',

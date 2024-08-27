@@ -80,6 +80,7 @@ export default {
     effect: '效果',
     scene: '场景',
     csg: '几何构造集',
+    example: '实例',
     geometry: '几何体',
     water: '水面',
     cssd2: 'CSS 2D',

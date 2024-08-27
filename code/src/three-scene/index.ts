@@ -261,6 +261,20 @@ export default class ThreeScene {
     obj?.clear()
   }
 
+  // 清除对象缓存
+  disposeObj = obj => {
+    if (!obj || !obj.traverse) return
+    obj.traverse(el => {
+      if (el.material) el.material.dispose()
+
+      if (el.geometry) el.geometry.dispose()
+
+      el?.clear()
+    })
+    obj?.clear()
+    this.scene.remove(obj)
+  }
+
   // 销毁
   dispose() {
     try {
