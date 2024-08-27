@@ -11,7 +11,7 @@ import { useResize } from '@/three-scene/hooks/resize'
 import { useFileLoader } from '@/three-scene/hooks/file-loader'
 import { useConvertData } from '@/three-scene/hooks/convert-data'
 
-const { load, progress } = useFileLoader()
+const { load } = useFileLoader()
 const { transformGeoJSON } = useConvertData()
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
