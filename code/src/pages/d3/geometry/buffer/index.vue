@@ -1,6 +1,6 @@
 <template>
   <div :class="$style.page" class="h-100 o-h">
-    <div ref="containerRef" class="h-100"></div>
+    <div class="h-100" ref="containerRef"></div>
   </div>
 </template>
 
@@ -12,7 +12,7 @@ const containerRef = ref()
 
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   camera: {
-    position: [0, 100, 260]
+    position: [0, 1000, 2000]
   },
   grid: {
     visible: true

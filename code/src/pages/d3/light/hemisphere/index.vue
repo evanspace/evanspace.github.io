@@ -40,7 +40,6 @@ onMounted(() => {
   options.container = containerRef.value
   scene = new NewThreeScene(options)
   scene.run()
-  console.log(scene)
   useResize(scene).resize()
 })
 </script>

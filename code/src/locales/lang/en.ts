@@ -80,6 +80,7 @@ export default {
     effect: 'effect',
     scene: 'scene',
     csg: 'CSG',
+    geometry: 'geometry',
     water: 'water',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
@@ -87,6 +88,7 @@ export default {
     hemisphere: 'hemisphere',
     simple: 'simple',
     model: 'model',
+    buffer: 'buffer',
 
     vue: 'vue',
     directives: 'directives',

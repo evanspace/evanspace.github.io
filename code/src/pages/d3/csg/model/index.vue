@@ -29,7 +29,6 @@ onMounted(() => {
   scene = new NewThreeScene(options)
   scene.run()
   useResize(scene).resize()
-  console.log(scene)
 })
 </script>
 

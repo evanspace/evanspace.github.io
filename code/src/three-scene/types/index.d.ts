@@ -53,6 +53,7 @@ export declare interface Options {
   container: HTMLElement | string
   width: number
   height: number
+  scale: number
   bgColor: number | string
   fog: Fog
 

@@ -80,6 +80,7 @@ export default {
     effect: '效果',
     scene: '场景',
     csg: '几何构造集',
+    geometry: '几何体',
     water: '水面',
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
@@ -87,6 +88,7 @@ export default {
     hemisphere: '半球',
     simple: '简单',
     model: '模型',
+    buffer: '缓冲器',
 
     vue: 'vue',
     directives: '指令',

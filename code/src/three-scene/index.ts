@@ -42,6 +42,7 @@ export default class ThreeScene {
     this.init()
     this.camera = this.initCamera()
     this.controls = this.initControls()
+    console.log(this)
   }
 
   init() {

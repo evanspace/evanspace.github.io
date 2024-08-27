@@ -4,6 +4,8 @@ export default {
   height: window.innerHeight,
   // 背景
   bgColor: null,
+  // 缩放(父元素缩放)
+  scale: 1,
   // 雾
   fog: {
     visible: false,
