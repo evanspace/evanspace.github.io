@@ -42,6 +42,10 @@ interface Grid {
   visible: boolean
   opacity: number
   transparent: boolean
+  width: number
+  divisions: number
+  centerLineColor: number | string
+  gridColor: number | string
 }
 
 interface Axes {

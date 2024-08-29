@@ -3,12 +3,17 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import ThreeScene from '@/three-scene'
 
-import { createCorrugatedPlate } from './corrugated-plate'
+import { useCorrugatedPlate } from './corrugated-plate'
+import { useOutline } from './out-line'
 import { useCoord } from '@/three-scene/hooks/coord'
 import { useCountryLine } from '@/three-scene/hooks/map/country-line'
+import { useCSS3D, CSS3DRenderer } from '@/three-scene/hooks/css3d'
 
+const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate()
+const { createOutline, update: outlineUpdate } = useOutline()
 const { getBoundingBox } = useCoord()
-const { createCountryFlatLine } = useCountryLine()
+const { createCountryFlatLine, getPoints } = useCountryLine()
+const { initCSS3DRender, createCSS3DDom } = useCSS3D()
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
@@ -31,6 +36,19 @@ textureMap.rotation = THREE.MathUtils.degToRad(45)
 const scale = 0.0128
 textureMap.repeat.set(scale, scale)
 
+// 全局颜色
+const COLOR = {
+  main: 0x00b8a9,
+  light: 0x123024,
+  line: 0xffffff,
+  line2: 0x61fbfd
+}
+
+// 地图深度
+const MAP_DEPTH = 0.5
+// 地图缩放倍数
+const MAP_SCALE = 20
+
 // 中心点
 const centerPos = {
   x: 105.06,
@@ -44,7 +62,7 @@ const createMapBlock = points => {
   const shape = new THREE.Shape(points)
   const opts = {
     // 挤出深度
-    depth: 0.5,
+    depth: MAP_DEPTH,
     // 对挤出的形状应用是否斜角
     bevelEnabled: true,
     // 斜角的分段层数
@@ -63,7 +81,7 @@ const createMapBlock = points => {
   // 表面材质
   const material = new THREE.MeshPhongMaterial({
     map: textureMap,
-    color: 0xb4eeea,
+    color: COLOR.main,
     // 颜色与贴图结合方式
     // MeshLambertMaterial 和 MeshPhongMaterial 当中。
     // MultiplyOperation 是默认值，它将环境贴图和物体表面颜色进行相乘。
@@ -75,12 +93,33 @@ const createMapBlock = points => {
   })
   // 边框材质
   const sideMaterial = new THREE.MeshLambertMaterial({
-    color: 0x123024,
+    color: COLOR.light,
     transparent: true,
     opacity: 0.9
   })
   const mesh = new THREE.Mesh(geometry, [material, sideMaterial])
+  mesh.scale.setScalar(MAP_SCALE)
   return mesh
+}
+
+// 创建 css3d 省份名称
+const createCSS3Dlabel = (properties, scene) => {
+  // 判断省份数据中心点
+  if (!properties.centroid && !properties.center) {
+    return false
+  }
+  const [lon, lat] = properties.centroid || properties.center
+  const label = createCSS3DDom({
+    name: `
+      <img src="${base}/oss/img/map/label.png" />
+      <div class="name">${properties.name}</div>
+    `,
+    className: 'map-3D-label',
+    position: [lon * MAP_SCALE, MAP_DEPTH * MAP_SCALE, -(lat * MAP_SCALE)],
+    onClick: e => [console.log(e)]
+  })
+  scene.add(label)
+  label.name = properties.name
 }
 
 // 创建上下边框
@@ -88,25 +127,27 @@ const createBorderLine = (mapJson, mapGroup) => {
   let lineTop = createCountryFlatLine(
     mapJson,
     {
-      color: 0xffffff,
+      color: COLOR.line,
       linewidth: 1,
       transparent: true,
       depthTest: false
     },
     'Line2'
   )
-  lineTop.position.y += 0.5
+  lineTop.position.y += 0.5 * MAP_SCALE
   let lineBottom = createCountryFlatLine(
     mapJson,
     {
-      color: 0x61fbfd,
+      color: COLOR.line2,
       linewidth: 1,
       depthTest: false
     },
     'Line2'
   )
-  // lineBottom.position.y -= 0.15
+  // lineBottom.position.y -= 0.15 * MAP_SCALE
   //  添加边线
+  lineTop.scale.setScalar(MAP_SCALE)
+  lineBottom.scale.setScalar(MAP_SCALE)
   mapGroup.add(lineTop)
   mapGroup.add(lineBottom)
 }
@@ -115,18 +156,33 @@ export class NewThreeScene extends ThreeScene {
   corrugatedPlate: InstanceType<typeof THREE.Mesh> | undefined
   clock: InstanceType<typeof THREE.Clock>
   mapGroup: InstanceType<typeof THREE.Group> | undefined
+  css3DRender: InstanceType<typeof CSS3DRenderer>
+  outline: InstanceType<createOutline> | undefined
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
     this.clock = new THREE.Clock()
+    this.css3DRender = initCSS3DRender(this.options, this.container)
     this.addModel()
   }
 
   addModel() {
     // 波纹板
-    const cpMh = createCorrugatedPlate(100, 0.5, 0.2)
+    const cpMh = createCorrugatedPlate({
+      range: 100 * MAP_SCALE,
+      interval: 0.8 * MAP_SCALE,
+      size: 0.2 * MAP_SCALE,
+      color: COLOR.main,
+      light: COLOR.light
+    })
     this.corrugatedPlate = cpMh
     this.addObject(cpMh)
+  }
+
+  initGrid() {
+    let gd = new THREE.GridHelper(200 * MAP_SCALE, 31, COLOR.light, COLOR.light)
+    this.grid = gd
+    this.addObject(gd)
   }
 
   initMap(mapJson) {
@@ -160,6 +216,9 @@ export class NewThreeScene extends ThreeScene {
         })
       }
 
+      // 创建 label
+      createCSS3Dlabel(properties, this.scene)
+
       // 翻转角度
       province.rotateX(-Math.PI / 2)
       province.name = properties.name
@@ -171,7 +230,7 @@ export class NewThreeScene extends ThreeScene {
 
     // 计算包围盒
     const box = getBoundingBox(mapGroup)
-    console.log(box)
+
     let {
       // size,
       center: { x, y, z }
@@ -180,16 +239,26 @@ export class NewThreeScene extends ThreeScene {
     centerPos.x = x
     centerPos.y = y
     centerPos.z = z
-    this.corrugatedPlate.position.set(x, y - 0.2, z)
-    // 移动控制可相机位置
-    this.moveControlAndCamera()
-    // 款滴
+    this.corrugatedPlate.position.set(x, 0 - 0.1 * MAP_SCALE, z)
+    // 重置场景元素
+    this.resetSceneEle()
+    // 宽度
     // const width = size.x < size.y ? size.y + 1 : size.x + 1
 
     this.addObject(mapGroup)
   }
 
-  moveControlAndCamera() {
+  // 轮廓
+  initMapOutLine(mapJson) {
+    console.log(mapJson)
+    const points = getPoints(mapJson, MAP_DEPTH)
+    const outline = createOutline(points)
+    outline.scale.setScalar(MAP_SCALE)
+    this.outline = outline
+    this.addObject(outline)
+  }
+
+  resetSceneEle() {
     const { x, y, z } = centerPos
     // 设置相机对焦位置
     this.camera.lookAt(x, y, z)
@@ -197,28 +266,42 @@ export class NewThreeScene extends ThreeScene {
       .to(
         {
           x: centerPos.x,
-          y: 80,
-          z: z + 1
+          y: 40 * MAP_SCALE,
+          z: z + 40 * MAP_SCALE
         },
         1000
       )
       .easing(TWEEN.Easing.Quadratic.In)
       .start()
       .onUpdate(() => {})
+
+    // 控制器
     this.controls.target = new THREE.Vector3(x, y, z)
+
+    // 网格
+    if (this.grid) {
+      this.grid.position.set(x, 0, z)
+    }
   }
 
   modelAnimate() {
+    // 波纹板
     if (this.corrugatedPlate) {
       let dalte = this.clock.getDelta()
-      const mat = this.corrugatedPlate.material
-      // 扩散波半径
-      const range = mat.uniforms.range.value
-      const length = mat.uniforms.length.value
-      mat.uniforms.radius.value += dalte * (range / 2)
-      if (mat.uniforms.radius.value >= range + length) {
-        mat.uniforms.radius.value = 0
-      }
+      corrugatUpdate(this.corrugatedPlate, dalte)
+    }
+    // outlineUpdate(this.corrugatedPlate, dalte)
+    // css 3D 渲染器
+    if (this.css3DRender) {
+      this.css3DRender.render(this.scene, this.camera)
+    }
+  }
+
+  resize() {
+    super.resize()
+    if (this.css3DRender) {
+      const { width, height } = this.options
+      this.css3DRender.setSize(width, height)
     }
   }
 }

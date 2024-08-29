@@ -23,29 +23,50 @@ export const useCountryLine = () => {
     let lineGroup = new THREE.Group()
     for (let i = 0; i < features.length; i++) {
       const element = features[i]
-      element.geometry.coordinates.forEach(coords => {
+      const coordinates = element.geometry.coordinates
+      for (let j = 0; j < coordinates.length; j++) {
+        const coords = coordinates[j]
         // 每一块的点数据
         const points: InstanceType<typeof THREE.Vector3>[] = []
         if (lineType === 'Line2') {
-          coords[0].forEach(item => {
-            points.push(item[0], 0, -item[1])
+          coords.forEach(polygon => {
+            polygon.forEach(item => {
+              points.push(item[0], 0, -item[1])
+            })
           })
-          // 根据每一块的点数据创建线条
-          let line = createLine(points, material, lineType)
-          lineGroup.add(line)
         } else {
-          coords[0].forEach(item => {
-            points.push(new THREE.Vector3(item[0], item[1], 0))
+          coords.forEach(polygon => {
+            polygon.forEach(item => {
+              points.push(new THREE.Vector3(item[0], item[1], 0))
+            })
           })
-          // 根据每一块的点数据创建线条
-          let line = createLine(points, material, lineType)
-          // 将线条插入到组中
-          lineGroup.add(line)
         }
-      })
+        // 根据每一块的点数据创建线条
+        let line = createLine(points, material, lineType)
+        // 将线条插入到组中
+        lineGroup.add(line)
+      }
     }
     // 返回所有线条
     return lineGroup
+  }
+
+  // 获取所有点位
+  const getPoints = (data, y = 0) => {
+    let features = data.features
+    const points: number[] = []
+    for (let i = 0; i < features.length; i++) {
+      const element = features[i]
+      const coordinates = element.geometry.coordinates
+      for (let j = 0; j < coordinates.length; j++) {
+        coordinates[j].forEach(polygon => {
+          polygon.forEach(item => {
+            points.push(item[0], y, -item[1])
+          })
+        })
+      }
+    }
+    return points
   }
 
   // 根据点数据创建闭合的线条
@@ -61,6 +82,7 @@ export const useCountryLine = () => {
       geometry.setPositions(points)
       line = new Line2(geometry, material)
       line.name = 'countryLine2'
+      // 计算线段距离
       line.computeLineDistances()
     } else {
       const geometry = new THREE.BufferGeometry()
@@ -71,6 +93,7 @@ export const useCountryLine = () => {
     return line
   }
   return {
-    createCountryFlatLine
+    createCountryFlatLine,
+    getPoints
   }
 }

@@ -23,6 +23,10 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   grid: {
     visible: true
+    // width: 100,
+    // divisions: 31,
+    // gridColor: 0x123024,
+    // centerLineColor: 0x123024
   },
   axes: {
     visible: true
@@ -40,12 +44,15 @@ onMounted(() => {
     // load(`${base}/oss/map/广东省.json`).then(res => {
     scene.initMap(transformGeoJSON(res))
   })
+  load(`${base}/oss/map/china-outline.json`).then(res => {
+    // load(`${base}/oss/map/china.json`).then(res => {
+    // load(`${base}/oss/map/广东省.json`).then(res => {
+    scene.initMapOutLine(transformGeoJSON(res))
+  })
   useResize(scene).resize()
 })
 </script>
 
 <style lang="scss" module>
-.page {
-  position: relative;
-}
+@import './style.scss';
 </style>

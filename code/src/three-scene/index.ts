@@ -18,6 +18,8 @@ export default class ThreeScene {
   camera: InstanceType<typeof THREE.PerspectiveCamera>
   // 控制器
   controls: InstanceType<typeof OrbitControls> | undefined
+  // 网格
+  grid: InstanceType<typeof THREE.GridHelper> | undefined
   // 动画 id
   animationId: number | undefined
 
@@ -201,11 +203,12 @@ export default class ThreeScene {
   initGrid() {
     const grid = this.options.grid
     if (!grid.visible) return
+    const { width, divisions, centerLineColor, gridColor, opacity, transparent } = grid
     // 网格宽度、等分数、中心线颜色、网格颜色
-    let gd = new THREE.GridHelper(800, 80, 0xa1a1a1, 0xa1a1a1)
-    // grid.visible = false
-    gd.material.opacity = grid.opacity
-    gd.material.transparent = grid.transparent
+    let gd = new THREE.GridHelper(width, divisions, centerLineColor, gridColor)
+    gd.material.opacity = opacity
+    gd.material.transparent = transparent
+    this.grid = gd
     this.addObject(gd)
   }
 

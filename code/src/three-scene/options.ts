@@ -63,7 +63,14 @@ export default {
   grid: {
     visible: false,
     opacity: 0.3,
-    transparent: true
+    transparent: true,
+    width: 800,
+    // 等分数
+    divisions: 80,
+    // 中心线颜色
+    centerLineColor: 0xa1a1a1,
+    // 网格颜色
+    gridColor: 0xa1a1a1
   },
   axes: {
     visible: false,
