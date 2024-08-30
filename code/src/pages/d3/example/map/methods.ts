@@ -115,8 +115,8 @@ const createCSS3Dlabel = (properties, scene) => {
       <div class="name">${properties.name}</div>
     `,
     className: 'map-3D-label',
-    position: [lon * MAP_SCALE, MAP_DEPTH * MAP_SCALE, -(lat * MAP_SCALE)],
-    onClick: e => [console.log(e)]
+    position: [lon * MAP_SCALE, MAP_DEPTH * MAP_SCALE, -(lat * MAP_SCALE)]
+    // onClick: e => {console.log(e)}
   })
   scene.add(label)
   label.name = properties.name
@@ -285,12 +285,14 @@ export class NewThreeScene extends ThreeScene {
   }
 
   modelAnimate() {
+    let dalte = this.clock.getDelta()
     // 波纹板
     if (this.corrugatedPlate) {
-      let dalte = this.clock.getDelta()
       corrugatUpdate(this.corrugatedPlate, dalte)
     }
-    // outlineUpdate(this.corrugatedPlate, dalte)
+    if (this.outline) {
+      outlineUpdate(this.outline, dalte)
+    }
     // css 3D 渲染器
     if (this.css3DRender) {
       this.css3DRender.render(this.scene, this.camera)
