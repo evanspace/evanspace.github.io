@@ -23,10 +23,10 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   grid: {
     visible: true
-    // width: 100,
-    // divisions: 31,
-    // gridColor: 0x123024,
-    // centerLineColor: 0x123024
+  },
+  controls: {
+    maxPolarAngle: Math.PI * 0.46
+    // screenSpacePanning: false
   },
   axes: {
     visible: true
@@ -49,6 +49,7 @@ onMounted(() => {
     // load(`${base}/oss/map/广东省.json`).then(res => {
     scene.initMapOutLine(transformGeoJSON(res))
   })
+  console.log(NewThreeScene.total)
   useResize(scene).resize()
 })
 </script>

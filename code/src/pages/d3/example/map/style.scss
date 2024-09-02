@@ -13,6 +13,9 @@
       cursor: pointer;
       padding: 4px 8px;
       background-color: rgba($color: #000000, $alpha: .6);
+      &.is-active {
+        border: 1px solid #fff;
+      }
       img {
         width: 16px;
         height: 16px;
@@ -20,6 +23,8 @@
       .name {
         font-size: 12px;
         margin-left: 10px;
+        position: relative;
+        // -webkit-box-reflect: below 0 -webkit-linear-gradient(right,rgba(0, 0, 0,1) 0%,rgba(0, 0, 0, 0) 100%);
       }
     }
   }

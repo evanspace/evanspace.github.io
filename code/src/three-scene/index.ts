@@ -22,12 +22,15 @@ export default class ThreeScene {
   grid: InstanceType<typeof THREE.GridHelper> | undefined
   // 动画 id
   animationId: number | undefined
+  // 静态属性
+  static total: number = 0
 
   constructor(options: import('./types').Params = {}) {
     // 默认配置
     const defaultOpts = defOptions
     // 配置
     this.options = deepMerge(defaultOpts, options)
+    ThreeScene.total++
 
     // 容器
     if (isDOM(this.options.container)) {

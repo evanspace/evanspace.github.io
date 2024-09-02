@@ -68,8 +68,16 @@ const createGeometry = (range = 500, interval = 5, size = 3) => {
   return geometrys
 }
 
+export declare interface CorrugatedPlateOptions {
+  range?: number
+  interval?: number
+  size?: number
+  color?: string | number
+  light?: string | number
+}
+
 export const useCorrugatedPlate = () => {
-  const createCorrugatedPlate = (options: import('./index').CorrugatedPlateOptions) => {
+  const createCorrugatedPlate = (options: CorrugatedPlateOptions) => {
     const { range = 500, interval, size, color = 0x00b8a9, light = 0x0d7377 } = options
     const geometrys = createGeometry(range, interval, size)
     // 合并几何图形

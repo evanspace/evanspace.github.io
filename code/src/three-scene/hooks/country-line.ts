@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { Line2 } from 'three/examples/jsm/lines/Line2.js'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial.js'
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry.js'
-import { deepMerge } from '../../utils'
+import { deepMerge } from '../utils'
 
 export const useCountryLine = () => {
   // 创建国家平面边线
@@ -52,7 +52,7 @@ export const useCountryLine = () => {
   }
 
   // 获取所有点位
-  const getPoints = (data, y = 0) => {
+  const getPoints = (data, y: number = 0, isVector3?: boolean) => {
     let features = data.features
     const points: number[] = []
     for (let i = 0; i < features.length; i++) {
@@ -61,7 +61,11 @@ export const useCountryLine = () => {
       for (let j = 0; j < coordinates.length; j++) {
         coordinates[j].forEach(polygon => {
           polygon.forEach(item => {
-            points.push(item[0], y, -item[1])
+            if (isVector3) {
+              points.push(new THREE.Vector3(item[0], y, -item[1]))
+            } else {
+              points.push(item[0], y, -item[1])
+            }
           })
         })
       }
