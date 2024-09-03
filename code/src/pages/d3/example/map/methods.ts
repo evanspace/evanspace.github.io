@@ -215,7 +215,7 @@ const createScatter = (longitude: number, latitude: number) => {
 }
 
 // 外圈背景
-const outCircleTexture = textureLoader.load('/out-circle.png')
+const outCircleTexture = textureLoader.load('/out-circle2.png')
 const createOutRing = (scene, width) => {
   let plane = new THREE.PlaneGeometry(width, width)
   let material = new THREE.MeshBasicMaterial({
@@ -234,7 +234,7 @@ const createOutRing = (scene, width) => {
 }
 
 // 内圈背景
-const innerRingTexture = textureLoader.load('/inner-circle.png')
+const innerRingTexture = textureLoader.load('/inner-circle2.png')
 const createInnerRing = (scene, width) => {
   let plane = new THREE.PlaneGeometry(width, width)
   let material = new THREE.MeshBasicMaterial({

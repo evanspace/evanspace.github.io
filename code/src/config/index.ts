@@ -8,11 +8,11 @@
 import { Axios } from '@axios'
 import { ElNotification, ElMessage, ElLoading } from 'element-plus'
 
-const env = import.meta.env
-const apiBeforePath = env.VITE_API_BEFORE_PATH
+// const env = import.meta.env
+// const apiBeforePath = env.VITE_API_BEFORE_PATH
 
 const apiRoot = {
-  api: apiBeforePath,
+  api: '/mock',
   user: '/mock',
   monitor: '/mock',
   area: '/mock',
