@@ -42,6 +42,11 @@ const Api = {
     get_config: '/monitor/get_config'
   },
 
+  echarts: {
+    get: '/echarts/get',
+    map: '/echarts/map'
+  },
+
   d3: {
     map: '/d3/map'
   },

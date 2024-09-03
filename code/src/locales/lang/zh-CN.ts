@@ -97,7 +97,9 @@ export default {
     directives: '指令',
 
     navigator: 'navigator',
-    share: '分享'
+    share: '分享',
+
+    echarts: 'echarts'
   },
 
   user: {

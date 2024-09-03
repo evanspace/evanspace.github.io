@@ -97,7 +97,9 @@ export default {
     directives: 'directives',
 
     navigator: 'navigator',
-    share: 'share'
+    share: 'share',
+
+    echarts: 'echarts'
   },
 
   user: {
