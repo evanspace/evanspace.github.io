@@ -7,6 +7,7 @@ export declare interface Options {
   circleTextureUrl: string
   lightTextureUrl: string
   scaleFactor: number
+  color: string | number
 }
 
 export declare type Params = import('../utils').DeepPartial<Options>
@@ -25,7 +26,8 @@ export const useMarkLight = (options: Params) => {
       // 光柱的URL
       lightTextureUrl: `${base}/oss/textures/map/light.png`,
       // 缩放系数，用来调整标记点和光圈的缩放大小
-      scaleFactor: 1
+      scaleFactor: 1,
+      color: 0x00ffff
     },
     options
   )
@@ -39,7 +41,7 @@ export const useMarkLight = (options: Params) => {
     const geometry = new THREE.PlaneGeometry(3, 3)
     const material = new THREE.MeshBasicMaterial({
       map: textureLoader.load(_options.pointTextureUrl),
-      color: 0x00ffff,
+      color: _options.color,
       side: THREE.DoubleSide,
       transparent: true,
       depthWrite: false //禁止写入深度缓冲区数据
@@ -59,7 +61,7 @@ export const useMarkLight = (options: Params) => {
     const geometry = new THREE.PlaneGeometry(3, 3)
     const material = new THREE.MeshBasicMaterial({
       map: textureLoader.load(_options.circleTextureUrl),
-      color: 0x00ffff,
+      color: _options.color,
       side: THREE.DoubleSide,
       opacity: 0,
       transparent: true,
@@ -109,7 +111,7 @@ export const useMarkLight = (options: Params) => {
     // 柱子材质
     const material = new THREE.MeshBasicMaterial({
       map: textureLoader.load(_options.lightTextureUrl),
-      color: 0x00ffff,
+      color: _options.color,
       transparent: true,
       depthWrite: false,
       side: THREE.DoubleSide

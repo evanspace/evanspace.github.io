@@ -16,9 +16,8 @@ const apiRoot = {
   user: '/mock',
   monitor: '/mock',
   area: '/mock',
-  test: '/mock',
+  test: '/mock'
 }
-
 
 const hostname = location.hostname
 const webname = hostname.split('.').slice(-2, -1).join('.') //网页名字
@@ -28,19 +27,23 @@ const Api = {
   base: {
     title: 'Vue3 前端训练基地',
     webname: webname,
-    domian: String( domian ), // 根域名
+    domian: String(domian) // 根域名
   },
 
   user: {
     login: '/user/login',
     logout: '/user/logout',
     getUserInfo: '/user/getUserInfo',
-    changePwd: '/user/changePwd',
+    changePwd: '/user/changePwd'
   },
 
   monitor: {
-    init:'',
+    init: '',
     get_config: '/monitor/get_config'
+  },
+
+  d3: {
+    map: '/d3/map'
   },
 
   area: {
@@ -54,66 +57,58 @@ const Api = {
     update: '/test/update',
     del: '/test/del',
     items: '/test/items',
-    group: '/test/group',
+    group: '/test/group'
   }
 }
 
-
 // 追加
-const appendRoot = ( key: number, path: String ) => {
-  return ( ( apiRoot as any )[ key ] || apiRoot.api || '' ) + path
+const appendRoot = (key: number, path: String) => {
+  return ((apiRoot as any)[key] || apiRoot.api || '') + path
 }
 
 // 格式化
-const apiFormat = ( obj: any, key: any, isFirst: Boolean = false ) => {
-  Object.keys( obj ).forEach( k => {
-    isFirst && ( key = k )
-    if ( key == 'apiRoot' || key == 'base' ) return
-    let o = obj[ k ]
-    if ( typeof o == 'object' ) {
-      apiFormat( o, key )
+const apiFormat = (obj: any, key: any, isFirst: Boolean = false) => {
+  Object.keys(obj).forEach(k => {
+    isFirst && (key = k)
+    if (key == 'apiRoot' || key == 'base') return
+    let o = obj[k]
+    if (typeof o == 'object') {
+      apiFormat(o, key)
     } else {
-      obj[ k ] = appendRoot( key, o )
+      obj[k] = appendRoot(key, o)
     }
-  } )
+  })
 }
-apiFormat( Api, null, true )
+apiFormat(Api, null, true)
 
-const install = function( app: any ) {  
+const install = function (app: any) {
   app.config.globalProperties.$api = Api
 }
 export default install
 
-
 // 通知提示
 type noType = 'success' | 'warning' | 'error' | 'info'
-const Notip = ( message = '', title = '提示', type: noType = 'success' ) => {
-  ElNotification( {
+const Notip = (message = '', title = '提示', type: noType = 'success') => {
+  ElNotification({
     type,
     title,
-    message,
-  } )
+    message
+  })
 }
 
-const Message = ( message = '', type: noType = 'success' ) => {
+const Message = (message = '', type: noType = 'success') => {
   ElMessage({
     message,
-    type,
-  } )
+    type
+  })
 }
 
 const Loading = () => {
-  return ElLoading.service( {
+  return ElLoading.service({
     lock: true,
     text: 'Loading',
-    background: 'rgba(0, 0, 0, 0.7)',
-  } )
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
 }
 
-export {
-  Axios,
-  Api,
-  Notip,
-  Message,
-  Loading,
-}
+export { Axios, Api, Notip, Message, Loading }

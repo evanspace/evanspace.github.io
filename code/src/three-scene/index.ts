@@ -92,9 +92,12 @@ export default class ThreeScene {
     // 创建渲染对象
     const renderer = new THREE.WebGLRenderer({
       // 是否开启反锯齿，设置为true开启反锯齿
-      antialias: true
+      antialias: true,
       // 透明度
       // alpha: true,
+      // 设置对数深度缓存
+      // 解决 模型相接处或某些区域出现频闪问题或内容被相邻近元素覆盖掉的情况
+      logarithmicDepthBuffer: true
     })
     // renderer.setClearAlpha( 0 )
 

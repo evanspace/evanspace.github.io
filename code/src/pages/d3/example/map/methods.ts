@@ -9,12 +9,30 @@ import { useCoord } from '@/three-scene/hooks/coord'
 import { useCountryLine } from '@/three-scene/hooks/country-line'
 import { useCSS3D, CSS3DRenderer } from '@/three-scene/hooks/css3d'
 import { useMarkLight } from '@/three-scene/hooks/mark-light'
+import { useRaycaster } from '@/three-scene/hooks/raycaster'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 // 地图深度
 const MAP_DEPTH = 0.5
 // 地图缩放倍数
-const MAP_SCALE = 20
+const MAP_SCALE = 40
+
+// 全局颜色
+const COLOR = {
+  // 主色
+  main: 0x71ade2,
+  mainHover: 0x92ffff,
+  // 浅色
+  light: 0x757882,
+  lightHover: 0x92ffff,
+  // 线条
+  line: 0xa4e0f7,
+  line2: 0x61fbfd,
+  // 轮廓线
+  outline: 0xb4eafc,
+  // mark 颜色
+  markColor: 0x71ade2
+}
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate()
 const { createOutline, update: outlineUpdate } = useOutline()
@@ -25,8 +43,10 @@ const { createMarkLight } = useMarkLight({
   pointTextureUrl: `${base}/oss/textures/map/point.png`,
   circleTextureUrl: `${base}/oss/textures/map/circle.png`,
   lightTextureUrl: `${base}/oss/textures/map/light.png`,
-  scaleFactor: MAP_SCALE
+  scaleFactor: MAP_SCALE,
+  color: COLOR.markColor
 })
+const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
 
 // 加载管理器
 const manager = new THREE.LoadingManager()
@@ -50,21 +70,6 @@ textureMap.flipY = false
 const scale = 0.0128
 textureMap.repeat.set(scale, scale)
 normalTextureMap.repeat.set(scale, scale)
-
-// 全局颜色
-const COLOR = {
-  // 主色
-  main: 0x10ddc2,
-  mainHover: 0x92ffff,
-  // 浅色
-  light: 0x757882,
-  lightHover: 0x92ffff,
-  // 线条
-  line: 0xf5f5f5,
-  line2: 0x61fbfd,
-  // 轮廓线
-  outline: 0x92ffff
-}
 
 // 中心点
 const centerPos = {
@@ -127,14 +132,14 @@ const createCSS3Dlabel = (properties, scene) => {
   if (!properties.centroid && !properties.center) {
     return false
   }
-  const [lon, lat] = properties.center || properties.centroid
+  const [lon, lat] = properties.centroid || properties.center
   const label = createCSS3DDom({
     name: `
       <img src="${base}/oss/img/map/label.png" />
       <div class="name">${properties.name}</div>
     `,
     className: 'map-3D-label',
-    position: [lon * MAP_SCALE, lat * MAP_SCALE, MAP_DEPTH * MAP_SCALE]
+    position: [lon * MAP_SCALE, lat * MAP_SCALE * 0.995, MAP_DEPTH * MAP_SCALE]
     // onClick: e => {console.log(e)}
   })
   label.rotateX(Math.PI * 0.5)
@@ -173,7 +178,7 @@ const createBorderLine = (mapJson, scene) => {
     'Line2'
   )
   lineTop.name = '地图上边框'
-  lineTop.position.y += 0.5 * MAP_SCALE
+  lineTop.position.y += MAP_DEPTH * MAP_SCALE
   let lineBottom = createCountryFlatLine(
     mapJson,
     {
@@ -191,28 +196,44 @@ const createBorderLine = (mapJson, scene) => {
   scene.add(lineBottom)
 }
 
+// 创建散点
+const createScatter = (longitude: number, latitude: number) => {
+  const group = new THREE.Group()
+  const size = 0.2 * MAP_SCALE
+  // 圆盘
+  const circle = new THREE.CircleGeometry(size, 32)
+  const circleMat = new THREE.MeshBasicMaterial({ color: COLOR.main, transparent: true, opacity: 1 })
+  const circleMesh = new THREE.Mesh(circle, circleMat)
+
+  // 半球
+  const sphere = new THREE.SphereGeometry(size * 0.9, 32, 32, 0, Math.PI)
+  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.line2, transparent: true, opacity: 1 })
+  const sphereMesh = new THREE.Mesh(sphere, sphereMat)
+  group.add(circleMesh, sphereMesh)
+  group.position.set(longitude * MAP_SCALE, latitude * MAP_SCALE, MAP_DEPTH * MAP_SCALE * 1.005)
+  return group
+}
+
 export class NewThreeScene extends ThreeScene {
   // 波纹板
-  corrugatedPlate: InstanceType<typeof THREE.Mesh> | undefined
+  corrugatedPlate?: InstanceType<typeof THREE.Mesh>
   // 时间
   clock: InstanceType<typeof THREE.Clock>
   // 地图组
-  mapGroup: InstanceType<typeof THREE.Group> | undefined
+  mapGroup?: InstanceType<typeof THREE.Group>
+  // 散点组
+  scatterGroup?: InstanceType<typeof THREE.Group>
   // CSS3D 渲染器
   css3DRender: InstanceType<typeof CSS3DRenderer>
   // 地图轮廓
-  outline: InstanceType<createOutline> | undefined
-  // 射线拾取
-  raycaster: InstanceType<typeof THREE.Raycaster>
-  // 坐标（二维向量）
-  pointer: InstanceType<typeof THREE.Vector2>
+  outline?: InstanceType<createOutline>
+  // hover 回调
+  hoverBack?: (e, position: typeof style) => void
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
     this.clock = new THREE.Clock()
     this.css3DRender = initCSS3DRender(this.options, this.container)
-    this.raycaster = new THREE.Raycaster()
-    this.pointer = new THREE.Vector2()
     this.addModel()
     this.bindEvent()
   }
@@ -239,41 +260,59 @@ export class NewThreeScene extends ThreeScene {
   // 鼠标移动
   onPointerMove(e) {
     const dom = this.container
-    // 获取元素偏移量
-    const rect = dom.getBoundingClientRect() || { left: 0, top: 0 }
-    // 渲染元素作为子组件可能有缩放处理，元素大小需要计算处理
     const scale = this.options.scale
-
-    // 设置二维向量坐标 （-1， 1 范围）
-    this.pointer.x = ((e.clientX - rect.left) / (dom.clientWidth * scale)) * 2 - 1
-    this.pointer.y = -((e.clientY - rect.top) / (dom.clientHeight * scale)) * 2 + 1
+    raycasterUpdate(e, dom, scale)
 
     if (this.mapGroup) {
       // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
-      this.raycaster.setFromCamera(this.pointer, this.camera)
+      raycaster.setFromCamera(pointer, this.camera)
       // 检查射线和物体之间的交叉点（包含或不包含后代）
-      const interscts = this.raycaster.intersectObject(this.mapGroup)
+      const interscts = raycaster.intersectObjects([this.mapGroup, this.scatterGroup])
       this.container.style.cursor = interscts.length ? 'pointer' : 'auto'
       if (interscts.length > 0) {
         const object = interscts[0].object
-        // 网格
-        if (object.isMesh && object.material) {
-          this.setMapBlockColor(object.uuid)
+        let puuid
+        const pObj = this.findParentProvinceGroupGroupUuid(object)
+        if (pObj) {
+          puuid = pObj.uuid
+          this.hoverProvince(pObj)
         }
+        this.setMapBlockColor(puuid)
       } else {
+        this.hoverProvince()
         this.setMapBlockColor()
       }
     }
   }
 
+  // 查找父级身份组合
+  findParentProvinceGroupGroupUuid(object) {
+    const _find = obj => {
+      let parent = obj.parent
+      if (!parent) {
+        return
+      }
+      if ((parent && parent.isProvinceGroup) || parent.isScatter) {
+        return parent
+      }
+      return _find(parent)
+    }
+    return _find(object)
+  }
+
+  // 地图省份 hover
+  hoverProvince(pObj?) {
+    if (typeof this.hoverBack === 'function') this.hoverBack(pObj, style)
+  }
+
   // 设置地图面颜色
-  setMapBlockColor(uuid?) {
+  setMapBlockColor(puuid?) {
     this.mapGroup.traverse(el => {
-      if (el.isProvince) {
-        el.material[0].color.set(el.uuid === uuid ? COLOR.mainHover : COLOR.main)
-        el.material[1].color.set(el.uuid === uuid ? COLOR.lightHover : COLOR.light)
+      if (el.isProvinceBlock) {
+        el.material[0].color.set(el.parent.uuid === puuid ? COLOR.mainHover : COLOR.main)
+        el.material[1].color.set(el.parent.uuid === puuid ? COLOR.lightHover : COLOR.light)
       } else if (el.isLabel) {
-        const isTarget = el.parent.children.findIndex(e => e.uuid == uuid) > -1
+        const isTarget = el.parent.uuid === puuid
         el.element.className = `map-3D-label${isTarget ? ' is-active' : ''}`
       }
     })
@@ -315,7 +354,7 @@ export class NewThreeScene extends ThreeScene {
           // 创建地图区块
           const mesh = createMapBlock(points)
           // 省份区块标记
-          mesh.isProvince = true
+          mesh.isProvinceBlock = true
           provinceObj.add(mesh)
         })
       }
@@ -327,7 +366,10 @@ export class NewThreeScene extends ThreeScene {
 
       // 翻转角度
       provinceObj.rotateX(-Math.PI / 2)
+      // 省份组合标记
+      provinceObj.isProvinceGroup = true
       provinceObj.name = properties.name
+      provinceObj.data = properties
       mapGroup.add(provinceObj)
     }
 
@@ -361,6 +403,25 @@ export class NewThreeScene extends ThreeScene {
     outline.scale.setScalar(MAP_SCALE)
     this.outline = outline
     this.addObject(outline)
+  }
+
+  // 散点
+  initScatter(points: import('./index').MapPoint[], hoverBack?: (e, position: typeof style) => void) {
+    console.log(points)
+    const scatterGroup = new THREE.Group()
+    for (let i = 0; i < points.length; i++) {
+      const item = points[i]
+      const [longitude, latitude] = item.value
+      const mesh = createScatter(longitude, latitude)
+      mesh.name = item.name
+      mesh.data = item
+      mesh.isScatter = true
+      scatterGroup.add(mesh)
+    }
+    scatterGroup.rotateX(-Math.PI * 0.5)
+    this.scatterGroup = scatterGroup
+    this.addObject(scatterGroup)
+    this.hoverBack = hoverBack
   }
 
   resetSceneEle() {
