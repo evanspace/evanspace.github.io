@@ -17,7 +17,7 @@ export const getMap = () => {
         projects.push({
           value: [it.lng, it.lat],
           name: it.name,
-          carbon: it.carbonEmission,
+          carbon: it.carbon,
           use: it.use,
           count: len,
           city: item.province,

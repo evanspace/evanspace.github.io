@@ -21,7 +21,7 @@ export default [
                   'lng|80-120.0-6': 0,
                   'lat|25-45.0-6': 0,
                   name: '@cword(5,10)',
-                  'carbonEmission|0-1': 0,
+                  'carbon|0-10000': 0,
                   'use|0-1000000': 0,
                   id: '@guid'
                 }
