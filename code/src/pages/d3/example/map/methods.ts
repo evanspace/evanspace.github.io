@@ -10,12 +10,15 @@ import { useCountryLine } from '@/three-scene/hooks/country-line'
 import { useCSS3D, CSS3DRenderer } from '@/three-scene/hooks/css3d'
 import { useMarkLight } from '@/three-scene/hooks/mark-light'
 import { useRaycaster } from '@/three-scene/hooks/raycaster'
+import { useFlywire } from '@/three-scene/hooks/flywire'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
-// 地图深度
-const MAP_DEPTH = 0.5
-// 地图缩放倍数
-const MAP_SCALE = 40
+const OPTS = {
+  // 地图深度
+  depth: 0.5,
+  // 地图缩放倍数
+  scale: 40
+}
 
 // 全局颜色
 const COLOR = {
@@ -30,12 +33,16 @@ const COLOR = {
   line2: 0x61fbfd,
   // 轮廓线
   outline: 0xb4eafc,
+  // outline: 0xf00f00,
   // mark 颜色
   markColor: 0x71ade2
 }
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate()
-const { createOutline, update: outlineUpdate } = useOutline()
+const { createOutline, update: outlineUpdate } = useOutline({
+  size: 0.3 * OPTS.scale,
+  color: COLOR.outline
+})
 const { getBoundingBox } = useCoord()
 const { createCountryFlatLine, getPoints } = useCountryLine()
 const { initCSS3DRender, createCSS3DDom } = useCSS3D()
@@ -43,10 +50,15 @@ const { createMarkLight } = useMarkLight({
   pointTextureUrl: `${base}/oss/textures/map/point.png`,
   circleTextureUrl: `${base}/oss/textures/map/circle.png`,
   lightTextureUrl: `${base}/oss/textures/map/light.png`,
-  scaleFactor: MAP_SCALE,
+  scaleFactor: OPTS.scale,
   color: COLOR.markColor
 })
 const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
+const { createFlywire, update: flywireUpdate } = useFlywire({
+  depth: OPTS.depth,
+  color: COLOR.line,
+  color2: COLOR.line2
+})
 
 // 加载管理器
 const manager = new THREE.LoadingManager()
@@ -84,7 +96,7 @@ const createMapBlock = points => {
   const shape = new THREE.Shape(points)
   const opts = {
     // 挤出深度
-    depth: MAP_DEPTH,
+    depth: OPTS.depth,
     // 对挤出的形状应用是否斜角
     bevelEnabled: true,
     // 斜角的分段层数
@@ -122,7 +134,7 @@ const createMapBlock = points => {
     opacity: 0.9
   })
   const mesh = new THREE.Mesh(geometry, [material, sideMaterial])
-  mesh.scale.setScalar(MAP_SCALE)
+  mesh.scale.setScalar(OPTS.scale)
   return mesh
 }
 
@@ -139,7 +151,7 @@ const createCSS3Dlabel = (properties, scene) => {
       <div class="name">${properties.name}</div>
     `,
     className: 'map-3D-label',
-    position: [lon * MAP_SCALE, lat * MAP_SCALE * 0.995, MAP_DEPTH * MAP_SCALE]
+    position: [lon * OPTS.scale, lat * OPTS.scale * 0.995, OPTS.depth * OPTS.scale]
     // onClick: e => {console.log(e)}
   })
   label.rotateX(Math.PI * 0.5)
@@ -159,8 +171,8 @@ const createMarkLightPoint = (properties, screen) => {
   // 创建光柱
   const height = 1 + random(5, 10) / 4
   const [lon, lat] = properties.centroid || properties.center
-  const light = createMarkLight(lon * MAP_SCALE, lat * MAP_SCALE, height * MAP_SCALE)
-  light.position.z = MAP_DEPTH * MAP_SCALE * 1.01
+  const light = createMarkLight(lon * OPTS.scale, lat * OPTS.scale, height * OPTS.scale)
+  light.position.z = OPTS.depth * OPTS.scale * 1.01
   light.rotateX(-Math.PI / 2)
   screen.add(light)
 }
@@ -178,7 +190,7 @@ const createBorderLine = (mapJson, scene) => {
     'Line2'
   )
   lineTop.name = '地图上边框'
-  lineTop.position.y += MAP_DEPTH * MAP_SCALE
+  lineTop.position.y += OPTS.depth * OPTS.scale
   let lineBottom = createCountryFlatLine(
     mapJson,
     {
@@ -188,10 +200,10 @@ const createBorderLine = (mapJson, scene) => {
     },
     'Line2'
   )
-  // lineBottom.position.y -= 0.15 * MAP_SCALE
+  // lineBottom.position.y -= 0.15 * OPTS.scale
   lineBottom.name = '地图下边框'
-  lineTop.scale.setScalar(MAP_SCALE)
-  lineBottom.scale.setScalar(MAP_SCALE)
+  lineTop.scale.setScalar(OPTS.scale)
+  lineBottom.scale.setScalar(OPTS.scale)
   scene.add(lineTop)
   scene.add(lineBottom)
 }
@@ -199,7 +211,7 @@ const createBorderLine = (mapJson, scene) => {
 // 创建散点
 const createScatter = (longitude: number, latitude: number) => {
   const group = new THREE.Group()
-  const size = 0.2 * MAP_SCALE
+  const size = 0.2 * OPTS.scale
   // 圆盘
   const circle = new THREE.CircleGeometry(size, 32)
   const circleMat = new THREE.MeshBasicMaterial({ color: COLOR.main, transparent: true, opacity: 1 })
@@ -210,7 +222,7 @@ const createScatter = (longitude: number, latitude: number) => {
   const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.line2, transparent: true, opacity: 1 })
   const sphereMesh = new THREE.Mesh(sphere, sphereMat)
   group.add(circleMesh, sphereMesh)
-  group.position.set(longitude * MAP_SCALE, latitude * MAP_SCALE, MAP_DEPTH * MAP_SCALE * 1.005)
+  group.position.set(longitude * OPTS.scale, latitude * OPTS.scale, OPTS.depth * OPTS.scale * 1.005)
   return group
 }
 
@@ -261,6 +273,8 @@ export class NewThreeScene extends ThreeScene {
   mapGroup?: InstanceType<typeof THREE.Group>
   // 散点组
   scatterGroup?: InstanceType<typeof THREE.Group>
+  // 飞线组
+  flywireGroup?: InstanceType<typeof THREE.Group>
   // CSS3D 渲染器
   css3DRender: InstanceType<typeof CSS3DRenderer>
   // 地图轮廓
@@ -284,9 +298,9 @@ export class NewThreeScene extends ThreeScene {
   addModel() {
     // 波纹板
     const cpMh = createCorrugatedPlate({
-      range: 100 * MAP_SCALE,
-      interval: 0.8 * MAP_SCALE,
-      size: 0.2 * MAP_SCALE,
+      range: 100 * OPTS.scale,
+      interval: 0.8 * OPTS.scale,
+      size: 0.2 * OPTS.scale,
       color: COLOR.main,
       light: COLOR.light
     })
@@ -362,9 +376,9 @@ export class NewThreeScene extends ThreeScene {
 
   // 网格辅助线
   initGrid() {
-    const width = 200 * MAP_SCALE,
+    const width = 200 * OPTS.scale,
       segmentation = 20,
-      size = 1.4 * MAP_SCALE,
+      size = 1.4 * OPTS.scale,
       step = width / segmentation,
       start = -width / 2
     let gd = new THREE.GridHelper(width, segmentation, COLOR.light, COLOR.light)
@@ -455,7 +469,7 @@ export class NewThreeScene extends ThreeScene {
     centerPos.x = x
     centerPos.y = y
     centerPos.z = z
-    this.corrugatedPlate.position.set(x, 0 - 0.1 * MAP_SCALE, z)
+    this.corrugatedPlate.position.set(x, 0 - 0.1 * OPTS.scale, z)
     // 重置场景元素
     this.resetSceneEle()
     // 宽度
@@ -469,9 +483,9 @@ export class NewThreeScene extends ThreeScene {
 
   // 轮廓
   initMapOutLine(mapJson) {
-    const points = getPoints(mapJson, MAP_DEPTH, !true)
-    const outline = createOutline(points, COLOR.outline)
-    outline.scale.setScalar(MAP_SCALE)
+    const points = getPoints(mapJson, OPTS.depth, !true)
+    const outline = createOutline(points)
+    outline.scale.setScalar(OPTS.scale)
     this.outline = outline
     this.addObject(outline)
   }
@@ -503,7 +517,22 @@ export class NewThreeScene extends ThreeScene {
 
   // 飞线
   initFlywire(points) {
+    const name = '飞线集合'
+    // 存在则销毁
+    if (this.scatterGroup) {
+      this.disposeObj(this.flywireGroup)
+    }
     console.log(points)
+    const flywireGroup = new THREE.Group()
+    for (let i = 0; i < points.length; i++) {
+      const { coords, path } = points[i]
+      const mesh = createFlywire(coords, OPTS.scale)
+      mesh.name = path
+      flywireGroup.add(mesh)
+    }
+    flywireGroup.name = name
+    this.flywireGroup = flywireGroup
+    this.addObject(flywireGroup)
   }
 
   // 重置场景元素
@@ -515,8 +544,8 @@ export class NewThreeScene extends ThreeScene {
       .to(
         {
           x: centerPos.x,
-          y: 40 * MAP_SCALE,
-          z: z + 40 * MAP_SCALE
+          y: 40 * OPTS.scale,
+          z: z + 40 * OPTS.scale
         },
         1000
       )
@@ -557,6 +586,11 @@ export class NewThreeScene extends ThreeScene {
     // 旋转光圈
     if (this.innerRingMesh) {
       this.innerRingMesh.rotation.z -= 0.0005
+    }
+
+    // 飞线
+    if (this.flywireGroup) {
+      flywireUpdate()
     }
   }
 
