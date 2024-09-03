@@ -118,6 +118,7 @@ const queryMap = () => {
       }
       show.value = isShow
     })
+    scene?.initFlywire(res.lines)
   })
 }
 

@@ -2,9 +2,9 @@ import { Axios, Api } from '@/config'
 
 // 查询地图配置
 export const getMap = () => {
-  return Axios.get(Api.d3.map).then(list => {
+  return Axios.get(Api.d3.map).then(res => {
     const projects: import('./index').MapPoint[] = []
-    const citys = list.map(item => {
+    const citys = res.list.map(item => {
       const len = item.projects.length
       let city = item.province
       item.projects.forEach(it => {
@@ -29,7 +29,8 @@ export const getMap = () => {
     })
     return {
       citys,
-      projects
+      projects,
+      lines: res.lines
     }
   })
 }

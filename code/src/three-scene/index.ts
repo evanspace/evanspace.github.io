@@ -109,6 +109,10 @@ export default class ThreeScene {
       this.scene.fog = new THREE.Fog(color ?? this.scene.background, near, far)
     }
 
+    // 渲染顺序
+    // 开启后模型可以设置 renderOrder 值，依次渲染
+    renderer.sortObjects = true
+
     // 渲染开启阴影 ！！！！
     renderer.shadowMap.enabled = true
     // THREE.BasicShadowMap 性能很好，但质量很差

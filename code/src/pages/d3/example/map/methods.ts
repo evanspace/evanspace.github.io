@@ -501,6 +501,11 @@ export class NewThreeScene extends ThreeScene {
     this.hoverBack = hoverBack
   }
 
+  // 飞线
+  initFlywire(points) {
+    console.log(points)
+  }
+
   // 重置场景元素
   resetSceneEle() {
     const { x, y, z } = centerPos
