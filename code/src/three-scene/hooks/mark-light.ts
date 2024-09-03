@@ -10,7 +10,7 @@ export declare interface Options {
   color: string | number
 }
 
-export declare type Params = import('../utils').DeepPartial<Options>
+export declare type Params = import('../types/utils').DeepPartial<Options>
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 

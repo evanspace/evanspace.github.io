@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { getMap } from './request'
+import * as request from './request'
 import { NewThreeScene } from './methods'
 
 import { useResize } from '@/three-scene/hooks/resize'
@@ -55,47 +55,29 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   camera: {
     position: [0, 100, 200]
   },
+  fog: {
+    visible: false,
+    near: 2000,
+    far: 3000
+  },
   grid: {
     visible: true
   },
   controls: {
     maxPolarAngle: Math.PI * 0.46,
-    // maxDistance: 20000
+    maxDistance: 5000,
     screenSpacePanning: false
   },
   axes: {
-    visible: true
+    visible: false
   }
 }
 
 let scene: InstanceType<typeof NewThreeScene>
 
 const queryMap = () => {
-  getMap().then(list => {
-    const projects: import('./index').MapPoint[] = []
-    const citys = list.map(item => {
-      const len = item.projects.length
-      let city = item.province
-      item.projects.forEach(it => {
-        projects.push({
-          value: [it.lng, it.lat],
-          name: it.name,
-          carbon: it.carbonEmission,
-          use: it.use,
-          total: len,
-          city: item.province,
-          id: it.id
-        })
-      })
-      const value = item.total
-      return {
-        name: city,
-        code: item.code,
-        total: len,
-        city: item.province,
-        value
-      }
-    })
+  request.getMap().then(res => {
+    const { projects, citys } = res
     scene?.initScatter(projects, (e, position) => {
       let isShow = !!e
       if (isShow) {
@@ -110,6 +92,7 @@ const queryMap = () => {
           total = 0,
           list: ListItem[] = []
         if (isScatter) {
+          console.log(data)
           city = data.city
           title = data.name
           total = data.total

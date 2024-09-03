@@ -52,7 +52,7 @@ const fragmentShader = `
   }
 `
 export const useOutline = () => {
-  const createOutline = (points: number[], color?: string | number) => {
+  const createOutline = (points: number[], color?: string | number): InstanceType<typeof THREE.Points> => {
     const positions = new Float32Array(points)
     const opacityGeometry = new THREE.BufferGeometry()
     // 设置顶点

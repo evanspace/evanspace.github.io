@@ -214,12 +214,12 @@ const createScatter = (longitude: number, latitude: number) => {
   return group
 }
 
-// 创建旋转光圈
-const rotatingApertureTexture = textureLoader.load('/rotating-aperture.png')
-const createRotationAperture = (scene, width) => {
+// 外圈背景
+const outCircleTexture = textureLoader.load('/out-circle.png')
+const createOutRing = (scene, width) => {
   let plane = new THREE.PlaneGeometry(width, width)
   let material = new THREE.MeshBasicMaterial({
-    map: rotatingApertureTexture,
+    map: outCircleTexture,
     transparent: true,
     opacity: 1,
     depthTest: true
@@ -233,12 +233,12 @@ const createRotationAperture = (scene, width) => {
   return mesh
 }
 
-// 创建旋转点
-const rotatingPointTexture = textureLoader.load('/rotating-point2.png')
-const createRotatingPoint = (scene, width) => {
+// 内圈背景
+const innerRingTexture = textureLoader.load('/inner-circle.png')
+const createInnerRing = (scene, width) => {
   let plane = new THREE.PlaneGeometry(width, width)
   let material = new THREE.MeshBasicMaterial({
-    map: rotatingPointTexture,
+    map: innerRingTexture,
     transparent: true,
     opacity: 1,
     depthTest: true
@@ -264,13 +264,13 @@ export class NewThreeScene extends ThreeScene {
   // CSS3D 渲染器
   css3DRender: InstanceType<typeof CSS3DRenderer>
   // 地图轮廓
-  outline?: InstanceType<createOutline>
+  outline?: ReturnType<typeof createOutline>
   // hover 回调
   hoverBack?: (e, position: typeof style) => void
-  // 旋转光圈
-  rotatingApertureMesh?: InstanceType<typeof THREE.Mesh>
-  // 旋转点
-  rotatingPointMesh?: InstanceType<typeof THREE.Mesh>
+  // 外圈背景
+  outRingMesh?: InstanceType<typeof THREE.Mesh>
+  // 内圈背景
+  innerRingMesh?: InstanceType<typeof THREE.Mesh>
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
@@ -374,7 +374,7 @@ export class NewThreeScene extends ThreeScene {
       for (let j = 0; j <= segmentation; j++) {
         const x = start + i * step
         const z = start + j * step
-        const geo = new THREE.PlaneGeometry(size, size / 4)
+        const geo = new THREE.PlaneGeometry(size, size / 5)
         // 边框材质
         const mat = new THREE.MeshLambertMaterial({
           color: COLOR.light,
@@ -461,8 +461,8 @@ export class NewThreeScene extends ThreeScene {
     // 宽度
     const width = size.x < size.y ? size.y + 1 : size.x + 1
     // 添加背景，修饰元素
-    this.rotatingApertureMesh = createRotationAperture(this.scene, width)
-    this.rotatingPointMesh = createRotatingPoint(this.scene, width * 0.9)
+    this.outRingMesh = createOutRing(this.scene, width)
+    this.innerRingMesh = createInnerRing(this.scene, width * 0.9)
 
     this.addObject(mapGroup)
   }
@@ -546,12 +546,12 @@ export class NewThreeScene extends ThreeScene {
     sideTextureMap.offset.y += 0.005
 
     // 旋转光圈
-    if (this.rotatingApertureMesh) {
-      this.rotatingApertureMesh.rotation.z += 0.0005
+    if (this.outRingMesh) {
+      this.outRingMesh.rotation.z += 0.0005
     }
     // 旋转光圈
-    if (this.rotatingPointMesh) {
-      this.rotatingPointMesh.rotation.z -= 0.0005
+    if (this.innerRingMesh) {
+      this.innerRingMesh.rotation.z -= 0.0005
     }
   }
 
