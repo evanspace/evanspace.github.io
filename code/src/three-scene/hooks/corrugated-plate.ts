@@ -37,7 +37,7 @@ const fragmentShader = `
 `
 
 const createGeometry = (range = 500, interval = 5, size = 3) => {
-  const geometrys = [] as any[]
+  const geometrys: InstanceType<typeof THREE.PlaneGeometry>[] = []
   // 间隔，大小
   const len = Math.floor(range / interval)
 

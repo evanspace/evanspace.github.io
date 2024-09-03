@@ -3,12 +3,21 @@
     <div class="h-100" ref="containerRef"></div>
 
     <div :class="$style['dialog-view']" v-if="show" :style="dialog.style">
-      <div :class="$style.title">
-        {{ dialog.extend.name }}
+      <div :class="$style.city" class="flex" v-if="dialog.extend.city">
+        <span :class="$style.name">{{ dialog.extend.city }}</span>
+        <span :class="$style.total">{{ dialog.extend.total }}个项目</span>
       </div>
-
-      <div v-if="dialog.extend.isScatter">数量：{{ dialog.extend.value }}</div>
-      <div v-else>总数：{{ dialog.extend.count }}</div>
+      <div :class="$style.project" class="flex flex-ac" v-if="dialog.extend.title">
+        <img :src="`${base}oss/img/map/pos.png`" alt="" />
+        <span :class="$style.name">{{ dialog.extend.title }}</span>
+      </div>
+      <div :class="$style.count">
+        <div :class="$style.item" v-for="item in dialog.list">
+          <span>{{ item.name }}</span>
+          <span>{{ item.value }}</span>
+          <span>{{ item.unit }}</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -28,7 +37,13 @@ const { show, options: dialog } = useDialog({
     left: '0px',
     top: '0px'
   },
-  extend: {}
+  list: [],
+  extend: {
+    isScatter: false,
+    city: '',
+    title: '',
+    total: 0
+  }
 })
 const { load } = useFileLoader()
 const { transformGeoJSON } = useConvertData()
@@ -45,8 +60,8 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   controls: {
     maxPolarAngle: Math.PI * 0.46,
-    maxDistance: 20000
-    // screenSpacePanning: false
+    // maxDistance: 20000
+    screenSpacePanning: false
   },
   axes: {
     visible: true
@@ -57,7 +72,6 @@ let scene: InstanceType<typeof NewThreeScene>
 
 const queryMap = () => {
   getMap().then(list => {
-    console.log(list)
     const projects: import('./index').MapPoint[] = []
     const citys = list.map(item => {
       const len = item.projects.length
@@ -68,7 +82,7 @@ const queryMap = () => {
           name: it.name,
           carbon: it.carbonEmission,
           use: it.use,
-          count: len,
+          total: len,
           city: item.province,
           id: it.id
         })
@@ -77,7 +91,7 @@ const queryMap = () => {
       return {
         name: city,
         code: item.code,
-        count: len,
+        total: len,
         city: item.province,
         value
       }
@@ -90,18 +104,33 @@ const queryMap = () => {
           dialog.style.top = position.top + 'px'
         }
         const isScatter = e.isScatter
-        dialog.extend.name = e.data.name
-        let value = 0,
-          count = 0
+        const data = e.data
+        let city = '',
+          title = '',
+          total = 0,
+          list: ListItem[] = []
         if (isScatter) {
-          value = e.data.use
+          city = data.city
+          title = data.name
+          total = data.total
+          list = [
+            { name: '今日用电量', value: data.use, unit: 'kWh' },
+            { name: '今日碳排放', value: data.carbon, unit: 'kgCO₂' }
+          ]
         } else {
           const obj = citys.find(it => it.name == e.name)
-          if (!obj) isShow = false
-          count = obj?.count
+          if (obj) {
+            city = obj?.city
+            total = obj?.total
+            list = [{ name: '今日用电量', value: obj?.value, unit: 'kWh' }]
+          } else {
+            isShow = false
+          }
         }
-        dialog.extend.value = value
-        dialog.extend.count = count
+        dialog.list = list
+        dialog.extend.city = city
+        dialog.extend.title = title
+        dialog.extend.total = total
         dialog.extend.isScatter = isScatter
       }
       show.value = isShow

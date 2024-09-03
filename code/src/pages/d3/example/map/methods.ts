@@ -56,10 +56,19 @@ manager.setURLModifier(url => {
 })
 
 //贴图材质加载
-const texture = new THREE.TextureLoader(manager)
-const textureMap = texture.load('/gz-map.jpg')
-const normalTextureMap = texture.load('/gz-map-fx.jpg')
-const sideTextureMap = texture.load('/border.png')
+const textureLoader = new THREE.TextureLoader(manager)
+
+// 中心点
+const centerPos = {
+  x: 105.06,
+  y: 0,
+  z: 32.93
+}
+
+// 创建地图区块
+const textureMap = textureLoader.load('/gz-map.jpg')
+const normalTextureMap = textureLoader.load('/gz-map-fx.jpg')
+const sideTextureMap = textureLoader.load('/border.png')
 
 // 材质属性设置
 textureMap.wrapS = normalTextureMap.wrapS = sideTextureMap.wrapS = THREE.RepeatWrapping
@@ -70,15 +79,6 @@ textureMap.flipY = false
 const scale = 0.0128
 textureMap.repeat.set(scale, scale)
 normalTextureMap.repeat.set(scale, scale)
-
-// 中心点
-const centerPos = {
-  x: 105.06,
-  y: 0,
-  z: 32.93
-}
-
-// 创建地图区块
 const createMapBlock = points => {
   // 绘制二维平面
   const shape = new THREE.Shape(points)
@@ -206,12 +206,50 @@ const createScatter = (longitude: number, latitude: number) => {
   const circleMesh = new THREE.Mesh(circle, circleMat)
 
   // 半球
-  const sphere = new THREE.SphereGeometry(size * 0.9, 32, 32, 0, Math.PI)
+  const sphere = new THREE.SphereGeometry(size * 0.8, 32, 32, 0, Math.PI)
   const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.line2, transparent: true, opacity: 1 })
   const sphereMesh = new THREE.Mesh(sphere, sphereMat)
   group.add(circleMesh, sphereMesh)
   group.position.set(longitude * MAP_SCALE, latitude * MAP_SCALE, MAP_DEPTH * MAP_SCALE * 1.005)
   return group
+}
+
+// 创建旋转光圈
+const rotatingApertureTexture = textureLoader.load('/rotating-aperture.png')
+const createRotationAperture = (scene, width) => {
+  let plane = new THREE.PlaneGeometry(width, width)
+  let material = new THREE.MeshBasicMaterial({
+    map: rotatingApertureTexture,
+    transparent: true,
+    opacity: 1,
+    depthTest: true
+  })
+  let mesh = new THREE.Mesh(plane, material)
+  const { x, z } = centerPos
+  mesh.position.set(x, -1, z)
+  mesh.scale.setScalar(1.2)
+  mesh.rotateX(-Math.PI * 0.5)
+  scene.add(mesh)
+  return mesh
+}
+
+// 创建旋转点
+const rotatingPointTexture = textureLoader.load('/rotating-point2.png')
+const createRotatingPoint = (scene, width) => {
+  let plane = new THREE.PlaneGeometry(width, width)
+  let material = new THREE.MeshBasicMaterial({
+    map: rotatingPointTexture,
+    transparent: true,
+    opacity: 1,
+    depthTest: true
+  })
+  let mesh = new THREE.Mesh(plane, material)
+  const { x, z } = centerPos
+  mesh.position.set(x, -2, z)
+  mesh.scale.setScalar(1.2)
+  mesh.rotateX(-Math.PI * 0.5)
+  scene.add(mesh)
+  return mesh
 }
 
 export class NewThreeScene extends ThreeScene {
@@ -229,6 +267,10 @@ export class NewThreeScene extends ThreeScene {
   outline?: InstanceType<createOutline>
   // hover 回调
   hoverBack?: (e, position: typeof style) => void
+  // 旋转光圈
+  rotatingApertureMesh?: InstanceType<typeof THREE.Mesh>
+  // 旋转点
+  rotatingPointMesh?: InstanceType<typeof THREE.Mesh>
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
@@ -320,9 +362,35 @@ export class NewThreeScene extends ThreeScene {
 
   // 网格辅助线
   initGrid() {
-    let gd = new THREE.GridHelper(200 * MAP_SCALE, 31, COLOR.light, COLOR.light)
+    const width = 200 * MAP_SCALE,
+      segmentation = 20,
+      size = 1.4 * MAP_SCALE,
+      step = width / segmentation,
+      start = -width / 2
+    let gd = new THREE.GridHelper(width, segmentation, COLOR.light, COLOR.light)
     this.grid = gd
-    this.addObject(gd)
+    const group = new THREE.Group()
+    for (let i = 0; i <= segmentation; i++) {
+      for (let j = 0; j <= segmentation; j++) {
+        const x = start + i * step
+        const z = start + j * step
+        const geo = new THREE.PlaneGeometry(size, size / 4)
+        // 边框材质
+        const mat = new THREE.MeshLambertMaterial({
+          color: COLOR.light,
+          transparent: true,
+          opacity: 0.9
+        })
+        const mesh = new THREE.Mesh(geo, mat)
+        mesh.rotateX(-Math.PI * 0.5)
+        mesh.position.set(x, 0, z)
+        const mesh2 = mesh.clone()
+        mesh2.rotateZ(Math.PI * 0.5)
+        group.add(mesh, mesh2)
+      }
+    }
+    group.name = '辅助交点'
+    this.addObject(gd, group)
   }
 
   // 地图
@@ -380,7 +448,7 @@ export class NewThreeScene extends ThreeScene {
     const box = getBoundingBox(mapGroup)
 
     let {
-      // size,
+      size,
       center: { x, y, z }
     } = box
     this.mapGroup = mapGroup
@@ -391,7 +459,10 @@ export class NewThreeScene extends ThreeScene {
     // 重置场景元素
     this.resetSceneEle()
     // 宽度
-    // const width = size.x < size.y ? size.y + 1 : size.x + 1
+    const width = size.x < size.y ? size.y + 1 : size.x + 1
+    // 添加背景，修饰元素
+    this.rotatingApertureMesh = createRotationAperture(this.scene, width)
+    this.rotatingPointMesh = createRotatingPoint(this.scene, width * 0.9)
 
     this.addObject(mapGroup)
   }
@@ -407,8 +478,14 @@ export class NewThreeScene extends ThreeScene {
 
   // 散点
   initScatter(points: import('./index').MapPoint[], hoverBack?: (e, position: typeof style) => void) {
-    console.log(points)
+    const name = '散点集合'
+    // 存在则销毁
+    if (this.scatterGroup) {
+      this.disposeObj(this.scatterGroup)
+    }
     const scatterGroup = new THREE.Group()
+    scatterGroup.name = name
+
     for (let i = 0; i < points.length; i++) {
       const item = points[i]
       const [longitude, latitude] = item.value
@@ -424,6 +501,7 @@ export class NewThreeScene extends ThreeScene {
     this.hoverBack = hoverBack
   }
 
+  // 重置场景元素
   resetSceneEle() {
     const { x, y, z } = centerPos
     // 设置相机对焦位置
@@ -447,6 +525,8 @@ export class NewThreeScene extends ThreeScene {
     // 网格
     if (this.grid) {
       this.grid.position.set(x, 0, z)
+      const group = this.scene.getObjectByName('辅助交点')
+      group.position.set(x, 0, z)
     }
   }
 
@@ -464,6 +544,15 @@ export class NewThreeScene extends ThreeScene {
       this.css3DRender.render(this.scene, this.camera)
     }
     sideTextureMap.offset.y += 0.005
+
+    // 旋转光圈
+    if (this.rotatingApertureMesh) {
+      this.rotatingApertureMesh.rotation.z += 0.0005
+    }
+    // 旋转光圈
+    if (this.rotatingPointMesh) {
+      this.rotatingPointMesh.rotation.z -= 0.0005
+    }
   }
 
   resize() {

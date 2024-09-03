@@ -232,12 +232,8 @@ export default class ThreeScene {
   }
 
   // 添加对象到场景
-  addObject(object: object | object[]) {
-    if (Array.isArray(object)) {
-      this.scene.add(...object)
-    } else {
-      this.scene.add(object)
-    }
+  addObject(...objects: object[]) {
+    this.scene.add(...objects)
   }
 
   // 重置画布大小

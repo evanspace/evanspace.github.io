@@ -10,6 +10,7 @@ export declare interface Options {
   }
   type?: string | number
   extend?: any
+  list?: ListItem[]
 }
 
 export const useDialog = (opts?: Options) => {

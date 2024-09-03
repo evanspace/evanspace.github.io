@@ -4,7 +4,7 @@ export interface MapPoint {
   value: [number, number]
   carbon: number
   use: number
-  count: number
+  total?: number
   city: string
   code?: string
 }

@@ -4,20 +4,63 @@
   position: relative;
 }
 
-.dialog-view {
-  padding: 10px 20px;
-  z-index: 1;
-  position: absolute;
-  font-size: 14px;
-  transform: translate(5px, 5px);
-  background-color: rgba($color: #000000, $alpha: .5);
 
-  .title {
-    font-size: 18px;
-    // -webkit-box-reflect: below 0 -webkit-linear-gradient(right,rgba(0, 0, 0,1) 0%,rgba(0, 0, 0, 0) 100%);
+
+.dialog-view {
+  padding: 16px;
+  position: absolute;
+  transform: translate(5px, 5px);
+  white-space: nowrap;
+  border-radius: 4px;
+  background-color: rgba(9, 24, 89, 1);
+  .city {
+    .name {
+      flex: 1;
+      color: #fff;
+      overflow: hidden;
+      font-size: 16px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+    }
+    .total {
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 12px;
+    }
+  }
+  .project {
+    color: #fff;
+    font-size: 14px;
+    margin-top: 8px;
+    img {
+      width: 10px;
+      height: 14px;
+      margin-right: 8px;
+    }
+    .name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .count {
+    color: rgba(255, 255, 255, 1);
+    font-size: 12px;
+    .item {
+      margin-top: 8px;
+      span {
+        &:nth-child(2),
+        &:nth-child(3) {
+          color: rgba(255, 255, 255, 0.8);
+          margin-left: 8px;
+          font-weight: 700;
+        }
+        &:nth-child(2) {
+          font-size: 16px;
+        }
+      }
+    }
   }
 }
-
 
 :global {
   :local( .page ) {
