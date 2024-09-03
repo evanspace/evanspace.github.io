@@ -81,14 +81,14 @@ export const useMarkLight = (options: Params) => {
       .delay(delay)
       .onUpdate(params => {
         let { scale, opacity } = params
-        mesh.scale.set(scale, scale, scale)
+        mesh.scale.setScalar(scale)
         mesh.material.opacity = opacity
       })
     mesh.tween2 = new TWEEN.Tween({ scale: scale * 1.5, opacity: 1 })
       .to({ scale: scale * 2, opacity: 0 }, 1000)
       .onUpdate(params => {
         let { scale, opacity } = params
-        mesh.scale.set(scale, scale, scale)
+        mesh.scale.setScalar(scale)
         mesh.material.opacity = opacity
       })
     // 第一段动画完成后接第二段

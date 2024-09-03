@@ -65,7 +65,7 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   controls: {
     maxPolarAngle: Math.PI * 0.46,
-    maxDistance: 5000,
+    // maxDistance: 5000,
     screenSpacePanning: false
   },
   axes: {
@@ -92,7 +92,6 @@ const queryMap = () => {
           total = 0,
           list: ListItem[] = []
         if (isScatter) {
-          console.log(data)
           city = data.city
           title = data.name
           total = data.total

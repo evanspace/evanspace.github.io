@@ -85,7 +85,6 @@ const apiFormat = (obj: any, key: any, isFirst: Boolean = false) => {
   })
 }
 apiFormat(Api, null, true)
-console.log(Api)
 
 const install = function (app: any) {
   app.config.globalProperties.$api = Api
