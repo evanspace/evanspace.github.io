@@ -40,7 +40,7 @@ const COLOR = {
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate()
 const { createOutline, update: outlineUpdate } = useOutline({
-  size: 0.3 * OPTS.scale,
+  size: 0.1 * OPTS.scale,
   color: COLOR.outline
 })
 const { getBoundingBox } = useCoord()
@@ -57,7 +57,9 @@ const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
 const { createFlywire, update: flywireUpdate } = useFlywire({
   depth: OPTS.depth,
   color: COLOR.line,
-  color2: COLOR.line2
+  flyColor: COLOR.line2,
+  pointColor: COLOR.line,
+  pointWidth: 2.5 * OPTS.scale
 })
 
 // 加载管理器
@@ -341,7 +343,7 @@ export class NewThreeScene extends ThreeScene {
     }
   }
 
-  // 查找父级身份组合
+  // 查找父级省份组合
   findParentProvinceGroupGroupUuid(object) {
     const _find = obj => {
       let parent = obj.parent
@@ -522,7 +524,7 @@ export class NewThreeScene extends ThreeScene {
     if (this.scatterGroup) {
       this.disposeObj(this.flywireGroup)
     }
-    console.log(points)
+
     const flywireGroup = new THREE.Group()
     for (let i = 0; i < points.length; i++) {
       const { coords, path } = points[i]

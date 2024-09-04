@@ -51,7 +51,7 @@ export const useMarkLight = (options: Params) => {
     mesh.name = '底部光点'
     // 缩放
     const scale = 0.3 * _options.scaleFactor
-    mesh.scale.set(scale, scale, scale)
+    mesh.scale.setScalar(scale)
     return mesh
   }
 
@@ -72,7 +72,8 @@ export const useMarkLight = (options: Params) => {
     mesh.name = 'createLightHalo'
     // 缩放
     const scale = 0.5 * _options.scaleFactor
-    mesh.scale.set(scale, scale, scale)
+    mesh.scale.setScalar(scale)
+
     // 动画延迟时间
     const delay = random(0, 2000)
     // 动画：透明度缩放动画

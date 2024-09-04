@@ -5,63 +5,22 @@ export declare interface Options {
   size: number
   color: string | number
   range: number
+  factor: number
 }
 
 export declare type Params = import('../types/utils').DeepPartial<Options>
 
-const vertexShader = `
-  attribute float aOpacity;
-  uniform float uSize;
-
-  attribute float aIndex;
-  varying vec3 vp;
-  varying float vertexIndex;
-
-  void main(){
-    gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);
-    gl_PointSize = uSize;
-
-    vp = position;
-    vertexIndex = aIndex;
-  }
-`
-
-const fragmentShader = `
-  varying float vertexIndex;
-  uniform vec3 uColor;
-  uniform float uIndex;
-  uniform float uRange;
-
-  float invert(float n){
-    return 1.-n;
-  }
-
-  void main(){
-    float uOpacity = 1.0;
-    if(vertexIndex <= uIndex || vertexIndex >= (uRange + uIndex)){
-        discard;
-    }
-    uOpacity = (vertexIndex - uIndex)/uRange;
-    if ( uOpacity < 0.2) {
-      discard;
-    }
-    vec2 uv=vec2(gl_PointCoord.x,invert(gl_PointCoord.y));
-    vec2 cUv=2.*uv-1.;
-    vec4 color=vec4(1./length(cUv));
-    color*=uOpacity;
-    color.rgb*=uColor;
-    gl_FragColor=color;
-  }
-`
 export const useOutline = (options: Params = {}) => {
   // 默认参数
   const _options: Options = deepMerge(
     {
       // 粒子大小
-      size: 4,
+      size: 1,
       color: 0xf57170,
       // 动画范围
-      range: 500
+      range: 500,
+      // 流动系数
+      factor: 1
     },
     options
   )
@@ -75,8 +34,49 @@ export const useOutline = (options: Params = {}) => {
     opacityGeometry.setAttribute('aIndex', new THREE.BufferAttribute(vertexIndexs, 1))
 
     const mat = new THREE.ShaderMaterial({
-      vertexShader: vertexShader,
-      fragmentShader: fragmentShader,
+      vertexShader: `
+        attribute float aOpacity;
+        uniform float uSize;
+
+        attribute float aIndex;
+        varying vec3 vp;
+        varying float vertexIndex;
+
+        void main(){
+          gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);
+          gl_PointSize = uSize;
+
+          vp = position;
+          vertexIndex = aIndex;
+        }
+      `,
+      fragmentShader: `
+        varying float vertexIndex;
+        uniform vec3 uColor;
+        uniform float uIndex;
+        uniform float uRange;
+
+        float invert(float n){
+          return 1.-n;
+        }
+
+        void main(){
+          float uOpacity = 1.0;
+          if(vertexIndex <= uIndex || vertexIndex >= (uRange + uIndex)){
+              discard;
+          }
+          uOpacity = (vertexIndex - uIndex)/uRange;
+          if ( uOpacity < 0.2) {
+            discard;
+          }
+          vec2 uv=vec2(gl_PointCoord.x,invert(gl_PointCoord.y));
+          vec2 cUv=2.*uv-1.;
+          vec4 color=vec4(1./length(cUv));
+          color*=uOpacity;
+          color.rgb*=uColor;
+          gl_FragColor=color;
+        }
+      `,
       transparent: true, // 设置透明
       depthTest: true,
       uniforms: {
@@ -84,7 +84,7 @@ export const useOutline = (options: Params = {}) => {
           value: _options.size
         },
         uIndex: { value: 0 },
-        uTotal: { value: vertexIndexs.length },
+        uLength: { value: vertexIndexs.length },
         uRange: { value: _options.range },
         uColor: {
           value: new THREE.Color(_options.color)
@@ -98,9 +98,9 @@ export const useOutline = (options: Params = {}) => {
 
   const update = mesh => {
     const mat = mesh.material
-    const uTotal = mat.uniforms.uTotal.value
-    mat.uniforms.uIndex.value += 8
-    if (mat.uniforms.uIndex.value >= uTotal) {
+    const uLength = mat.uniforms.uLength.value
+    mat.uniforms.uIndex.value += 4 * _options.factor
+    if (mat.uniforms.uIndex.value >= uLength) {
       mat.uniforms.uIndex.value = 0
     }
   }

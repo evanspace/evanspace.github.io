@@ -65,8 +65,8 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   controls: {
     maxPolarAngle: Math.PI * 0.46,
-    maxDistance: 5000,
-    // screenSpacePanning: false
+    // maxDistance: 5000,
+    screenSpacePanning: false
   },
   axes: {
     visible: false
