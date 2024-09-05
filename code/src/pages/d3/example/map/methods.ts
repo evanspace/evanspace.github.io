@@ -11,6 +11,8 @@ import { useCSS3D, CSS3DRenderer } from '@/three-scene/hooks/css3d'
 import { useMarkLight } from '@/three-scene/hooks/mark-light'
 import { useRaycaster } from '@/three-scene/hooks/raycaster'
 import { useFlywire } from '@/three-scene/hooks/flywire'
+import { useMapBar } from '@/three-scene/hooks/map-bar'
+import data from '@/config/mock/echarts/data'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const OPTS = {
@@ -59,7 +61,12 @@ const { createFlywire, update: flywireUpdate } = useFlywire({
   color: COLOR.line,
   flyColor: COLOR.line2,
   pointColor: COLOR.line,
+  height: 4,
   pointWidth: 2.5 * OPTS.scale
+})
+const { createBar } = useMapBar({
+  height: 5 * OPTS.scale,
+  size: 0.2 * OPTS.scale
 })
 
 // 加载管理器
@@ -157,7 +164,7 @@ const createCSS3Dlabel = (properties, scene) => {
     // onClick: e => {console.log(e)}
   })
   label.rotateX(Math.PI * 0.5)
-  label.name = properties.name
+  label.name = properties.name + '_CSS3D_label'
   label.isLabel = true
   scene.add(label)
 }
@@ -486,6 +493,41 @@ export class NewThreeScene extends ThreeScene {
     this.addObject(mapGroup)
   }
 
+  // 柱状
+  initMapBar(citys) {
+    console.log(citys)
+    // 清除柱状
+    if (!this.mapGroup) return
+    this.clearMapBar()
+    // 找对大
+    const max = Math.max(...citys.map(it => it.total))
+    console.log(max)
+    for (let i = 0; i < citys.length; i++) {
+      const { name, value, total } = citys[i]
+      const el = this.mapGroup.getObjectByName(name)
+      if (!el) {
+        console.log(name, el)
+      } else {
+        const factor = total / max
+        const { centroid, center } = el.data
+        const pos = centroid || center
+        const bar = createBar({
+          position: [pos[0] * OPTS.scale, pos[1] * OPTS.scale, OPTS.depth * OPTS.scale],
+          factor
+        })
+        el.add(bar)
+      }
+    }
+  }
+
+  clearMapBar() {
+    this.mapGroup.traverse(el => {
+      if (el.isBar) {
+        this.disposeObj(el)
+      }
+    })
+  }
+
   // 轮廓
   initMapOutLine(mapJson) {
     // 存在则销毁
@@ -530,8 +572,8 @@ export class NewThreeScene extends ThreeScene {
   initFlywire(points) {
     const name = '飞线集合'
     // 存在则销毁
-    if (this.scatterGroup) {
-      this.scatterGroup = null
+    if (this.flywireGroup) {
+      this.flywireGroup = null
       this.disposeObj(this.flywireGroup)
     }
 

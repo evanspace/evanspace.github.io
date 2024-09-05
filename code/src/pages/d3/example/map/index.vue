@@ -76,9 +76,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
     visible: true
   },
   controls: {
-    maxPolarAngle: Math.PI * 0.46,
-    // maxDistance: 5000,
-    screenSpacePanning: false
+    // maxPolarAngle: Math.PI * 0.46,
+    maxDistance: 5000
+    // screenSpacePanning: false
   },
   axes: {
     visible: false
@@ -129,6 +129,7 @@ const queryMap = () => {
       }
       show.value = isShow
     })
+    scene?.initMapBar(citys)
     scene?.initFlywire(res.lines)
   })
 }
@@ -142,6 +143,7 @@ onMounted(() => {
   load(`${base}/oss/map/china.json`).then(res => {
     // load(`${base}/oss/map/广东省.json`).then(res => {
     scene.initMap(transformGeoJSON(res))
+    queryMap()
   })
 
   // 轮廓
@@ -149,7 +151,6 @@ onMounted(() => {
     scene.initMapOutLine(transformGeoJSON(res))
   })
   console.log(NewThreeScene.total)
-  queryMap()
   useResize(scene).resize()
 })
 </script>

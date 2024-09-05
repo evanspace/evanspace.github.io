@@ -100,6 +100,7 @@ export const useCorrugatedPlate = () => {
     })
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = '波纹板'
+    mesh.renderOrder = 0
     return mesh
   }
 
