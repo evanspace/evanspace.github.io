@@ -4,6 +4,10 @@ export default {
   height: window.innerHeight,
   // 背景
   bgColor: null,
+  // 背景图
+  bgUrl: null,
+  // 环境
+  env: null,
   // 缩放(父元素缩放)
   scale: 1,
   // 雾

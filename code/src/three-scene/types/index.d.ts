@@ -59,6 +59,8 @@ export declare interface Options {
   height: number
   scale: number
   bgColor: number | string
+  bgUrl: string | string[]
+  env: string
   fog: Fog
 
   lightHelperVisible: boolean

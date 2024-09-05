@@ -51,7 +51,19 @@ const { transformGeoJSON } = useConvertData()
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const containerRef = ref()
 
+// const path = '/oss/img/sky'
+// const skyCode = 216
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {
+  // bgUrl: [
+  //   `${base}${path}/${skyCode}/posX.jpeg`,
+  //   `${base}${path}/${skyCode}/negX.jpeg`,
+  //   `${base}${path}/${skyCode}/posY.jpeg`,
+  //   `${base}${path}/${skyCode}/negY.jpeg`,
+  //   `${base}${path}/${skyCode}/posZ.jpeg`,
+  //   `${base}${path}/${skyCode}/negZ.jpeg`
+  // ],
+  // bgUrl: `${base}/oss/img/map/earth.jpg`,
+  // env: `${base}/oss/textures/hdr/skidpan_2k.hdr`,
   camera: {
     position: [0, 100, 200]
   },

@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
 import { deepMerge, isDOM } from './utils'
 import defOptions from './options'
@@ -88,7 +89,7 @@ export default class ThreeScene {
 
   // 渲染器
   initRenderer() {
-    const { width, height, bgColor } = this.options
+    const { width, height, bgColor, bgUrl, env } = this.options
     // 创建渲染对象
     const renderer = new THREE.WebGLRenderer({
       // 是否开启反锯齿，设置为true开启反锯齿
@@ -101,8 +102,17 @@ export default class ThreeScene {
     })
     // renderer.setClearAlpha( 0 )
 
-    // 背景色
-    this.setBgColor(bgColor)
+    // 环境
+    if (env) {
+      this.setEnvironment(env)
+    }
+
+    // 背景
+    if (bgUrl) {
+      this.setBgTexture(bgUrl)
+    } else {
+      this.setBgColor(bgColor)
+    }
 
     if (this.options.fog.visible) {
       const { color, near, far } = this.options.fog
@@ -215,7 +225,7 @@ export default class ThreeScene {
     if (!grid.visible) return
     const { width, divisions, centerLineColor, gridColor, opacity, transparent } = grid
     // 网格宽度、等分数、中心线颜色、网格颜色
-    let gd = new THREE.GridHelper(width, divisions, centerLineColor, gridColor)
+    const gd = new THREE.GridHelper(width, divisions, centerLineColor, gridColor)
     gd.material.opacity = opacity
     gd.material.transparent = transparent
     this.grid = gd
@@ -226,11 +236,33 @@ export default class ThreeScene {
   initAxes() {
     if (!this.options.axes.visible) return
     // 辅助坐标器
-    let axesHelper = new THREE.AxesHelper(this.options.axes.size)
+    const axesHelper = new THREE.AxesHelper(this.options.axes.size)
     this.addObject(axesHelper)
   }
 
-  // 设置背景
+  // 设置环境
+  setEnvironment(env) {
+    new RGBELoader().load(env, texture => {
+      texture.mapping = THREE.EquirectangularReflectionMapping
+      // 将加载的材质texture设置给背景和环境
+      this.scene.environment = texture
+    })
+  }
+
+  // 设置背景图
+  setBgTexture(bgUrl) {
+    if (Array.isArray(bgUrl)) {
+      const loader = new THREE.CubeTextureLoader()
+      const env = loader.load(bgUrl)
+      console.log(env)
+      // 设置背景
+      this.scene.background = env
+    } else {
+      this.scene.background = new THREE.TextureLoader().load(bgUrl)
+    }
+  }
+
+  // 设置背景色
   setBgColor(color: number | string) {
     this.scene.background = color ? new THREE.Color(color) : null
   }
