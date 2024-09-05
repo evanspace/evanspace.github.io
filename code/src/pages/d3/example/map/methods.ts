@@ -497,14 +497,14 @@ export class NewThreeScene extends ThreeScene {
     if (!this.mapGroup) return
     this.clearMapBar()
     // 找对大
-    const max = Math.max(...citys.map(it => it.total))
+    const max = Math.max(...citys.map(it => it.value))
     for (let i = 0; i < citys.length; i++) {
-      const { name, total } = citys[i]
+      const { name, value } = citys[i]
       const el = this.mapGroup.getObjectByName(name)
       if (!el) {
         console.log(name, el)
       } else {
-        const factor = total / max
+        const factor = value / max
         const { centroid, center } = el.data
         const pos = centroid || center
         const bar = createBar({
