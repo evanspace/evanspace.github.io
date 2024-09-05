@@ -325,7 +325,9 @@ export class NewThreeScene extends ThreeScene {
       // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
       raycaster.setFromCamera(pointer, this.camera)
       // 检查射线和物体之间的交叉点（包含或不包含后代）
-      const interscts = raycaster.intersectObjects([this.mapGroup, this.scatterGroup])
+      const objects = [this.mapGroup]
+      if (this.scatterGroup) objects.push(this.scatterGroup)
+      const interscts = raycaster.intersectObjects(objects)
       this.container.style.cursor = interscts.length ? 'pointer' : 'auto'
       if (interscts.length > 0) {
         const object = interscts[0].object
@@ -415,6 +417,7 @@ export class NewThreeScene extends ThreeScene {
     const name = '地图'
     // 存在则销毁
     if (this.mapGroup) {
+      this.mapGroup = null
       this.disposeObj(this.mapGroup)
     }
 
@@ -485,6 +488,11 @@ export class NewThreeScene extends ThreeScene {
 
   // 轮廓
   initMapOutLine(mapJson) {
+    // 存在则销毁
+    if (this.outline) {
+      this.outline = null
+      this.disposeObj(this.outline)
+    }
     const points = getPoints(mapJson, OPTS.depth, !true)
     const outline = createOutline(points)
     outline.scale.setScalar(OPTS.scale)
@@ -497,6 +505,7 @@ export class NewThreeScene extends ThreeScene {
     const name = '散点集合'
     // 存在则销毁
     if (this.scatterGroup) {
+      this.scatterGroup = null
       this.disposeObj(this.scatterGroup)
     }
     const scatterGroup = new THREE.Group()
@@ -522,6 +531,7 @@ export class NewThreeScene extends ThreeScene {
     const name = '飞线集合'
     // 存在则销毁
     if (this.scatterGroup) {
+      this.scatterGroup = null
       this.disposeObj(this.flywireGroup)
     }
 
