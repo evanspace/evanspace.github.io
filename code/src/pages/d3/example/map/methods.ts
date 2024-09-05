@@ -12,7 +12,6 @@ import { useMarkLight } from '@/three-scene/hooks/mark-light'
 import { useRaycaster } from '@/three-scene/hooks/raycaster'
 import { useFlywire } from '@/three-scene/hooks/flywire'
 import { useMapBar } from '@/three-scene/hooks/map-bar'
-import data from '@/config/mock/echarts/data'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const OPTS = {
@@ -420,7 +419,6 @@ export class NewThreeScene extends ThreeScene {
 
   // 地图
   initMap(mapJson) {
-    console.log(mapJson)
     const name = '地图'
     // 存在则销毁
     if (this.mapGroup) {
@@ -495,13 +493,11 @@ export class NewThreeScene extends ThreeScene {
 
   // 柱状
   initMapBar(citys) {
-    console.log(citys)
     // 清除柱状
     if (!this.mapGroup) return
     this.clearMapBar()
     // 找对大
     const max = Math.max(...citys.map(it => it.total))
-    console.log(max)
     for (let i = 0; i < citys.length; i++) {
       const { name, total } = citys[i]
       const el = this.mapGroup.getObjectByName(name)
