@@ -503,7 +503,7 @@ export class NewThreeScene extends ThreeScene {
     const max = Math.max(...citys.map(it => it.total))
     console.log(max)
     for (let i = 0; i < citys.length; i++) {
-      const { name, value, total } = citys[i]
+      const { name, total } = citys[i]
       const el = this.mapGroup.getObjectByName(name)
       if (!el) {
         console.log(name, el)
