@@ -27,16 +27,15 @@ const COLOR = {
   // 主色（地图面）
   main: 0x338ad7,
   mainHover: 0x92ffff,
-  // 浅色
+  // 浅色（波纹板、）
   light: 0x003e79,
   lightHover: 0x92ffff,
-  // 线条
+  // 线条(地图区块上下线条)
   line: 0xb4eafc,
   line2: 0x61fbfd,
   // 轮廓线
   outline: 0xb4eafc,
-  // outline: 0xf00f00,
-  // mark 颜色
+  // mark 颜色(光柱)
   markColor: 0x338ad7
 }
 
