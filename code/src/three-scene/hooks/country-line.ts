@@ -12,7 +12,9 @@ export const useCountryLine = () => {
     lineType: 'Line' | 'LineLoop' | 'LineSegments' | 'Line2' = 'LineLoop'
   ) => {
     let materialOpt = {
-      color: 0x00ffff
+      color: 0x00ffff,
+      linewidth: 1,
+      depthTest: false
     }
     materialOpt = deepMerge(materialOpt, materialOptions)
     let material = new THREE.LineBasicMaterial(materialOpt)

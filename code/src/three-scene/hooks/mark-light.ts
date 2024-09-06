@@ -6,7 +6,7 @@ export declare interface Options {
   pointTextureUrl: string
   circleTextureUrl: string
   lightTextureUrl: string
-  scaleFactor: number
+  factor: number
   color: string | number
 }
 
@@ -25,8 +25,8 @@ export const useMarkLight = (options: Params) => {
       circleTextureUrl: `${base}/oss/textures/map/circle.png`,
       // 光柱的URL
       lightTextureUrl: `${base}/oss/textures/map/light.png`,
-      // 缩放系数，用来调整标记点和光圈的缩放大小
-      scaleFactor: 1,
+      // 系数
+      factor: 1,
       color: 0x00ffff
     },
     options
@@ -47,10 +47,10 @@ export const useMarkLight = (options: Params) => {
       depthWrite: false //禁止写入深度缓冲区数据
     })
     let mesh = new THREE.Mesh(geometry, material)
-    mesh.renderOrder = 97
+    mesh.renderOrder = 1
     mesh.name = '底部光点'
     // 缩放
-    const scale = 0.3 * _options.scaleFactor
+    const scale = 0.3 * _options.factor
     mesh.scale.setScalar(scale)
     return mesh
   }
@@ -68,10 +68,10 @@ export const useMarkLight = (options: Params) => {
       depthWrite: false //禁止写入深度缓冲区数据
     })
     let mesh = new THREE.Mesh(geometry, material)
-    mesh.renderOrder = 98
+    mesh.renderOrder = 2
     mesh.name = 'createLightHalo'
     // 缩放
-    const scale = 0.5 * _options.scaleFactor
+    const scale = 0.5 * _options.factor
     mesh.scale.setScalar(scale)
 
     // 动画延迟时间
@@ -101,7 +101,7 @@ export const useMarkLight = (options: Params) => {
   }
 
   // 创建光柱
-  const createMarkLight = (longitude: number, latitude: number, height: number) => {
+  const createMarkLight = (position = [0, 0, 0], height = 10) => {
     const group = new THREE.Group()
     // 柱体的geo,6.19=柱体图片高度/宽度的倍数
     const geometry = new THREE.PlaneGeometry(height / 6.219, height)
@@ -122,7 +122,7 @@ export const useMarkLight = (options: Params) => {
     light01.rotateX(Math.PI)
     light01.position.z = height
     // 渲染顺序
-    light01.renderOrder = 99
+    light01.renderOrder = 3
     light01.name = '光柱 01'
     // 光柱02：复制光柱01
     let light02 = light01.clone()
@@ -137,7 +137,7 @@ export const useMarkLight = (options: Params) => {
 
     // 将光柱和标点添加到组里
     group.add(light01, light02, bottomPoint, circleLight)
-    group.position.set(longitude, latitude, 0)
+    group.position.set(...position)
     group.rotateX(Math.PI * 0.5)
     group.name = '光柱标记'
     return group

@@ -1,16 +1,44 @@
 import * as THREE from 'three'
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
-export declare interface CorrugatedPlateOptions {
-  range?: number
-  interval?: number
-  size?: number
-  color?: string | number
-  light?: string | number
+import { deepMerge } from '../utils'
+
+export declare interface Options {
+  range: number
+  interval: number
+  size: number
+  color: string | number
+  light: string | number
+  factor: number
 }
 
-export const useCorrugatedPlate = () => {
-  const createGeometry = (range = 500, interval = 5, size = 3) => {
+export declare type Params = import('../types/utils').DeepPartial<Options>
+
+export const useCorrugatedPlate = (options: Params = {}) => {
+  // 默认参数
+  const _options: Options = deepMerge(
+    {
+      // 范围
+      range: 100,
+      // 间隔
+      interval: 0.8,
+      // 单个平面大小
+      size: 0.2,
+      // 颜色
+      color: 0x00b8a9,
+      // 浅色
+      light: 0x0d7377,
+      // 系数
+      factor: 1
+    },
+    options
+  )
+
+  const createGeometry = () => {
+    let { range, interval, size, factor } = _options
+    range *= factor
+    interval *= factor
+    size *= factor
     const geometrys: InstanceType<typeof THREE.PlaneGeometry>[] = []
     // 间隔，大小
     const len = Math.floor(range / interval)
@@ -42,19 +70,20 @@ export const useCorrugatedPlate = () => {
     return geometrys
   }
 
-  const createCorrugatedPlate = (options: CorrugatedPlateOptions) => {
-    const { range = 500, interval, size, color = 0x00b8a9, light = 0x0d7377 } = options
-    const geometrys = createGeometry(range, interval, size)
+  const createCorrugatedPlate = () => {
+    let { range, color, light, factor } = _options
+    range *= factor
+    const geometrys = createGeometry()
     // 合并几何图形
     const geometry = BufferGeometryUtils.mergeGeometries(geometrys)
     const material = new THREE.ShaderMaterial({
       //  着色器代码 变量
       uniforms: {
-        color: { value: new THREE.Color(light) },
-        tcolor: { value: new THREE.Color(color) },
-        radius: { value: 1.25 },
-        length: { value: range / 10 }, // 扫过区域(宽度)
-        range: { value: range } // 扫过最大范围
+        uColor: { value: new THREE.Color(light) },
+        uTcolor: { value: new THREE.Color(color) },
+        uRadius: { value: 1.25 },
+        uLength: { value: range / 10 }, // 扫过区域(宽度)
+        uRange: { value: range } // 扫过最大范围
       },
       // 顶点着色器
       vertexShader: `
@@ -67,51 +96,49 @@ export const useCorrugatedPlate = () => {
       // 片元着色器
       fragmentShader: `
         varying vec3 vp;
-        uniform vec3 color;
-        uniform vec3 tcolor;
-        uniform float radius;
-        uniform float length;
-        uniform float range;
+        uniform vec3 uColor;
+        uniform vec3 uTcolor;
+        uniform float uRadius;
+        uniform float uLength;
         float getLeng(float x, float y){
           return  sqrt((x-0.0)*(x-0.0)+(y-0.0)*(y-0.0));
         }
         void main(){
           float uOpacity = 0.8;
-          vec3 vColor = color;
-          float uLength = getLeng(vp.x,vp.z);
-          if ( uLength <= radius && uLength > radius - length ) {
-            float op = sin( (radius - uLength) / length ) ;
+          vec3 vColor = uColor;
+          float length = getLeng(vp.x,vp.z);
+          if ( length <= uRadius && length > uRadius - uLength ) {
+            float op = sin( (uRadius - length) / uLength ) ;
             uOpacity = op;
             if ( vp.y < 0.0 ) {
-              vColor = color * op;
+              vColor = uColor * op;
             } else {
-              vColor = tcolor;
+              vColor = uTcolor;
             };
-            vColor = tcolor;
+            vColor = uTcolor;
           }
           gl_FragColor = vec4(vColor,uOpacity);
         }
       `,
       transparent: true,
       // 深度写入
-      depthWrite: true,
-      // depthTest: true,
+      depthWrite: false,
+      // depthTest: false,
       side: THREE.DoubleSide
     })
     const mesh = new THREE.Mesh(geometry, material)
     mesh.name = '波纹板'
-    mesh.renderOrder = 0
     return mesh
   }
 
   const update = (mesh, dalte) => {
     const mat = mesh.material
     // 扩散波半径
-    const range = mat.uniforms.range.value
-    const length = mat.uniforms.length.value
-    mat.uniforms.radius.value += dalte * (range / 4)
-    if (mat.uniforms.radius.value >= range + length) {
-      mat.uniforms.radius.value = 0
+    const range = mat.uniforms.uRange.value
+    const length = mat.uniforms.uLength.value
+    mat.uniforms.uRadius.value += dalte * (range / 4)
+    if (mat.uniforms.uRadius.value >= range + length) {
+      mat.uniforms.uRadius.value = 0
     }
   }
 

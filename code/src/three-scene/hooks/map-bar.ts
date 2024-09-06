@@ -1,6 +1,9 @@
 import * as THREE from 'three'
+import { useCSS3D } from './css3d'
 
 import { deepMerge } from '../utils'
+
+const { createCSS3DDom } = useCSS3D()
 
 export declare interface Options {
   height: number
@@ -31,14 +34,22 @@ export const useMapBar = (options: Params = {}) => {
 
   const createBar = (
     opts: {
-      factor?: number
+      heightRatio?: number
       position?: number[]
+      label?: {
+        name?: string
+        className?: string
+        onClick?: (e: Event) => void
+      }
     } = {}
   ) => {
     let { size, height, factor, color1, color2 } = _options
-    factor = opts.factor ?? factor
-    height = height * factor
+    size *= factor
+    height *= factor
+    height = height * (opts.heightRatio ?? factor)
     const [x, y, z] = opts.position || [0, 0, 0]
+
+    const group = new THREE.Group()
 
     // 创建柱状图几何体
     const geo = new THREE.BoxGeometry(size, size, height)
@@ -48,11 +59,11 @@ export const useMapBar = (options: Params = {}) => {
       depthTest: false,
       // side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.6,
       vertexColors: false,
       uniforms: {
         uColor1: { value: new THREE.Color(color1) },
-        uColor2: { value: new THREE.Color(color2) }
+        uColor2: { value: new THREE.Color(color2) },
+        uOpacity: { value: 0.6 }
       },
       vertexShader: `
         varying vec3 vColor;
@@ -66,17 +77,32 @@ export const useMapBar = (options: Params = {}) => {
       `,
       fragmentShader: `
         varying vec3 vColor;
+        uniform float uOpacity;
         void main() {
-          gl_FragColor = vec4(vColor, 1.0);
+          gl_FragColor = vec4(vColor, uOpacity);
         }
       `
     })
 
     // 创建柱状图网格
     const barMesh = new THREE.Mesh(geo, mat)
-    barMesh.position.set(x, y, z + height / 2)
-    barMesh.renderOrder = 99
-    return barMesh
+    group.add(barMesh)
+    group.name = '柱状图'
+    group.position.set(x, y, z + height / 2)
+    group.renderOrder = 99
+
+    if (opts.label) {
+      const { name = '', className = '', onClick } = opts.label
+      const label = createCSS3DDom({
+        name,
+        className,
+        position: [0, 0, height / 2],
+        onClick
+      })
+      label.rotateX(Math.PI * 0.5)
+      group.add(label)
+    }
+    return group
   }
 
   return {

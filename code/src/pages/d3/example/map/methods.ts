@@ -12,6 +12,7 @@ import { useMarkLight } from '@/three-scene/hooks/mark-light'
 import { useRaycaster } from '@/three-scene/hooks/raycaster'
 import { useFlywire } from '@/three-scene/hooks/flywire'
 import { useMapBar } from '@/three-scene/hooks/map-bar'
+import { numConverter } from '@/common/utils/reckon'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const OPTS = {
@@ -23,25 +24,29 @@ const OPTS = {
 
 // 全局颜色
 const COLOR = {
-  // 主色
-  main: 0x71ade2,
+  // 主色（地图面）
+  main: 0x338ad7,
   mainHover: 0x92ffff,
   // 浅色
-  light: 0x757882,
+  light: 0x003e79,
   lightHover: 0x92ffff,
   // 线条
-  line: 0xa4e0f7,
+  line: 0xb4eafc,
   line2: 0x61fbfd,
   // 轮廓线
   outline: 0xb4eafc,
   // outline: 0xf00f00,
   // mark 颜色
-  markColor: 0x71ade2
+  markColor: 0x338ad7
 }
 
-const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate()
+const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate({
+  factor: OPTS.scale,
+  color: COLOR.main,
+  light: COLOR.light
+})
 const { createOutline, update: outlineUpdate } = useOutline({
-  size: 0.1 * OPTS.scale,
+  factor: OPTS.scale,
   color: COLOR.outline
 })
 const { getBoundingBox } = useCoord()
@@ -51,7 +56,7 @@ const { createMarkLight } = useMarkLight({
   pointTextureUrl: `${base}/oss/textures/map/point.png`,
   circleTextureUrl: `${base}/oss/textures/map/circle.png`,
   lightTextureUrl: `${base}/oss/textures/map/light.png`,
-  scaleFactor: OPTS.scale,
+  factor: OPTS.scale,
   color: COLOR.markColor
 })
 const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
@@ -60,12 +65,12 @@ const { createFlywire, update: flywireUpdate } = useFlywire({
   color: COLOR.line,
   flyColor: COLOR.line2,
   pointColor: COLOR.line,
-  height: 4,
-  pointWidth: 2.5 * OPTS.scale
+  factor: OPTS.scale
 })
 const { createBar } = useMapBar({
-  height: 5 * OPTS.scale,
-  size: 0.2 * OPTS.scale
+  height: 5,
+  size: 0.2,
+  factor: OPTS.scale
 })
 
 // 加载管理器
@@ -122,8 +127,8 @@ const createMapBlock = points => {
 
   // 表面材质
   const material = new THREE.MeshPhongMaterial({
-    map: textureMap,
     color: COLOR.main,
+    map: textureMap,
     normalMap: normalTextureMap,
     // 颜色与贴图结合方式
     // MeshLambertMaterial 和 MeshPhongMaterial 当中。
@@ -143,6 +148,7 @@ const createMapBlock = points => {
   })
   const mesh = new THREE.Mesh(geometry, [material, sideMaterial])
   mesh.scale.setScalar(OPTS.scale)
+  mesh.name = '地图拼块'
   return mesh
 }
 
@@ -179,8 +185,10 @@ const createMarkLightPoint = (properties, screen) => {
   // 创建光柱
   const height = 1 + random(5, 10) / 4
   const [lon, lat] = properties.centroid || properties.center
-  const light = createMarkLight(lon * OPTS.scale, lat * OPTS.scale, height * OPTS.scale)
-  light.position.z = OPTS.depth * OPTS.scale * 1.01
+  const light = createMarkLight(
+    [lon, lat, OPTS.depth * 1.01].map(t => t * OPTS.scale),
+    height * OPTS.scale
+  )
   light.rotateX(-Math.PI / 2)
   screen.add(light)
 }
@@ -191,9 +199,7 @@ const createBorderLine = (mapJson, scene) => {
     mapJson,
     {
       color: COLOR.line,
-      linewidth: 1,
-      transparent: true,
-      depthTest: false
+      transparent: true
     },
     'Line2'
   )
@@ -202,13 +208,10 @@ const createBorderLine = (mapJson, scene) => {
   let lineBottom = createCountryFlatLine(
     mapJson,
     {
-      color: COLOR.line2,
-      linewidth: 1,
-      depthTest: false
+      color: COLOR.line2
     },
     'Line2'
   )
-  // lineBottom.position.y -= 0.15 * OPTS.scale
   lineBottom.name = '地图下边框'
   lineTop.scale.setScalar(OPTS.scale)
   lineBottom.scale.setScalar(OPTS.scale)
@@ -305,13 +308,8 @@ export class NewThreeScene extends ThreeScene {
   // 添加模型
   addModel() {
     // 波纹板
-    const cpMh = createCorrugatedPlate({
-      range: 100 * OPTS.scale,
-      interval: 0.8 * OPTS.scale,
-      size: 0.2 * OPTS.scale,
-      color: COLOR.main,
-      light: COLOR.light
-    })
+    const cpMh = createCorrugatedPlate()
+    cpMh.renderOrder = 0
     this.corrugatedPlate = cpMh
     this.addObject(cpMh)
   }
@@ -497,20 +495,34 @@ export class NewThreeScene extends ThreeScene {
     if (!this.mapGroup) return
     this.clearMapBar()
     // 找对大
-    const max = Math.max(...citys.map(it => it.value))
+    const max = Math.max(...citys.map(it => it.use))
     for (let i = 0; i < citys.length; i++) {
-      const { name, value } = citys[i]
+      const { name, use } = citys[i]
       const el = this.mapGroup.getObjectByName(name)
       if (!el) {
         console.log(name, el)
       } else {
-        const factor = value / max
-        const { centroid, center } = el.data
+        const heightRatio = use / max
+        const { centroid, center, name } = el.data
         const pos = centroid || center
         const bar = createBar({
           position: [pos[0] * OPTS.scale, pos[1] * OPTS.scale, OPTS.depth * OPTS.scale],
-          factor
+          heightRatio,
+          label: {
+            name: `
+              <div class="label-wrap">
+                <div class="name">${name}</div>
+                <div class="text">
+                  <span class="value">${numConverter(use)}</span>
+                  <span class="unit">kWh</span>
+                </div>
+              </div>
+            `,
+            className: 'map-bar-label'
+            // onClick: e => {console.log(e)}
+          }
         })
+        bar.isBar = true
         el.add(bar)
       }
     }
@@ -533,7 +545,7 @@ export class NewThreeScene extends ThreeScene {
     }
     const points = getPoints(mapJson, OPTS.depth, !true)
     const outline = createOutline(points)
-    outline.scale.setScalar(OPTS.scale)
+    outline.renderOrder = 10
     this.outline = outline
     this.addObject(outline)
   }
@@ -551,7 +563,7 @@ export class NewThreeScene extends ThreeScene {
 
     for (let i = 0; i < points.length; i++) {
       const item = points[i]
-      const [longitude, latitude] = item.value
+      const [longitude = 0, latitude = 0] = item.coord || []
       const mesh = createScatter(longitude, latitude)
       mesh.name = item.name
       mesh.data = item
@@ -576,11 +588,16 @@ export class NewThreeScene extends ThreeScene {
     const flywireGroup = new THREE.Group()
     for (let i = 0; i < points.length; i++) {
       const { coords, path } = points[i]
-      const mesh = createFlywire(coords, OPTS.scale)
+      const mesh = createFlywire(
+        coords.map(it => {
+          return it.map(t => t * OPTS.scale)
+        })
+      )
       mesh.name = path
       flywireGroup.add(mesh)
     }
     flywireGroup.name = name
+    flywireGroup.renderOrder = 20
     this.flywireGroup = flywireGroup
     this.addObject(flywireGroup)
   }

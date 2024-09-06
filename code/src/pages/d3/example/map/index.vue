@@ -64,6 +64,7 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   // ],
   // bgUrl: `${base}/oss/img/map/earth.jpg`,
   // env: `${base}/oss/textures/hdr/skidpan_2k.hdr`,
+  bgColor: 0x071729,
   camera: {
     position: [0, 100, 200]
   },
@@ -115,8 +116,8 @@ const queryMap = () => {
           const obj = citys.find(it => it.name == e.name)
           if (obj) {
             city = obj?.city
-            total = obj?.total
-            list = [{ name: '今日用电量', value: obj?.value, unit: 'kWh' }]
+            total = obj?.total ?? 0
+            list = [{ name: '今日用电量', value: obj?.use, unit: 'kWh' }]
           } else {
             isShow = false
           }
@@ -150,7 +151,6 @@ onMounted(() => {
   load(`${base}/oss/map/china-outline.json`).then(res => {
     scene.initMapOutLine(transformGeoJSON(res))
   })
-  console.log(NewThreeScene.total)
   useResize(scene).resize()
 })
 </script>

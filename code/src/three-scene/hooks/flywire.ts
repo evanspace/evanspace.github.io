@@ -12,10 +12,12 @@ export declare interface Options {
   pointWidth: number
   tubularSegments: number
   radius: number
+  flyPointWidth: number
   radialSegments: number
   closed: boolean
   length: number
   factor: number
+  speed: number
 }
 
 export declare type Params = import('../types/utils').DeepPartial<Options>
@@ -28,7 +30,7 @@ export const useFlywire = (options: Params = {}) => {
       // 深度
       depth: 0,
       // 高度(凸起高度)
-      height: 8,
+      height: 4,
       // 飞线点位数
       divisions: 1000,
       color: 0xffffff,
@@ -36,19 +38,23 @@ export const useFlywire = (options: Params = {}) => {
       flyColor: 0xffc107,
       // 点位
       pointColor: 0xff0ff0,
-      pointWidth: 30,
+      pointWidth: 2.5,
+      // 流动飞线点位宽度
+      flyPointWidth: 2.4,
       // 管道分段数 默认值为64。
       tubularSegments: 256,
       // 管道的半径，默认值为1。
-      radius: 1.0,
+      radius: 0.5,
       // 管道横截面的分段数目，默认值为8
       radialSegments: 8,
       // 管道的两端是否闭合，默认值为false。
       closed: false,
       // 流动长度
       length: 100,
-      // 流动系数
-      factor: 1
+      // 系数
+      factor: 1,
+      // 流动速度
+      speed: 4
     },
     options
   )
@@ -62,7 +68,7 @@ export const useFlywire = (options: Params = {}) => {
       uIndex: { value: 0 },
       uTotal: { value: _options.divisions },
       // 流动宽度
-      uWidth: { value: _options.radius * 3 },
+      uWidth: { value: _options.flyPointWidth },
       // 流动长度
       uLength: { value: _options.length }
     },
@@ -107,7 +113,7 @@ export const useFlywire = (options: Params = {}) => {
       uOpacity: { value: 1 }, // 透明度
       uSpeed: { value: 0.1 }, // 速度
       uSge: { value: 4 }, // 数量（圈数）
-      uRadius: { value: _options.pointWidth / 2 },
+      uRadius: { value: (_options.pointWidth * _options.factor) / 2 },
       time: { value: 0.0 }
     },
     transparent: true,
@@ -175,12 +181,15 @@ export const useFlywire = (options: Params = {}) => {
   })
 
   // 根据起点和终点获取曲线做标点
-  const getCurvePoint = (coords: import('../types/utils').getType<Options, 'coords'>, scale: number = 1) => {
-    const [x1, z1] = coords[0].map(t => t * scale)
-    const [x2, z2] = coords[1].map(t => t * scale)
-    const height = (_options.depth + _options.height) * scale
+  const getCurvePoint = (coords: import('../types/utils').getType<Options, 'coords'>) => {
+    const [x1, z1] = coords[0]
+    const [x2, z2] = coords[1]
+    let { depth, height, factor, divisions } = _options
+    height = (depth + height) * factor
+    depth *= factor
+
     // 坐标起点
-    const v0 = new THREE.Vector3(x1, _options.depth * scale, -z1)
+    const v0 = new THREE.Vector3(x1, depth, -z1)
     // 控制点1坐标
     // 起点基础上，增加区间范围的 1/4
     const v1 = new THREE.Vector3(x1 + (x2 - x1) / 4, height, -(z1 + (z2 - z1) / 4))
@@ -190,11 +199,11 @@ export const useFlywire = (options: Params = {}) => {
     const v2 = new THREE.Vector3(x1 + ((x2 - x1) * 3) / 4, height, -(z1 + ((z2 - z1) * 3) / 4))
 
     // 终点
-    const v3 = new THREE.Vector3(x2, _options.depth * scale, -z2)
+    const v3 = new THREE.Vector3(x2, depth, -z2)
     // 使用3次贝塞尔曲线
     const lineCurve = new THREE.CubicBezierCurve3(v0, v1, v2, v3)
     // 获取曲线上的点
-    return lineCurve.getPoints(_options.divisions)
+    return lineCurve.getPoints(divisions)
   }
 
   // 创建飞线-动态
@@ -209,27 +218,29 @@ export const useFlywire = (options: Params = {}) => {
   }
 
   // 创建坐标点
-  const createCroodPoint = (crood, scale: number = 1) => {
+  const createCroodPoint = crood => {
     const [x, z] = crood
-    const width = _options.pointWidth
+    let { pointWidth, depth, factor } = _options
+    const width = pointWidth * factor
+    depth *= factor
 
     // 创建平面
     const geo = new THREE.PlaneGeometry(width, width, 1, 1)
     const point = new THREE.Mesh(geo, pointMaterial)
-    point.position.set(x * scale, _options.depth * scale, -z * scale)
+    point.position.set(x, depth, -z)
     point.rotateX(-Math.PI * 0.5)
     return point
   }
 
-  const createFlywire = (coords: import('../types/utils').getType<Options, 'coords'>, scale: number = 1) => {
+  const createFlywire = (coords: import('../types/utils').getType<Options, 'coords'>) => {
     const group = new THREE.Group()
 
     // 坐标
-    const start = createCroodPoint(coords[0], scale)
-    const end = createCroodPoint(coords[1], scale)
+    const start = createCroodPoint(coords[0])
+    const end = createCroodPoint(coords[1])
     group.add(start, end)
 
-    const points = getCurvePoint(coords, scale)
+    const points = getCurvePoint(coords)
     // 平滑样条线
     // CatmullRomCurve3( 点位、曲线闭合、曲线类型、类型catmullrom时张力默认 0.5)
     // 曲线类型：centripetal、chordal和catmullrom
@@ -247,13 +258,32 @@ export const useFlywire = (options: Params = {}) => {
       // 管道闭合
       _options.closed
     )
-    const tubMat = new THREE.MeshBasicMaterial({
-      color: _options.color,
+    const tubMat = new THREE.ShaderMaterial({
       transparent: true,
-      opacity: 0.75,
-      depthTest: true
+      opacity: 1,
+      depthTest: false,
+      vertexColors: false,
+      uniforms: {
+        uColor: { value: new THREE.Color(_options.color) },
+        uOpacity: { value: 0.6 }
+      },
+      vertexShader: `
+        varying vec3 vColor;
+        uniform vec3 uColor;
+        void main() {
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 uColor;
+        uniform float uOpacity;
+        void main() {
+          gl_FragColor = vec4(uColor, uOpacity);
+        }
+      `
     })
     const tubMesh = new THREE.Mesh(tubeGeo, tubMat)
+    tubMesh.renderOrder = 10
 
     // 飞线
     const fly = createFly(points)
@@ -263,7 +293,7 @@ export const useFlywire = (options: Params = {}) => {
   const update = () => {
     const mat = flyMaterial
     const uTotal = mat.uniforms.uTotal.value
-    mat.uniforms.uIndex.value += 4 * _options.factor
+    mat.uniforms.uIndex.value += _options.speed
     if (mat.uniforms.uIndex.value >= uTotal) {
       mat.uniforms.uIndex.value = 0
     }
