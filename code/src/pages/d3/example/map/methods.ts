@@ -17,7 +17,7 @@ import { numConverter } from '@/common/utils/reckon'
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const OPTS = {
   // 地图深度
-  depth: 0.5,
+  depth: 1,
   // 地图缩放倍数
   scale: 40
 }
@@ -28,15 +28,16 @@ const COLOR = {
   main: 0x338ad7,
   mainHover: 0x92ffff,
   // 浅色（波纹板、）
-  light: 0x003e79,
+  light: 0x10467a,
   lightHover: 0x92ffff,
   // 线条(地图区块上下线条)
-  line: 0xb4eafc,
+  line: 0x91dbf3,
   line2: 0x61fbfd,
   // 轮廓线
   outline: 0xb4eafc,
   // mark 颜色(光柱)
-  markColor: 0x338ad7
+  markColor1: 0xcaffff,
+  markColor2: 0x69f8ff
 }
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate({
@@ -56,7 +57,7 @@ const { createMarkLight } = useMarkLight({
   circleTextureUrl: `${base}/oss/textures/map/circle.png`,
   lightTextureUrl: `${base}/oss/textures/map/light.png`,
   factor: OPTS.scale,
-  color: COLOR.markColor
+  color: COLOR.markColor1
 })
 const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
 const { createFlywire, update: flywireUpdate } = useFlywire({
@@ -69,7 +70,9 @@ const { createFlywire, update: flywireUpdate } = useFlywire({
 const { createBar } = useMapBar({
   height: 5,
   size: 0.2,
-  factor: OPTS.scale
+  factor: OPTS.scale,
+  color1: COLOR.markColor1,
+  color2: COLOR.markColor2
 })
 
 // 加载管理器
@@ -136,7 +139,7 @@ const createMapBlock = points => {
     // AddOperation 用于对两种颜色进行相加。
     combine: THREE.MultiplyOperation,
     transparent: true,
-    opacity: 1
+    opacity: 0.8
   })
   // 边框材质
   const sideMaterial = new THREE.MeshLambertMaterial({
