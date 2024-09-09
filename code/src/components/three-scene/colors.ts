@@ -1,30 +1,30 @@
-
 import type { Colors } from '.'
 
 // 颜色
 const color = {
   normal: 0xffffff,
-  runing: 0x127E12,
-  error: 0xC20C00,
+  runing: 0x127e12,
+  error: 0xc20c00
 }
 
-
-// type 1-制冷 2-采暖 3-冷热源 4-风柜 5-环境
 export const colors = <Colors>{
   // 正常
   normal: {
     color: color.normal,
-    main: 0xF8F8F8,
-    text: 0x5093FF
+    main: 0xf8f8f8,
+    text: 0x5093ff
+    // FM: 0x606c74
   },
   // 运行
   runing: {
     color: color.runing,
-    main: 0x9FFDF7
+    main: 0x2e77f8,
+    FM: 0x067417
   },
   // 故障
   error: {
     color: color.error,
-    main: 0xFD8C6A,
+    main: 0xb54425,
+    FM: 0xe82d1b
   }
 }

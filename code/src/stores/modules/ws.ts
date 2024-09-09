@@ -189,16 +189,9 @@ export const useWsStore = defineStore({
     // 格式化数据
     formatData(list: import('@/components/three-scene/index').ObjectItem[], callbak?: Function) {
       return list.map((item, index) => {
-        const style = item.style || { left: '0', top: '0' }
-        if (item.font) {
-          const { size, color } = item.font
-          size && (style.fontSize = size + 'em')
-          color && (style.color = color)
-        }
         const obj = {
           id: index,
           ...item,
-          style,
           status: 0,
           error: 0
         }
@@ -235,11 +228,7 @@ export const useWsStore = defineStore({
         case DEVICE_KEY.CWP:
         case DEVICE_KEY.CHWP:
         case DEVICE_KEY.COT:
-          status =
-            this.getObj(obj, code, KEYS.ON_OFF).value ||
-            this.getObj(obj, code, KEYS.VFD_ON_OFF).value
-              ? 1
-              : 0
+          status = this.getObj(obj, code, KEYS.ON_OFF).value || this.getObj(obj, code, KEYS.VFD_ON_OFF).value ? 1 : 0
           break
         case DEVICE_KEY.CWV:
         case DEVICE_KEY.CHWV:
@@ -266,10 +255,7 @@ export const useWsStore = defineStore({
         case DEVICE_KEY.CWP:
         case DEVICE_KEY.CHWP:
         case DEVICE_KEY.COT:
-          status =
-            this.getObj(obj, code, KEYS.PWR_ALM).value || this.getObj(obj, code, KEYS.VFD_ALM).value
-              ? 1
-              : 0
+          status = this.getObj(obj, code, KEYS.PWR_ALM).value || this.getObj(obj, code, KEYS.VFD_ALM).value ? 1 : 0
           break
       }
       return status

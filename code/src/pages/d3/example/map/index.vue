@@ -2,6 +2,10 @@
   <div :class="$style.page" class="h-100 o-h">
     <div class="h-100" ref="containerRef"></div>
 
+    <div :class="$style.operate">
+      <el-button type="primary" size="small" @click="onExport">导出</el-button>
+    </div>
+
     <div :class="$style['dialog-view']" v-if="show" :style="dialog.style">
       <div :class="$style.city" class="flex" v-if="dialog.extend.city">
         <span :class="$style.name">{{ dialog.extend.city }}</span>
@@ -73,6 +77,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
     near: 2000,
     far: 3000
   },
+  render: {
+    preserveDrawingBuffer: true
+  },
   grid: {
     visible: true
   },
@@ -87,6 +94,8 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
 }
 
 let scene: InstanceType<typeof NewThreeScene>
+
+const onExport = () => scene?.exportImage()
 
 const queryMap = () => {
   request.getMap().then(res => {

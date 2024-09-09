@@ -3,7 +3,7 @@
 
 import { colors } from './colors'
 
-import type { ThreeConfig, WsConfig, FloorObj, Progress, Dialog } from '.'
+import type { ThreeConfig, FloorObj, Progress, Dialog } from '.'
 
 // 配置
 export const threeConfig = <ThreeConfig>( {
@@ -16,16 +16,7 @@ export const threeConfig = <ThreeConfig>( {
   // 设备
   devices: [],
   // timer: null,
-  // sideToggleTimer: null,
 } )
-
-// ws
-export const wsConfig = <WsConfig>{
-  // timer: null,
-  // 推送数据防抖延迟
-  shakeTime: 500,
-  tsp: Date.now()
-}
 
 
 // 楼层对象

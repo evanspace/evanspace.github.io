@@ -5,6 +5,13 @@ interface Fog {
   far: number
 }
 
+interface Render {
+  antialias: boolean
+  alpha: boolean
+  logarithmicDepthBuffer: boolean
+  preserveDrawingBuffer: boolean
+}
+
 interface Controls {
   visible: boolean
   enableDamping: boolean
@@ -62,6 +69,7 @@ export declare interface Options {
   bgUrl: string | string[]
   env: string
   fog: Fog
+  render: Render
 
   lightHelperVisible: boolean
   controls: Controls

@@ -16,6 +16,18 @@ export default {
     near: 100,
     far: 1000
   },
+  // 渲染器配置
+  render: {
+    // 是否开启反锯齿，设置为true开启反锯齿
+    antialias: true,
+    // 透明度
+    // alpha: true,
+    // 设置对数深度缓存
+    // 解决 模型相接处或某些区域出现频闪问题或内容被相邻近元素覆盖掉的情况
+    logarithmicDepthBuffer: true,
+    // 截图设置, true 时性能会下降
+    preserveDrawingBuffer: false
+  },
   // 控制
   controls: {
     // 是否开启

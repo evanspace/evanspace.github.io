@@ -1,4 +1,3 @@
-
 // props
 export interface XYZ {
   x: number
@@ -7,17 +6,15 @@ export interface XYZ {
 }
 
 export interface Font {
-  size?: number
+  size?: number | string
   color?: string
   position?: XYZ
   rotation?: XYZ
 }
 
-export interface Style {
-  left?: string
-  top?: string
-  fontSize?: string
-  color?: string
+export interface StylePosition {
+  left: number
+  top: number
 }
 
 export interface ObjectItem {
@@ -34,18 +31,16 @@ export interface ObjectItem {
   rotation?: XYZ
   scale?: XYZ
 
-
   // 管路
   // 贴图重复次数[x,y0]
   map?: number[]
   // 绑定设备（管路关联设备。设备动则动,只要满足一个设备运行则执行）
   // [ [ 'LDB_1-1', 'FM_1-1' ], [ 'LDB_1-2', 'FM_1-1' ] ]
-  bind?: ( string | string[] | string[][] )[]
+  bind?: (string | string[] | string[][])[]
   // 左
-  left?: ( string | string[] | string[][] )[]
+  left?: (string | string[] | string[][])[]
   // 右
-  right?: ( string | string[] | string[][] )[]
-
+  right?: (string | string[] | string[][])[]
 
   // 字体
   font?: Font
@@ -60,19 +55,23 @@ export interface ObjectItem {
   followMark?: string
 
   id?: number
-  style: Style
 
   // 运行状态
   status?: number
   // 故障状态
   error?: number
+  // 远程状态
+  remote?: number
+  // 本地状态
+  local?: number
+  // 禁用状态
+  disabled?: number
 
   // 双击事件
   onDblclick?: Function
   // 点击事件
   onClick?: Function
 }
-
 
 export interface Config {
   // 场景相机位置
@@ -111,13 +110,17 @@ export interface ModelItem {
   font?: string
   // 警告标识
   warning?: string
+  // 远程状态标识
+  remote?: string
+  // 本地状态标识
+  local?: string
+  // 禁用标识
+  disabled?: string
   // 管路贴图 管路需要贴图时，这条数据需要排在管路之前
   pipeMap?: string
   // 管路贴图 重复数量
   repeat?: number[]
 }
-
-
 
 // indexDb 数据库查询
 export interface DbGtKeyResult {
@@ -125,21 +128,26 @@ export interface DbGtKeyResult {
   data: ArrayBuffer | string
 }
 
-
+export type Color = number | string | (number | string)[]
 
 // data
-export interface Color {
-  color: number
-  main: number
-  text?: number
+export interface ColorObject {
+  // 默认颜色
+  color: Color
+  // 主体颜色
+  main: Color
+  // 文字颜色
+  text?: Color
+  // 其他
+  [key: string]: Color
 }
 export interface Colors {
   // 正常
-  normal: Color
+  normal: ColorObject
   // 运行
-  runing: Color
+  runing: ColorObject
   // 故障
-  error: Color
+  error: ColorObject
 }
 export interface Extra {
   mixer: any
@@ -150,9 +158,10 @@ export interface ThreeModelItem {
   visible: boolean
   _pos?: XYZ
   position: XYZ
-  data?: Scene3DObjectItem
+  data?: ObjectItem
   extra?: Extra
   clear: Function
+  element?: HTMLElement
 }
 
 export interface ThreeConfig {
@@ -162,19 +171,11 @@ export interface ThreeConfig {
   loadPart: object
   devices: ThreeModelItem[]
   timer?: NodeJS.Timeout
-  sideToggleTimer?: NodeJS.Timeout
-}
-
-export interface WsConfig {
-  timer?: NodeJS.Timeout
-  shakeTime: number
-  tsp: number
 }
 
 export interface FloorObj {
   list: ThreeModelItem[]
 }
-
 
 export interface ProgressListItem {
   name: string
@@ -204,7 +205,6 @@ export interface Dialog {
   }
 }
 
-
 // three
 export interface Clock {
   autoStart: boolean
@@ -228,10 +228,9 @@ export interface Raycaster {
   }[]
   near: number
   ray: object
-  setFromCamera: ((mouse: Vector, camera: any) => void)
-  intersectObjects: ((objects: any[], recursive: boolean) => any[])
+  setFromCamera: (mouse: Vector, camera: any) => void
+  intersectObjects: (objects: any[], recursive: boolean) => any[]
 }
-
 
 export interface ControlType {
   // 最大相机移动距离(景深相机)
@@ -248,38 +247,110 @@ export interface ControlType {
   screenSpacePanning?: boolean
 }
 
+// 改变材质配置
+export interface ChangeMaterialOpts {
+  // 类型、
+  type: string
+  // 模型、
+  el: any
+  // 颜色对象、
+  colorObj: ColorObject
+  // 颜色、
+  color: Color
+  // 动画暂停状态、
+  paused: boolean
+  // 故障状态
+  error: boolean
+  // 远程状态
+  remote?: boolean
+  // 本地状态
+  local?: boolean
+  // 本地状态
+  disabled?: boolean
+}
+
+export interface UpdateFnReturn {
+  // 大于 0 则运行
+  status?: number
+  // 大于 0 则故障
+  error?: number
+  // 大于 0 则远程
+  remote?: number
+  // 大于 0 则本地
+  local?: number
+  // 大于 0 则禁用
+  disabled?: number
+}
+
+export interface UpdateDotReturn {
+  // 显示
+  show: boolean
+  // 值
+  value?: number
+}
 
 export interface Props {
+  // 是否开发环境（开发环境下开启测试功能）
+  devEnv?: boolean
+
   id?: string | number
+  // 背景色 默认: void 0
   bgColor?: string | boolean
+  // 天空背景 默认： 217
   skyCode?: SkyCode
+  // 天空背景 code 列表 默认: [ '216', '217', '218', '219', '220', '221', '222', '223', '224', '225' ]
   skyCodes?: SkyCode[]
+  // 天空背景资源路径 默认: '/img/sky'
   skyPath?: string
+
+  // hdr 环境
   hdr?: string
   grid?: boolean
   baseUrl: string
-  
+
   // 模型
   models: ModelItem[]
   // 配置
   config?: Config
   // 对象列表（设备列表）
   objects: ObjectItem[]
+  // DOT 类型 key 默认: 'DOT'
+  dotKey?: string
+  // dot 点位展示严格模式（设备运行时展示） 默认: true
+  dotShowStrict?: boolean
+
+  // 加载缓存 默认: true
+  loadCache?: boolean
 
   lightHelper?: boolean
   axesHelper?: boolean
-  // 缩放
+  // 缩放 默认: 1
   scale?: number
+
+  // indexdb
+  // 数据库名称
+  dbName?: string
+  // 表名称
+  tbName?: string
+  // 版本号
+  dbVersion?: number
 
   // 主体变色
   mainBodyChangeColor?: boolean
-  // 主体网格名称
+  // 主体网格名称 默认: [ '主体' ]
   mainBodyMeshName?: string[]
 
-  // 初始化模型参数回调方法
-  initModelItemCall?: (obj: ObjectItem) => object
   // 获取颜色回调
-  getColorCall?: (obj: ObjectItem) => string | number
+  getColorCall?: (obj: ObjectItem) => string | number | undefined
+
+  // 格式化数据方法
+  formatObject: (list: ObjectItem[]) => ObjectItem[]
+  // DOT 点位更新对象回调方法
+  dotUpdateObjectCall?: (obj: ObjectItem, list: ThreeModelItem[]) => UpdateDotReturn
+  // 更新对象回调方法
+  updateObjectCall?: (obj: ObjectItem) => UpdateFnReturn
+  // 随机更新对象回调方法
+  randomUpdateObjectCall?: (obj: ObjectItem) => UpdateFnReturn | undefined
 
   // 动态模型类型
   animationModelType?: string[]
@@ -287,14 +358,16 @@ export interface Props {
   pipeMeshName?: string[]
   // 管路模型类型
   pipeModelType?: string[]
+  // 状态材质名称（需要改变隐藏/展示的网格名称）
+  statusMeshName?: string[]
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]
-  // 颜色状态类型（需要根据状态改变颜色的类型）
+  // 颜色状态类型（需要根据状态改变颜色的类型） 默认： [ 'FM', 'XFM' ]
   colorModelType?: string[]
   // 绘制名称立体文字的类型
   textModelType?: string[]
-  // 点位类型列表
-  dotTypes?: string[]
+  // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
+  anchorType?: string[]
   // 楼层模块类型
   floorModelType?: string[]
 
@@ -304,7 +377,7 @@ export interface Props {
   cruiseSegment?: number
   // 巡航速度因子
   cruiseSpeed?: number
-  // 管路
+  // 巡航管路
   cruiseTubeShow?: boolean
   // 路径背景
   pathBg?: string
@@ -320,66 +393,113 @@ export interface Props {
   cruisePathOffset?: number
 }
 
-export declare const ThreeScene: import('vue').DefineComponent<{
-  readonly id: import('vue').PropType<string | number>
-  readonly skyCode: import('vue').PropType<'216' | '217' | '218' | '219' | '220' | '221' | '222' | '223' | '224' | '225'>
-  readonly skyCodes: import('vue').PropType<SkyCode[]>
-  readonly skyPath: StringConstructor
-  readonly bgColor: import('vue').PropType<string | boolean>
-  readonly hdr: StringConstructor
-  readonly grid: BooleanConstructor
-  readonly baseUrl: {
-    readonly type: StringConstructor
-    required: true
-  }
-  readonly models: {
-    readonly type: import('vue').PropType<ModelItem[]>
-    required: true
-  }
-  readonly config: import('vue').PropType<config>
-  readonly objects: {
-    readonly type: import('vue').PropType<ObjectItem[]>
-    required: true
-  }
-  readonly lightHelper: BooleanConstructor
-  readonly axesHelper: BooleanConstructor
-  readonly scale: NumberConstructor
-  readonly mainBodyChangeColor: NumberConstructor
-  readonly mainBodyMeshName: import('vue').PropType<string[]>
-  readonly initModelItemCall: import('vue').PropType<((obj: ObjectItem) => object)>
-  readonly getColorCall: import('vue').PropType<((obj: ThreeModelItem) => string | number)>
-  readonly animationModelType: import('vue').PropType<string[]>
-  readonly pipeMeshName: import('vue').PropType<string[]>
-  readonly pipeModelType: import('vue').PropType<string[]>
-  readonly colorMeshName: import('vue').PropType<string[]>
-  readonly colorModelType: import('vue').PropType<string[]>
-  readonly textModelType: import('vue').PropType<string[]>
-  readonly dotTypes: import('vue').PropType<string[]>
-  readonly floorModelType: import('vue').PropType<string[]>
-  readonly cruisePoints: import('vue').PropType<number[][]>
-  readonly cruiseSegment: NumberConstructor
-  readonly cruiseSpeed: NumberConstructor
-  readonly cruiseTubeShow: BooleanConstructor
-  readonly pathBg: StringConstructor
-  readonly pathWidth: NumberConstructor
-  readonly pathMap: import('vue').PropType<number[][]>
-  readonly pathTension: NumberConstructor
-  readonly pathMapSpeed: NumberConstructor
-  readonly cruisePathOffset: NumberConstructor
-}, {
+export declare const ThreeScene: import('vue').DefineComponent<
+  {
+    readonly devEnv: BooleanConstructor
+    readonly id: import('vue').PropType<string | number>
+    readonly skyCode: import('vue').PropType<
+      '216' | '217' | '218' | '219' | '220' | '221' | '222' | '223' | '224' | '225'
+    >
+    readonly skyCodes: import('vue').PropType<SkyCode[]>
+    readonly skyPath: StringConstructor
+    readonly bgColor: import('vue').PropType<string | boolean>
+    readonly hdr: StringConstructor
+    readonly grid: BooleanConstructor
+    readonly baseUrl: {
+      readonly type: StringConstructor
+      required: true
+    }
+    readonly models: {
+      readonly type: import('vue').PropType<ModelItem[]>
+      required: true
+    }
 
-  slots: Readonly<{
-    [name: string]: import('vue').Slot | undefined
-  }>
-  floorAnimate: (index?: number) => void
-}, {}, {}, {}, {}, {}, {
-  loaded: () => void
-  select: (object: ObjectItem) => void
-  dblclick: (model: ThreeModelItem) => void
-  clickDot: (dot: ObjectItem) => void
-}, {}, {}, Readonly<Props> & {
-  onLoaded?: (() => void) | undefined
-  onSelect?: ((object: ObjectItem) => void) | undefined
-  onDblclick?: ((model: ThreeModelItem) => void) | undefined
-  onClickDot?: ((dot: ObjectItem) => void) | undefined
-}>
+    readonly dotKey: StringConstructor
+    readonly dotShowStrict: BooleanConstructor
+
+    readonly config: import('vue').PropType<config>
+    readonly objects: {
+      readonly type: import('vue').PropType<ObjectItem[]>
+      required: true
+    }
+    readonly loadCache: BooleanConstructor
+    readonly lightHelper: BooleanConstructor
+    readonly axesHelper: BooleanConstructor
+    readonly scale: NumberConstructor
+
+    readonly dbName: StringConstructor
+    readonly tbName: StringConstructor
+    readonly dbVersion: NumberConstructor
+
+    readonly mainBodyChangeColor: NumberConstructor
+    readonly mainBodyMeshName: import('vue').PropType<string[]>
+
+    readonly getColorCall: import('vue').PropType<(obj: ThreeModelItem) => string | number>
+
+    readonly formatObject: {
+      readonly type: import('vue').PropType<(list: ObjectItem[]) => ObjectItem[]>
+      required: true
+    }
+    readonly dotUpdateObjectCall: import('vue').PropType<
+      (obj: ObjectItem, list: ThreeModelItem[]) => UpdateDotReturn
+    >
+    readonly updateObjectCall: {
+      readonly type: import('vue').PropType<(obj: ObjectItem) => UpdateFnReturn>
+      required: true
+    }
+    readonly randomUpdateObjectCall: import('vue').PropType<
+      (obj: ObjectItem) => UpdateFnReturn | undefined
+    >
+
+    readonly animationModelType: import('vue').PropType<string[]>
+    readonly pipeMeshName: import('vue').PropType<string[]>
+    readonly pipeModelType: import('vue').PropType<string[]>
+    readonly statusMeshName: import('vue').PropType<string[]>
+    readonly colorMeshName: import('vue').PropType<string[]>
+    readonly colorModelType: import('vue').PropType<string[]>
+    readonly textModelType: import('vue').PropType<string[]>
+    readonly anchorType: import('vue').PropType<string[]>
+    readonly floorModelType: import('vue').PropType<string[]>
+    readonly cruisePoints: import('vue').PropType<number[][]>
+    readonly cruiseSegment: NumberConstructor
+    readonly cruiseSpeed: NumberConstructor
+    readonly cruiseTubeShow: BooleanConstructor
+    readonly pathBg: StringConstructor
+    readonly pathWidth: NumberConstructor
+    readonly pathMap: import('vue').PropType<number[][]>
+    readonly pathTension: NumberConstructor
+    readonly pathMapSpeed: NumberConstructor
+    readonly cruisePathOffset: NumberConstructor
+  },
+  {
+    slots: Readonly<{
+      [name: string]: import('vue').Slot | undefined
+    }>
+    floorAnimate: (index?: number) => void
+    setControls: (opts: ControlType) => void
+    resize: () => void
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  {
+    loaded: () => void
+    update: (list: ObjectItem[], isRando?: boolean) => void
+    select: (object: ObjectItem) => void
+    dblclick: (model: ThreeModelItem) => void
+    clickDot: (dot: ObjectItem) => void
+    clickDialogDot: (dot: ObjectItem, pos: StylePosition) => void
+  },
+  {},
+  {},
+  Readonly<Props> & {
+    onLoaded?: (() => void) | undefined
+    onUpdate?: ((list: ObjectItem[], isRando?: boolean) => void) | undefined
+    onSelect?: ((object: ObjectItem) => void) | undefined
+    onDblclick?: ((model: ThreeModelItem) => void) | undefined
+    onClickDot?: ((dot: ObjectItem) => void) | undefined
+    onClickDialogDot?: ((dot: ObjectItem, pos: StylePosition) => void) | undefined
+  }
+>

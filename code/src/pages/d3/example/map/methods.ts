@@ -316,9 +316,16 @@ export class NewThreeScene extends ThreeScene {
     this.addObject(cpMh)
   }
 
-  // 绑定事件
-  bindEvent() {
-    this.renderer.domElement.addEventListener('pointermove', this.onPointerMove.bind(this))
+  // 双击
+  onDblclick(e: MouseEvent) {
+    console.log(e)
+  }
+
+  // 按下
+  onPointerDown(e: PointerEvent) {
+    console.log(e)
+    // @ts-ignore
+    e._text = '---'
   }
 
   // 鼠标移动
@@ -341,14 +348,19 @@ export class NewThreeScene extends ThreeScene {
         const pObj = this.findParentProvinceGroupGroupUuid(object)
         if (pObj) {
           puuid = pObj.uuid
-          this.hoverProvince(pObj)
+          this.#hoverProvince(pObj)
         }
         this.setMapBlockColor(puuid)
       } else {
-        this.hoverProvince()
+        this.#hoverProvince()
         this.setMapBlockColor()
       }
     }
+  }
+
+  // 弹起
+  onPointerUp(e: PointerEvent): void {
+    console.log(e)
   }
 
   // 查找父级省份组合
@@ -367,7 +379,7 @@ export class NewThreeScene extends ThreeScene {
   }
 
   // 地图省份 hover
-  hoverProvince(pObj?) {
+  #hoverProvince(pObj?) {
     if (typeof this.hoverBack === 'function') this.hoverBack(pObj, style)
   }
 

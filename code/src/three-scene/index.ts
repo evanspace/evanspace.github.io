@@ -26,12 +26,23 @@ export default class ThreeScene {
   // 静态属性
   static total: number = 0
 
+  // 私有属性
+  #pointer: {
+    tsp: number
+    isClick: boolean
+  }
+
   constructor(options: import('./types').Params = {}) {
     // 默认配置
     const defaultOpts = defOptions
     // 配置
     this.options = deepMerge(defaultOpts, options)
     ThreeScene.total++
+
+    this.#pointer = {
+      tsp: 0,
+      isClick: false
+    }
 
     // 容器
     if (isDOM(this.options.container)) {
@@ -91,15 +102,7 @@ export default class ThreeScene {
   initRenderer() {
     const { width, height, bgColor, bgUrl, env } = this.options
     // 创建渲染对象
-    const renderer = new THREE.WebGLRenderer({
-      // 是否开启反锯齿，设置为true开启反锯齿
-      antialias: true,
-      // 透明度
-      // alpha: true,
-      // 设置对数深度缓存
-      // 解决 模型相接处或某些区域出现频闪问题或内容被相邻近元素覆盖掉的情况
-      logarithmicDepthBuffer: true
-    })
+    const renderer = new THREE.WebGLRenderer(this.options.render)
     // renderer.setClearAlpha( 0 )
 
     // 环境
@@ -265,6 +268,30 @@ export default class ThreeScene {
   // 设置背景色
   setBgColor(color: number | string) {
     this.scene.background = color ? new THREE.Color(color) : null
+  }
+
+  // 绑定事件
+  bindEvent() {
+    const dom = this.renderer.domElement
+    dom.addEventListener('dblclick', this.onDblclick.bind(this))
+    dom.addEventListener('pointerdown', this.onPointerDown.bind(this))
+    dom.addEventListener('pointermove', this.onPointerMove.bind(this))
+    dom.addEventListener('pointerup', this.onPointerUp.bind(this))
+  }
+  onDblclick(_e: MouseEvent) {}
+  onPointerDown(e: PointerEvent) {
+    this.#pointer.isClick = true
+    this.#pointer.tsp = e.timeStamp
+  }
+  onPointerMove(_e: PointerEvent) {}
+  onPointerUp(_e: PointerEvent) {}
+
+  // 导出图片
+  exportImage() {
+    const link = document.createElement('a')
+    link.download = 'render.png'
+    link.href = this.renderer.domElement.toDataURL().replace('image/png', 'image/octet-stream')
+    link.click()
   }
 
   // 添加对象到场景
