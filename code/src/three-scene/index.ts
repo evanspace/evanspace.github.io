@@ -3,7 +3,7 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 
-import { deepMerge, isDOM } from './utils'
+import { deepMerge, isDOM, getUrl } from './utils'
 import defOptions from './options'
 
 export default class ThreeScene {
@@ -244,7 +244,7 @@ export default class ThreeScene {
 
   // 设置环境
   setEnvironment(env) {
-    new RGBELoader().load(env, texture => {
+    new RGBELoader().load(getUrl(env), texture => {
       texture.mapping = THREE.EquirectangularReflectionMapping
       // 将加载的材质texture设置给背景和环境
       this.scene.environment = texture
@@ -255,12 +255,11 @@ export default class ThreeScene {
   setBgTexture(bgUrl) {
     if (Array.isArray(bgUrl)) {
       const loader = new THREE.CubeTextureLoader()
-      const env = loader.load(bgUrl)
-      console.log(env)
+      const env = loader.load(getUrl(bgUrl))
       // 设置背景
       this.scene.background = env
     } else {
-      this.scene.background = new THREE.TextureLoader().load(bgUrl)
+      this.scene.background = new THREE.TextureLoader().load(getUrl(bgUrl))
     }
   }
 

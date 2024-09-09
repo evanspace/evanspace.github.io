@@ -1,18 +1,18 @@
-interface Fog {
+export declare interface Fog {
   visible: boolean
-  color?: string | number
+  color: string | number
   near: number
   far: number
 }
 
-interface Render {
+export declare interface Render {
   antialias: boolean
   alpha: boolean
   logarithmicDepthBuffer: boolean
   preserveDrawingBuffer: boolean
 }
 
-interface Controls {
+export declare interface Controls {
   visible: boolean
   enableDamping: boolean
   dampingFactor: number
@@ -26,26 +26,26 @@ interface Controls {
   maxDistance: number
 }
 
-interface AmbientLight {
+export declare interface AmbientLight {
   visible: boolean
   color: number | string
   intensity: number
 }
 
-interface DirectionalLight {
+export declare interface DirectionalLight {
   visible: boolean
   light2: boolean
   color: number | string
   intensity: number
 }
 
-interface Camera {
+export declare interface Camera {
   near: number
   far: number
   position: [number, number, number]
 }
 
-interface Grid {
+export declare interface Grid {
   visible: boolean
   opacity: number
   transparent: boolean
@@ -55,7 +55,7 @@ interface Grid {
   gridColor: number | string
 }
 
-interface Axes {
+export declare interface Axes {
   visible: boolean
   size: number
 }
@@ -64,6 +64,7 @@ export declare interface Options {
   container: HTMLElement | string
   width: number
   height: number
+  baseUrl: string
   scale: number
   bgColor: number | string
   bgUrl: string | string[]

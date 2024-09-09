@@ -87,6 +87,7 @@ export default {
     cssd3: 'CSS 3D',
     unrealBloom: 'unreal bloom',
     device: 'device',
+    floor: 'floor',
     hemisphere: 'hemisphere',
     simple: 'simple',
     model: 'model',

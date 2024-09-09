@@ -2,7 +2,9 @@ export default {
   container: document.body,
   width: window.innerWidth,
   height: window.innerHeight,
-  // 背景
+  // 基础地址（资源地址）
+  baseUrl: '',
+  // 背景 (背景透明需要 render 参数 alpha 为 true)
   bgColor: null,
   // 背景图
   bgUrl: null,

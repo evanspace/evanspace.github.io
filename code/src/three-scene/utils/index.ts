@@ -1,15 +1,15 @@
 // 判断指定类型
-export const isType = (type, value) => {
+export const isType = (type: string, value): boolean => {
   return Object.prototype.toString.call(value) === `[object ${type}]`
 }
 
 // 判断是否为对象
-export const isObject = value => {
+export const isObject = (value): boolean => {
   return isType('Object', value)
 }
 
 // 判断 dom 元素
-export const isDOM = obj => {
+export const isDOM = (obj): boolean => {
   return (
     obj &&
     (typeof HTMLElement === 'object'
@@ -20,7 +20,7 @@ export const isDOM = obj => {
 
 /**
  * @description deepClone() 深拷贝-最终版：解决循环引用的问题
- * @param {*} target 对象
+ * @param { * } target 对象
  * @example
  *      const obj1 = {
  *          a: 1,
@@ -94,6 +94,33 @@ export const deepMerge = (target, source) => {
 }
 
 // 随机数
-export const random = (min, max) => {
+export const random = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+/**
+ * 校验url地址是否正确
+ * @param { string } url 需要校验的 url 地址
+ * @return { boolean } 校验结果
+ * @example
+ * checkUrl( 'https://www.baidu.com' )
+ */
+export const checkUrl = (url: string): boolean => {
+  !url && (url = '')
+  let regex = /^([hH][tT]{2}[pP]:\/\/|[hH][tT]{2}[pP][sS]:\/\/)[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(\/\S*)?$/
+  if (!regex.test(url)) return false
+  return true
+}
+
+// 获取地址
+export const getUrl = (url: string | string[], baseUrl: string = '') => {
+  // 判断数组
+  if (Array.isArray(url)) {
+    return url.map(u => getUrl(u, baseUrl))
+  }
+  // 检查是否为完整链接 不是则拼接域名地址
+  if (!checkUrl(url) && url.indexOf(baseUrl) < 0) {
+    return baseUrl + url
+  }
+  return url
 }
