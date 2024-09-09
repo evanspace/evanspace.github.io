@@ -283,7 +283,7 @@ export default class ThreeScene {
     this.pointer.tsp = e.timeStamp
   }
   onPointerMove(_e: PointerEvent) {}
-  onPointerUp(e: PointerEvent) {
+  onPointerUp(_e: PointerEvent) {
     this.pointer.isClick = false
   }
 
