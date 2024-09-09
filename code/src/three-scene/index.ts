@@ -25,9 +25,8 @@ export default class ThreeScene {
   animationId: number | undefined
   // 静态属性
   static total: number = 0
-
-  // 私有属性
-  #pointer: {
+  // 鼠标
+  pointer: {
     tsp: number
     isClick: boolean
   }
@@ -39,7 +38,7 @@ export default class ThreeScene {
     this.options = deepMerge(defaultOpts, options)
     ThreeScene.total++
 
-    this.#pointer = {
+    this.pointer = {
       tsp: 0,
       isClick: false
     }
@@ -280,11 +279,13 @@ export default class ThreeScene {
   }
   onDblclick(_e: MouseEvent) {}
   onPointerDown(e: PointerEvent) {
-    this.#pointer.isClick = true
-    this.#pointer.tsp = e.timeStamp
+    this.pointer.isClick = true
+    this.pointer.tsp = e.timeStamp
   }
   onPointerMove(_e: PointerEvent) {}
-  onPointerUp(_e: PointerEvent) {}
+  onPointerUp(e: PointerEvent) {
+    this.pointer.isClick = false
+  }
 
   // 导出图片
   exportImage() {

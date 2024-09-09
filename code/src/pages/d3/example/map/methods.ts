@@ -19,7 +19,9 @@ const OPTS = {
   // 地图深度
   depth: 1,
   // 地图缩放倍数
-  scale: 40
+  scale: 40,
+  // 右键间隔时间
+  rightClickBackDiffTime: 100
 }
 
 // 全局颜色
@@ -293,7 +295,7 @@ export class NewThreeScene extends ThreeScene {
   // 地图轮廓
   outline?: ReturnType<typeof createOutline>
   // hover 回调
-  hoverBack?: (e, position: typeof style) => void
+  #hoverBack?: (e, position: typeof style) => void
   // 外圈背景
   outRingMesh?: InstanceType<typeof THREE.Mesh>
   // 内圈背景
@@ -323,9 +325,8 @@ export class NewThreeScene extends ThreeScene {
 
   // 按下
   onPointerDown(e: PointerEvent) {
-    console.log(e)
-    // @ts-ignore
-    e._text = '---'
+    this.pointer.isClick = true
+    this.pointer.tsp = e.timeStamp
   }
 
   // 鼠标移动
@@ -345,7 +346,7 @@ export class NewThreeScene extends ThreeScene {
       if (interscts.length > 0) {
         const object = interscts[0].object
         let puuid
-        const pObj = this.findParentProvinceGroupGroupUuid(object)
+        const pObj = this.findParentGroupGroupUuid(object)
         if (pObj) {
           puuid = pObj.uuid
           this.#hoverProvince(pObj)
@@ -360,11 +361,47 @@ export class NewThreeScene extends ThreeScene {
 
   // 弹起
   onPointerUp(e: PointerEvent): void {
-    console.log(e)
+    this.pointer.isClick = false
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < OPTS.rightClickBackDiffTime
+    if (e.button == 2) {
+      console.log('你点了右键')
+    } else if (e.button == 0) {
+      console.log('你点了左键', isClick)
+      isClick && this.clickObject(e)
+    } else if (e.button == 1) {
+      console.log('你点了滚轮')
+    }
   }
 
-  // 查找父级省份组合
-  findParentProvinceGroupGroupUuid(object) {
+  // 点击元素
+  clickObject(e) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e, dom, scale)
+
+    if (this.scatterGroup) {
+      // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+      raycaster.setFromCamera(pointer, this.camera)
+      // 检查射线和物体之间的交叉点（包含或不包含后代）
+      const objects = [this.scatterGroup]
+      const interscts = raycaster.intersectObjects(objects)
+      this.container.style.cursor = interscts.length ? 'pointer' : 'auto'
+      if (interscts.length) {
+        const obj = interscts[0].object
+        const pObj = this.findParentGroupGroupUuid(obj)
+        const data = pObj.data || {}
+        ElMessage.info({
+          message: data.name,
+          grouping: true
+        })
+      }
+    }
+  }
+
+  // 查找父级组合
+  findParentGroupGroupUuid(object) {
     const _find = obj => {
       let parent = obj.parent
       if (!parent) {
@@ -380,7 +417,7 @@ export class NewThreeScene extends ThreeScene {
 
   // 地图省份 hover
   #hoverProvince(pObj?) {
-    if (typeof this.hoverBack === 'function') this.hoverBack(pObj, style)
+    if (typeof this.#hoverBack === 'function') this.#hoverBack(pObj, style)
   }
 
   // 设置地图面颜色
@@ -587,7 +624,7 @@ export class NewThreeScene extends ThreeScene {
     scatterGroup.rotateX(-Math.PI * 0.5)
     this.scatterGroup = scatterGroup
     this.addObject(scatterGroup)
-    this.hoverBack = hoverBack
+    this.#hoverBack = hoverBack
   }
 
   // 飞线
