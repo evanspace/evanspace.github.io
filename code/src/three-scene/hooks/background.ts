@@ -1,8 +1,9 @@
 // 背景
-export const useBackground = (defaultIndex = 0) => {
+export const useBackground = (code: string = '') => {
   const skys = ['216', '217', '218', '219', '220', '221', '222', '223', '224', '225']
   const skyPath = ref('/oss/img/sky')
-  const index = ref(defaultIndex)
+  const i = skys.findIndex(t => t == code)
+  const index = ref(i < 0 ? 0 : i)
   const change = scene => {
     const code = skys[index.value]
     if (!code) return
@@ -19,8 +20,10 @@ export const useBackground = (defaultIndex = 0) => {
     )
   }
   return {
+    skys,
     index,
     skyPath,
-    change
+    change,
+    load
   }
 }

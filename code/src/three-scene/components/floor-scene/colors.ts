@@ -1,4 +1,4 @@
-import type { Colors } from '.'
+import type { Colors } from '../../types/color'
 
 // 颜色
 const color = {
@@ -7,7 +7,7 @@ const color = {
   error: 0xc20c00
 }
 
-export const colors = <Colors>{
+export const colors: Colors = {
   // 正常
   normal: {
     color: color.normal,

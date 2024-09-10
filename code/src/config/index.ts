@@ -48,7 +48,8 @@ const Api = {
   },
 
   d3: {
-    map: '/d3/map'
+    map: '/d3/map',
+    floor: '/d3/floor'
   },
 
   area: {

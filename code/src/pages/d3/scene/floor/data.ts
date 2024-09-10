@@ -2,10 +2,14 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
-export const getPageOpts = (): {} & import('@/three-scene/components/floor-scene/index').Props => ({
+export const getPageOpts = (): {} & Omit<
+  import('@/three-scene/components/floor-scene/index').Props,
+  'formatObject'
+> => ({
   devEnv,
   baseUrl: base,
   bgColor: '',
+  skyCode: '221',
   render: {
     alpha: true
   },
@@ -14,6 +18,14 @@ export const getPageOpts = (): {} & import('@/three-scene/components/floor-scene
   //   u => `/oss/img/sky/216${u}`
   // ),
   env: '/oss/textures/hdr/skidpan_2k.hdr',
+  camera: {
+    far: 1000000
+  },
+  controls: {
+    screenSpacePanning: false,
+    maxDistance: 50000,
+    maxPolarAngle: Math.PI * 0.46
+  },
 
   models: [
     {
@@ -33,11 +45,54 @@ export const getPageOpts = (): {} & import('@/three-scene/components/floor-scene
       name: '楼顶', // 高 350
       size: 0.1,
       url: '/楼顶.glb'
+    },
+
+    {
+      key: 'COLD_CAMERA',
+      name: '摄像头',
+      type: 'sprite',
+      size: 1,
+      range: { x: 37, y: 77 },
+      mapUrl: '/sxt.png'
+    },
+    {
+      key: 'COLD_ROOM_INLET',
+      name: '房间入口',
+      type: 'sprite',
+      size: 1,
+      range: { x: 37, y: 77 },
+      mapUrl: '/fjdw.png'
+    },
+    {
+      key: 'COLD_GPS',
+      name: '定位',
+      type: 'sprite',
+      size: 1,
+      range: { x: 51, y: 56 },
+      mapUrl: '/dw.png'
     }
   ].map(item => {
     if (item.url) {
       item.url = '/oss/model/floor' + item.url
     }
-    return item
-  })
+    if (item.mapUrl) {
+      item.mapUrl = '/oss/textures/floor' + item.mapUrl
+    }
+    return item as import('@/three-scene/types/model').ModelItem
+  }),
+  objects: [],
+  config: {},
+
+  colorMeshName: [],
+  floorModelType: [
+    'FLOOR_COMMON',
+    'FLOOR_ONE',
+    'FLOOR_TWO_FIVE',
+    'FLOOR_SIX',
+    'FLOOR_SEVEN_ELEVEN',
+    'FLOOR_TWELVE_THIRTEEN',
+    'FLOOR_FOURTEEN_SIXTEEN',
+    'FLOOR_SEVENTEEN_EIGHTEEN'
+  ],
+  anchorType: ['COLD_CAMERA', 'COLD_ROOM_INLET', 'COLD_GPS']
 })

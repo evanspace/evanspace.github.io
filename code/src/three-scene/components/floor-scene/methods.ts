@@ -1,93 +1,155 @@
 import * as THREE from 'three'
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 import ThreeScene from '../../index'
-import { getUrl } from '../../utils'
-import { colors } from './colors'
+import { useRaycaster } from '@/three-scene/hooks/raycaster'
 
-// 模型类型映射
-const MODEL_MAP = {
-  // base-基础底座,
-  base: 'base',
-  // device-场景设备,
-  device: 'device',
-  // font-字体,
-  font: 'font',
-  // map-精灵,
-  map: 'map',
-  // pipe-管路贴图
-  pipe: 'pipe',
-  // warning-警告标识,
-  warning: 'warning',
-  // remote-远程状态，
-  remote: 'remote',
-  // local-本地标识，
-  local: 'local',
-  // disabled-禁用标识
-  disabled: 'disabled'
-}
+import type { XYZ } from '../../types/model'
+import type { Config, ExtendOptions } from '.'
 
-// 配置
-const OPTS = {
-  dracoPath: '/draco/gltf/',
-  // 模型 KB 倍数
-  modelSizeKB: 1024 * 1024
-}
+import DEFAULTCONFIG from '../../config'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH || ''
-const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath(base + OPTS.dracoPath)
-const loader = new GLTFLoader()
-loader.setDRACOLoader(dracoLoader)
-
-// 加载模型
-const loadMode = (key, url, baseUrl, size: number = 0, item?) => {
-  return new Promise((resolve, reject) => {
-    const color = colors.normal[key] || colors.normal.color
-    url = getUrl(url, baseUrl)
-
-    // 判断文件类型是否为 glb
-    let tmpArr = url.split('.')
-    let type = tmpArr.pop().toLowerCase()
-    if (type !== 'glb') {
-      throw new Error('模型类型错误,必须为 GLB 格式，当前格式：' + type)
-    }
-
-    loader.load(url, glb => {
-      let obj = glb.scene.children[0]
-      console.log(obj)
-    })
-  })
-}
+const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
 
 export class NewThreeScene extends ThreeScene {
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  // 设备集合
+  deviceGroup: InstanceType<typeof THREE.Group>
+  extend: Partial<ExtendOptions>
+  constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
     super(options)
+
+    this.extend = extend
+    this.deviceGroup = new THREE.Group()
+    this.bindEvent()
   }
 
-  loadSceneEle(models: import('./index').ModelItem[], callback) {
-    console.log(models)
-    let index = 0
-    const baseUrl = this.options.baseUrl
+  // 双击
+  onDblclick(e: MouseEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e as PointerEvent, dom, scale)
 
-    const _load = async () => {
-      const item = models[index]
-      const { key, name, url, type = MODEL_MAP.device, size } = item
-      switch (type) {
-        case MODEL_MAP.device:
-          loadMode(key, url, baseUrl, size, item)
-          break
-      }
-      index++
-      callback({
-        loaded: size * OPTS.modelSizeKB
-      })
-      if (index < models.length) {
-        _load()
+    if (this.deviceGroup) {
+      // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+      raycaster.setFromCamera(pointer, this.camera)
+      // 检查射线和物体之间的交叉点（包含或不包含后代）
+      const objects = [this.deviceGroup]
+      const interscts = raycaster.intersectObjects(objects)
+
+      if (interscts.length) {
+        const obj = interscts[0].object
+        const object = this.findParentGroupGroup(obj)
+        if (!object) return
+        if (typeof this.extend?.onDblclick === 'function') this.extend.onDblclick(object)
       }
     }
-    _load()
+  }
+
+  // 移动
+  onPointerMove(e: PointerEvent) {
+    this.checkIntersectObjects(e)
+  }
+
+  // 弹起
+  onPointerUp(e: PointerEvent) {
+    super.onPointerUp(e)
+
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < DEFAULTCONFIG.rightClickBackDiffTime
+    if (e.button == 2) {
+      // console.log('你点了右键')
+      if (isClick && typeof this.extend?.onClickRight === 'function') this.extend.onClickRight(e)
+    } else if (e.button == 0) {
+      // console.log('你点了左键')
+      isClick && this.checkIntersectObjects(e)
+    } else if (e.button == 1) {
+      // console.log('你点了滚轮')
+    }
+  }
+
+  // 检查交叉几何体
+  checkIntersectObjects(e: PointerEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e, dom, scale)
+    let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+    const objects = this.deviceGroup.children.filter(it => it.visible && it._isAnchor_)
+
+    // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+    raycaster.setFromCamera(pointer, this.camera)
+    let interscts = raycaster.intersectObjects(objects, isClick)
+    dom.style.cursor = interscts.length > 0 ? 'pointer' : 'auto'
+    if (!isClick) {
+      return
+    }
+
+    if (interscts.length) {
+      const object = interscts[0].object
+
+      if (!object) return
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(object)
+    }
+  }
+
+  // 查找父级组合
+  findParentGroupGroup(object) {
+    const _find = obj => {
+      let parent = obj.parent
+      if (!parent) {
+        return
+      }
+      if (parent && parent._isDevice_) {
+        return parent
+      }
+      return _find(parent)
+    }
+    return _find(object)
+  }
+
+  // 清除场景设备
+  clearDevice() {
+    if (!this.deviceGroup) return
+    this.disposeObj(this.deviceGroup)
+    this.deviceGroup = new THREE.Group()
+    this.addObject(this.deviceGroup)
+  }
+
+  // 添加设备
+  addDevice(...obj) {
+    if (this.deviceGroup) {
+      this.deviceGroup.add(...obj)
+    }
+  }
+
+  // 获取楼层集合
+  getFloor() {
+    return this.deviceGroup.children.filter(it => it._isFloor_)
+  }
+
+  // 隐藏除楼层之外的对象
+  hideOmitFloor(visible: boolean) {
+    this.deviceGroup.children.forEach(el => {
+      el.visible = el._isFloor_ || visible
+    })
+  }
+
+  // 获取跟随目标集合
+  getFlowMark(mark) {
+    return this.deviceGroup.children.filter(el => el.data?.followMark === mark)
+  }
+
+  // 获取动画目标点
+  getAnimTargetPos(config: Config, _to?: XYZ, _target?: XYZ) {
+    const to = _to || config.to || { x: -104, y: 7, z: 58 }
+    const target = _target || config.target || { x: 0, y: 0, z: 0 }
+    // 中心点位
+    this.controls.target.set(target.x, target.y, target.z)
+    return to
+  }
+
+  // 获取场景坐标
+  getPosition() {
+    console.log('视角', this.camera.position)
+    console.log('目标位置', this.controls.target)
   }
 }

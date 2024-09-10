@@ -1,27 +1,26 @@
 import type { Fog, Render, Camera, Controls } from '../../types/index'
+import type { XYZ, ModelItem, ObjectItem } from '../../types/model'
 
-export declare interface XYZ {
-  x: number
-  y: number
-  z: number
-}
-
-export declare interface ModelItem {
-  // 模型 唯一 key（场景元素按照 对应 key 加载）
-  key: string
-  name: string
-  // 模型文件大小 （M 为单位）
-  size: number
-  // 模型加载地址
-  url: string
-  // 模型类型
-  // base-基础底座， device-场景设备, font-字体, map-精灵, pipe-管路贴图
-  // warning-警告标识, remote-远程状态， local-本地标识， disabled-禁用标识
-  type?: 'base' | 'device' | 'font' | 'map' | 'pipe' | 'warning' | 'remote' | 'local' | 'disabled'
-  // 贴图倍数
-  map?: Pick<XYZ, 'x' | 'y'>
-  // 精灵贴图
-  repeat?: number[]
+export interface Config {
+  // 场景相机位置
+  to?: XYZ
+  // 场景中心点/相机聚焦位置
+  target?: XYZ
+  // 楼层展开模式
+  // UD -> up-down | BA -> before-after
+  floorExpandMode?: 'UD' | 'BA'
+  // 楼层展开间距
+  floorExpandMargin?: number
+  // 楼层展开后隐藏其他模型
+  floorExpandHiddenOther?: boolean
+  // 楼层展开的 索引(楼层类型列表索引)
+  floorExpandIndex?: number
+  // 楼层展开是否改变视角
+  floorExpandChangeViewAngle?: boolean
+  // 返回
+  back?: Function
+  // 加载
+  load?: Function
 }
 
 export declare interface Props {
@@ -29,8 +28,12 @@ export declare interface Props {
   devEnv?: boolean
   // 基础地址（加载资源地址）
   baseUrl: string
+  // draco 解压文件地址
+  dracoUrl?: string
   // 背景色
   bgColor?: string | number
+  // 天空背景
+  skyCode?: string
   // 背景图片
   bgUrl?: string | string[]
 
@@ -48,40 +51,33 @@ export declare interface Props {
 
   // 模型(场景加载类型对应的模型)
   models: ModelItem[]
+  // 配置
+  config?: Config
+  // 对象列表（设备列表）
+  objects: ObjectItem[]
+  // DOT 类型 key 默认: 'DOT'
+  dotKey?: string
+
+  // 颜色材质名称（需要改变颜色的网格名称）
+  colorMeshName?: string[]
+
+  // 格式化数据方法
+  formatObject: (list: ObjectItem[]) => ObjectItem[]
+
+  // 颜色材质名称（需要改变颜色的网格名称）
+  colorMeshName?: string[]
+  // 动态模型类型(有动画)
+  animationModelType?: string[]
+  // 楼层模块类型
+  floorModelType?: string[]
+  // 绘制名称立体文字的类型
+  textModelType?: string[]
+  // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
+  anchorType?: string[]
 }
 
-export type Color = number | string | (number | string)[]
-
-// data
-export interface ColorObject {
-  // 默认颜色
-  color: Color
-  // 主体颜色
-  main: Color
-  // 文字颜色
-  text?: Color
-  // 其他
-  [key: string]: Color
-}
-export interface Colors {
-  // 正常
-  normal: ColorObject
-  // 运行
-  runing: ColorObject
-  // 故障
-  error: ColorObject
-}
-
-export declare interface ProgressListItem {
-  name: string
-  pro: number
-}
-
-export declare interface Progress {
-  percentage: number
-  show: boolean
-  isEnd: boolean
-  list: ProgressListItem[]
-  total: number
-  loaded: number
+export declare interface ExtendOptions {
+  onDblclick: (e) => void
+  onClickLeft: (e) => void
+  onClickRight: (e) => void
 }
