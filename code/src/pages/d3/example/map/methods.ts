@@ -471,8 +471,8 @@ export class NewThreeScene extends ThreeScene {
     const name = '地图'
     // 存在则销毁
     if (this.mapGroup) {
-      this.mapGroup = null
       this.disposeObj(this.mapGroup)
+      this.mapGroup = null
     }
 
     const mapGroup = new THREE.Group()
@@ -591,8 +591,8 @@ export class NewThreeScene extends ThreeScene {
   initMapOutLine(mapJson) {
     // 存在则销毁
     if (this.outline) {
-      this.outline = null
       this.disposeObj(this.outline)
+      this.outline = null
     }
     const points = getPoints(mapJson, OPTS.depth, !true)
     const outline = createOutline(points)
@@ -606,8 +606,8 @@ export class NewThreeScene extends ThreeScene {
     const name = '散点集合'
     // 存在则销毁
     if (this.scatterGroup) {
-      this.scatterGroup = null
       this.disposeObj(this.scatterGroup)
+      this.scatterGroup = null
     }
     const scatterGroup = new THREE.Group()
     scatterGroup.name = name
@@ -632,8 +632,8 @@ export class NewThreeScene extends ThreeScene {
     const name = '飞线集合'
     // 存在则销毁
     if (this.flywireGroup) {
-      this.flywireGroup = null
       this.disposeObj(this.flywireGroup)
+      this.flywireGroup = null
     }
 
     const flywireGroup = new THREE.Group()
