@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+// import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import CONFIG from '../config'

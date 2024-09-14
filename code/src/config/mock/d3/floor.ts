@@ -1,4 +1,4 @@
-import { mock } from 'mockjs'
+// import { mock } from 'mockjs'
 import { builder } from '../util'
 
 const floorMap = {

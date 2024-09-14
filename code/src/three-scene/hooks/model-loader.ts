@@ -4,8 +4,8 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 
 import { deepMerge, getUrl } from '../utils'
 import * as UTILS from '../utils/model'
-import type { ModelItem, ObjectItem } from '../types/model'
-import type { Colors, Color } from '../types/color'
+import type { ModelItem } from '../types/model'
+import type { Colors } from '../types/color'
 
 export declare interface ProgressListItem {
   name: string
@@ -198,7 +198,7 @@ export const useModelLoader = (options: Params = {}) => {
         newUrl,
         glb => {
           let obj = glb.scene.children[0]
-          const del = modelNormalization(model, color, obj, glb.animations)
+          const del = modelNormalization(model, color as string | number, obj, glb.animations)
           resolve(del)
         },
         res => {

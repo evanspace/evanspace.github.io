@@ -32,7 +32,7 @@ import { NewThreeScene } from './methods'
 import { colors } from './colors'
 import * as UTILS from '../../utils/model'
 
-import type { ObjectItem, ThreeModelItem } from '../../types/model'
+import type { ObjectItem, ThreeModelItem, XYZ } from '../../types/model'
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   dracoUrl: '',
