@@ -187,7 +187,7 @@ export class NewThreeScene extends ThreeScene {
   }
 
   // 获取动画目标点
-  getAnimTargetPos(config: Config, _to?: XYZ, _target?: XYZ) {
+  getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
     const to = _to || config.to || { x: -104, y: 7, z: 58 }
     const target = _target || config.target || { x: 0, y: 0, z: 0 }
     // 中心点位

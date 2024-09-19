@@ -1,4 +1,4 @@
-export interface XYZ {
+export declare interface XYZ {
   x: number
   y: number
   z: number

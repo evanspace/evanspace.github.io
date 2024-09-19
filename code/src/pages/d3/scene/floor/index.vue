@@ -1,5 +1,11 @@
 <template>
   <div :class="$style.page" class="h-100 o-h">
+    <div :class="$style.operate">
+      <div class="flex flex-ac">
+        <span>点位：</span>
+        <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
+      </div>
+    </div>
     <t-floor-scene
       ref="threeSceneRef"
       :dev-env="pageOpts.devEnv"
@@ -7,6 +13,7 @@
       :bg-color="pageOpts.bgColor"
       :bg-url="pageOpts.bgUrl"
       :env="pageOpts.env"
+      :indexDB="pageOpts.indexDB"
       :sky-code="pageOpts.skyCode"
       :camera="pageOpts.camera"
       :render="pageOpts.render"
@@ -53,7 +60,7 @@ const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
     obj.value = val
   }
 
-  obj.show = true
+  // obj.show = true
   obj.value = Number(Number(obj.value || 0).toFixed(2))
   return {
     value: obj.value,
@@ -109,6 +116,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" module>
-.page {
-}
+@import './style.scss';
 </style>

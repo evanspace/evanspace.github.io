@@ -1,12 +1,16 @@
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js'
 
 import { deepMerge, getUrl } from '../utils'
 import * as UTILS from '../utils/model'
 import type { ModelItem } from '../types/model'
 import type { Colors } from '../types/color'
+import type { IndexDB } from '../types/indexdb'
 
+import * as IDB from '../utils/indexdb'
+import DEFAULTCONFIG from '../config'
 export declare interface ProgressListItem {
   name: string
   percentage: number
@@ -28,11 +32,15 @@ export declare interface Options {
   colors: Colors
   loadCache: boolean
   colorMeshName: string[]
+  indexDB: IndexDB
 }
 
 export declare type Params = import('../types/utils').DeepPartial<Options>
 
 export const useModelLoader = (options: Params = {}) => {
+  // 数据库
+  let gDB: IDBDatabase
+
   // 颜色
   const color = {
     normal: 0x88a1b5,
@@ -66,7 +74,10 @@ export const useModelLoader = (options: Params = {}) => {
       // 加载缓存
       loadCache: true,
       // 改变颜色材质网格名称集合
-      colorMeshName: []
+      colorMeshName: [],
+      indexDB: {
+        cache: true
+      }
     },
     options
   )
@@ -178,14 +189,100 @@ export const useModelLoader = (options: Params = {}) => {
     return newModel
   }
 
+  // 打开数据库
+  const openDB = () => {
+    // 创建数据库
+    return IDB.createDB(
+      _options.indexDB?.tbName || DEFAULTCONFIG.indexdb.tbName,
+      _options.indexDB?.dbName || DEFAULTCONFIG.indexdb.dbName,
+      _options.indexDB?.version || DEFAULTCONFIG.indexdb.version
+    ).then(db => {
+      if (!!db) {
+        // 开启缓存
+        THREE.Cache.enabled = true
+        gDB = db
+      }
+      return db
+    })
+  }
+
+  // 获取缓存模型数据
+  const getCacheModel = (url: string, size: number = 0): Promise<any> => {
+    const loader = new GLTFLoader()
+    return new Promise(async resolve => {
+      // 加载缓存
+      if (!_options.indexDB.cache) resolve(null)
+      // three 缓存
+      const tCache = THREE.Cache.get(url)
+      if (!!tCache) {
+        // 判断缓存的是否为 buffer 类型数据
+        if (tCache instanceof ArrayBuffer) {
+          loadProgress({ loaded: tCache.byteLength })
+          loader.parse(tCache, '', result => {
+            THREE.Cache.add(url, result)
+            resolve(result)
+          })
+        } else {
+          loadProgress({ loaded: size * _options.modelSizeKB })
+          setTimeout(() => {
+            resolve(tCache)
+          }, 10)
+        }
+      } else {
+        // 数据库查询
+        const store = await IDB.getDataByKey(gDB, _options.indexDB?.tbName || DEFAULTCONFIG.indexdb.tbName, url)
+        if (!!store && store.data) {
+          const data = store.data
+          if (typeof data === 'string') {
+            loadProgress({ loaded: data.length })
+            THREE.Cache.add(store.path, data)
+            setTimeout(() => {
+              resolve(data)
+            }, 10)
+          } else {
+            loadProgress({ loaded: data.byteLength })
+            loader.parse(data, '', result => {
+              THREE.Cache.add(store.path, result)
+              resolve(result)
+            })
+          }
+        } else {
+          resolve(null)
+        }
+      }
+    })
+  }
+
+  // db 缓存
+  const dbStoreAdd = url => {
+    // 加载缓存
+    if (!_options.indexDB.cache) return
+    const ch = THREE.Cache.get(url)
+    if (!ch) return
+    if (!!gDB) {
+      const gDBTableName = _options.indexDB?.tbName || DEFAULTCONFIG.indexdb.tbName
+      const db_tb = gDB.transaction(gDBTableName, 'readwrite').objectStore(gDBTableName)
+      db_tb.add({ path: url, data: ch })
+    }
+  }
+
   // 加载模型
   const loadModel = (model: ModelItem, onProgress?: Function): Promise<any> => {
-    const { key, url = '' } = model
+    const { key, url = '', size = 0 } = model
     const { baseUrl, colors } = _options
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       let color = colors.normal[key] || colors.normal.color
       color = UTILS.getColorArr(color)[0]
       const newUrl = getUrl(url, baseUrl)
+
+      // 缓存
+      const store = await getCacheModel(url, size)
+      if (store) {
+        const obj = store.scene.children[0]
+        const del = modelNormalization(model, color, obj, store.animations)
+        resolve(del)
+        return
+      }
 
       // 判断文件类型是否为 glb
       let tmpArr = newUrl.split('.')
@@ -199,6 +296,7 @@ export const useModelLoader = (options: Params = {}) => {
         glb => {
           let obj = glb.scene.children[0]
           const del = modelNormalization(model, color as string | number, obj, glb.animations)
+          dbStoreAdd(newUrl)
           resolve(del)
         },
         res => {
@@ -228,8 +326,35 @@ export const useModelLoader = (options: Params = {}) => {
     modelMap.set(key, sprite)
   }
 
+  // 加载字体
+  let fontParser: InstanceType<typeof FontLoader>
+  const loadFont = (model: ModelItem) => {
+    const { url = '', size = 0 } = model
+    const { baseUrl } = _options
+    const newUrl = getUrl(url, baseUrl)
+    const loader = new FontLoader()
+
+    return new Promise(async resolve => {
+      const store = await getCacheModel(newUrl, size)
+      if (store) {
+        fontParser = loader.parse(JSON.parse(store))
+        setTimeout(() => {
+          resolve(fontParser)
+        }, 10)
+        return
+      }
+
+      loader.load(newUrl, font => {
+        fontParser = font
+        dbStoreAdd(url)
+        resolve(font)
+      })
+    })
+  }
+
   // 加载全部模型
-  const loadModels = (models: ModelItem[], onSuccess: Function, onProgress?: Function) => {
+  const loadModels = async (models: ModelItem[], onSuccess: Function, onProgress?: Function) => {
+    await openDB()
     const max = models.length
     if (!reset(max)) return
     // 计算模型文件总大小
@@ -245,6 +370,9 @@ export const useModelLoader = (options: Params = {}) => {
           break
         case MODEL_MAP.sprite:
           createSprite(item)
+          break
+        case MODEL_MAP.font:
+          loadFont(item)
           break
       }
 

@@ -83,6 +83,13 @@ export const getPageOpts = (): {} & Omit<
   objects: [],
   config: {},
 
+  indexDB: {
+    cache: true,
+    dbName: 'THREE__FLOOR__DB',
+    tbName: 'TB',
+    version: 1
+  },
+  dotShowStrict: !true,
   colorMeshName: [],
   floorModelType: [
     'FLOOR_COMMON',

@@ -49,7 +49,7 @@ export const getDBVersion = (dbName: string, version: number, tbName: string) =>
 }
 
 // 创建数据库
-export const createDB = async (tbName, dbName = 'THREE__MODEL_DB', version = 1): Promise<IDBDatabase | null> => {
+export const createDB = async (tbName, dbName = 'THREE__MODEL_DB', version = 1): Promise<IDBDatabase | undefined> => {
   if (!window.indexedDB) return Promise.resolve(null)
 
   await getDBVersion(dbName, version, tbName)

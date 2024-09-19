@@ -1,30 +1,31 @@
 import type { Fog, Render, Camera, Controls } from '../../types/index'
 import type { XYZ, ModelItem, ObjectItem } from '../../types/model'
+import type { IndexDB } from '../../types/indexdb'
 
-export interface Config {
+export declare interface Config {
   // 场景相机位置
-  to?: XYZ
+  to: XYZ
   // 场景中心点/相机聚焦位置
-  target?: XYZ
+  target: XYZ
   // 楼层展开模式
   // UD -> up-down | BA -> before-after
-  floorExpandMode?: 'UD' | 'BA'
+  floorExpandMode: 'UD' | 'BA'
   // 楼层展开间距
-  floorExpandMargin?: number
+  floorExpandMargin: number
   // 楼层展开后隐藏其他模型
-  floorExpandHiddenOther?: boolean
+  floorExpandHiddenOther: boolean
   // 楼层展开的 索引(楼层类型列表索引)
-  floorExpandIndex?: number
+  floorExpandIndex: number
   // 楼层展开是否改变视角
-  floorExpandChangeViewAngle?: boolean
+  floorExpandChangeViewAngle: boolean
   // 返回
-  back?: Function
+  back: Function
   // 加载
-  load?: Function
+  load: Function
 }
 
 // 改变材质配置
-export interface ChangeMaterialOpts {
+export declare interface ChangeMaterialOpts {
   // 类型、
   type: string
   // 模型、
@@ -38,28 +39,28 @@ export interface ChangeMaterialOpts {
   // 故障状态
   error: boolean
   // 远程状态
-  remote?: boolean
+  remote: boolean
   // 本地状态
-  local?: boolean
+  local: boolean
   // 本地状态
-  disabled?: boolean
+  disabled: boolean
 }
 // 更新对象返回
-export interface UpdateFnReturn {
+export declare interface UpdateFnReturn {
   // 大于 0 则运行
-  status?: number
+  status: number
   // 大于 0 则故障
-  error?: number
+  error: number
   // 大于 0 则远程
-  remote?: number
+  remote: number
   // 大于 0 则本地
-  local?: number
+  local: number
   // 大于 0 则禁用
-  disabled?: number
+  disabled: number
 }
 
 // 更新点位返回
-export interface UpdateDotReturn {
+export declare interface UpdateDotReturn {
   // 显示
   show: boolean
   // 值
@@ -83,6 +84,9 @@ export declare interface Props {
   // 环境
   env?: string
 
+  // 数据库
+  indexDB?: Partial<IndexDB>
+
   // 相机
   camera?: Partial<Camera>
   // 雾化
@@ -95,7 +99,7 @@ export declare interface Props {
   // 模型(场景加载类型对应的模型)
   models: ModelItem[]
   // 配置
-  config?: Config
+  config?: Partial<Config>
   // 对象列表（设备列表）
   objects: ObjectItem[]
   // DOT 类型 key 默认: 'DOT'
@@ -113,9 +117,9 @@ export declare interface Props {
   // DOT 点位更新对象回调方法
   dotUpdateObjectCall?: (obj: ObjectItem, list: ThreeModelItem[]) => UpdateDotReturn
   // 更新对象回调方法
-  updateObjectCall?: (obj: ObjectItem) => UpdateFnReturn
+  updateObjectCall?: (obj: ObjectItem) => Partial<UpdateFnReturn>
   // 随机更新对象回调方法
-  randomUpdateObjectCall?: (obj: ObjectItem) => UpdateFnReturn | undefined
+  randomUpdateObjectCall?: (obj: ObjectItem) => Partial<UpdateFnReturn> | undefined
 
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]

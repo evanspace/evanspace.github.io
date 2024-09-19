@@ -47,7 +47,10 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
   controls: () => ({}),
   colorMeshName: () => [],
   anchorType: () => [],
-  mainBodyMeshName: () => ['主体']
+  mainBodyMeshName: () => ['主体'],
+  indexDB: () => ({
+    cache: true
+  })
 })
 
 import { useResize } from '../../hooks/resize'
@@ -58,7 +61,8 @@ const { change: changeBackground, load: backgroundLoad } = useBackground()
 const { progress, loadModel, loadModels, getModel } = useModelLoader({
   baseUrl: props.dracoUrl,
   colors,
-  colorMeshName: props.colorMeshName
+  colorMeshName: props.colorMeshName,
+  indexDB: props.indexDB
 })
 
 // 加载完成、更新、选择 anchorType 类型的模块、双击模型、点击 DOT 类型点位, 点击弹窗点位
@@ -92,6 +96,27 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
 }
 
 let scene: InstanceType<typeof NewThreeScene>
+
+watch(
+  () => props.dotShowStrict,
+  () => toggleDotVisible()
+)
+
+// 点位隐现方式切换
+const toggleDotVisible = () => {
+  const list = scene.dotGroup.children
+  for (let i = 0; i < list.length; i++) {
+    const el = list[i]
+    if (!el.data) continue
+    const data = el.data
+    // 数据参数
+    let type = data.type
+    // 点位
+    if (type === props.dotKey) {
+      updateDotVisible(el)
+    }
+  }
+}
 
 // 楼层动画
 const floorAnimate = (index?: number) => {
@@ -394,7 +419,6 @@ const assemblyScenario = async () => {
 // 加载
 const load = () => {
   loadModels(props.models, () => {
-    console.log('加载完成')
     assemblyScenario()
   })
 }
