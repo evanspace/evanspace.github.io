@@ -563,7 +563,6 @@ onMounted(() => {
       }
     },
     onClickLeft(object) {
-      console.log(object)
       if (object) {
         dialog.select = [object]
         emits('select', object)
