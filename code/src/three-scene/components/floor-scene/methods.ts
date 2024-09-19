@@ -2,24 +2,68 @@ import * as THREE from 'three'
 
 import ThreeScene from '../../index'
 import { useRaycaster } from '@/three-scene/hooks/raycaster'
+import { useCSS2D, CSS2DRenderer } from '@/three-scene/hooks/css2d'
 
-import type { XYZ } from '../../types/model'
+import type { XYZ, ObjectItem } from '../../types/model'
 import type { Config, ExtendOptions } from '.'
 
 import DEFAULTCONFIG from '../../config'
 
 const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
+const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 
 export class NewThreeScene extends ThreeScene {
   // 设备集合
   deviceGroup: InstanceType<typeof THREE.Group>
+  // 点位集合
+  dotGroup: InstanceType<typeof THREE.Group>
+  // 扩展参数
   extend: Partial<ExtendOptions>
+  // CSS2D 渲染器
+  css2DRender: InstanceType<typeof CSS2DRenderer>
   constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
     super(options)
 
     this.extend = extend
+    this.css2DRender = initCSS2DRender(this.options, this.container)
+    this.css2DRender.domElement.className = 'three-scene__dot-wrap'
     this.deviceGroup = new THREE.Group()
     this.bindEvent()
+    this.addDotGroup()
+  }
+
+  addDotGroup() {
+    const group = new THREE.Group()
+    this.scene.add(group)
+    this.dotGroup = group
+  }
+
+  createDot(item: ObjectItem, clickBack) {
+    const pos = item.position
+    const { size, color } = item.font || {}
+    const { x = 0, y = 0, z = 0 } = pos || {}
+    const label = createCSS2DDom({
+      name: `
+        <div class="bg"></div>
+        <span class="inner" style="${
+          size != void 0 ? `font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
+        } ${color != void 0 ? `color: ${color}` : ''}"></span>
+      `,
+      className: 'dot-2D-label',
+      position: [x, y, z],
+      onClick: clickBack
+    })
+    label.name = item.name
+    label.data = item
+    // 原始点位 备用
+    label._position_ = { x, y, z }
+    this.dotGroup.add(label)
+    return label
+  }
+
+  modelAnimate() {
+    // css2D 渲染器
+    this.css2DRender.render(this.scene, this.camera)
   }
 
   // 双击
@@ -34,7 +78,6 @@ export class NewThreeScene extends ThreeScene {
       // 检查射线和物体之间的交叉点（包含或不包含后代）
       const objects = [this.deviceGroup]
       const interscts = raycaster.intersectObjects(objects)
-
       if (interscts.length) {
         const obj = interscts[0].object
         const object = this.findParentGroupGroup(obj)
@@ -133,9 +176,14 @@ export class NewThreeScene extends ThreeScene {
     })
   }
 
+  // 获取所有对象
+  getAll() {
+    return this.deviceGroup.children.concat(this.dotGroup.children)
+  }
+
   // 获取跟随目标集合
   getFlowMark(mark) {
-    return this.deviceGroup.children.filter(el => el.data?.followMark === mark)
+    return this.getAll().filter(el => el.data?.followMark === mark)
   }
 
   // 获取动画目标点
@@ -151,5 +199,11 @@ export class NewThreeScene extends ThreeScene {
   getPosition() {
     console.log('视角', this.camera.position)
     console.log('目标位置', this.controls.target)
+  }
+
+  resize() {
+    super.resize()
+    const { width, height } = this.options
+    this.css2DRender.setSize(width, height)
   }
 }

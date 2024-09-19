@@ -94,5 +94,8 @@ export const getPageOpts = (): {} & Omit<
     'FLOOR_FOURTEEN_SIXTEEN',
     'FLOOR_SEVENTEEN_EIGHTEEN'
   ],
-  anchorType: ['COLD_CAMERA', 'COLD_ROOM_INLET', 'COLD_GPS']
+  anchorType: ['COLD_CAMERA', 'COLD_ROOM_INLET', 'COLD_GPS'],
+  mainBodyChangeColor: true,
+  mainBodyMeshName: ['立方体062'],
+  animationModelType: ['FLOOR_COMMON']
 })

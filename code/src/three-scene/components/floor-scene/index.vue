@@ -2,7 +2,7 @@
   <div :class="$style['floor-scene']">
     <!-- 操作按钮 -->
     <div class="scene-operation" v-if="devEnv">
-      <el-link type="success">随机更新</el-link>
+      <el-link type="success" @click="rendomUpdate">随机更新</el-link>
       <el-link @click="() => scene?.getPosition()" type="success">场景坐标</el-link>
       <el-link type="warning" @click="() => changeBackground(scene)">切换背景</el-link>
     </div>
@@ -26,23 +26,28 @@
 </template>
 
 <script lang="ts" setup>
+import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import { NewThreeScene } from './methods'
 import { colors } from './colors'
 import * as UTILS from '../../utils/model'
 
+import DEFAULTCONFIG from '../../config'
+
 import type { ObjectItem, ThreeModelItem, XYZ } from '../../types/model'
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   dracoUrl: '',
   dotKey: 'DOT',
+  dotShowStrict: true,
   camera: () => ({}),
   fog: () => ({}),
   render: () => ({}),
   controls: () => ({}),
   colorMeshName: () => [],
-  anchorType: () => []
+  anchorType: () => [],
+  mainBodyMeshName: () => ['主体']
 })
 
 import { useResize } from '../../hooks/resize'
@@ -102,7 +107,7 @@ const floorAnimate = (index?: number) => {
   }
   floors.forEach((el, i) => {
     // 换算间距
-    const pos = el._pos
+    const pos = el._position_
     let k = i - (!isExist ? i : index)
     const margin = props.config?.floorExpandMargin || 200
     const mode = props.config?.floorExpandMode || 'UD'
@@ -145,7 +150,7 @@ const floorAnimate = (index?: number) => {
     const object = floors[index] || {}
     to = object.data?.to
     if (!!to) {
-      target = object.data?.target || object._pos
+      target = object.data?.target || object._position_
     }
   }
   to = scene.getAnimTargetPos(props.config || {}, to, target)
@@ -165,8 +170,9 @@ const isCameraMove = (to: XYZ) => {
 // 跟随模型动画
 const fllowModelAnimate = (mode: string, items: ThreeModelItem[], cy: number, cz: number) => {
   if (items.length === 0) return
+
   items.forEach(el => {
-    const pos = el._pos
+    const pos = el._position_
     const ty = mode == 'UD' ? (pos?.y ?? 0) + cy : pos?.y ?? 0
     const tz = mode == 'BA' ? (pos?.z ?? 0) + cz : pos?.z ?? 0
     new TWEEN.Tween(el.position)
@@ -198,6 +204,43 @@ const loadBase = async (item: ObjectItem) => {
   return Promise.resolve(model)
 }
 
+// 更新点位隐现
+const updateDotVisible = (target: ThreeModelItem) => {
+  if (typeof props.dotUpdateObjectCall !== 'function') {
+    throw Error('未传人点位更新对象回调方法 dotUpdateObjectCall')
+  }
+  const item = target.data as ObjectItem
+  const res = props.dotUpdateObjectCall(item, scene.deviceGroup)
+  if (typeof res !== 'object') {
+    throw Error('点位更新回调方法返回类型不是 Object，当前返回类型为：' + typeof res)
+  }
+  Object.keys(res).forEach(key => {
+    item[key] = res[key]
+  })
+
+  target.visible = item.show || !props.dotShowStrict
+  const dom = target.element?.getElementsByClassName('inner')[0] as HTMLElement
+  if (dom) {
+    const { size, color } = item.font || {}
+    if (size != void 0) {
+      dom.style.fontSize = typeof size === 'string' ? size : size + 'px'
+    }
+    if (color != void 0) {
+      dom.style.color = color
+    }
+    dom.textContent = `${item.value || 0}${item.unit}`
+  }
+}
+
+// 创建 dot 点位
+const createDotObject = item => {
+  updateDotVisible(
+    scene.createDot(item, e => {
+      console.log(item, e)
+    })
+  )
+}
+
 // 循环加载对象
 const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
@@ -210,6 +253,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     } else {
       // 点位
       if (type === props.dotKey) {
+        createDotObject(item)
       }
     }
     return
@@ -230,6 +274,30 @@ const loopLoadObject = async (item: ObjectItem) => {
   model.position.set(x, y, z)
   // 转换方位
   model.rotation.set(...ROT)
+
+  const animationModelType = props.animationModelType || []
+  if (animationModelType.includes(type)) {
+    if (model.type !== 'Group') {
+      const group = new THREE.Group()
+      group.add(model)
+      model = group
+    }
+    // 主体网格
+    if (props.mainBodyChangeColor) {
+      const children = model.children[0]?.children || []
+      const mesh = children.filter(it => (props.mainBodyMeshName || []).some(t => it.name.indexOf(t) > -1))
+      const cobj = colors.normal
+      let color = cobj.main || cobj.color
+      let colrs = UTILS.getColorArr(color)
+      if (colrs.length) {
+        mesh.forEach((e, i) => {
+          UTILS.setMaterialColor(e, colrs[i % colrs.length])
+        })
+      }
+      model[DEFAULTCONFIG.meshKey.body] = mesh
+    }
+  }
+
   model._isDevice_ = true
   model.data = item
 
@@ -335,6 +403,97 @@ const initPage = () => {
   load()
   if (props.skyCode) {
     backgroundLoad(scene, props.skyCode)
+  }
+}
+
+// 随机更新
+const rendomUpdate = () => {
+  const emitData: ObjectItem[] = []
+
+  if (typeof props.randomUpdateObjectCall !== 'function') {
+    throw Error('未传入随机更新回调函数 randomUpdateObjectCall')
+  }
+
+  scene.getAll().forEach((el, _i) => {
+    if (!el.data) return
+
+    const data = el.data
+    // 数据参数
+    let type = data.type
+
+    // 点位
+    if (type === props.dotKey) {
+      updateDotVisible(el)
+      return
+    }
+
+    // @ts-ignore
+    const res = props.randomUpdateObjectCall(data)
+    if (!res) return
+    if (typeof res !== 'object') {
+      throw Error('更新回调函数返回对象不为 Object，当前类型：' + typeof res)
+    }
+    Object.keys(res).forEach(key => {
+      data[key] = res[key]
+    })
+    emitData.push(toRaw(data))
+
+    let { status = 0, error = 0, remote = 0, local = 0, disabled = 0 } = data
+    // 获取颜色
+    const cKey = error > 0 ? 'error' : status > 0 ? 'runing' : 'normal'
+    const cobj = colors[cKey]
+    let color = cobj[type] || cobj.color
+
+    if (typeof props.getColorCall === 'function') {
+      const cr = props.getColorCall(data)
+      if (cr) color = cr
+    }
+
+    changeModleStatusColor({
+      type,
+      el,
+      colorObj: cobj,
+      color,
+      paused: status == 0,
+      error: error > 0,
+      remote: remote > 0,
+      local: local > 0,
+      disabled: disabled > 0
+    })
+  })
+  emits('update', emitData, true)
+}
+
+// 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
+const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
+  let { el, colorObj: cobj, color, type, paused, error: isError } = opts
+  let colors = UTILS.getColorArr(color)
+  color = colors[0]
+
+  // 场景
+  // 扩展数据
+  const extra = el.extra
+  // 状态运行则运动
+  if (!!extra) {
+    // 暂停状态
+    !!extra.action && (extra.action.paused = paused)
+    if (color != void 0) {
+      const meshs = extra.meshs || []
+      meshs.forEach(e => {
+        UTILS.setMaterialColor(e, color)
+      })
+    }
+  }
+
+  // 主体变色
+  if (props.mainBodyChangeColor && el[DEFAULTCONFIG.meshKey.body]) {
+    const color = cobj.main
+    let colors = UTILS.getColorArr(color)
+    if (colors.length) {
+      el[DEFAULTCONFIG.meshKey.body].forEach((e, i) => {
+        UTILS.setMaterialColor(e, colors[i % colors.length])
+      })
+    }
   }
 }
 

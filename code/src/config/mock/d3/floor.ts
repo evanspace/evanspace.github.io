@@ -76,6 +76,7 @@ for (let i = 0; i < list.length; i++) {
   floorData.push({
     name: `${i + 1}楼`,
     type: list[i],
+    mark: list[i] + '_' + i,
     position: {
       x: 0,
       y: y,
@@ -83,6 +84,18 @@ for (let i = 0; i < list.length; i++) {
     }
   })
 }
+
+floorData.push({
+  name: 'DOT',
+  unit: '%',
+  type: 'DOT',
+  followMark: 'FLOOR_COMMON_3',
+  position: {
+    x: 0,
+    y: 260,
+    z: 100
+  }
+})
 
 export default [
   {

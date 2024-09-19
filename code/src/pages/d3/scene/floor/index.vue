@@ -14,9 +14,15 @@
       :config="pageOpts.config"
       :models="pageOpts.models"
       :anchor-type="pageOpts.anchorType"
+      :dot-show-strict="pageOpts.dotShowStrict"
       :floor-model-type="pageOpts.floorModelType"
+      :main-body-change-color="pageOpts.mainBodyChangeColor"
+      :main-body-mesh-name="pageOpts.mainBodyMeshName"
+      :animation-model-type="pageOpts.animationModelType"
       :objects="pageOpts.objects"
       :format-object="formatObject"
+      :dot-update-object-call="dotUpdateObjectCall"
+      :random-update-object-call="randomUpdateObjectCall"
     ></t-floor-scene>
   </div>
 </template>
@@ -35,6 +41,43 @@ const threeSceneRef = ref()
 // 格式化
 const formatObject = list => {
   return wsStore.formatData(list)
+}
+
+// 点位更新回调
+const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
+  // const val = wsStore.getKeyValue( code ).value
+  const val = Math.random() * 40
+  if (val !== void 0) {
+    obj.value = val
+  }
+
+  obj.show = true
+  obj.value = Number(Number(obj.value || 0).toFixed(2))
+  return {
+    value: obj.value,
+    show: obj.show,
+    font: {
+      ...(obj.font || {}),
+      color: obj.value > 35 ? '#f00' : null
+    }
+  }
+}
+
+// 随机更新回调
+const randomUpdateObjectCall = (_obj: ObjectItem) => {
+  // const code = _obj.deviceCode || ''
+  // console.log( code )
+  const status = Math.random() > 0.5 ? 1 : 0
+  const error = Math.random() > 0.5 ? 1 : 0
+  const disabled = Math.random() > 0.8 ? 1 : 0
+  const ctl = Math.floor(Math.random() * 3)
+  return {
+    status: disabled > 0 ? 0 : status,
+    error: disabled > 0 ? 0 : error,
+    remote: ctl == 1 ? 1 : 0,
+    local: ctl == 2 ? 1 : 0,
+    disabled
+  }
 }
 
 onMounted(() => {

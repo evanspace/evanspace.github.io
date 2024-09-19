@@ -101,7 +101,7 @@ export declare interface Extra {
 export declare interface ThreeModelItem {
   uuid: string
   visible: boolean
-  _pos?: XYZ
+  _position_?: XYZ
   position: XYZ
   data?: ObjectItem
   extra?: Extra

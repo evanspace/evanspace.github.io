@@ -23,6 +23,49 @@ export interface Config {
   load?: Function
 }
 
+// 改变材质配置
+export interface ChangeMaterialOpts {
+  // 类型、
+  type: string
+  // 模型、
+  el: any
+  // 颜色对象、
+  colorObj: ColorObject
+  // 颜色、
+  color: Color
+  // 动画暂停状态、
+  paused: boolean
+  // 故障状态
+  error: boolean
+  // 远程状态
+  remote?: boolean
+  // 本地状态
+  local?: boolean
+  // 本地状态
+  disabled?: boolean
+}
+// 更新对象返回
+export interface UpdateFnReturn {
+  // 大于 0 则运行
+  status?: number
+  // 大于 0 则故障
+  error?: number
+  // 大于 0 则远程
+  remote?: number
+  // 大于 0 则本地
+  local?: number
+  // 大于 0 则禁用
+  disabled?: number
+}
+
+// 更新点位返回
+export interface UpdateDotReturn {
+  // 显示
+  show: boolean
+  // 值
+  value?: number
+}
+
 export declare interface Props {
   // 是否开发环境（开发环境下开启测试功能）
   devEnv?: boolean
@@ -57,12 +100,22 @@ export declare interface Props {
   objects: ObjectItem[]
   // DOT 类型 key 默认: 'DOT'
   dotKey?: string
+  // dot 点位展示严格模式（设备运行时展示） 默认: true
+  dotShowStrict?: boolean
 
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]
 
+  // 获取颜色回调
+  getColorCall?: (obj: ObjectItem) => string | number | undefined
   // 格式化数据方法
   formatObject: (list: ObjectItem[]) => ObjectItem[]
+  // DOT 点位更新对象回调方法
+  dotUpdateObjectCall?: (obj: ObjectItem, list: ThreeModelItem[]) => UpdateDotReturn
+  // 更新对象回调方法
+  updateObjectCall?: (obj: ObjectItem) => UpdateFnReturn
+  // 随机更新对象回调方法
+  randomUpdateObjectCall?: (obj: ObjectItem) => UpdateFnReturn | undefined
 
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]
@@ -74,6 +127,11 @@ export declare interface Props {
   textModelType?: string[]
   // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
   anchorType?: string[]
+
+  // 主体变色
+  mainBodyChangeColor?: boolean
+  // 主体网格名称 默认: [ '主体' ]
+  mainBodyMeshName?: string[]
 }
 
 export declare interface ExtendOptions {
