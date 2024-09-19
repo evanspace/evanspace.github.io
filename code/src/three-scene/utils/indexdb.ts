@@ -50,7 +50,7 @@ export const getDBVersion = (dbName: string, version: number, tbName: string) =>
 
 // 创建数据库
 export const createDB = async (tbName, dbName = 'THREE__MODEL_DB', version = 1): Promise<IDBDatabase | undefined> => {
-  if (!window.indexedDB) return Promise.resolve(null)
+  if (!window.indexedDB) return Promise.resolve(void 0)
 
   await getDBVersion(dbName, version, tbName)
   // 创建数据库 名称、版本号
@@ -75,7 +75,7 @@ export const createDB = async (tbName, dbName = 'THREE__MODEL_DB', version = 1):
     }
     request.onerror = ev => {
       console.log('数据库打开失败', ev)
-      resolve(null)
+      resolve(void 0)
     }
   })
 }
