@@ -29,17 +29,30 @@ const COLOR = {
   // 主色（地图面）
   main: 0x338ad7,
   mainHover: 0x92ffff,
+  // 边(区域侧边)
+  borderColor: 0x92ffff,
+  borderHoverColor: 0x10467a,
   // 浅色（波纹板、）
   light: 0x10467a,
   lightHover: 0x92ffff,
   // 线条(地图区块上下线条)
   line: 0x91dbf3,
   line2: 0x61fbfd,
+  // 网格线
+  gridColor: 0x0b233a,
+  // 网格交叉
+  gridFork: 0x173a5b,
   // 轮廓线
   outline: 0xb4eafc,
   // mark 颜色(光柱)
   markColor1: 0xcaffff,
-  markColor2: 0x69f8ff
+  markColor2: 0x69f8ff,
+  // 飞线
+  flyColor1: 0x91dbf3,
+  flyColor2: 0x61fbfd,
+  // 散点
+  scatterColor1: 0x91dbf3,
+  scatterColor2: 0x61fbfd
 }
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate({
@@ -65,8 +78,8 @@ const { raycaster, pointer, style, update: raycasterUpdate } = useRaycaster()
 const { createFlywire, update: flywireUpdate } = useFlywire({
   depth: OPTS.depth,
   color: COLOR.line,
-  flyColor: COLOR.line2,
-  pointColor: COLOR.line,
+  flyColor: COLOR.flyColor2,
+  pointColor: COLOR.flyColor1,
   factor: OPTS.scale
 })
 const { createBar } = useMapBar({
@@ -145,7 +158,7 @@ const createMapBlock = points => {
   })
   // 边框材质
   const sideMaterial = new THREE.MeshLambertMaterial({
-    color: COLOR.light,
+    color: COLOR.borderColor,
     map: sideTextureMap,
     transparent: true,
     opacity: 0.9
@@ -229,12 +242,12 @@ const createScatter = (longitude: number, latitude: number) => {
   const size = 0.2 * OPTS.scale
   // 圆盘
   const circle = new THREE.CircleGeometry(size, 32)
-  const circleMat = new THREE.MeshBasicMaterial({ color: COLOR.main, transparent: true, opacity: 1 })
+  const circleMat = new THREE.MeshBasicMaterial({ color: COLOR.scatterColor1, transparent: true, opacity: 1 })
   const circleMesh = new THREE.Mesh(circle, circleMat)
 
   // 半球
   const sphere = new THREE.SphereGeometry(size * 0.8, 32, 32, 0, Math.PI)
-  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.line2, transparent: true, opacity: 1 })
+  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.scatterColor2, transparent: true, opacity: 1 })
   const sphereMesh = new THREE.Mesh(sphere, sphereMat)
   group.add(circleMesh, sphereMesh)
   group.position.set(longitude * OPTS.scale, latitude * OPTS.scale, OPTS.depth * OPTS.scale * 1.005)
@@ -425,7 +438,7 @@ export class NewThreeScene extends ThreeScene {
     this.mapGroup.traverse(el => {
       if (el.isProvinceBlock) {
         el.material[0].color.set(el.parent.uuid === puuid ? COLOR.mainHover : COLOR.main)
-        el.material[1].color.set(el.parent.uuid === puuid ? COLOR.lightHover : COLOR.light)
+        el.material[1].color.set(el.parent.uuid === puuid ? COLOR.borderHoverColor : COLOR.borderColor)
       } else if (el.isLabel) {
         const isTarget = el.parent.uuid === puuid
         el.element.className = `map-3D-label${isTarget ? ' is-active' : ''}`
@@ -440,7 +453,7 @@ export class NewThreeScene extends ThreeScene {
       size = 1.4 * OPTS.scale,
       step = width / segmentation,
       start = -width / 2
-    let gd = new THREE.GridHelper(width, segmentation, COLOR.light, COLOR.light)
+    let gd = new THREE.GridHelper(width, segmentation, COLOR.gridColor, COLOR.gridColor)
     this.grid = gd
     const group = new THREE.Group()
     for (let i = 0; i <= segmentation; i++) {
@@ -450,13 +463,13 @@ export class NewThreeScene extends ThreeScene {
         const geo = new THREE.PlaneGeometry(size, size / 5)
         // 边框材质
         const mat = new THREE.MeshLambertMaterial({
-          color: COLOR.light,
+          color: COLOR.gridFork,
           transparent: true,
           opacity: 0.9
         })
         const mesh = new THREE.Mesh(geo, mat)
         mesh.rotateX(-Math.PI * 0.5)
-        mesh.position.set(x, 0, z)
+        mesh.position.set(x, 0.1, z)
         const mesh2 = mesh.clone()
         mesh2.rotateZ(Math.PI * 0.5)
         group.add(mesh, mesh2)
