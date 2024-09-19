@@ -32,6 +32,8 @@ import tFloorScene from '@/three-scene/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 
+import type { ObjectItem } from '@/three-scene/types/model'
+
 import { useWsStore } from '@/stores'
 const wsStore = useWsStore()
 

@@ -466,6 +466,7 @@ const rendomUpdate = () => {
 
 // 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
 const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
+  // @ts-ignore
   let { el, colorObj: cobj, color, type, paused, error: isError } = opts
   let colors = UTILS.getColorArr(color)
   color = colors[0]
