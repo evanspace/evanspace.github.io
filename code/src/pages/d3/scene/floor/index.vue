@@ -30,7 +30,18 @@
       :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
       :random-update-object-call="randomUpdateObjectCall"
-    ></t-floor-scene>
+    >
+      <template #dialog="{ data, title }">
+        <div :class="$style['dialog-wrap']">
+          <div :class="$style.circle"></div>
+          <div :class="$style.line"></div>
+          <div :class="$style.content">
+            <div :class="$style.title">{{ title }}</div>
+            <div :class="$style.data">{{ data }}</div>
+          </div>
+        </div>
+      </template>
+    </t-floor-scene>
   </div>
 </template>
 
@@ -60,7 +71,7 @@ const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
     obj.value = val
   }
 
-  // obj.show = true
+  obj.show = Math.random() > 0.5
   obj.value = Number(Number(obj.value || 0).toFixed(2))
   return {
     value: obj.value,

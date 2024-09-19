@@ -140,6 +140,7 @@ export declare interface Props {
 
 export declare interface ExtendOptions {
   onDblclick: (e) => void
-  onClickLeft: (e) => void
+  onClickLeft: (e?) => void
   onClickRight: (e) => void
+  animateCall: () => void
 }

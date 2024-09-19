@@ -1,9 +1,9 @@
-// import * as THREE from 'three'
+import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import CONFIG from '../config'
 import type { Color } from '../types/color'
-import type { XYZ } from '../types/model'
+import type { XYZ, StylePosition } from '../types/model'
 
 // 获取位置、大小、缩放参数
 export const get_P_S_R_param = (model, item, s: number = 1) => {
@@ -104,7 +104,11 @@ export const setMaterialColor = (e: any, color: number | string): void => {
 }
 
 // 相机入场动画
-export const cameraInSceneAnimate = (camera: any, to: XYZ, at: XYZ): Promise<any> => {
+export const cameraInSceneAnimate = (
+  camera: InstanceType<typeof THREE.PerspectiveCamera>,
+  to: XYZ,
+  at: XYZ
+): Promise<InstanceType<typeof THREE.PerspectiveCamera>> => {
   camera.lookAt(at)
   return new Promise(resolve => {
     new TWEEN.Tween(camera.position)
@@ -119,4 +123,25 @@ export const cameraInSceneAnimate = (camera: any, to: XYZ, at: XYZ): Promise<any
         resolve(camera)
       })
   })
+}
+
+// 获取 3 维平面位置
+export const getPlanePosition = (
+  dom: HTMLElement,
+  object,
+  camera: InstanceType<typeof THREE.PerspectiveCamera>
+): StylePosition => {
+  let halfw = dom.clientWidth / 2
+  let halfh = dom.clientHeight / 2
+  let position = object.position.clone()
+  const scale = object.scale
+  position.y += scale.x / 2
+  // 平面坐标
+  let vector = position.project(camera)
+  // 二维坐标 (没有加偏移量因为 css 父级又相对定位)
+  let pos = {
+    left: vector.x * halfw + halfw,
+    top: -vector.y * halfh + halfh
+  }
+  return pos
 }

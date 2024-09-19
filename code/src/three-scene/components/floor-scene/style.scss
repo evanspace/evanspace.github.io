@@ -62,6 +62,12 @@
   }
 }
 
+
+.dialog {
+  z-index: 5;
+  position: absolute;
+}
+
 :global {
   :local( .floor-scene ) {
     .scene-operation {

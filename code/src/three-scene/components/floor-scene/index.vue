@@ -22,6 +22,11 @@
         <div :class="$style.text">{{ progress.percentage }}%</div>
       </div>
     </div>
+
+    <!-- 设备信息弹窗 -->
+    <div :class="$style.dialog" v-if="dialog.show" :style="dialog.style">
+      <slot name="dialog" :data="dialog.data" :title="dialog.title" :position="dialog.position"></slot>
+    </div>
   </div>
 </template>
 
@@ -32,7 +37,6 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { NewThreeScene } from './methods'
 import { colors } from './colors'
 import * as UTILS from '../../utils/model'
-
 import DEFAULTCONFIG from '../../config'
 
 import type { ObjectItem, ThreeModelItem, XYZ } from '../../types/model'
@@ -56,6 +60,7 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
 import { useResize } from '../../hooks/resize'
 import { useBackground } from '../../hooks/background'
 import { useModelLoader } from '../../hooks/model-loader'
+import { useDialog } from '@/three-scene/hooks/dialog'
 
 const { change: changeBackground, load: backgroundLoad } = useBackground()
 const { progress, loadModel, loadModels, getModel } = useModelLoader({
@@ -64,6 +69,7 @@ const { progress, loadModel, loadModels, getModel } = useModelLoader({
   colorMeshName: props.colorMeshName,
   indexDB: props.indexDB
 })
+const { dialog } = useDialog()
 
 // 加载完成、更新、选择 anchorType 类型的模块、双击模型、点击 DOT 类型点位, 点击弹窗点位
 const emits = defineEmits<{
@@ -264,6 +270,27 @@ const createDotObject = item => {
       console.log(item, e)
     })
   )
+}
+
+// 弹窗展示数据
+const dialogShowData = () => {
+  const object = dialog.select[0]
+  const data = object.data
+  dialog.data = data as Partial<ObjectItem>
+  dialog.title = data?.name || ''
+
+  const pos = updateDialogPosition(object)
+  emits('click-dialog-dot', data as ObjectItem, pos)
+}
+
+// 更新 dialog 坐标
+const updateDialogPosition = object => {
+  const dom = containerRef.value
+  const pos = UTILS.getPlanePosition(dom, object, scene.camera)
+  dialog.position = pos
+  dialog.style.left = pos.left + 'px'
+  dialog.style.top = pos.top + 'px'
+  return pos
 }
 
 // 循环加载对象
@@ -537,13 +564,28 @@ onMounted(() => {
     },
     onClickLeft(object) {
       console.log(object)
-      emits('select', object)
+      if (object) {
+        dialog.select = [object]
+        emits('select', object)
+        dialogShowData()
+      } else {
+        dialog.select = []
+      }
+      dialog.show = !!object
     },
     onClickRight: _e => {
       if (typeof props.config?.back === 'function') {
         props.config.back(scene)
       } else {
         floorAnimate(-1)
+      }
+    },
+    animateCall: () => {
+      // 弹窗位置
+      if (dialog.show && !!dialog.select.length) {
+        // 设备弹窗信息
+        const object = dialog.select[0]
+        updateDialogPosition(object)
       }
     }
   })

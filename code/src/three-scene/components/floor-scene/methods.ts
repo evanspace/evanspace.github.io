@@ -64,6 +64,8 @@ export class NewThreeScene extends ThreeScene {
   modelAnimate() {
     // css2D 渲染器
     this.css2DRender.render(this.scene, this.camera)
+
+    if (typeof this.extend.animateCall === 'function') this.extend.animateCall()
   }
 
   // 双击
@@ -131,6 +133,8 @@ export class NewThreeScene extends ThreeScene {
 
       if (!object) return
       if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(object)
+    } else {
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
     }
   }
 

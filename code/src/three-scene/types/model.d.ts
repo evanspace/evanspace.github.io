@@ -108,3 +108,8 @@ export declare interface ThreeModelItem {
   clear: Function
   element?: HTMLElement
 }
+
+export interface StylePosition {
+  left: number
+  top: number
+}
