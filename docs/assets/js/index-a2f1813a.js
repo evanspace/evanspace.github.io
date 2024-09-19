@@ -1,0 +1,1 @@
+import{_ as s}from"./common-14aeaaac.js";import{o as a,g as c,h as o}from"./vendor-20ed11f5.js";const r={class:"page"};const d=s({},[["render",function(s,d){return a(),c("div",r,d[0]||(d[0]=[o("div",{class:"cup"},[o("div",{class:"cup-body"},[o("div",{class:"layer"}),o("div",{class:"layer"})])],-1)]))}],["__scopeId","data-v-00c32c94"]]);export{d as default};
