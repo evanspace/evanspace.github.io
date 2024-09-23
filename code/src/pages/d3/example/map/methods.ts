@@ -1,17 +1,17 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
-import { useCorrugatedPlate } from '@/three-scene/hooks/corrugated-plate'
-import { useOutline } from '@/three-scene/hooks/out-line'
-import { useCoord } from '@/three-scene/hooks/coord'
-import { useCountryLine } from '@/three-scene/hooks/country-line'
-import { useCSS3D, CSS3DRenderer } from '@/three-scene/hooks/css3d'
-import { useMarkLight } from '@/three-scene/hooks/mark-light'
-import { useRaycaster } from '@/three-scene/hooks/raycaster'
-import { useFlywire } from '@/three-scene/hooks/flywire'
-import { useMapBar } from '@/three-scene/hooks/map-bar'
+import { useCorrugatedPlate } from 'three-scene/hooks/corrugated-plate'
+import { useOutline } from 'three-scene/hooks/out-line'
+import { useCoord } from 'three-scene/hooks/coord'
+import { useCountryLine } from 'three-scene/hooks/country-line'
+import { useCSS3D, CSS3DRenderer } from 'three-scene/hooks/css3d'
+import { useMarkLight } from 'three-scene/hooks/mark-light'
+import { useRaycaster } from 'three-scene/hooks/raycaster'
+import { useFlywire } from 'three-scene/hooks/flywire'
+import { useMapBar } from 'three-scene/hooks/map-bar'
 import { numConverter } from '@/common/utils/reckon'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH

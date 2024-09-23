@@ -57,10 +57,9 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
   })
 })
 
-import { useResize } from '../../hooks/resize'
 import { useBackground } from '../../hooks/background'
 import { useModelLoader } from '../../hooks/model-loader'
-import { useDialog } from '@/three-scene/hooks/dialog'
+import { useDialog } from 'three-scene/hooks/dialog'
 
 const { change: changeBackground, load: backgroundLoad } = useBackground()
 const { progress, loadModel, loadModels, getModel } = useModelLoader({
@@ -73,6 +72,7 @@ const { dialog } = useDialog()
 
 // 加载完成、更新、选择 anchorType 类型的模块、双击模型、点击 DOT 类型点位, 点击弹窗点位
 const emits = defineEmits<{
+  init: [scene: InstanceType<typeof NewThreeScene>]
   loaded: []
   update: [list: ObjectItem[], isRandom?: boolean]
   select: [item: ObjectItem]
@@ -589,7 +589,7 @@ onMounted(() => {
     }
   })
   scene.run()
-  useResize(scene).resize()
+  emits('init', scene)
   initPage()
 })
 

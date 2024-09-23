@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { SUBTRACTION, INTERSECTION, ADDITION, Brush, Evaluator } from 'three-bvh-csg'
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
 const params = {
   operation: SUBTRACTION,
@@ -76,7 +76,10 @@ export class NewThreeScene extends ThreeScene {
     //布尔运算物体
     this.brush = createBrush()
 
-    this.wireframe = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial({ color: 0x009688, wireframe: true }))
+    this.wireframe = new THREE.Mesh(
+      new THREE.BoxGeometry(1, 1, 1),
+      new THREE.MeshBasicMaterial({ color: 0x009688, wireframe: true })
+    )
     this.addModel()
   }
 

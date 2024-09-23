@@ -30,11 +30,11 @@
 import * as request from './request'
 import { NewThreeScene } from './methods'
 
-import { useResize } from '@/three-scene/hooks/resize'
+import { useResize } from '@/hooks/scene-resize'
 import { useDialog } from '@/hooks/dialog'
 
-import { useFileLoader } from '@/three-scene/hooks/file-loader'
-import { useConvertData } from '@/three-scene/hooks/convert-data'
+import { useFileLoader } from 'three-scene/hooks/file-loader'
+import { useConvertData } from 'three-scene/hooks/convert-data'
 
 const { show, options: dialog } = useDialog({
   style: {

@@ -1,3 +1,5 @@
+import { ref } from 'vue'
+
 // 背景
 export const useBackground = (code: string = '') => {
   const skys = ['216', '217', '218', '219', '220', '221', '222', '223', '224', '225']

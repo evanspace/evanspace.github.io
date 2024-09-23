@@ -8,7 +8,7 @@ import {
   // @ts-ignore
   HOLLOW_INTERSECTION
 } from 'three-bvh-csg'
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
 let csgEvaluator = new Evaluator()
 csgEvaluator.attributes = ['position', 'normal', 'color']

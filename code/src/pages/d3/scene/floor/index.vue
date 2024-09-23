@@ -30,6 +30,7 @@
       :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
       :random-update-object-call="randomUpdateObjectCall"
+      @init="onInit"
     >
       <template #dialog="{ data, title }">
         <div :class="$style['dialog-wrap']">
@@ -46,13 +47,14 @@
 </template>
 
 <script lang="ts" setup>
-import tFloorScene from '@/three-scene/components/floor-scene/index.vue'
+import tFloorScene from 'three-scene/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 
-import type { ObjectItem } from '@/three-scene/types/model'
+import type { ObjectItem } from 'three-scene/types/model'
 
 import { useWsStore } from '@/stores'
+import { useResize } from '@/hooks/scene-resize'
 const wsStore = useWsStore()
 
 const pageOpts = reactive(getPageOpts())
@@ -98,6 +100,10 @@ const randomUpdateObjectCall = (_obj: ObjectItem) => {
     local: ctl == 2 ? 1 : 0,
     disabled
   }
+}
+
+const onInit = scene => {
+  useResize(scene).resize()
 }
 
 onMounted(() => {

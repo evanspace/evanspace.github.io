@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { NewThreeScene } from './methods'
-import { useResize } from '@/three-scene/hooks/resize'
+import { useResize } from '@/hooks/scene-resize'
 
 const containerRef = ref()
 

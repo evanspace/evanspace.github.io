@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
 const createBufferGeometry = () => {
   // 三角形数量

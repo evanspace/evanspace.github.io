@@ -16,7 +16,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 

@@ -36,7 +36,9 @@
       "@common/*": [ "src/common/*" ],
       "@utils/*": [ "src/common/utils/*" ],
       "@assets/*": [ "src/common/assets/*" ],
-      "@axios": [ "src/common/service/index.ts" ]
+      "@axios": [ "src/common/service/index.ts" ],
+      "three-scene": [ "src/three-scene" ],
+      "three-scene/*": [ "src/three-scene/*" ]
     },
 
     // 解决引入 js 报红问题

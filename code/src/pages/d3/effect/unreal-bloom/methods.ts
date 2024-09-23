@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import ThreeScene from '@/three-scene'
+import ThreeScene from 'three-scene'
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
