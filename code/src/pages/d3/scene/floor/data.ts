@@ -23,6 +23,9 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
     maxDistance: 50000,
     maxPolarAngle: Math.PI * 0.46
   },
+  grid: {
+    visible: true
+  },
 
   models: [
     {

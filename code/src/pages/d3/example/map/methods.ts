@@ -32,16 +32,19 @@ const COLOR = {
   // 边(区域侧边)
   borderColor: 0x92ffff,
   borderHoverColor: 0x10467a,
-  // 浅色（波纹板、）
+  // 浅色
   light: 0x10467a,
   lightHover: 0x92ffff,
+  // 波纹板
+  plateColor: 0x338ad7,
+  plateLight: 0x10467a,
   // 线条(地图区块上下线条)
   line: 0x91dbf3,
   line2: 0x61fbfd,
   // 网格线
-  gridColor: 0x0b233a,
+  gridColor: 0x0a2036,
   // 网格交叉
-  gridFork: 0x173a5b,
+  gridFork: 0x0e2843,
   // 轮廓线
   outline: 0xb4eafc,
   // mark 颜色(光柱)
@@ -57,8 +60,8 @@ const COLOR = {
 
 const { createCorrugatedPlate, update: corrugatUpdate } = useCorrugatedPlate({
   factor: OPTS.scale,
-  color: COLOR.main,
-  light: COLOR.light
+  color: COLOR.plateColor,
+  light: COLOR.plateLight
 })
 const { createOutline, update: outlineUpdate } = useOutline({
   factor: OPTS.scale,
@@ -674,7 +677,7 @@ export class NewThreeScene extends ThreeScene {
     new TWEEN.Tween(this.camera.position)
       .to(
         {
-          x: centerPos.x,
+          x: x,
           y: 40 * OPTS.scale,
           z: z + 40 * OPTS.scale
         },

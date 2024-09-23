@@ -1,8 +1,7 @@
 <template>
   <div class="page">
-    
     <div :class="$style.wrap">
-      <input :class="$style.input" type="text" v-model="text">
+      <input :class="$style.input" type="text" v-model="text" />
       <p>{{ text }}</p>
     </div>
   </div>
@@ -10,11 +9,10 @@
 
 <script lang="ts" setup>
 import { debounceRef } from './debounce'
-const text = debounceRef( '', 500 )
-
+const text = debounceRef('', 500)
 </script>
-  
-<style lang="scss" module="">
+
+<style lang="scss" module>
 .wrap {
   margin: 5px;
   border: 1px solid #ddd;
