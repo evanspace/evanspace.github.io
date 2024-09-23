@@ -111,7 +111,7 @@ watch(
 watch(
   () => props.scale,
   v => {
-    scene?.setScale(v)
+    scene?.setScale(v || 1)
   }
 )
 
