@@ -77,6 +77,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
     near: 2000,
     far: 3000
   },
+  render: {
+    preserveDrawingBuffer: true
+  },
   grid: {
     visible: true
   },
