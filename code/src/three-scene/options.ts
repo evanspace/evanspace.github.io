@@ -77,6 +77,22 @@ export default {
     far: 10000,
     position: [-350, 510, 700]
   },
+  // 巡航
+  cruise: {
+    visible: false,
+    // 运行中
+    runing: false,
+    // 点位
+    points: [],
+    // 曲线张力
+    tension: 0,
+    // 基础地址
+    baseUrl: '',
+    // 贴图地址
+    mapUrl: '/oss/textures/cruise/arrow.png',
+    // 贴图重复
+    repeat: [0.1, 1]
+  },
   // 网格
   grid: {
     visible: false,

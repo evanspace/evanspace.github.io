@@ -18,6 +18,15 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   camera: {
     far: 1000000
   },
+  cruise: {
+    visible: true,
+    points: [
+      [450, 1, 450],
+      [450, 1, -450],
+      [-450, 1, -450],
+      [-450, 1, 450]
+    ]
+  },
   controls: {
     screenSpacePanning: false,
     maxDistance: 50000,
