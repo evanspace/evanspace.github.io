@@ -11,9 +11,13 @@ export const useCruise = () => {
   let cruiseCurve: InstanceType<typeof THREE.CatmullRomCurve3>
   // 贴图
   let texture: InstanceType<typeof THREE.TextureLoader>
+  // 辅助眼睛
+  let eye: InstanceType<typeof THREE.Mesh>
+
   let _options: Options = {
     visible: true,
     runing: false,
+    helper: false,
     // 点位
     points: [],
     // 分段
@@ -44,7 +48,7 @@ export const useCruise = () => {
     // 默认参数
     _options = deepMerge(_options, options)
 
-    const { points, tension, mapUrl, baseUrl, repeat, width } = _options
+    const { points, tension, mapUrl, baseUrl, repeat, width, helper } = _options
 
     const newPoints: InstanceType<typeof THREE.Vector3>[] = []
     for (let i = 0; i < points.length; i++) {
@@ -88,7 +92,42 @@ export const useCruise = () => {
     const mesh = new THREE.Mesh(geometry, mat)
     group.add(mesh)
     group.name = 'cruise'
+
+    if (helper) {
+      createHelper(group, newPoints)
+    }
     return group
+  }
+
+  // 辅助
+  const createHelper = (group, points) => {
+    eye = new THREE.Mesh(
+      new THREE.SphereGeometry(2),
+      new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0.8, transparent: true })
+    )
+    group.add(eye)
+
+    const geo = new THREE.BufferGeometry().setFromPoints(points)
+    const material = new THREE.LineBasicMaterial({ color: 0x0000ff, opacity: 1, transparent: true })
+    const mesh = new THREE.Line(geo, material)
+    group.add(mesh)
+
+    const tubeGeometry = new THREE.TubeGeometry(cruiseCurve, 100, _options.width / 2, 3, true)
+    const tubeMat = new THREE.MeshLambertMaterial({
+      color: 0xff00ff,
+      opacity: 0.1,
+      transparent: true
+    })
+    const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMat)
+    const wireframeMaterial = new THREE.MeshBasicMaterial({
+      color: 0xff0ff0,
+      opacity: 0.3,
+      wireframe: true,
+      transparent: true
+    })
+    const wireframe = new THREE.Mesh(tubeGeometry, wireframeMaterial)
+    tubeMesh.add(wireframe)
+    group.add(tubeMesh)
   }
 
   // 长度
@@ -109,25 +148,17 @@ export const useCruise = () => {
   const cruiseAnimate = camera => {
     if (!camera) return
     if (!cruiseCurve) return
-    const { mapSpeed, speed, factor, runing, offset } = _options
+    const { mapSpeed, speed, factor, runing, offset, helper } = _options
     if (texture) texture.offset.x -= mapSpeed
     runing && (_options.index += factor * speed)
     const looptime = getCruiseLen()
     const t = (_options.index % looptime) / looptime
 
     const pos = cruiseCurve.getPointAt(t)
-    // if (props.cruiseTubeShow && cruiseCameraEye) {
-    // const nPos = getOffsetPoint(offset, pos)
-    // cruiseCameraEye.position.copy(nPos)
-
-    // 返回点t在曲线上位置切线向量
-    // const tangent = cruiseCurve.getTangentAt( t )
-    // // 位置向量和切线向量相加即为所需朝向的点向量
-    // const lookAtVec = tangent.add( nPos )
-    // cruiseCameraEye.lookAt( lookAtVec )
-    // }
-
-    // if (!threeConfig.isCruise) return
+    if (helper && eye) {
+      const nPos = getOffsetPoint(offset, pos)
+      eye.position.copy(nPos)
+    }
 
     const oft = 0.03
     let ts = t - oft

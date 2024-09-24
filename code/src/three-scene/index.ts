@@ -277,6 +277,12 @@ export default class ThreeScene {
     cruise.index = 0
   }
 
+  // 设置巡航点位
+  setCruisePoint(points) {
+    this.options.cruise.points = points
+    this.createCruise()
+  }
+
   // 创建巡航组
   createCruise() {
     const { visible, points } = this.options.cruise

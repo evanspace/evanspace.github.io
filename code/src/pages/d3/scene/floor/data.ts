@@ -20,6 +20,7 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   },
   cruise: {
     visible: true,
+    helper: true,
     points: [
       [450, 1, 450],
       [450, 1, -450],

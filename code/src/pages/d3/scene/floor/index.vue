@@ -5,6 +5,9 @@
         <span>点位：</span>
         <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
       </div>
+      <div class="flex flex-ac">
+        <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
+      </div>
     </div>
     <t-floor-scene
       ref="threeSceneRef"
@@ -106,6 +109,19 @@ const randomUpdateObjectCall = (_obj: ObjectItem) => {
 
 const onInit = scene => {
   useResize(scene).resize()
+}
+
+// 切换巡航点位
+const onChangeCruisePoint = () => {
+  const points = [
+    [450, 1, 450],
+    [450, 1, -450],
+    [-450, 1, -450],
+    [-450, 1, 450]
+  ].map(items => {
+    return items.map(t => t * (0.5 - Math.random() * 0.5 + 1))
+  })
+  pageOpts.cruise && (pageOpts.cruise.points = points)
 }
 
 onMounted(() => {

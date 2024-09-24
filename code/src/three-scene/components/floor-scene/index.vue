@@ -118,6 +118,14 @@ watch(
   }
 )
 
+// 巡航
+watch(
+  () => props.cruise.points,
+  v => {
+    scene.setCruisePoint(v)
+  }
+)
+
 // 点位隐现方式切换
 const toggleDotVisible = () => {
   const list = scene.dotGroup.children

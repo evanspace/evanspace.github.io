@@ -75,6 +75,7 @@ export declare interface Cruise {
   factor: number
   segment: number
   index: number
+  helper: boolean
 }
 
 export declare interface Options {
