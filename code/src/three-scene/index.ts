@@ -259,9 +259,11 @@ export default class ThreeScene {
 
   // 坐标辅助器
   initAxes() {
+    console.log('===')
     if (!this.options.axes.visible) return
     // 辅助坐标器
     const axesHelper = new THREE.AxesHelper(this.options.axes.size)
+    console.log('---')
     this.addObject(axesHelper)
   }
 

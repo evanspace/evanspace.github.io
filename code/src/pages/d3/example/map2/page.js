@@ -1,4 +1,4 @@
 export default {
   title: 'map',
-  order: 11
+  order: 10
 }
