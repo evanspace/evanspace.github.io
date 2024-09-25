@@ -145,7 +145,17 @@ onMounted(() => {
       pageOpts.config && (pageOpts.config[key] = json[key])
     })
 
-    pageOpts.objects = list
+    pageOpts.objects = list.map(item => {
+      if (item.type === 'COLD_ROOM_INLET') {
+        item.onClick = e => {
+          ElMessage.success({
+            message: e.name,
+            grouping: true
+          })
+        }
+      }
+      return item
+    })
   })
 })
 </script>

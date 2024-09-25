@@ -20,13 +20,14 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   },
   cruise: {
     visible: true,
-    helper: true,
+    // helper: true,
     points: [
-      [450, 1, 450],
-      [450, 1, -450],
-      [-450, 1, -450],
-      [-450, 1, 450]
-    ]
+      [450, 490, 450],
+      [450, 490, -450],
+      [-450, 490, -450],
+      [-450, 490, 450]
+    ],
+    offset: 10
   },
   controls: {
     screenSpacePanning: false,
