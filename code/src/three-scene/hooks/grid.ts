@@ -31,7 +31,7 @@ export const useGrid = () => {
         group.add(mesh, mesh2)
       }
     }
-    group.name = '辅助交点'
+    group.name = '辅助交叉点'
     return group
   }
 
