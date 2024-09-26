@@ -9,8 +9,10 @@ import { ref, onMounted } from 'vue'
 import { MapThreeScene } from './methods'
 
 import { useBackground } from '../../hooks/background'
+import { useConvertData } from '../../hooks/convert-data'
 
 const { backgroundLoad } = useBackground()
+const { transformGeoJSON } = useConvertData()
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   camera: () => ({}),
@@ -19,7 +21,10 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
   render: () => ({}),
   controls: () => ({}),
   grid: () => ({}),
-  axes: () => ({})
+  axes: () => ({}),
+  config: () => ({}),
+  color: () => ({}),
+  corrugatedPlate: true
 })
 
 const containerRef = ref()
@@ -28,6 +33,26 @@ const containerRef = ref()
 const emits = defineEmits<{
   init: [scene: InstanceType<typeof MapThreeScene>]
 }>()
+
+// 地图数据
+watch(
+  () => props.mapJson,
+  json => {
+    if (json) {
+      scene?.initMap(transformGeoJSON(json))
+    }
+  }
+)
+
+// 轮廓线
+watch(
+  () => props.outlineJson,
+  json => {
+    if (json) {
+      scene?.initMapOutLine(transformGeoJSON(json))
+    }
+  }
+)
 
 const options: ConstructorParameters<typeof MapThreeScene>[0] = {
   baseUrl: props.baseUrl,
@@ -49,11 +74,15 @@ const initPage = () => {
   if (props.skyCode) {
     backgroundLoad(scene, props.skyCode)
   }
+  // 波纹板
+  if (props.corrugatedPlate) {
+    scene?.addCorrugatedPlate()
+  }
 }
 
 onMounted(() => {
   options.container = containerRef.value
-  scene = new MapThreeScene(options)
+  scene = new MapThreeScene(options, props.config, props.color)
   scene.run()
 
   emits('init', scene)

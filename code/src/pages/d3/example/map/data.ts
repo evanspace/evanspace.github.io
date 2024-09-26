@@ -4,11 +4,11 @@ const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
 const OPTS = {
   // 地图深度
-  depth: 1,
+  depth: 2,
   // 地图缩放倍数
-  scale: 40,
+  scale: 40
   // 右键间隔时间
-  rightClickBackDiffTime: 100
+  // rightClickBackDiffTime: 100
 }
 
 // 全局颜色
@@ -50,6 +50,17 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
   baseUrl: base,
   // skyCode: '217',
   bgColor: 0x071729,
+  color: COLOR,
+  config: {
+    ...OPTS,
+    map: {
+      map: '/oss/textures/map/gz-map.jpg'
+      // normal: '/oss/textures/map/gz-map-fx.jpg',
+      // side: '/oss/textures/map/border.png'
+      // bgOutCircle: '/oss/textures/map/out-circle.png'
+      // bgInnerCircle: '/oss/textures/map/inner-circle.png'
+    }
+  },
   camera: {
     // helper: true,
     position: [0, 100, 200]
@@ -70,16 +81,20 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
     gridColor: COLOR.gridColor,
     centerLineColor: COLOR.gridColor,
     fork: true,
-    // forkSize: 10,
+    divisions: 20,
+    width: 200 * OPTS.scale,
+    forkSize: 1.4 * OPTS.scale,
     forkColor: COLOR.gridFork
   },
   controls: {
-    maxPolarAngle: Math.PI * 0.46,
+    // maxPolarAngle: Math.PI * 0.46,
     maxDistance: 5000,
-    enableDamping: true,
-    screenSpacePanning: false
+    enableDamping: true
+    // screenSpacePanning: false
   },
   axes: {
     visible: true
-  }
+  },
+  mapJson: null,
+  outlineJson: null
 })

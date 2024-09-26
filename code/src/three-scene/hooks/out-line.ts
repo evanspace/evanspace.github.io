@@ -13,7 +13,7 @@ export declare type Params = import('../types/utils').DeepPartial<Options>
 
 export const useOutline = (options: Params = {}) => {
   // 默认参数
-  const _options: Options = deepMerge(
+  let _options: Options = deepMerge(
     {
       // 粒子大小
       size: 0.1,
@@ -27,7 +27,8 @@ export const useOutline = (options: Params = {}) => {
     },
     options
   )
-  const createOutline = (points: number[]): InstanceType<typeof THREE.Points> => {
+  const createOutline = (points: number[], options: Params = {}): InstanceType<typeof THREE.Points> => {
+    _options = deepMerge(_options, options)
     const { size, factor, range, color } = _options
     const positions = new Float32Array(points)
     const opacityGeometry = new THREE.BufferGeometry()
@@ -112,6 +113,7 @@ export const useOutline = (options: Params = {}) => {
 
   return {
     createOutline,
-    update
+    update,
+    outlineUpdate: update
   }
 }
