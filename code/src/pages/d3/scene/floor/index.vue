@@ -23,6 +23,7 @@
       :render="pageOpts.render"
       :controls="pageOpts.controls"
       :grid="pageOpts.grid"
+      :directional-light="pageOpts.directionalLight"
       :config="pageOpts.config"
       :models="pageOpts.models"
       :anchor-type="pageOpts.anchorType"

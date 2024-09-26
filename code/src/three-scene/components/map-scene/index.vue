@@ -8,6 +8,20 @@
 import { ref } from 'vue'
 import { MapThreeScene } from './methods'
 
+import { useBackground } from '../../hooks/background'
+
+const { backgroundLoad } = useBackground()
+
+const props = withDefaults(defineProps<import('./index').Props>(), {
+  camera: () => ({}),
+  cruise: () => ({}),
+  fog: () => ({}),
+  render: () => ({}),
+  controls: () => ({}),
+  grid: () => ({}),
+  axes: () => ({})
+})
+
 const containerRef = ref()
 
 // 加载完成
@@ -16,37 +30,26 @@ const emits = defineEmits<{
 }>()
 
 const options: ConstructorParameters<typeof MapThreeScene>[0] = {
-  bgColor: 0x071729,
-  camera: {
-    helper: true,
-    position: [0, 100, 200]
-  },
-  directionalLight: {
-    helper: true
-  },
-  fog: {
-    visible: false,
-    near: 2000,
-    far: 3000
-  },
-  render: {
-    preserveDrawingBuffer: true
-  },
-  grid: {
-    visible: true
-  },
-  controls: {
-    maxPolarAngle: Math.PI * 0.46,
-    maxDistance: 5000,
-    enableDamping: true,
-    screenSpacePanning: false
-  },
-  axes: {
-    visible: true
-  }
+  baseUrl: props.baseUrl,
+  bgUrl: props.bgUrl,
+  env: props.env,
+  bgColor: props.bgColor,
+  camera: props.camera,
+  cruise: props.cruise,
+  fog: props.fog,
+  render: props.render,
+  grid: props.grid,
+  controls: props.controls,
+  axes: props.axes
 }
 
 let scene: InstanceType<typeof MapThreeScene>
+
+const initPage = () => {
+  if (props.skyCode) {
+    backgroundLoad(scene, props.skyCode)
+  }
+}
 
 onMounted(() => {
   options.container = containerRef.value
@@ -54,6 +57,7 @@ onMounted(() => {
   scene.run()
 
   emits('init', scene)
+  initPage()
 })
 </script>
 

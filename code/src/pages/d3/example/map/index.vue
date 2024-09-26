@@ -1,13 +1,32 @@
 <template>
   <div :class="$style.page" class="h-100 o-h">
-    <t-map-scene @init="onInit"></t-map-scene>
+    <t-map-scene
+      ref="threeSceneRef"
+      :dev-env="pageOpts.devEnv"
+      :base-url="pageOpts.baseUrl"
+      :bg-color="pageOpts.bgColor"
+      :bg-url="pageOpts.bgUrl"
+      :env="pageOpts.env"
+      :sky-code="pageOpts.skyCode"
+      :camera="pageOpts.camera"
+      :cruise="pageOpts.cruise"
+      :render="pageOpts.render"
+      :controls="pageOpts.controls"
+      :grid="pageOpts.grid"
+      :axes="pageOpts.axes"
+      @init="onInit"
+    ></t-map-scene>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tMapScene from 'three-scene/components/map-scene/index.vue'
 
+import { getPageOpts } from './data'
+
 import { useResize } from '@/hooks/scene-resize'
+
+const pageOpts = reactive(getPageOpts())
 
 const onInit = scene => {
   useResize(scene).resize()
