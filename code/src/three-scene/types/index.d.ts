@@ -33,6 +33,7 @@ export declare interface AmbientLight {
 }
 
 export declare interface DirectionalLight {
+  helper: boolean
   visible: boolean
   light2: boolean
   color: number | string
@@ -40,6 +41,7 @@ export declare interface DirectionalLight {
 }
 
 export declare interface Camera {
+  helper: boolean
   near: number
   far: number
   position: [number, number, number]
@@ -91,7 +93,6 @@ export declare interface Options {
   fog: Fog
   render: Render
 
-  lightHelperVisible: boolean
   controls: Controls
   ambientLight: AmbientLight
   directionalLight: DirectionalLight

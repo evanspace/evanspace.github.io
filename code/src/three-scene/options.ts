@@ -15,7 +15,9 @@ export default {
   // 雾
   fog: {
     visible: false,
+    // 近
     near: 100,
+    // 远
     far: 1000
   },
   // 渲染器配置
@@ -54,8 +56,7 @@ export default {
     // 相机距离远点最远距离
     maxDistance: 2000
   },
-  // 灯光辅助
-  lightHelperVisible: false,
+  // 环境光
   ambientLight: {
     visible: true,
     color: 0xffffff,
@@ -64,6 +65,8 @@ export default {
   },
   // 平行光
   directionalLight: {
+    // 辅助
+    helper: false,
     visible: true,
     light2: true,
     color: 0xffffff,
@@ -71,6 +74,8 @@ export default {
   },
   // 相机
   camera: {
+    // 辅助
+    helper: false,
     // 近
     near: 1,
     // 远

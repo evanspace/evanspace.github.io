@@ -159,7 +159,7 @@ export default class ThreeScene {
 
   // 灯光
   initLight() {
-    const { ambientLight, directionalLight, lightHelperVisible } = this.options
+    const { ambientLight, directionalLight } = this.options
     // 环境光
     if (ambientLight.visible) {
       const ambLight = new THREE.AmbientLight(ambientLight.color, ambientLight.intensity)
@@ -169,7 +169,7 @@ export default class ThreeScene {
     if (directionalLight.visible) {
       const direLight = this.createDirectionalLight()
       this.addObject(direLight)
-      if (lightHelperVisible) {
+      if (directionalLight.helper) {
         const dirLightHelper = new THREE.DirectionalLightHelper(direLight, 1)
         this.addObject(dirLightHelper)
       }
@@ -178,7 +178,7 @@ export default class ThreeScene {
         const dirLight2 = this.createDirectionalLight(false)
         dirLight2.position.set(-500, 800, -800)
         this.addObject(dirLight2)
-        if (lightHelperVisible) {
+        if (directionalLight.helper) {
           const dirLigh2tHelper = new THREE.DirectionalLightHelper(dirLight2, 1)
           this.addObject(dirLigh2tHelper)
         }
@@ -218,6 +218,10 @@ export default class ThreeScene {
     const cam = new THREE.PerspectiveCamera(36, width / height, camera.near, camera.far)
     // 相机位置
     cam.position.set(...camera.position)
+    if (camera.helper) {
+      const helper = new THREE.CameraHelper(cam)
+      this.addObject(helper)
+    }
     this.addObject(cam)
     return cam
   }
@@ -259,11 +263,9 @@ export default class ThreeScene {
 
   // 坐标辅助器
   initAxes() {
-    console.log('===')
     if (!this.options.axes.visible) return
     // 辅助坐标器
     const axesHelper = new THREE.AxesHelper(this.options.axes.size)
-    console.log('---')
     this.addObject(axesHelper)
   }
 

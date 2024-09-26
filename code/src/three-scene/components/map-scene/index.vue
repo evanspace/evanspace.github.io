@@ -18,7 +18,11 @@ const emits = defineEmits<{
 const options: ConstructorParameters<typeof MapThreeScene>[0] = {
   bgColor: 0x071729,
   camera: {
+    helper: true,
     position: [0, 100, 200]
+  },
+  directionalLight: {
+    helper: true
   },
   fog: {
     visible: false,
