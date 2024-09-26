@@ -7,8 +7,10 @@ import { deepMerge, isDOM, getUrl } from './utils'
 import defOptions from './options'
 
 import { useCruise } from './hooks/cruise'
+import { useGrid } from './hooks/grid'
 
 const { createCruise, cruiseAnimate, updateCruise, bindEvent, removeEvent } = useCruise()
+const { createFork } = useGrid()
 export default class ThreeScene {
   // 配置
   options: import('./types').Options
@@ -252,13 +254,18 @@ export default class ThreeScene {
   initGrid() {
     const grid = this.options.grid
     if (!grid.visible) return
-    const { width, divisions, centerLineColor, gridColor, opacity, transparent } = grid
+    const { width, divisions, centerLineColor, gridColor, opacity, transparent, fork } = grid
     // 网格宽度、等分数、中心线颜色、网格颜色
     const gd = new THREE.GridHelper(width, divisions, centerLineColor, gridColor)
     gd.material.opacity = opacity
     gd.material.transparent = transparent
     this.grid = gd
     this.addObject(gd)
+    // 交叉
+    if (fork) {
+      const group = createFork(grid)
+      this.addObject(group)
+    }
   }
 
   // 坐标辅助器

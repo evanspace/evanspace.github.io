@@ -130,7 +130,11 @@ export default {
     // 中心线颜色
     centerLineColor: 0xa1a1a1,
     // 网格颜色
-    gridColor: 0xa1a1a1
+    gridColor: 0xa1a1a1,
+    // 交叉
+    fork: false,
+    forkSize: 1.4,
+    forkColor: 0xa1a1a1
   },
   axes: {
     visible: false,

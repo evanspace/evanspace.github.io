@@ -55,6 +55,9 @@ export declare interface Grid {
   divisions: number
   centerLineColor: number | string
   gridColor: number | string
+  fork: boolean
+  forkSize: number
+  forkColor: number | string
 }
 
 export declare interface Axes {

@@ -1,5 +1,9 @@
 <template>
   <div :class="$style.page" class="h-100 o-h">
+    <div :class="$style.operate">
+      <el-button type="primary" size="small" @click="onExport">导出</el-button>
+    </div>
+
     <t-map-scene
       ref="threeSceneRef"
       :dev-env="pageOpts.devEnv"
@@ -12,6 +16,7 @@
       :cruise="pageOpts.cruise"
       :render="pageOpts.render"
       :controls="pageOpts.controls"
+      :directional-light="pageOpts.directionalLight"
       :grid="pageOpts.grid"
       :axes="pageOpts.axes"
       @init="onInit"
@@ -26,7 +31,11 @@ import { getPageOpts } from './data'
 
 import { useResize } from '@/hooks/scene-resize'
 
+const threeSceneRef = ref()
+
 const pageOpts = reactive(getPageOpts())
+
+const onExport = () => threeSceneRef.value?.exportImage()
 
 const onInit = scene => {
   useResize(scene).resize()

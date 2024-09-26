@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { MapThreeScene } from './methods'
 
 import { useBackground } from '../../hooks/background'
@@ -58,6 +58,10 @@ onMounted(() => {
 
   emits('init', scene)
   initPage()
+})
+
+defineExpose({
+  exportImage: () => scene?.exportImage()
 })
 </script>
 
