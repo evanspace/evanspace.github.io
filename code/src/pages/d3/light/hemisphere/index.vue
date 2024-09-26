@@ -26,9 +26,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   },
   directionalLight: {
     // visible: false
+    helper: true,
     light2: false
   },
-  lightHelperVisible: true,
   grid: {
     visible: true
   }
