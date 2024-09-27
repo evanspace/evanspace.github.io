@@ -315,6 +315,7 @@ export class MapThreeScene extends ThreeScene {
     }
     // 波纹板
     const cpMh = createCorrugatedPlate({
+      range: this.config.plateRadius,
       factor: this.config.scale,
       color: this.color.plateColor,
       light: this.color.plateLight
@@ -401,8 +402,8 @@ export class MapThreeScene extends ThreeScene {
       const width = size.x < size.y ? size.y + 1 : size.x + 1
 
       // 添加背景，修饰元素
-      this.outRingMesh = createOutRing(this.scene, width)
-      this.innerRingMesh = createInnerRing(this.scene, width * 0.9)
+      this.outRingMesh = createOutRing(this.scene, width * this.config.bgOutFactor)
+      this.innerRingMesh = createInnerRing(this.scene, width * this.config.bgInnerFactor)
     }
   }
 
@@ -653,7 +654,7 @@ export class MapThreeScene extends ThreeScene {
       .to(
         {
           x: x,
-          y: 40 * this.config.scale,
+          y: 90 * this.config.scale,
           z: z + 40 * this.config.scale
         },
         1000
@@ -663,7 +664,7 @@ export class MapThreeScene extends ThreeScene {
       .onUpdate(() => {})
 
     // 控制器
-    this.controls.target = new THREE.Vector3(x, y, z)
+    this.controls.target = new THREE.Vector3(x, y, z - 5 * this.config.scale)
 
     // 网格
     if (this.grid) {

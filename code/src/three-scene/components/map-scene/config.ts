@@ -3,6 +3,8 @@ export default {
   depth: 1,
   // 地图缩放倍数
   scale: 40,
+  // 波纹板半径
+  plateRadius: 200,
   // 右键间隔时间
   rightClickBackDiffTime: 100,
 
@@ -16,6 +18,10 @@ export default {
   mapBg: true,
   // 地图柱状图
   mapBar: true,
+
+  // 背景因素（缩放大小）
+  bgOutFactor: 1,
+  bgInnerFactor: 0.9,
 
   // 地图贴图
   map: {

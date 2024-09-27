@@ -49,6 +49,14 @@ const emits = defineEmits<{
   click: [e: import('./index').Scatter]
 }>()
 
+// 缩放
+watch(
+  () => props.scale,
+  v => {
+    scene?.setScale(v || 1)
+  }
+)
+
 // 地图数据
 watch(
   () => props.mapJson,
@@ -136,6 +144,11 @@ const initPage = () => {
   // 波纹板
   if (props.corrugatedPlate) {
     scene?.addCorrugatedPlate()
+  }
+
+  // 飞线
+  if (props.flywire && props.flywire.length) {
+    scene?.initFlywire(props.flywire)
   }
 }
 

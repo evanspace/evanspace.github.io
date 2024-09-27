@@ -6,7 +6,9 @@ const OPTS = {
   // 地图深度
   depth: 2,
   // 地图缩放倍数
-  scale: 40
+  scale: 40,
+  // 波纹板半径
+  plateRadius: 100
   // 右键间隔时间
   // rightClickBackDiffTime: 100
 }
@@ -56,6 +58,8 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
     areaLabel: true,
     markLight: true,
     // mapBg: false,
+    // bgOutFactor: 0.5,
+    // bgInnerFactor: 0.3,
     map: {
       // map: '/oss/textures/map/gz-map.jpg',
       // normal: '/oss/textures/map/gz-map-fx.jpg',
@@ -84,8 +88,8 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
     gridColor: COLOR.gridColor,
     centerLineColor: COLOR.gridColor,
     fork: true,
-    divisions: 20,
-    width: 200 * OPTS.scale,
+    divisions: 40,
+    width: OPTS.plateRadius * 2 * OPTS.scale,
     forkSize: 1.4 * OPTS.scale,
     forkColor: COLOR.gridFork
   },

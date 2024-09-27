@@ -52,6 +52,8 @@ export declare interface Config {
   depth: number
   // 地图缩放倍数
   scale: number
+  // 波纹板半径
+  plateRadius: number
   // 右键间隔时间
   rightClickBackDiffTime: number
 
@@ -65,6 +67,10 @@ export declare interface Config {
   mapBg: boolean
   // 地图柱状图
   mapBar: boolean
+
+  // 背景因素（缩放大小）
+  bgOutFactor: number
+  bgInnerFactor: number
 
   // 地图贴图
   map: Partial<MapTexture>
