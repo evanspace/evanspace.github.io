@@ -19,6 +19,7 @@
       :indexDB="pageOpts.indexDB"
       :sky-code="pageOpts.skyCode"
       :camera="pageOpts.camera"
+      :colors="pageOpts.colors"
       :cruise="pageOpts.cruise"
       :render="pageOpts.render"
       :controls="pageOpts.controls"

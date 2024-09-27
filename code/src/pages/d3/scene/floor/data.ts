@@ -18,6 +18,15 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   camera: {
     far: 1000000
   },
+  colors: {
+    normal: {
+      main: 0x00ff00
+    },
+    runing: {
+      main: 0xff0ff0,
+      text: 0x000000
+    }
+  },
   cruise: {
     visible: true,
     // helper: true,
