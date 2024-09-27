@@ -58,7 +58,7 @@ const isCollapse = computed(() => !sidebar.value.opened)
   overflow-x: hidden;
   .el-scrollbar__view,
   .el-menu {
-    // height: 100%;
+    height: 100%;
   }
 }
 </style>
