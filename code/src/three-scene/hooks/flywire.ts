@@ -25,7 +25,7 @@ export declare type Params = import('../types/utils').DeepPartial<Options>
 // 飞线
 export const useFlywire = (options: Params = {}) => {
   // 默认参数
-  const _options: Options = deepMerge(
+  let _options: Options = deepMerge(
     {
       // 深度
       depth: 0,
@@ -60,125 +60,10 @@ export const useFlywire = (options: Params = {}) => {
   )
 
   // 流动材质
-  const flyMaterial = new THREE.ShaderMaterial({
-    depthTest: false,
-    uniforms: {
-      // 线条颜色
-      uColor: { value: new THREE.Color(_options.flyColor) },
-      uIndex: { value: 0 },
-      uTotal: { value: _options.divisions },
-      // 流动宽度
-      uWidth: { value: _options.flyPointWidth },
-      // 流动长度
-      uLength: { value: _options.length }
-    },
-    vertexShader: `
-      attribute float aIndex;
-      uniform float uIndex;
-      uniform float uWidth;
-      uniform vec3 uColor;
-      varying float vSize;
-      uniform float uLength;
-
-      void main(){
-          vec4 viewPosition = viewMatrix * modelMatrix * vec4(position,1);
-          gl_Position = projectionMatrix * viewPosition;
-
-          if(aIndex >= uIndex - uLength && aIndex < uIndex){
-            vSize = uWidth * ((aIndex - uIndex + uLength) / uLength);
-          }
-          gl_PointSize = vSize;
-      }
-    `,
-    side: THREE.DoubleSide,
-    fragmentShader: `
-      varying float vSize;
-      uniform vec3 uColor;
-      void main(){
-          if(vSize<=0.0){
-            gl_FragColor = vec4(1,0,0,0);
-          }else{
-            gl_FragColor = vec4(uColor,1);
-          }
-      }
-    `,
-    transparent: true,
-    vertexColors: false
-  })
+  let flyMaterial: InstanceType<typeof THREE.ShaderMaterial>
 
   // 做标点材质
-  const pointMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      uColor: { value: new THREE.Color(_options.pointColor) },
-      uOpacity: { value: 1 }, // 透明度
-      uSpeed: { value: 0.1 }, // 速度
-      uSge: { value: 4 }, // 数量（圈数）
-      uRadius: { value: (_options.pointWidth * _options.factor) / 2 },
-      time: { value: 0.0 }
-    },
-    transparent: true,
-    depthTest: false,
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        // 最终顶点位置信息=投影矩阵*模型视图矩阵*每个顶点坐标
-        gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-      }
-    `,
-    fragmentShader: `
-      varying vec2 vUv;
-      uniform vec3 uColor;
-      uniform float uOpacity;
-      uniform float uSpeed;
-      uniform float uSge;
-      uniform float time;
-      float PI = 3.14159265;
-      float drawCircle(float index, float range) {
-        float opacity = 1.0;
-        if (index >= 1.0 - range) {
-          opacity = 1.0 - (index - (1.0 - range)) / range;
-        } else if(index <= range) {
-          opacity = index / range;
-        }
-        return opacity;
-      }
-      float distanceTo(vec2 src, vec2 dst) {
-        float dx = src.x - dst.x;
-        float dy = src.y - dst.y;
-        float dv = dx * dx + dy * dy;
-        return sqrt(dv);
-      }
-      void main() {
-        float iTime = -time * uSpeed;
-        float opacity = 0.0;
-        float len = distanceTo(vec2(0.5, 0.5), vec2(vUv.x, vUv.y));
-
-        float size = 1.0 / uSge;
-        vec2 range = vec2(0.65, 0.75);
-        float index = mod(iTime + len, size);
-        // 中心圆
-        vec2 cRadius = vec2(0.06, 0.12);
-
-        if (index < size && len <= 0.5) {
-          float i = sin(index / size * PI);
-
-          // 处理边缘锯齿
-          if (i >= range.x && i <= range.y){
-            // 归一
-            float t = (i - range.x) / (range.y - range.x);
-            // 边缘锯齿范围
-            float r = 0.3;
-            opacity = drawCircle(t, r);
-          }
-          // 渐变
-          opacity *=  1.0 - len / 0.5;
-        };
-        gl_FragColor = vec4(uColor, uOpacity * opacity);
-      }
-    `,
-    side: THREE.DoubleSide
-  })
+  let pointMaterial: InstanceType<typeof THREE.ShaderMaterial>
 
   // 根据起点和终点获取曲线做标点
   const getCurvePoint = (coords: import('../types/utils').getType<Options, 'coords'>) => {
@@ -230,6 +115,130 @@ export const useFlywire = (options: Params = {}) => {
     point.position.set(x, depth, -z)
     point.rotateX(-Math.PI * 0.5)
     return point
+  }
+
+  // 创建材质
+  const createFlywireTexture = (options: Params = {}) => {
+    _options = deepMerge(_options, options)
+
+    flyMaterial = new THREE.ShaderMaterial({
+      depthTest: false,
+      uniforms: {
+        // 线条颜色
+        uColor: { value: new THREE.Color(_options.flyColor) },
+        uIndex: { value: 0 },
+        uTotal: { value: _options.divisions },
+        // 流动宽度
+        uWidth: { value: _options.flyPointWidth },
+        // 流动长度
+        uLength: { value: _options.length }
+      },
+      vertexShader: `
+        attribute float aIndex;
+        uniform float uIndex;
+        uniform float uWidth;
+        uniform vec3 uColor;
+        varying float vSize;
+        uniform float uLength;
+  
+        void main(){
+            vec4 viewPosition = viewMatrix * modelMatrix * vec4(position,1);
+            gl_Position = projectionMatrix * viewPosition;
+  
+            if(aIndex >= uIndex - uLength && aIndex < uIndex){
+              vSize = uWidth * ((aIndex - uIndex + uLength) / uLength);
+            }
+            gl_PointSize = vSize;
+        }
+      `,
+      side: THREE.DoubleSide,
+      fragmentShader: `
+        varying float vSize;
+        uniform vec3 uColor;
+        void main(){
+            if(vSize<=0.0){
+              gl_FragColor = vec4(1,0,0,0);
+            }else{
+              gl_FragColor = vec4(uColor,1);
+            }
+        }
+      `,
+      transparent: true,
+      vertexColors: false
+    })
+
+    pointMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        uColor: { value: new THREE.Color(_options.pointColor) },
+        uOpacity: { value: 1 }, // 透明度
+        uSpeed: { value: 0.1 }, // 速度
+        uSge: { value: 4 }, // 数量（圈数）
+        uRadius: { value: (_options.pointWidth * _options.factor) / 2 },
+        time: { value: 0.0 }
+      },
+      transparent: true,
+      depthTest: false,
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          // 最终顶点位置信息=投影矩阵*模型视图矩阵*每个顶点坐标
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
+      `,
+      fragmentShader: `
+        varying vec2 vUv;
+        uniform vec3 uColor;
+        uniform float uOpacity;
+        uniform float uSpeed;
+        uniform float uSge;
+        uniform float time;
+        float PI = 3.14159265;
+        float drawCircle(float index, float range) {
+          float opacity = 1.0;
+          if (index >= 1.0 - range) {
+            opacity = 1.0 - (index - (1.0 - range)) / range;
+          } else if(index <= range) {
+            opacity = index / range;
+          }
+          return opacity;
+        }
+        float distanceTo(vec2 src, vec2 dst) {
+          float dx = src.x - dst.x;
+          float dy = src.y - dst.y;
+          float dv = dx * dx + dy * dy;
+          return sqrt(dv);
+        }
+        void main() {
+          float iTime = -time * uSpeed;
+          float opacity = 0.0;
+          float len = distanceTo(vec2(0.5, 0.5), vec2(vUv.x, vUv.y));
+  
+          float size = 1.0 / uSge;
+          vec2 range = vec2(0.65, 0.75);
+          float index = mod(iTime + len, size);
+          // 中心圆
+          vec2 cRadius = vec2(0.06, 0.12);
+  
+          if (index < size && len <= 0.5) {
+            float i = sin(index / size * PI);
+  
+            // 处理边缘锯齿
+            if (i >= range.x && i <= range.y){
+              // 归一
+              float t = (i - range.x) / (range.y - range.x);
+              // 边缘锯齿范围
+              float r = 0.3;
+              opacity = drawCircle(t, r);
+            }
+            // 渐变
+            opacity *=  1.0 - len / 0.5;
+          };
+          gl_FragColor = vec4(uColor, uOpacity * opacity);
+        }
+      `,
+      side: THREE.DoubleSide
+    })
   }
 
   const createFlywire = (coords: import('../types/utils').getType<Options, 'coords'>) => {
@@ -301,8 +310,11 @@ export const useFlywire = (options: Params = {}) => {
     const time = performance.now() * 0.001
     pointMaterial.uniforms.time.value = time
   }
+  createFlywireTexture()
   return {
+    createFlywireTexture,
     createFlywire,
-    update
+    update,
+    flywireUpdate: update
   }
 }

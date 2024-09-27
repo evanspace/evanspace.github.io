@@ -18,7 +18,7 @@ export declare type Params = import('../types/utils').DeepPartial<Options>
 // 地图柱状图
 export const useMapBar = (options: Params = {}) => {
   // 默认参数
-  const _options: Options = deepMerge(
+  let _options: Options = deepMerge(
     {
       // 高度
       height: 10,
@@ -41,8 +41,10 @@ export const useMapBar = (options: Params = {}) => {
         className?: string
         onClick?: (e: Event) => void
       }
-    } = {}
+    } = {},
+    options: Params = {}
   ) => {
+    _options = deepMerge(_options, options)
     let { size, height, factor, color1, color2 } = _options
     size *= factor
     height *= factor

@@ -11,6 +11,8 @@ import { useCoord } from '../../hooks/coord'
 import { useMarkLight } from '../../hooks/mark-light'
 import { useCountryLine } from '../../hooks/country-line'
 import { useOutline } from '../../hooks/out-line'
+import { useFlywire } from '../../hooks/flywire'
+import { useMapBar } from '../../hooks/map-bar'
 
 import DEFAULTCONFIG from '../../config'
 import CONFIG from './config'
@@ -23,6 +25,8 @@ const { getBoundingBox } = useCoord()
 const { createMarkLight } = useMarkLight()
 const { createCountryFlatLine, getPoints } = useCountryLine()
 const { createOutline, outlineUpdate } = useOutline()
+const { createFlywireTexture, createFlywire, flywireUpdate } = useFlywire()
+const { createBar } = useMapBar()
 
 // 中心点
 const centerPos = {
@@ -237,6 +241,25 @@ const createInnerRing = (scene, width) => {
   return mesh
 }
 
+// 创建散点
+const createScatter = (_this, longitude: number, latitude: number) => {
+  const { scale, depth } = _this.config
+  const group = new THREE.Group()
+  const size = 0.2 * scale
+  // 圆盘
+  const circle = new THREE.CircleGeometry(size, 32)
+  const circleMat = new THREE.MeshBasicMaterial({ color: COLOR.scatterColor1, transparent: true, opacity: 1 })
+  const circleMesh = new THREE.Mesh(circle, circleMat)
+
+  // 半球
+  const sphere = new THREE.SphereGeometry(size * 0.8, 32, 32, 0, Math.PI)
+  const sphereMat = new THREE.MeshBasicMaterial({ color: COLOR.scatterColor2, transparent: true, opacity: 1 })
+  const sphereMesh = new THREE.Mesh(sphere, sphereMat)
+  group.add(circleMesh, sphereMesh)
+  group.position.set(longitude * scale, latitude * scale, depth * scale * 1.005)
+  return group
+}
+
 export class MapThreeScene extends ThreeScene {
   // 配置
   config: import('./index').Config
@@ -258,6 +281,7 @@ export class MapThreeScene extends ThreeScene {
   outline?: ReturnType<typeof createOutline>
   // hover 回调
   #hoverBack?: (e, position: typeof style) => void
+  #clickBack?: (e) => void
   // 外圈背景
   outRingMesh?: InstanceType<typeof THREE.Mesh>
   // 内圈背景
@@ -266,11 +290,15 @@ export class MapThreeScene extends ThreeScene {
   constructor(
     options: ConstructorParameters<typeof ThreeScene>[0],
     config: Partial<import('./index').Config> = {},
-    color: Partial<import('./index').Color> = {}
+    color: Partial<import('./index').Color> = {},
+    hoverBack?: (e, position: typeof style) => void,
+    clickBack?: (e) => void
   ) {
     super(options)
     this.config = deepMerge(CONFIG, config)
     this.color = deepMerge(COLOR, color)
+    this.#hoverBack = hoverBack
+    this.#clickBack = clickBack
 
     this.clock = new THREE.Clock()
     this.css3DRender = initCSS3DRender(this.options, this.container)
@@ -328,10 +356,14 @@ export class MapThreeScene extends ThreeScene {
         })
       }
 
-      // 创建 label
-      createCSS3Dlabel(this, properties, provinceObj)
-      // 创建光柱
-      createMarkLightPoint(this, properties, provinceObj)
+      if (this.config.areaLabel) {
+        // 创建 label
+        createCSS3Dlabel(this, properties, provinceObj)
+      }
+      if (this.config.markLight) {
+        // 创建光柱
+        createMarkLightPoint(this, properties, provinceObj)
+      }
 
       // 翻转角度
       provinceObj.rotateX(-Math.PI / 2)
@@ -345,8 +377,10 @@ export class MapThreeScene extends ThreeScene {
     this.mapGroup = mapGroup
     this.addObject(mapGroup)
 
-    // 创建上下边线
-    createBorderLine(this, geoJson)
+    if (this.config.border) {
+      // 创建上下边线
+      createBorderLine(this, geoJson)
+    }
 
     // 计算包围盒
     const box = getBoundingBox(mapGroup)
@@ -362,16 +396,18 @@ export class MapThreeScene extends ThreeScene {
 
     // 重置场景元素
     this.resetSceneEle()
-    // 宽度
-    const width = size.x < size.y ? size.y + 1 : size.x + 1
-    // 添加背景，修饰元素
-    this.outRingMesh = createOutRing(this.scene, width)
-    this.innerRingMesh = createInnerRing(this.scene, width * 0.9)
+    if (this.config.mapBg) {
+      // 宽度
+      const width = size.x < size.y ? size.y + 1 : size.x + 1
+
+      // 添加背景，修饰元素
+      this.outRingMesh = createOutRing(this.scene, width)
+      this.innerRingMesh = createInnerRing(this.scene, width * 0.9)
+    }
   }
 
   // 轮廓
   initMapOutLine(geoJson) {
-    console.log(geoJson)
     // 存在则销毁
     if (this.outline) {
       this.disposeObj(this.outline)
@@ -385,6 +421,116 @@ export class MapThreeScene extends ThreeScene {
     outline.renderOrder = 10
     this.outline = outline
     this.addObject(outline)
+  }
+
+  // 飞线
+  initFlywire(points: import('./index').Flywire[]) {
+    const name = '飞线集合'
+    // 存在则销毁
+    if (this.flywireGroup) {
+      this.disposeObj(this.flywireGroup)
+      this.flywireGroup = null
+    }
+
+    const { scale, depth } = this.config
+    const COLOR = this.color
+    createFlywireTexture({
+      depth: depth,
+      color: COLOR.line,
+      flyColor: COLOR.flyColor2,
+      pointColor: COLOR.flyColor1,
+      factor: scale
+    })
+    const flywireGroup = new THREE.Group()
+    for (let i = 0; i < points.length; i++) {
+      const { coords, path } = points[i]
+      const mesh = createFlywire(
+        coords.map(it => {
+          return it.map(t => t * scale)
+        })
+      )
+      mesh.name = path
+      flywireGroup.add(mesh)
+    }
+    flywireGroup.name = name
+    flywireGroup.renderOrder = 20
+    this.flywireGroup = flywireGroup
+    this.addObject(flywireGroup)
+  }
+
+  // 柱状
+  initMapBar(citys, labelRender) {
+    if (!this.config.mapBar) return
+    // 清除柱状
+    if (!this.mapGroup) return
+    this.clearMapBar()
+
+    // 找对大
+    const max = Math.max(...citys.map(it => it.value || 0))
+    const { scale, depth } = this.config
+    const COLOR = this.color
+    const options = {
+      height: 5,
+      size: 0.2,
+      factor: scale,
+      color1: COLOR.markColor1,
+      color2: COLOR.markColor2
+    }
+    for (let i = 0; i < citys.length; i++) {
+      const { name = '', value = 0 } = citys[i]
+      const el = this.mapGroup.getObjectByName(name)
+      if (!el) {
+        console.log(name, el)
+      } else {
+        const heightRatio = value / max || 0
+        const { centroid, center } = el.data
+        const pos = centroid || center
+        const bar = createBar(
+          {
+            position: [pos[0] * scale, pos[1] * scale, depth * scale],
+            heightRatio,
+            label: labelRender(citys[i])
+          },
+          options
+        )
+        bar.isBar = true
+        el.add(bar)
+      }
+    }
+  }
+
+  // 清除柱状图
+  clearMapBar() {
+    this.mapGroup.traverse(el => {
+      if (el.isBar) {
+        this.disposeObj(el)
+      }
+    })
+  }
+
+  // 散点
+  initScatter(points: import('./index').Scatter[]) {
+    const name = '散点集合'
+    // 存在则销毁
+    if (this.scatterGroup) {
+      this.disposeObj(this.scatterGroup)
+      this.scatterGroup = null
+    }
+    const scatterGroup = new THREE.Group()
+    scatterGroup.name = name
+
+    for (let i = 0; i < points.length; i++) {
+      const item = points[i]
+      const [longitude = 0, latitude = 0] = item.coord || []
+      const mesh = createScatter(this, longitude, latitude)
+      mesh.name = item.name
+      mesh.data = item
+      mesh.isScatter = true
+      scatterGroup.add(mesh)
+    }
+    scatterGroup.rotateX(-Math.PI * 0.5)
+    this.scatterGroup = scatterGroup
+    this.addObject(scatterGroup)
   }
 
   // 双击
@@ -435,12 +581,12 @@ export class MapThreeScene extends ThreeScene {
     // 判断是否未点击
     const isClick = s < (this.config.rightClickBackDiffTime || DEFAULTCONFIG.rightClickBackDiffTime)
     if (e.button == 2) {
-      console.log('你点了右键')
+      // console.log('你点了右键')
     } else if (e.button == 0) {
-      console.log('你点了左键', isClick)
+      // console.log('你点了左键', isClick)
       isClick && this.clickObject(e)
     } else if (e.button == 1) {
-      console.log('你点了滚轮')
+      // console.log('你点了滚轮')
     }
   }
 
@@ -493,10 +639,7 @@ export class MapThreeScene extends ThreeScene {
         const obj = interscts[0].object
         const pObj = this.findParentGroupGroupUuid(obj)
         const data = pObj.data || {}
-        ElMessage.info({
-          message: data.name,
-          grouping: true
-        })
+        if (typeof this.#clickBack === 'function') this.#clickBack(data)
       }
     }
   }
@@ -560,6 +703,11 @@ export class MapThreeScene extends ThreeScene {
     // 轮廓
     if (this.outline) {
       outlineUpdate(this.outline)
+    }
+
+    // 飞线
+    if (this.flywireGroup) {
+      flywireUpdate()
     }
   }
   resize() {

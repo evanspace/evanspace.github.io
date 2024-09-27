@@ -55,8 +55,41 @@ export declare interface Config {
   // 右键间隔时间
   rightClickBackDiffTime: number
 
+  // 区域 label
+  areaLabel: boolean
+  // 光柱
+  markLight: boolean
+  // 上下边框
+  border: boolean
+  // 地图背景
+  mapBg: boolean
+  // 地图柱状图
+  mapBar: boolean
+
   // 地图贴图
   map: Partial<MapTexture>
+}
+
+export declare interface Flywire {
+  path: string
+  coords: number[][]
+}
+
+export declare interface BarItem {
+  name: string
+  value: number
+  unit: string
+}
+
+export declare interface BarLabel {
+  name: string
+  className: string
+  onClick: (e: Event) => void
+}
+
+export declare interface Scatter {
+  coord: number[]
+  name: string
 }
 
 export declare interface Props {
@@ -105,4 +138,13 @@ export declare interface Props {
   mapJson: any
   // 轮廓配置
   outlineJson?: any
+  // 飞线
+  flywire?: Flywire[]
+  // 柱状图
+  barList?: Partial<BarItem>[]
+  // 散点
+  scatters?: Scatter[]
+
+  // 柱状图 labe render
+  barLabelRender?: (e: Partial<BarItem>) => Partial<BarLabel>
 }

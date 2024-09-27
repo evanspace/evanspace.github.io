@@ -6,6 +6,17 @@ export default {
   // 右键间隔时间
   rightClickBackDiffTime: 100,
 
+  // 区域 label
+  areaLabel: false,
+  // 光柱
+  markLight: false,
+  // 上下边框
+  border: true,
+  // 地图背景
+  mapBg: true,
+  // 地图柱状图
+  mapBar: true,
+
   // 地图贴图
   map: {
     // map: '/oss/textures/map/gz-map.jpg',

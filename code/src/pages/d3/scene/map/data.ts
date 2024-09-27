@@ -53,11 +53,14 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
   color: COLOR,
   config: {
     ...OPTS,
+    areaLabel: true,
+    markLight: true,
+    // mapBg: false,
     map: {
-      map: '/oss/textures/map/gz-map.jpg'
+      // map: '/oss/textures/map/gz-map.jpg',
       // normal: '/oss/textures/map/gz-map-fx.jpg',
-      // side: '/oss/textures/map/border.png'
-      // bgOutCircle: '/oss/textures/map/out-circle.png'
+      // side: '/oss/textures/map/border.png',
+      // bgOutCircle: '/oss/textures/map/out-circle.png',
       // bgInnerCircle: '/oss/textures/map/inner-circle.png'
     }
   },
@@ -96,5 +99,8 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
     visible: true
   },
   mapJson: null,
-  outlineJson: null
+  outlineJson: null,
+  flywire: [],
+  barList: [],
+  scatters: []
 })
