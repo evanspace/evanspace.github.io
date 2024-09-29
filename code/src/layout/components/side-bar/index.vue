@@ -56,9 +56,13 @@ const isCollapse = computed(() => !sidebar.value.opened)
 <style lang="scss">
 .scrollbar-wrapper {
   overflow-x: hidden;
+  border-right: 1px solid var(--el-menu-border-color);
   .el-scrollbar__view,
   .el-menu {
     height: 100%;
+  }
+  .el-menu {
+    border-right: none;
   }
 }
 </style>
