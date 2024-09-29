@@ -1,0 +1,13 @@
+.page {
+  color: #fff;
+  height: 100%;
+  position: relative;
+}
+
+.operate {
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  position: absolute;
+  white-space: nowrap;
+}

@@ -1,0 +1,25 @@
+.device-scene {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.container {
+  height: 100%;
+}
+
+
+:global {
+  :local( .device-scene ) {
+    .scene-operation {
+      left: 50%;
+      bottom: 30px;
+      z-index: 1;
+      position: absolute;
+      transform: translateX(-50%);
+      .el-link {
+        margin: 0 3px;
+      }
+    }
+  }
+}
