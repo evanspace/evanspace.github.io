@@ -56,9 +56,10 @@ export const getPageOpts = (): {} & Omit<
   },
   grid: {
     visible: true,
-    gridColor: 0xff0ff0,
-    centerLineColor: 0xf00f00,
-    fork: true
+    gridColor: 0x00adb5,
+    centerLineColor: 0x00adb5,
+    fork: true,
+    forkColor: 0x00adb5
   },
   axes: {
     visible: true
