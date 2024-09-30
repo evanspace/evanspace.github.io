@@ -34,7 +34,6 @@
       :main-body-mesh-name="pageOpts.mainBodyMeshName"
       :animation-model-type="pageOpts.animationModelType"
       :objects="pageOpts.objects"
-      :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
       :update-object-call="updateObjectCall"
       @init="onInit"
@@ -61,17 +60,10 @@ import * as request from './request'
 
 import type { ObjectItem } from 'three-scene/types/model.d'
 
-import { useWsStore } from '@/stores'
 import { useResize } from '@/hooks/scene-resize'
-const wsStore = useWsStore()
 
 const pageOpts = reactive(getPageOpts())
 const threeSceneRef = ref()
-
-// 格式化
-const formatObject = list => {
-  return wsStore.formatData(list)
-}
 
 // 点位更新回调
 const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
