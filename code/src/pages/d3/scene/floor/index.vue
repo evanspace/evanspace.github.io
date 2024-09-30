@@ -36,8 +36,9 @@
       :objects="pageOpts.objects"
       :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
-      :random-update-object-call="randomUpdateObjectCall"
+      :update-object-call="updateObjectCall"
       @init="onInit"
+      @click-dot="onClickDot"
     >
       <template #dialog="{ data, title }">
         <div :class="$style['dialog-wrap']">
@@ -92,8 +93,9 @@ const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
   }
 }
 
-// 随机更新回调
-const randomUpdateObjectCall = (_obj: ObjectItem) => {
+// 更新回调
+const updateObjectCall = (_obj: ObjectItem, isRandom) => {
+  console.log(isRandom)
   // const code = _obj.deviceCode || ''
   // console.log( code )
   const status = Math.random() > 0.5 ? 1 : 0
@@ -111,6 +113,9 @@ const randomUpdateObjectCall = (_obj: ObjectItem) => {
 
 const onInit = scene => {
   useResize(scene).resize()
+}
+const onClickDot = (item, e) => {
+  console.log(item, e)
 }
 
 // 切换巡航点位
