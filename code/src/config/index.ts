@@ -49,6 +49,7 @@ const Api = {
 
   d3: {
     map: '/d3/map',
+    device: '/d3/device',
     floor: '/d3/floor'
   },
 

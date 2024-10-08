@@ -18,11 +18,13 @@ export const getPageOpts = (): {} & Omit<
 
   colors: {
     normal: {
-      main: 0x00ff00
+      main: [0x88a1b5, 0x292e31],
+      text: 0xb9dbff,
+      FM: 0x88a1b5
     },
     runing: {
-      main: 0xff0ff0,
-      text: 0x000000
+      main: 0x2e77f8,
+      FM: 0x067417
     }
   },
 
@@ -39,10 +41,10 @@ export const getPageOpts = (): {} & Omit<
     visible: true,
     // helper: true,
     points: [
-      [450, 490, 450],
-      [450, 490, -450],
-      [-450, 490, -450],
-      [-450, 490, 450]
+      [450, 0.1, 450],
+      [450, 0.1, -450],
+      [-450, 0.1, -450],
+      [-450, 0.1, 450]
     ],
     offset: 10
   },
@@ -55,7 +57,7 @@ export const getPageOpts = (): {} & Omit<
     maxPolarAngle: Math.PI * 0.46
   },
   grid: {
-    visible: true,
+    visible: !true,
     gridColor: 0x00adb5,
     centerLineColor: 0x00adb5,
     fork: true,
@@ -64,28 +66,63 @@ export const getPageOpts = (): {} & Omit<
   axes: {
     visible: true
   },
-  directionalLight: {
-    helper: true
+  ambientLight: {
+    intensity: 8
   },
+  directionalLight: {
+    helper: true,
+    intensity: 3
+  },
+  config: {},
 
   models: [
     {
-      key: 'FLOOR_ONE',
-      name: '大堂', // 高 140
-      size: 8.5,
-      url: '/1楼.glb'
+      key: 'JSQ',
+      name: '分集水器',
+      size: 2,
+      url: '/分集水器.glb'
     },
     {
-      key: 'FLOOR_COMMON',
-      name: '楼层', // 高 60
-      size: 13.7,
-      url: '/楼层.glb'
+      key: 'LXJ',
+      name: '离心机',
+      size: 1.4,
+      url: '/离心机.glb'
     },
     {
-      key: 'FLOOR_ATTIC',
-      name: '楼顶', // 高 350
-      size: 0.1,
-      url: '/楼顶.glb'
+      key: 'LGJ',
+      name: '螺杆机',
+      size: 1.2,
+      url: '/螺杆机.glb'
+    },
+    {
+      key: 'LQT',
+      name: '冷却塔',
+      size: 0.8,
+      url: '/冷却塔.glb'
+    },
+    {
+      key: 'LDB',
+      name: '冷冻泵',
+      size: 2.5,
+      url: '/冷冻泵.glb'
+    },
+    {
+      key: 'LQB',
+      name: '冷却泵',
+      size: 2.5,
+      url: '/冷却泵.glb'
+    },
+    {
+      key: 'FM',
+      name: '阀门',
+      size: 0.05,
+      url: '/阀门.glb'
+    },
+    {
+      key: 'BSHLQ',
+      name: '板式换热器-制冷',
+      size: 0.4,
+      url: '/板式换热器-制冷.glb'
     },
 
     {
@@ -111,10 +148,18 @@ export const getPageOpts = (): {} & Omit<
       size: 1,
       range: { x: 51, y: 56 },
       mapUrl: '/dw.png'
+    },
+
+    {
+      key: 'FONT_WRYH',
+      name: '微软雅黑字体',
+      type: 'font',
+      size: 26.35,
+      url: '/oss/font/YaHei_Regular.json'
     }
   ].map(item => {
-    if (item.url) {
-      item.url = '/oss/model/floor' + item.url
+    if (!item.type && item.url) {
+      item.url = '/oss/model/ncl' + item.url
     }
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
@@ -122,5 +167,9 @@ export const getPageOpts = (): {} & Omit<
     return item as import('three-scene/types/model').ModelItem
   }),
   objects: [],
-  dotShowStrict: !true
+  dotShowStrict: !true,
+  mainBodyChangeColor: true,
+
+  colorMeshName: ['叶轮'],
+  animationModelType: ['LDB', 'LQB', 'SB', 'LXJ', 'LGJ', 'LQT', 'FM']
 })

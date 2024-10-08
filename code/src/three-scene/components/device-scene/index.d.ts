@@ -1,7 +1,28 @@
-import type { Fog, Render, Camera, Controls, Grid, Axes, Cruise, DirectionalLight } from '../../types/index'
+import type {
+  Fog,
+  Render,
+  Camera,
+  Controls,
+  Grid,
+  Axes,
+  Cruise,
+  AmbientLight,
+  DirectionalLight
+} from '../../types/index'
 import type { XYZ, ModelItem, ObjectItem } from '../../types/model'
 import type { IndexDB } from '../../types/indexdb'
 import type { Colors } from '../../types/color'
+
+export declare interface Config {
+  // 场景相机位置
+  to: XYZ
+  // 场景中心点/相机聚焦位置
+  target: XYZ
+  // 返回
+  back: Function
+  // 加载
+  load: Function
+}
 
 // 更新对象返回
 export declare interface UpdateFnReturn {
@@ -64,12 +85,15 @@ export declare interface Props {
   grid?: Partial<Grid>
   // 坐标轴
   axes?: Partial<Axes>
+  // 环境光
+  ambientLight?: Partial<AmbientLight>
   // 平行光
   directionalLight?: Partial<DirectionalLight>
 
   // 模型(场景加载类型对应的模型)
   models: ModelItem[]
-
+  // 配置
+  config?: Partial<Config>
   // 对象列表（设备列表）
   objects: ObjectItem[]
   // DOT 类型 key 默认: 'DOT'
@@ -77,17 +101,14 @@ export declare interface Props {
   // dot 点位展示严格模式（设备运行时展示） 默认: true
   dotShowStrict?: boolean
 
-  // 颜色材质名称（需要改变颜色的网格名称）
-  colorMeshName?: string[]
-
   // 获取颜色回调
   getColorCall?: (obj: ObjectItem) => string | number | undefined
   // 格式化数据方法
-  formatObject: (list: ObjectItem[]) => ObjectItem[]
+  formatObject?: (list: ObjectItem[]) => ObjectItem[]
   // DOT 点位更新对象回调方法
   dotUpdateObjectCall?: (obj: ObjectItem, list: ThreeModelItem[]) => UpdateDotReturn
   // 更新对象回调方法
-  updateObjectCall?: (obj: ObjectItem) => Partial<UpdateFnReturn>
+  updateObjectCall?: (obj: ObjectItem, isRandom: boolean) => Partial<UpdateFnReturn>
 
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]

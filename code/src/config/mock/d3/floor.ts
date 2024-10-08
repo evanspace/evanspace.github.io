@@ -99,7 +99,7 @@ floorData.push({
 
 export default [
   {
-    // 项目地图数据
+    // 项目楼层数据
     url: '/d3/floor',
     method: 'get',
     response: () =>
