@@ -11,3 +11,11 @@
   position: absolute;
   white-space: nowrap;
 }
+
+:global {
+  :local( .operate ) {
+    .el-link {
+      margin-right: 5px;
+    }
+  }
+}

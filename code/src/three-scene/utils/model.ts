@@ -1,9 +1,10 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
 
 import CONFIG from '../config'
 import type { Color } from '../types/color'
-import type { XYZ, StylePosition } from '../types/model'
+import type { XYZ, StylePosition, ObjectItem } from '../types/model'
 
 // 获取位置、大小、缩放参数
 export const get_P_S_R_param = (model, item, s: number = 1) => {
@@ -163,4 +164,243 @@ export const findMaterial = (children, names: string[]) => {
   }
   find(children)
   return list
+}
+
+// 获取偏差值
+const TYPE_KEYS = CONFIG.keys
+export const getDeviationConfig = (item, cr: string | number = 0xffffff) => {
+  const type = item.type
+  let size = 10, // 模型、字体大小
+    color = cr, // 字体颜色
+    txPos = { x: 0, y: 0, z: 0 }, // 字体 xyz 坐标（相对模型的中心点）
+    txRot = { x: 0, y: 0, z: 0 }, // 字体 xyz 旋转大小
+    warnPos = { x: 0, y: 0, z: 0 }, // 警告 xyz 坐标（相对模型的中心点）
+    statusPos = { x: 0, y: 0, z: 0 }, // 状态 xyz 坐标（相对模型的中心点）
+    disabledPos = { x: 0, y: 0, z: 0 } // 禁用 xyz 坐标（相对模型的中心点）
+  switch (type) {
+    case TYPE_KEYS.TEXT: // 文字
+      break
+
+    case TYPE_KEYS.JSQ: // 集水器
+      txPos.y = 10
+      txPos.x = -20
+      txRot.y = 270
+      warnPos.y = 62
+      break
+
+    case TYPE_KEYS.LDB: // 冷冻泵
+    case TYPE_KEYS.LQB: // 冷却泵
+      txPos.z = type === TYPE_KEYS.LDB ? 0 : 60
+      txPos.x = type === TYPE_KEYS.LDB ? -60 : 0
+      txRot.y = type === TYPE_KEYS.LDB ? 0 : -90
+      warnPos.y = 45
+      statusPos.x = -0.4
+      statusPos.y = 46.7
+      statusPos.z = -15.7
+      disabledPos.x = -0.4
+      disabledPos.y = 34
+      disabledPos.z = 12.5
+      break
+
+    case TYPE_KEYS.XBC: // 蓄冰槽
+    case TYPE_KEYS.LXJ: // 离心机
+      txPos.y = 16
+      txPos.z = 50
+      txRot.x = -20
+      warnPos.y = 78
+      statusPos.x = 36
+      statusPos.y = 67
+      statusPos.z = 42
+      disabledPos.x = -25
+      disabledPos.y = 85
+      disabledPos.z = 20
+      break
+
+    case TYPE_KEYS.LGJ: // 螺杆机
+    case TYPE_KEYS.LGJ_2: // 双头螺杆机
+    case TYPE_KEYS.LGJ_3: // 三机头螺杆机
+    case TYPE_KEYS.LGJ_4: // 四机头螺杆机
+      txPos.y = 16
+      txPos.z = 50
+      txRot.x = -20
+      warnPos.y = 78
+      statusPos.x = -40
+      statusPos.y = 64
+      statusPos.z = 42
+      disabledPos.x = 0
+      disabledPos.y = 75
+      disabledPos.z = 20
+      break
+
+    case TYPE_KEYS.LQT: // 冷却塔
+      txPos.x = -60
+      warnPos.y = 85
+      statusPos.x = -27.6
+      statusPos.y = 70
+      statusPos.z = -25.2
+      disabledPos.x = -27.6
+      disabledPos.y = 70
+      disabledPos.z = 25.2
+      break
+
+    case TYPE_KEYS.GL: // 锅炉
+      txPos.x = 83
+      txPos.y = 2
+      warnPos.y = 125
+      statusPos.y = 125
+      break
+
+    case TYPE_KEYS.BSHRQ: // 板式换热器
+      size = 12
+      txPos.y = 8
+      txPos.z = 33
+      warnPos.y = 105
+      statusPos.y = 105
+      break
+
+    case TYPE_KEYS.BSHLQ: // 板式换热器-制冷
+      txPos.y = 16
+      txPos.z = 40
+      warnPos.y = 88
+      statusPos.x = -43
+      statusPos.y = 90
+      statusPos.z = -20
+      break
+
+    case TYPE_KEYS.FLRB: // 风冷热泵
+      txPos.x = 50
+      txPos.y = 2
+      warnPos.y = 123
+      statusPos.y = 123
+      break
+
+    case TYPE_KEYS.FJY_X: // 风机-右
+    case TYPE_KEYS.FJZ_X: // 风机-左
+      size = 6
+      txPos.y = 80
+      txPos.z = 30
+      warnPos.y = 80
+      statusPos.y = 80
+      break
+
+    case TYPE_KEYS.FJY: // 风机-右
+    case TYPE_KEYS.FJZ: // 风机-左
+      size = 6
+      txPos.y = 103
+      warnPos.y = 110
+      statusPos.y = 110
+      break
+
+    case TYPE_KEYS.FM: // 阀门
+    case TYPE_KEYS.XFM: // 阀门
+      break
+  }
+
+  // 字体配置
+  let font = item.font || {}
+  // 字体坐标
+  let fontPOs = font.position || {}
+  if (fontPOs) {
+    Object.keys(fontPOs).forEach(key => {
+      txPos[key] = fontPOs[key]
+    })
+  }
+  // 字体角度
+  let fontRot = font.rotation || {}
+  if (fontRot) {
+    Object.keys(fontRot).forEach(key => {
+      txRot[key] = fontRot[key]
+    })
+    ;(txRot.x = (Math.PI / 180) * txRot.x), (txRot.y = (Math.PI / 180) * txRot.y), (txRot.z = (Math.PI / 180) * txRot.z)
+  }
+
+  font.size && (size = font.size)
+  font.color && (color = font.color)
+
+  return { size, color, txPos, txRot, warnPos, statusPos, disabledPos }
+}
+
+// 创建文字
+export const createText = (item: ObjectItem, fontParser, color?: string | number) => {
+  if (!fontParser) return
+  const obj = getDeviationConfig(item, color)
+  // 文字
+  let textGeo = new TextGeometry(item.name || '', {
+    font: fontParser,
+    size: obj.size || 5,
+    depth: 0,
+    curveSegments: 12, // 曲线分段
+    bevelThickness: 1, // 斜面厚度
+    bevelSize: 0.1, // 斜角大小
+    bevelEnabled: true // 斜角
+  })
+  const rotation = obj.txRot
+  textGeo.rotateX(rotation.x)
+  textGeo.rotateY(rotation.y)
+  textGeo.rotateZ(rotation.z)
+
+  const position = obj.txPos
+  // 计算边界
+  textGeo.computeBoundingBox()
+  // 计算垂直算法
+  textGeo.computeVertexNormals()
+  let offsetX = 0.5 * (textGeo.boundingBox.max.x - textGeo.boundingBox.min.x)
+  let offsetZ = 0.5 * (textGeo.boundingBox.max.z - textGeo.boundingBox.min.z)
+  let material = new THREE.MeshPhongMaterial({
+    color: obj.color != void 0 ? obj.color : 0xffffff,
+    flatShading: !true
+  })
+  let mesh = new THREE.Mesh(textGeo, material)
+  mesh.castShadow = true
+  mesh.position.set((position.x || 0) - offsetX, position.y || 0, (position.z || 0) - offsetZ)
+  mesh.name = 'text'
+  return mesh
+}
+
+// 创建警告标识 key、数据、模型、光源半径、缩放
+export const createWarning = (key, item: ObjectItem, model, radius = 100, s: number = 1) => {
+  if (!model) return
+  const obj = getDeviationConfig(item).warnPos
+  let group = new THREE.Group()
+  // 深克隆
+  let warningSigns = deepClone(model)
+  warningSigns.scale.set(s, s, s)
+  warningSigns.position.set(obj.x, obj.y, obj.z)
+  group.add(warningSigns)
+
+  // 创建光源
+  // 点光源 (颜色、强度、距离、衰减) 衰减！！！不要默认值
+  let light = new THREE.PointLight(0xc20c00, 8, radius, 0)
+  // const sphere = new THREE.SphereGeometry( 1, 16, 8 )
+  // light.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xff0040 } ) ) )
+
+  light.name = '灯光'
+  light.position.y = obj.y + 30
+  group.add(light)
+  group.name = key
+
+  // 警告标识动画
+  let mixer = new THREE.AnimationMixer(group)
+
+  // 创建颜色关键帧对象
+  // 0 时刻对应颜色 1，0，0   .25时刻对应颜色 1，1，1 .75...
+  let colorKF = new THREE.KeyframeTrack('红色.material.color', [0, 0.25, 0.75], [1, 0, 0, 1, 1, 0, 1, 0, 0])
+  let lightKF = new THREE.KeyframeTrack('灯光.color', [0, 0.25, 0.75], [1, 0, 0, 1, 1, 0, 1, 0, 0])
+  // 创建名为Sphere对象的关键帧数据  从0~20时间段，尺寸scale缩放3倍
+  let scaleTrack = new THREE.KeyframeTrack('警告标识.scale', [0, 0.5, 1], [1, 1, 1, 1.2, 1.2, 2, 1, 1, 1])
+  // 多个帧动画作为元素创建一个剪辑 clip 对象，命名‘warning_’，持续时间1
+  let clip = new THREE.AnimationClip(`warning_`, 1, [colorKF, lightKF, scaleTrack])
+  let action = mixer.clipAction(clip)
+  // 暂停
+  action.paused = true
+  // 播放
+  action.play()
+
+  // 隐藏
+  group.visible = false
+  return {
+    group,
+    action,
+    mixer
+  }
 }

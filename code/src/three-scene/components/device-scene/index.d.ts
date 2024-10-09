@@ -112,6 +112,8 @@ export declare interface Props {
 
   // 颜色材质名称（需要改变颜色的网格名称）
   colorMeshName?: string[]
+  // 颜色状态类型（需要根据状态改变颜色的类型） 默认： [ 'FM', 'XFM' ]
+  colorModelType?: string[]
   // 动态模型类型(有动画)
   animationModelType?: string[]
   // 绘制名称立体文字的类型
@@ -119,10 +121,12 @@ export declare interface Props {
   // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
   anchorType?: string[]
 
-  // 主体变色
+  // 主体变色 （动画模型）
   mainBodyChangeColor?: boolean
   // 主体网格名称 默认: [ '主体' ]
   mainBodyMeshName?: string[]
+  // 主体排除模型类型，防止主体网格名称和动态变色的名称相同
+  mainBodyExcludeType?: string[]
 }
 
 export declare interface ExtendOptions {

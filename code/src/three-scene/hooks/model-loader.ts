@@ -150,7 +150,6 @@ export const useModelLoader = (options: Params = {}) => {
   const loadProgress = res => {
     const loaded = res.loaded
     const total = progress.total
-    console.log()
     let s = Number(((loaded + progress.loaded) / total) * 100)
     if (s > 100) s = 100
     progress.percentage = Number(s.toFixed(2))
@@ -327,28 +326,36 @@ export const useModelLoader = (options: Params = {}) => {
   }
 
   // 加载字体
-  let fontParser: InstanceType<typeof FontLoader>
-  const loadFont = (model: ModelItem) => {
+  const loadFont = (model: ModelItem, onProgress?: Function) => {
     const { url = '', size = 0 } = model
     const { baseUrl } = _options
     const newUrl = getUrl(url, baseUrl)
     const loader = new FontLoader()
 
-    return new Promise(async resolve => {
+    return new Promise(async (resolve, reject) => {
       const store = await getCacheModel(newUrl, size)
       if (store) {
-        fontParser = loader.parse(JSON.parse(store))
+        const font = loader.parse(JSON.parse(store))
+        modelMap.set(MODEL_MAP.font, font)
         setTimeout(() => {
-          resolve(fontParser)
+          resolve(font)
         }, 10)
         return
       }
 
-      loader.load(newUrl, font => {
-        fontParser = font
-        dbStoreAdd(url)
-        resolve(font)
-      })
+      loader.load(
+        newUrl,
+        font => {
+          modelMap.set(MODEL_MAP.font, font)
+          dbStoreAdd(url)
+          resolve(font)
+        },
+        res => {
+          loadProgress(res)
+          if (typeof onProgress === 'function') onProgress(res)
+        },
+        reject
+      )
     })
   }
 
@@ -372,7 +379,11 @@ export const useModelLoader = (options: Params = {}) => {
           createSprite(item)
           break
         case MODEL_MAP.font:
-          loadFont(item)
+          await loadFont(item, onProgress)
+          break
+        case MODEL_MAP.warning:
+          item.key = MODEL_MAP.warning
+          await loadModel(item, onProgress)
           break
       }
 
@@ -380,6 +391,7 @@ export const useModelLoader = (options: Params = {}) => {
       progress.loaded += size * _options.modelSizeKB
       // 加载完成
       if (index >= max) {
+        progress.isEnd = true
         onSuccess()
       } else {
         _load()

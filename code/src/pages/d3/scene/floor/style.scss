@@ -13,6 +13,15 @@
 }
 
 
+:global {
+  :local( .operate ) {
+    .el-link {
+      margin-right: 5px;
+    }
+  }
+}
+
+
 $color: #3DAFFF;
 $color2: #FF000F;
 $line-width: 76px;
@@ -112,3 +121,4 @@ $line-height: 56px;
     }
   }
 }
+

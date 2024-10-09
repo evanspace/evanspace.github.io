@@ -7,6 +7,7 @@
       <el-link @click="() => scene?.getPosition()" type="success">场景坐标</el-link>
       <el-link type="warning" @click="() => changeBackground(scene)">切换背景</el-link>
       <el-link type="danger" @click="() => scene?.controlReset()">控制器重置</el-link>
+      <el-link v-if="cruise.visible" type="danger" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</el-link>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
@@ -59,6 +60,8 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
   colorMeshName: () => [],
   anchorType: () => [],
   mainBodyMeshName: () => ['主体'],
+  mainBodyExcludeType: () => ['FM'],
+  colorModelType: () => ['FM'],
   indexDB: () => ({
     cache: true
   })
@@ -81,7 +84,7 @@ import { useBackground } from '../../hooks/background'
 import { useModelLoader } from '../../hooks/model-loader'
 
 const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModel, loadModels, getModel } = useModelLoader({
+const { progress, MODEL_MAP, loadModel, loadModels, getModel } = useModelLoader({
   baseUrl: props.dracoUrl,
   colors: COLORS,
   colorMeshName: props.colorMeshName,
@@ -126,7 +129,15 @@ watch(
 watch(
   () => props.cruise.points,
   v => {
-    scene.setCruisePoint(v)
+    if (progress.isEnd) scene.setCruisePoint(v)
+  }
+)
+
+// 对象列表
+watch(
+  () => props.objects,
+  () => {
+    if (progress.isEnd) assemblyScenario()
   }
 )
 
@@ -193,7 +204,7 @@ const updateDotVisible = (target: ThreeModelItem) => {
 // 创建 dot 点位
 const createDotObject = item => {
   updateDotVisible(
-    scene.createDot(item, e => {
+    scene.addDot(item, e => {
       emits('click-dot', toRaw(item), e)
     })
   )
@@ -227,25 +238,50 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 缩放
   model.scale.set(...SCA)
 
-  // 摆放位置
-  model.position.set(x, y, z)
-  // 转换方位
-  model.rotation.set(...ROT)
-
+  // 动画类型
   const animationModelType = props.animationModelType || []
+  // 颜色网格
   const colorMeshName = props.colorMeshName || []
+  // 主体排除类型
+  const mainBodyExcludeType = props.mainBodyExcludeType || []
+  // 绘制文字类型
+  const textModelType = props.textModelType || []
+
+  const fontParser = getModel(MODEL_MAP.font)
+  // 是否需要绘制文字
+  if (textModelType.includes(type) && !!fontParser) {
+    const group = new THREE.Group()
+    group.add(model)
+    let text = UTILS.createText(item, fontParser, COLORS.normal.text)
+    group.add(text)
+    group.name = item.name
+    model = group
+  }
+
+  // 动画
   if (animationModelType.includes(type)) {
     if (model.type !== 'Group') {
       const group = new THREE.Group()
       group.add(model)
+      group.name = model.name
       model = group
     }
+
+    // 警告标识
+    const warnStatusModel = getModel(MODEL_MAP.warning)
+    if (!!warnStatusModel) {
+      const key = DEFAULTCONFIG.meshKey.warning
+      const { group: wg, action, mixer }: any = UTILS.createWarning(key, item, warnStatusModel)
+      model.add(wg)
+      model[key] = { action, mixer }
+    }
+
     // 主体网格
-    if (props.mainBodyChangeColor) {
+    if (props.mainBodyChangeColor && !mainBodyExcludeType.includes(type)) {
       const children = model.children[0]?.children || []
       const mesh = children.filter(it => (props.mainBodyMeshName || []).some(t => it.name.indexOf(t) > -1))
       const cobj = COLORS.normal
-      let color = cobj.main || cobj.color
+      let color = cobj.main != void 0 ? cobj.main : cobj.color
       let colrs = UTILS.getColorArr(color)
       if (colrs.length) {
         mesh.forEach((e, i) => {
@@ -273,7 +309,23 @@ const loopLoadObject = async (item: ObjectItem) => {
     }
     // 记录数据
     model.extra = { action, mixer, meshs }
+  } else {
+    const meshs: any[] = []
+    model.traverse(el => {
+      if (typeof el.name == 'string' && colorMeshName.some(t => el.name.indexOf(t) > -1)) {
+        meshs.push(el)
+      }
+    })
+    if (meshs.length) {
+      // 记录数据
+      model[DEFAULTCONFIG.meshKey.color] = meshs
+    }
   }
+
+  // 摆放位置
+  model.position.set(x, y, z)
+  // 转换方位
+  model.rotation.set(...ROT)
 
   model._isDevice_ = true
   model.data = item
@@ -337,11 +389,18 @@ const assemblyScenario = async () => {
   await initDevices()
 
   // 巡航
-  scene.createCruise()
+  scene.setCruisePoint(props.cruise.points)
 
   if (typeof props.config?.load === 'function') {
     props.config?.load(scene)
   }
+
+  const to = scene.getAnimTargetPos(props.config || {})
+  // 入场动画
+  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+    emits('loaded')
+    scene.controlSave()
+  })
 }
 
 // 加载
@@ -380,7 +439,6 @@ const updateObject = isRandom => {
     }
 
     if (typeof props.updateObjectCall === 'function') {
-      // @ts-ignore
       const res = props.updateObjectCall(data, isRandom)
       if (!res) return
       if (typeof res !== 'object') {
@@ -396,7 +454,7 @@ const updateObject = isRandom => {
     // 获取颜色
     const cKey = error > 0 ? 'error' : status > 0 ? 'runing' : 'normal'
     const cobj = COLORS[cKey]
-    let color = cobj[type] || cobj.color
+    let color = cobj[type] != void 0 ? cobj[type] : cobj.color
 
     if (typeof props.getColorCall === 'function') {
       const cr = props.getColorCall(data)
@@ -420,10 +478,20 @@ const updateObject = isRandom => {
 
 // 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
 const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
-  // @ts-ignore
-  let { el, colorObj: cobj, color, type, paused, error: isError } = opts
+  let { el, type, colorObj: cobj, color, paused, error } = opts
   let colors = UTILS.getColorArr(color)
   color = colors[0]
+
+  const meshKey = DEFAULTCONFIG.meshKey
+
+  const colorModelType = props.colorModelType
+  if (colorModelType.includes(type) && color != void 0) {
+    const meshs = el[meshKey.color] || []
+    meshs.forEach(e => {
+      UTILS.setMaterialColor(e, color)
+    })
+    return
+  }
 
   // 场景
   // 扩展数据
@@ -441,13 +509,25 @@ const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
   }
 
   // 主体变色
-  if (props.mainBodyChangeColor && el[DEFAULTCONFIG.meshKey.body]) {
-    const color = cobj.main
+  if (props.mainBodyChangeColor && el[meshKey.body]) {
+    const color = cobj.main != void 0 ? cobj.main : cobj.color
     let colors = UTILS.getColorArr(color)
     if (colors.length) {
-      el[DEFAULTCONFIG.meshKey.body].forEach((e, i) => {
+      el[meshKey.body].forEach((e, i) => {
         UTILS.setMaterialColor(e, colors[i % colors.length])
       })
+    }
+  }
+
+  const warning = el[meshKey.warning]
+  // 警告状态
+  if (!!warning) {
+    // 警告组合
+    const warnGroup = el.children.find(it => it.name == meshKey.warning)
+    if (!!warnGroup) {
+      warnGroup.visible = error
+      // 暂停状态
+      warning.action.paused = !error
     }
   }
 }
@@ -463,7 +543,8 @@ onMounted(() => {
 })
 
 defineExpose({
-  update: updateObject
+  update: updateObject,
+  exportImage: () => scene?.exportImage()
 })
 </script>
 

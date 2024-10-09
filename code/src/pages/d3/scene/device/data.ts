@@ -24,7 +24,10 @@ export const getPageOpts = (): {} & Omit<
     },
     runing: {
       main: 0x2e77f8,
-      FM: 0x067417
+      FM: 0x00590f
+    },
+    error: {
+      FM: 0xb53e09
     }
   },
 
@@ -32,7 +35,7 @@ export const getPageOpts = (): {} & Omit<
     cache: true,
     dbName: 'THREE__DEVICE__DB',
     tbName: 'TB',
-    version: 1
+    version: 2
   },
   camera: {
     far: 1000000
@@ -49,12 +52,13 @@ export const getPageOpts = (): {} & Omit<
     offset: 10
   },
   render: {
-    alpha: true
+    alpha: true,
+    preserveDrawingBuffer: true
   },
   controls: {
     screenSpacePanning: false,
-    maxDistance: 50000,
-    maxPolarAngle: Math.PI * 0.46
+    maxDistance: 50000
+    // maxPolarAngle: Math.PI * 0.46
   },
   grid: {
     visible: !true,
@@ -67,11 +71,13 @@ export const getPageOpts = (): {} & Omit<
     visible: true
   },
   ambientLight: {
-    intensity: 8
+    intensity: 2
   },
   directionalLight: {
-    helper: true,
-    intensity: 3
+    helper: !true
+    // intensity: 1
+    // position: [0, 500, -400],
+    // position2: [0, 500, 400]
   },
   config: {},
 
@@ -126,6 +132,28 @@ export const getPageOpts = (): {} & Omit<
     },
 
     {
+      key: 'JGBS',
+      name: '警告标识',
+      size: 0.2,
+      type: 'warning',
+      url: '/警告标识.glb'
+    },
+    {
+      key: 'JDBS',
+      name: '就地标识',
+      size: 0.2,
+      type: 'local',
+      url: '/就地.glb'
+    },
+    {
+      key: 'JYBS',
+      name: '禁用标识',
+      size: 0.03,
+      type: 'local',
+      url: '/禁用.glb'
+    },
+
+    {
       key: 'COLD_CAMERA',
       name: '摄像头',
       type: 'sprite',
@@ -158,7 +186,7 @@ export const getPageOpts = (): {} & Omit<
       url: '/oss/font/YaHei_Regular.json'
     }
   ].map(item => {
-    if (!item.type && item.url) {
+    if (item.type !== 'sprite' && item.url && item.url.indexOf('/oss') < 0) {
       item.url = '/oss/model/ncl' + item.url
     }
     if (item.mapUrl) {
@@ -167,9 +195,10 @@ export const getPageOpts = (): {} & Omit<
     return item as import('three-scene/types/model').ModelItem
   }),
   objects: [],
-  dotShowStrict: !true,
+  dotShowStrict: true,
   mainBodyChangeColor: true,
 
-  colorMeshName: ['叶轮'],
-  animationModelType: ['LDB', 'LQB', 'SB', 'LXJ', 'LGJ', 'LQT', 'FM']
+  colorMeshName: ['叶轮', '电动阀门'],
+  animationModelType: ['LDB', 'LQB', 'SB', 'LXJ', 'LGJ', 'LQT'],
+  textModelType: ['LDB', 'LQB', 'JSQ', 'LXJ', 'LGJ', 'LQT', 'BSHLQ']
 })

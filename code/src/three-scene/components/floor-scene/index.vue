@@ -131,7 +131,15 @@ watch(
 watch(
   () => props.cruise.points,
   v => {
-    scene.setCruisePoint(v)
+    if (progress.isEnd) scene.setCruisePoint(v)
+  }
+)
+
+// 对象列表
+watch(
+  () => props.objects,
+  () => {
+    if (progress.isEnd) assemblyScenario()
   }
 )
 
@@ -293,7 +301,7 @@ const updateDotVisible = (target: ThreeModelItem) => {
 // 创建 dot 点位
 const createDotObject = item => {
   updateDotVisible(
-    scene.createDot(item, e => {
+    scene.addDot(item, e => {
       emits('click-dot', toRaw(item), e)
     })
   )
@@ -359,6 +367,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     if (model.type !== 'Group') {
       const group = new THREE.Group()
       group.add(model)
+      group.name = model.name
       model = group
     }
     // 主体网格
@@ -446,7 +455,7 @@ const assemblyScenario = async () => {
   await initDevices()
 
   // 巡航
-  scene.createCruise()
+  scene.setCruisePoint(props.cruise.points)
 
   if (typeof props.config?.load === 'function') {
     props.config?.load(scene)
@@ -509,7 +518,6 @@ const updateObject = isRandom => {
     }
 
     if (typeof props.updateObjectCall === 'function') {
-      // @ts-ignore
       const res = props.updateObjectCall(data, isRandom)
       if (!res) return
       if (typeof res !== 'object') {
@@ -525,7 +533,7 @@ const updateObject = isRandom => {
     // 获取颜色
     const cKey = error > 0 ? 'error' : status > 0 ? 'runing' : 'normal'
     const cobj = COLORS[cKey]
-    let color = cobj[type] || cobj.color
+    let color = cobj[type] != void 0 ? cobj[type] : cobj.color
 
     if (typeof props.getColorCall === 'function') {
       const cr = props.getColorCall(data)
@@ -549,8 +557,7 @@ const updateObject = isRandom => {
 
 // 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
 const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
-  // @ts-ignore
-  let { el, colorObj: cobj, color, type, paused, error: isError } = opts
+  let { el, colorObj: cobj, color, paused } = opts
   let colors = UTILS.getColorArr(color)
   color = colors[0]
 
@@ -571,7 +578,7 @@ const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
 
   // 主体变色
   if (props.mainBodyChangeColor && el[DEFAULTCONFIG.meshKey.body]) {
-    const color = cobj.main
+    const color = cobj.main != void 0 ? cobj.main : cobj.color
     let colors = UTILS.getColorArr(color)
     if (colors.length) {
       el[DEFAULTCONFIG.meshKey.body].forEach((e, i) => {
@@ -634,6 +641,7 @@ onMounted(() => {
 
 defineExpose({
   floorAnimate,
+  exportImage: () => scene?.exportImage(),
   update: updateObject
 })
 </script>

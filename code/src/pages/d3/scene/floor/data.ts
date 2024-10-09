@@ -8,7 +8,8 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   bgColor: '',
   skyCode: '221',
   render: {
-    alpha: true
+    alpha: true,
+    preserveDrawingBuffer: true
   },
   // bgUrl: '/oss/img/map/earth.jpg',
   // bgUrl: [`/posX.jpeg`, `/negX.jpeg`, `/posY.jpeg`, `/negY.jpeg`, `/posZ.jpeg`, `/negZ.jpeg`].map(

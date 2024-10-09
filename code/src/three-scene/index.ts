@@ -172,19 +172,20 @@ export default class ThreeScene {
     // 平行光
     if (directionalLight.visible) {
       const direLight = this.createDirectionalLight()
+      direLight.position.set(...directionalLight.position)
       this.addObject(direLight)
       if (directionalLight.helper) {
         const dirLightHelper = new THREE.DirectionalLightHelper(direLight, 1)
         this.addObject(dirLightHelper)
       }
-      const pointLight = new THREE.PointLight(0xffffff, 100000, 1000)
-      pointLight.position.set(0, 200, 0)
-      pointLight.visible = true
-      this.addObject(pointLight)
+      // const pointLight = new THREE.PointLight(0xffffff, 100000, 1000)
+      // pointLight.position.set(0, 200, 0)
+      // pointLight.visible = true
+      // this.addObject(pointLight)
 
       if (directionalLight.light2) {
         const dirLight2 = this.createDirectionalLight(false)
-        dirLight2.position.set(-500, 800, -800)
+        dirLight2.position.set(...directionalLight.position2)
         this.addObject(dirLight2)
         if (directionalLight.helper) {
           const dirLigh2tHelper = new THREE.DirectionalLightHelper(dirLight2, 1)
@@ -199,7 +200,7 @@ export default class ThreeScene {
     const { color, intensity } = this.options.directionalLight
     // 平行光
     const dirLight = new THREE.DirectionalLight(color, intensity)
-    dirLight.position.set(500, 1000, 800)
+    // dirLight.position.set(0)
     if (castShadow) {
       dirLight.shadow.mapSize.setScalar(size)
       dirLight.shadow.bias = -1e-5
@@ -328,6 +329,15 @@ export default class ThreeScene {
     updateCruise(this.options.cruise)
   }
 
+  // 开启或关闭巡航深度测试
+  toggleCruiseDepthTest(depthTest?: boolean) {
+    this.cruiseGroup.traverse(el => {
+      if (el.isMesh || el.isLine) {
+        el.material.depthTest = depthTest != void 0 ? depthTest : !el.material.depthTest
+      }
+    })
+  }
+
   // 设置缩放
   setScale(s: number) {
     this.options.scale = s
@@ -388,6 +398,11 @@ export default class ThreeScene {
   // 添加对象到场景
   addObject(...objects: object[]) {
     this.scene.add(...objects)
+  }
+
+  // 控制保存
+  controlSave() {
+    this.controls.saveState()
   }
 
   // 控制重置

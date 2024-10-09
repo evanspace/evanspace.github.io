@@ -37,6 +37,10 @@ export default {
   rightClickBackDiffTime: 100,
 
   meshKey: {
-    body: Symbol('__BODY_')
+    body: Symbol('__BODY_'),
+    color: Symbol('__COLOR_'),
+    warning: Symbol('__WARNING_'),
+    local: Symbol('__LOCAL_'),
+    disabled: Symbol('__DISABLED_')
   }
 }

@@ -5,9 +5,8 @@
         <span>点位：</span>
         <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
       </div>
-      <div class="flex flex-ac">
-        <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
-      </div>
+      <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
+      <el-link type="primary" size="small" @click="onExport">导出</el-link>
     </div>
     <t-floor-scene
       ref="threeSceneRef"
@@ -122,6 +121,8 @@ const onChangeCruisePoint = () => {
   })
   pageOpts.cruise && (pageOpts.cruise.points = points)
 }
+
+const onExport = () => threeSceneRef.value?.exportImage()
 
 onMounted(() => {
   request.getConfig().then(res => {

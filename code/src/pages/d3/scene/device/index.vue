@@ -5,9 +5,8 @@
         <span>点位：</span>
         <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
       </div>
-      <div class="flex flex-ac">
-        <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
-      </div>
+      <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
+      <el-link type="primary" size="small" @click="onExport">导出</el-link>
     </div>
 
     <t-device-scene
@@ -24,6 +23,7 @@
       :cruise="pageOpts.cruise"
       :render="pageOpts.render"
       :controls="pageOpts.controls"
+      :config="pageOpts.config"
       :grid="pageOpts.grid"
       :axes="pageOpts.axes"
       :ambient-light="pageOpts.ambientLight"
@@ -34,10 +34,12 @@
       :main-body-change-color="pageOpts.mainBodyChangeColor"
       :color-mesh-name="pageOpts.colorMeshName"
       :animation-model-type="pageOpts.animationModelType"
+      :text-model-type="pageOpts.textModelType"
       :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
       :update-object-call="updateObjectCall"
       @init="onInit"
+      @click-dot="onClickDot"
     ></t-device-scene>
   </div>
 </template>
@@ -61,21 +63,30 @@ const formatObject = list => {
 }
 
 // 点位更新回调
-const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
+const dotUpdateObjectCall = (obj: ObjectItem, group) => {
+  const code = obj.deviceCode || ''
   // const val = wsStore.getKeyValue( code ).value
   const val = Math.random() * 40
   if (val !== void 0) {
     obj.value = val
   }
+  const c = code.split('_')[0] || ''
+  // const so = wsStore.getRunStatus( c ) > 0
+  const so = group.children.findIndex(it => it.data && it.data.deviceCode === c && (it.data?.status || 0) > 0) > -1
 
-  obj.show = Math.random() > 0.5
+  // 判断在运行则展示 不存在的则为公共参数也展示
+  if (so || ['SYS', 'CSC'].includes(c)) {
+    obj.show = true
+  } else {
+    obj.show = false
+  }
   obj.value = Number(Number(obj.value || 0).toFixed(2))
   return {
     value: obj.value,
     show: obj.show,
     font: {
       ...(obj.font || {}),
-      color: obj.value > 35 ? '#f00' : null
+      color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
     }
   }
 }
@@ -102,22 +113,27 @@ const onInit = scene => {
   useResize(scene).resize()
 }
 
+const onClickDot = (item, e) => {
+  console.log(item, e)
+}
+
 // 切换巡航点位
 const onChangeCruisePoint = () => {
   const points = [
-    [450, 0.1, 450],
-    [450, 0.1, -450],
-    [-450, 0.1, -450],
-    [-450, 0.1, 450]
+    [450, 0.1, 350],
+    [450, 0.1, -350],
+    [-450, 0.1, -350],
+    [-450, 0.1, 350]
   ].map(items => {
-    return items.map(t => t * (0.5 - Math.random() * 0.5 + 1))
+    return items.map(t => t * (0.2 - Math.random() * 0.2 + 1))
   })
   pageOpts.cruise && (pageOpts.cruise.points = points)
 }
 
+const onExport = () => threeSceneRef.value?.exportImage()
+
 onMounted(() => [
   request.getConfig().then(res => {
-    console.log(res)
     let list = res.JsonList
     const url = res.ModelUrl
     list.unshift({
@@ -125,13 +141,17 @@ onMounted(() => [
       type: '',
       url: url ? `${pageOpts.baseUrl}${url}` : ''
     })
-    let json = {}
+    let json: any = {}
     if (res.ConfigJson instanceof Object) {
       json = res.ConfigJson
     } else if (typeof res.ConfigJson == 'string') {
       try {
         json = JSON.parse(res.ConfigJson)
       } catch (er) {}
+    }
+
+    if (json.cruise) {
+      pageOpts.cruise && (pageOpts.cruise.points = json.cruise)
     }
     Object.keys(json).forEach(key => {
       pageOpts.config && (pageOpts.config[key] = json[key])
