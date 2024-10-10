@@ -57,8 +57,8 @@ export const getPageOpts = (): {} & Omit<
   },
   controls: {
     screenSpacePanning: false,
-    maxDistance: 50000
-    // maxPolarAngle: Math.PI * 0.46
+    maxDistance: 5000,
+    maxPolarAngle: Math.PI * 0.46
   },
   grid: {
     visible: !true,
@@ -149,7 +149,7 @@ export const getPageOpts = (): {} & Omit<
       key: 'JYBS',
       name: '禁用标识',
       size: 0.03,
-      type: 'local',
+      type: 'disabled',
       url: '/禁用.glb'
     },
 
@@ -198,6 +198,7 @@ export const getPageOpts = (): {} & Omit<
   dotShowStrict: true,
   mainBodyChangeColor: true,
 
+  anchorType: ['COLD_CAMERA', 'COLD_ROOM_INLET', 'COLD_GPS'],
   colorMeshName: ['叶轮', '电动阀门'],
   animationModelType: ['LDB', 'LQB', 'SB', 'LXJ', 'LGJ', 'LQT'],
   textModelType: ['LDB', 'LQB', 'JSQ', 'LXJ', 'LGJ', 'LQT', 'BSHLQ']

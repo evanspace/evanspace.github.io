@@ -31,6 +31,7 @@
       :models="pageOpts.models"
       :objects="pageOpts.objects"
       :dot-show-strict="pageOpts.dotShowStrict"
+      :anchor-type="pageOpts.anchorType"
       :main-body-change-color="pageOpts.mainBodyChangeColor"
       :color-mesh-name="pageOpts.colorMeshName"
       :animation-model-type="pageOpts.animationModelType"
@@ -40,7 +41,19 @@
       :update-object-call="updateObjectCall"
       @init="onInit"
       @click-dot="onClickDot"
-    ></t-device-scene>
+      @dblclick="onDbclick"
+    >
+      <template #dialog="{ data, title }">
+        <div :class="$style['dialog-wrap']">
+          <div :class="$style.circle"></div>
+          <div :class="$style.line"></div>
+          <div :class="$style.content">
+            <div :class="$style.title">{{ title }}</div>
+            <div :class="$style.data">{{ data }}</div>
+          </div>
+        </div>
+      </template>
+    </t-device-scene>
   </div>
 </template>
 
@@ -117,6 +130,10 @@ const onClickDot = (item, e) => {
   console.log(item, e)
 }
 
+const onDbclick = e => {
+  console.log(e)
+}
+
 // 切换巡航点位
 const onChangeCruisePoint = () => {
   const points = [
@@ -132,7 +149,7 @@ const onChangeCruisePoint = () => {
 
 const onExport = () => threeSceneRef.value?.exportImage()
 
-onMounted(() => [
+onMounted(() => {
   request.getConfig().then(res => {
     let list = res.JsonList
     const url = res.ModelUrl
@@ -169,7 +186,7 @@ onMounted(() => [
       return item
     })
   })
-])
+})
 </script>
 
 <style lang="scss" module>

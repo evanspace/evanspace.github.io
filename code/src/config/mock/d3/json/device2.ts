@@ -1,31 +1,45 @@
 export default [
   {
-    name: '分水器',
-    type: 'JSQ',
-    position: {
-      x: -408.2,
-      y: 0,
-      z: -185.5
-    }
-  },
-  {
     name: '集水器',
     type: 'JSQ',
     position: {
-      x: -408.2,
+      x: -364.4,
       y: 0,
-      z: 181.5
+      z: 160
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
     }
   },
-
+  {
+    name: '分水器',
+    type: 'JSQ',
+    position: {
+      x: -364.4,
+      y: 0,
+      z: -160
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
+    }
+  },
   {
     name: '1#',
     type: 'LDB',
     deviceCode: 'CHWP1',
     position: {
-      x: -280.4,
+      x: -226.4,
       y: 0,
-      z: -186.8
+      z: 180
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
     }
   },
   {
@@ -33,9 +47,14 @@ export default [
     type: 'LDB',
     deviceCode: 'CHWP2',
     position: {
-      x: -280.4,
+      x: -226.4,
       y: 0,
-      z: -93.2
+      z: 90
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
     }
   },
   {
@@ -43,8 +62,13 @@ export default [
     type: 'LDB',
     deviceCode: 'CHWP3',
     position: {
-      x: -280.4,
+      x: -226.4,
       y: 0,
+      z: 0
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
       z: 0
     }
   },
@@ -53,9 +77,14 @@ export default [
     type: 'LDB',
     deviceCode: 'CHWP4',
     position: {
-      x: -280.4,
+      x: -226.4,
       y: 0,
-      z: 91.1
+      z: -90
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
     }
   },
   {
@@ -63,20 +92,24 @@ export default [
     type: 'LDB',
     deviceCode: 'CHWP5',
     position: {
-      x: -280.4,
+      x: -226.4,
       y: 0,
-      z: 184.7
+      z: -180
+    },
+    rotation: {
+      x: 0,
+      y: 1.5,
+      z: 0
     }
   },
-
   {
     name: '1#',
     type: 'LQB',
     deviceCode: 'CWP1',
     position: {
-      x: 82.1,
+      x: 135.5,
       y: 0,
-      z: -186.8
+      z: 180
     },
     rotation: {
       x: 0,
@@ -89,9 +122,9 @@ export default [
     type: 'LQB',
     deviceCode: 'CWP2',
     position: {
-      x: 82.1,
+      x: 135.5,
       y: 0,
-      z: -93.2
+      z: 90
     },
     rotation: {
       x: 0,
@@ -104,7 +137,7 @@ export default [
     type: 'LQB',
     deviceCode: 'CWP3',
     position: {
-      x: 82.1,
+      x: 135.5,
       y: 0,
       z: 0
     },
@@ -119,9 +152,9 @@ export default [
     type: 'LQB',
     deviceCode: 'CWP4',
     position: {
-      x: 82.1,
+      x: 135.5,
       y: 0,
-      z: 91.2
+      z: -90
     },
     rotation: {
       x: 0,
@@ -134,9 +167,9 @@ export default [
     type: 'LQB',
     deviceCode: 'CWP5',
     position: {
-      x: 82.1,
+      x: 135.5,
       y: 0,
-      z: 184.7
+      z: -180
     },
     rotation: {
       x: 0,
@@ -144,56 +177,44 @@ export default [
       z: 0
     }
   },
-
   {
     name: '离心机1#',
     type: 'LXJ',
     deviceCode: 'CHL1',
     position: {
-      x: -103.4,
+      x: -48,
       y: 0,
-      z: -202.3
+      z: 190
     }
   },
   {
-    name: '离心机2#',
-    type: 'LXJ',
+    name: '螺杆机2#',
+    type: 'LGJ',
     deviceCode: 'CHL2',
     position: {
-      x: -103.4,
+      x: -48,
       y: 0,
-      z: -67.7
+      z: 0
     }
   },
   {
-    name: '离心机3#',
-    type: 'LXJ',
+    name: '螺杆机3#',
+    type: 'LGJ_3',
     deviceCode: 'CHL3',
     position: {
-      x: -103.4,
+      x: -48,
       y: 0,
-      z: 67.6
+      z: -190
     }
   },
-  {
-    name: '螺杆机4#',
-    type: 'LGJ',
-    deviceCode: 'CHL4',
-    position: {
-      x: -103.4,
-      y: 0,
-      z: 203.1
-    }
-  },
-
   {
     name: '1#',
     type: 'LQT',
     deviceCode: 'COT1',
     position: {
-      x: 224.9,
+      x: 314.6,
       y: 0,
-      z: -140.6
+      z: -180
     }
   },
   {
@@ -201,9 +222,9 @@ export default [
     type: 'LQT',
     deviceCode: 'COT2',
     position: {
-      x: 224.9,
+      x: 314.6,
       y: 0,
-      z: -36.9
+      z: -90
     }
   },
   {
@@ -211,9 +232,9 @@ export default [
     type: 'LQT',
     deviceCode: 'COT3',
     position: {
-      x: 224.9,
+      x: 314.6,
       y: 0,
-      z: 68
+      z: 0
     }
   },
   {
@@ -221,51 +242,29 @@ export default [
     type: 'LQT',
     deviceCode: 'COT4',
     position: {
-      x: 224.9,
+      x: 314.6,
       y: 0,
-      z: 173
+      z: 90
     }
   },
-
   {
     name: '5#',
     type: 'LQT',
     deviceCode: 'COT5',
     position: {
-      x: 347.9,
+      x: 314.6,
       y: 0,
-      z: 173
+      z: 180
     }
   },
-  {
-    name: '6#',
-    type: 'LQT',
-    deviceCode: 'COT6',
-    position: {
-      x: 347.9,
-      y: 0,
-      z: 68.3
-    }
-  },
-  {
-    name: '7#',
-    type: 'LQT',
-    deviceCode: 'COT7',
-    position: {
-      x: 347.9,
-      y: 0,
-      z: -36.9
-    }
-  },
-
   {
     name: '冷冻阀1#',
     type: 'FM',
     deviceCode: 'CHWV1',
     position: {
-      x: -187.6,
-      y: 39.6,
-      z: -226.5
+      x: -120.4,
+      y: 45.2,
+      z: 172.3
     }
   },
   {
@@ -273,9 +272,9 @@ export default [
     type: 'FM',
     deviceCode: 'CHWV2',
     position: {
-      x: -187.6,
-      y: 39.6,
-      z: -91.3
+      x: -120.4,
+      y: 45.2,
+      z: -17
     }
   },
   {
@@ -283,30 +282,19 @@ export default [
     type: 'FM',
     deviceCode: 'CHWV3',
     position: {
-      x: -187.6,
-      y: 39.6,
-      z: 43.4
+      x: -120.4,
+      y: 45.2,
+      z: -207.2
     }
   },
-  {
-    name: '冷冻阀4#',
-    type: 'FM',
-    deviceCode: 'CHWV4',
-    position: {
-      x: -187.6,
-      y: 39.6,
-      z: 179.6
-    }
-  },
-
   {
     name: '冷却阀1#',
     type: 'FM',
     deviceCode: 'CWV1',
     position: {
-      x: 6.4,
-      y: 29.2,
-      z: -181.3
+      x: 44.8,
+      y: 40.4,
+      z: 208
     },
     rotation: {
       x: 0,
@@ -319,9 +307,9 @@ export default [
     type: 'FM',
     deviceCode: 'CWV2',
     position: {
-      x: 6.4,
-      y: 29.2,
-      z: -46.3
+      x: 44.8,
+      y: 40.4,
+      z: 17.7
     },
     rotation: {
       x: 0,
@@ -334,9 +322,9 @@ export default [
     type: 'FM',
     deviceCode: 'CWV3',
     position: {
-      x: 6.4,
-      y: 29.2,
-      z: 89
+      x: 44.8,
+      y: 40.4,
+      z: -171.7
     },
     rotation: {
       x: 0,
@@ -344,278 +332,26 @@ export default [
       z: 0
     }
   },
-  {
-    name: '冷却阀4#',
-    type: 'FM',
-    deviceCode: 'CWV4',
-    position: {
-      x: 6.4,
-      y: 29.2,
-      z: 224.6
-    },
-    rotation: {
-      x: 0,
-      y: 1,
-      z: 0
-    }
-  },
-
-  {
-    name: '1#冷冻泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CHWP1_FRQ',
-    position: {
-      x: -280.4,
-      y: 36.5,
-      z: -186.8
-    }
-  },
-  {
-    name: '2#冷冻泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CHWP2_FRQ',
-    position: {
-      x: -280.4,
-      y: 36.5,
-      z: -93.2
-    }
-  },
-  {
-    name: '3#冷冻泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CHWP3_FRQ',
-    position: {
-      x: -280.4,
-      y: 36.5,
-      z: 0
-    }
-  },
-  {
-    name: '4#冷冻泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CHWP4_FRQ',
-    position: {
-      x: -280.4,
-      y: 36.5,
-      z: 91.1
-    }
-  },
-  {
-    name: '5#冷冻泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CHWP5_FRQ',
-    position: {
-      x: -280.4,
-      y: 36.5,
-      z: 184.7
-    }
-  },
-
-  {
-    name: '1#冷却泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CWP1_FRQ',
-    position: {
-      x: 82.1,
-      y: 36.5,
-      z: -186.8
-    }
-  },
-  {
-    name: '2#冷却泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CWP2_FRQ',
-    position: {
-      x: 82.1,
-      y: 36.5,
-      z: -93.2
-    }
-  },
-  {
-    name: '3#冷却泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CWP3_FRQ',
-    position: {
-      x: 82.1,
-      y: 36.5,
-      z: 0
-    }
-  },
-  {
-    name: '4#冷却泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CWP4_FRQ',
-    position: {
-      x: 82.1,
-      y: 36.5,
-      z: 91.2
-    }
-  },
-  {
-    name: '5#冷却泵',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'CWP5_FRQ',
-    position: {
-      x: 82.1,
-      y: 36.5,
-      z: 184.7
-    }
-  },
-
-  {
-    name: '1#离心机',
-    type: 'DOT',
-    unit: '%',
-    deviceCode: 'CHL1_LOAD_PER',
-    position: {
-      x: -103.4,
-      y: 68,
-      z: -202.3
-    }
-  },
-  {
-    name: '2#离心机',
-    type: 'DOT',
-    unit: '%',
-    deviceCode: 'CHL2_LOAD_PER',
-    position: {
-      x: -103.4,
-      y: 68,
-      z: -67.7
-    }
-  },
-  {
-    name: '3#离心机',
-    type: 'DOT',
-    unit: '%',
-    deviceCode: 'CHL3_LOAD_PER',
-    position: {
-      x: -103.4,
-      y: 68,
-      z: 67.6
-    }
-  },
-  {
-    name: '4#螺杆机',
-    type: 'DOT',
-    unit: '%',
-    deviceCode: 'CHL4_LOAD_PER',
-    position: {
-      x: -103.4,
-      y: 68,
-      z: 203.1
-    }
-  },
-
-  {
-    name: '7#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT7_FRQ',
-    position: {
-      x: 375.5,
-      y: 68,
-      z: -62.1
-    }
-  },
-  {
-    name: '6#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT6_FRQ',
-    position: {
-      x: 375.5,
-      y: 68,
-      z: 43.1
-    }
-  },
-  {
-    name: '5#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT5_FRQ',
-    position: {
-      x: 375.5,
-      y: 68,
-      z: 147.8
-    }
-  },
-
-  {
-    name: '4#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT4_FRQ',
-    position: {
-      x: 252.5,
-      y: 68,
-      z: 147.8
-    }
-  },
-  {
-    name: '3#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT3_FRQ',
-    position: {
-      x: 252.5,
-      y: 68,
-      z: 42.8
-    }
-  },
-  {
-    name: '2#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT2_FRQ',
-    position: {
-      x: 252.5,
-      y: 68,
-      z: -62.1
-    }
-  },
-  {
-    name: '1#冷却塔',
-    type: 'DOT',
-    unit: 'Hz',
-    deviceCode: 'COT1_FRQ',
-    position: {
-      x: 252.5,
-      y: 68,
-      z: -165.8
-    }
-  },
-
   {
     name: '分水器压力',
     type: 'DOT',
     unit: 'kPa',
     deviceCode: 'SYS_CHW_SP',
     position: {
-      x: -426.6,
-      y: 70.8,
-      z: -201.6
+      x: -323,
+      y: 60.8,
+      z: -208.1
     }
   },
   {
-    name: '冷冻出水温度',
+    name: '冷冻供水温度',
     type: 'DOT',
     unit: '℃',
     deviceCode: 'SYS_CHW_ST',
     position: {
-      x: -389.6,
-      y: 69,
-      z: -232.6
+      x: -366.5,
+      y: 60.8,
+      z: -144.6
     }
   },
   {
@@ -624,9 +360,9 @@ export default [
     unit: '℃',
     deviceCode: 'SYS_CHW_RT',
     position: {
-      x: -389.6,
-      y: 70.7,
-      z: 228.6
+      x: -366.5,
+      y: 60.8,
+      z: 144
     }
   },
   {
@@ -635,21 +371,218 @@ export default [
     unit: 'kPa',
     deviceCode: 'SYS_CHW_RP',
     position: {
-      x: -426.6,
-      y: 70.7,
-      z: 197.1
+      x: -323,
+      y: 60.8,
+      z: 206.6
     }
   },
-
+  {
+    name: '5#冷冻泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CHWP5_FRQ',
+    position: {
+      x: -208.6,
+      y: 46.5,
+      z: -179.8
+    }
+  },
+  {
+    name: '4#冷冻泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CHWP4_FRQ',
+    position: {
+      x: -208.6,
+      y: 46.5,
+      z: -89.8
+    }
+  },
+  {
+    name: '3#冷冻泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CHWP3_FRQ',
+    position: {
+      x: -208.6,
+      y: 46.5,
+      z: 0
+    }
+  },
+  {
+    name: '2#冷冻泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CHWP2_FRQ',
+    position: {
+      x: -208.6,
+      y: 46.5,
+      z: 89.9
+    }
+  },
+  {
+    name: '1#冷冻泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CHWP1_FRQ',
+    position: {
+      x: -208.6,
+      y: 46.5,
+      z: 180.5
+    }
+  },
+  {
+    name: '5#冷却泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CWP5_FRQ',
+    position: {
+      x: 116.3,
+      y: 46.5,
+      z: -179.8
+    }
+  },
+  {
+    name: '4#冷却泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CWP4_FRQ',
+    position: {
+      x: 116.3,
+      y: 46.5,
+      z: -89.8
+    }
+  },
+  {
+    name: '3#冷却泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CWP3_FRQ',
+    position: {
+      x: 116.3,
+      y: 46.5,
+      z: 0
+    }
+  },
+  {
+    name: '2#冷却泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CWP2_FRQ',
+    position: {
+      x: 116.3,
+      y: 46.5,
+      z: 89.9
+    }
+  },
+  {
+    name: '1#冷却泵',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'CWP1_FRQ',
+    position: {
+      x: 116.3,
+      y: 46.5,
+      z: 180.5
+    }
+  },
+  {
+    name: '1#离心机',
+    type: 'DOT',
+    unit: '%',
+    deviceCode: 'CHL1_LOAD_PER',
+    position: {
+      x: -81.7,
+      y: 81.8,
+      z: 208.2
+    }
+  },
+  {
+    name: '2#离心机',
+    type: 'DOT',
+    unit: '%',
+    deviceCode: 'CHL2_LOAD_PER',
+    position: {
+      x: -81.7,
+      y: 81.8,
+      z: 19.5
+    }
+  },
+  {
+    name: '3#螺杆机',
+    type: 'DOT',
+    unit: '%',
+    deviceCode: 'CHL3_LOAD_PER',
+    position: {
+      x: -81.7,
+      y: 81.8,
+      z: -170.9
+    }
+  },
+  {
+    name: '5#冷却塔',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'COT5_FRQ',
+    position: {
+      x: 355.4,
+      y: 85,
+      z: 180.5
+    }
+  },
+  {
+    name: '4#冷却塔',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'COT4_FRQ',
+    position: {
+      x: 355.4,
+      y: 85,
+      z: 89.8
+    }
+  },
+  {
+    name: '3#冷却塔',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'COT3_FRQ',
+    position: {
+      x: 355.4,
+      y: 85,
+      z: -0.9
+    }
+  },
+  {
+    name: '2#冷却塔',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'COT2_FRQ',
+    position: {
+      x: 355.4,
+      y: 85,
+      z: -90.2
+    }
+  },
+  {
+    name: '1#冷却塔',
+    type: 'DOT',
+    unit: 'Hz',
+    deviceCode: 'COT1_FRQ',
+    position: {
+      x: 355.4,
+      y: 85,
+      z: -180.6
+    }
+  },
   {
     name: '冷却供水温度',
     type: 'DOT',
     unit: '℃',
     deviceCode: 'SYS_CW_ST',
     position: {
-      x: 165.8,
-      y: 38.2,
-      z: -252.2
+      x: 199.5,
+      y: 45.6,
+      z: -236.5
     }
   },
   {
@@ -658,37 +591,9 @@ export default [
     unit: '℃',
     deviceCode: 'SYS_CW_RT',
     position: {
-      x: 165.8,
-      y: 11,
-      z: -1.4
-    }
-  },
-
-  {
-    name: '入口',
-    type: 'COLD_ROOM_INLET',
-    position: {
-      x: 150,
-      y: 150,
-      z: 0
-    }
-  },
-  {
-    name: '监控',
-    type: 'COLD_CAMERA',
-    position: {
-      x: 50,
-      y: 150,
-      z: 0
-    }
-  },
-  {
-    name: '定位',
-    type: 'COLD_GPS',
-    position: {
-      x: -50,
-      y: 150,
-      z: 0
+      x: 199.5,
+      y: 29.1,
+      z: 177.3
     }
   }
 ]

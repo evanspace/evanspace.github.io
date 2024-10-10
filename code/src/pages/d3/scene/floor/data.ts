@@ -41,11 +41,11 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   },
   controls: {
     screenSpacePanning: false,
-    maxDistance: 50000,
+    maxDistance: 5000,
     maxPolarAngle: Math.PI * 0.46
   },
   directionalLight: {
-    helper: true
+    helper: !true
   },
   grid: {
     visible: true

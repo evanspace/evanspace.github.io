@@ -26,13 +26,17 @@
         <div :class="$style.text">{{ progress.percentage }}%</div>
       </div>
     </div>
+
+    <!-- 设备信息弹窗 -->
+    <div :class="$style.dialog" v-if="dialog.show" :style="dialog.style">
+      <slot name="dialog" :data="dialog.data" :title="dialog.title" :position="dialog.position"></slot>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { ref, watch, toRaw, onMounted, withDefaults } from 'vue'
 import * as THREE from 'three'
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import { DeviceThreeScene } from './methods'
 
@@ -42,7 +46,7 @@ import DEFAULTCONFIG from '../../config'
 
 import { deepMerge } from '../../utils'
 
-import type { ObjectItem, ThreeModelItem, XYZ } from '../../types/model'
+import type { ObjectItem, ThreeModelItem } from '../../types/model'
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   dracoUrl: '',
@@ -82,6 +86,7 @@ const COLORS = deepMerge(colors, props.colors)
 
 import { useBackground } from '../../hooks/background'
 import { useModelLoader } from '../../hooks/model-loader'
+import { useDialog } from '../../hooks/dialog'
 
 const { changeBackground, backgroundLoad } = useBackground()
 const { progress, MODEL_MAP, loadModel, loadModels, getModel } = useModelLoader({
@@ -90,6 +95,7 @@ const { progress, MODEL_MAP, loadModel, loadModels, getModel } = useModelLoader(
   colorMeshName: props.colorMeshName,
   indexDB: props.indexDB
 })
+const { dialog } = useDialog()
 
 const containerRef = ref()
 
@@ -210,6 +216,40 @@ const createDotObject = item => {
   )
 }
 
+// 创建状态标识
+const createStatusMark = (model, item) => {
+  // 警告标识
+  const warnStatusModel = getModel(MODEL_MAP.warning)
+  if (!!warnStatusModel) {
+    const key = DEFAULTCONFIG.meshKey.warning
+    const {
+      group: wg,
+      action,
+      mixer
+    }: any = UTILS.createWarning(key, item, warnStatusModel, props.statusOffset?.WARNING)
+    model.add(wg)
+    model[key] = { action, mixer }
+  }
+
+  // 就地标识
+  const localStatusModel = getModel(MODEL_MAP.local)
+  if (!!localStatusModel) {
+    const key = DEFAULTCONFIG.meshKey.local
+    const localModel = UTILS.createStatusMark(item, localStatusModel, props.statusOffset?.STATUS)
+    model.add(localModel)
+    model[key] = localModel
+  }
+
+  // 禁用标识
+  const disabledStatusModel = getModel(MODEL_MAP.disabled)
+  if (!!disabledStatusModel) {
+    const key = DEFAULTCONFIG.meshKey.disabled
+    const disabledModel = UTILS.createStatusMark(item, disabledStatusModel, props.statusOffset?.DISABLED, true)
+    model.add(disabledModel)
+    model[key] = disabledModel
+  }
+}
+
 // 循环加载对象
 const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
@@ -252,7 +292,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   if (textModelType.includes(type) && !!fontParser) {
     const group = new THREE.Group()
     group.add(model)
-    let text = UTILS.createText(item, fontParser, COLORS.normal.text)
+    const text = UTILS.createText(item, fontParser, COLORS.normal.text, props.statusOffset?.TEXT)
     group.add(text)
     group.name = item.name
     model = group
@@ -267,19 +307,12 @@ const loopLoadObject = async (item: ObjectItem) => {
       model = group
     }
 
-    // 警告标识
-    const warnStatusModel = getModel(MODEL_MAP.warning)
-    if (!!warnStatusModel) {
-      const key = DEFAULTCONFIG.meshKey.warning
-      const { group: wg, action, mixer }: any = UTILS.createWarning(key, item, warnStatusModel)
-      model.add(wg)
-      model[key] = { action, mixer }
-    }
+    // 创建状态标识
+    createStatusMark(model, item)
 
     // 主体网格
     if (props.mainBodyChangeColor && !mainBodyExcludeType.includes(type)) {
-      const children = model.children[0]?.children || []
-      const mesh = children.filter(it => (props.mainBodyMeshName || []).some(t => it.name.indexOf(t) > -1))
+      const mesh = UTILS.findObjectsByHasProperty(model.children, props.mainBodyMeshName)
       const cobj = COLORS.normal
       let color = cobj.main != void 0 ? cobj.main : cobj.color
       let colrs = UTILS.getColorArr(color)
@@ -294,7 +327,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     // 升起动画
     // model.position.y = y - 30
     // UTILS.deviceAnimate( model, { y } )
-    const meshs = UTILS.findMaterial(model.children, colorMeshName)
+    const meshs = UTILS.findObjectsByHasProperty(model.children, colorMeshName)
     // 叶轮动画
     let mixer = new THREE.AnimationMixer(model)
     let action
@@ -417,6 +450,28 @@ const initPage = () => {
   }
 }
 
+// 弹窗展示数据
+const dialogShowData = () => {
+  const object = dialog.select[0]
+  const data = object.data
+  dialog.data = data as Partial<ObjectItem>
+  dialog.title = data?.name || ''
+  dialog.show = true
+
+  const pos = updateDialogPosition(object)
+  emits('click-dialog-dot', data as ObjectItem, pos)
+}
+
+// 更新 dialog 坐标
+const updateDialogPosition = object => {
+  const dom = containerRef.value
+  const pos = UTILS.getPlanePosition(dom, object, scene.camera)
+  dialog.position = pos
+  dialog.style.left = pos.left + 'px'
+  dialog.style.top = pos.top + 'px'
+  return pos
+}
+
 // 更新
 const updateObject = isRandom => {
   const emitData: ObjectItem[] = []
@@ -493,6 +548,17 @@ const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
     return
   }
 
+  if (!(props.animationModelType || []).includes(type)) {
+    return
+  }
+  // 文字
+  if (props.textChangeColor) {
+    const color = cobj.text != void 0 ? cobj.text : cobj.color
+    const group = el.getObjectByProperty('_isText_', true)
+    let colors = UTILS.getColorArr(color)
+    UTILS.setMaterialColor(group, colors[0])
+  }
+
   // 场景
   // 扩展数据
   const extra = el.extra
@@ -530,12 +596,63 @@ const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
       warning.action.paused = !error
     }
   }
+
+  // 就地
+  if (!!el[meshKey.local]) {
+    el[meshKey.local].visible = opts.local
+  }
+
+  // 禁用
+  if (!!el[meshKey.disabled]) {
+    el[meshKey.disabled].visible = opts.disabled
+  }
 }
 
 onMounted(() => {
   options.container = containerRef.value
 
-  scene = new DeviceThreeScene(options, {})
+  scene = new DeviceThreeScene(options, {
+    onDblclick(object) {
+      const data = object.data
+      if (typeof data.onDblclick === 'function') {
+        data.onDblclick(toRaw(data), object)
+      } else {
+        emits('dblclick', toRaw(data))
+      }
+    },
+    onClickLeft(object) {
+      if (object) {
+        const data = object.data
+        const backData = toRaw(data)
+        emits('select', backData)
+        // 点位点击事件
+        if (typeof data.onClick === 'function') {
+          dialog.show = false
+          data.onClick(backData)
+        } else {
+          dialog.select = [object]
+          dialogShowData()
+        }
+      } else {
+        dialog.select = []
+        dialog.show = false
+      }
+    },
+    onClickRight(e) {
+      console.log(e)
+      if (typeof props.config?.back === 'function') {
+        props.config.back(scene)
+      }
+    },
+    animateCall: () => {
+      // 弹窗位置
+      if (dialog.show && !!dialog.select.length) {
+        // 设备弹窗信息
+        const object = dialog.select[0]
+        updateDialogPosition(object)
+      }
+    }
+  })
   scene.run()
 
   emits('init', scene)

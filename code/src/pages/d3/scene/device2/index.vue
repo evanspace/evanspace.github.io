@@ -1,70 +1,74 @@
 <template>
-  <div :class="$style.wrapper">
-    <three-scene
+  <div :class="$style.page" class="h-100 o-h">
+    <div :class="$style.operate">
+      <div class="flex flex-ac">
+        <span>点位：</span>
+        <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
+      </div>
+      <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
+      <el-link type="primary" size="small" @click="onExport">导出</el-link>
+    </div>
+
+    <t-device-scene
       ref="threeSceneRef"
-      sky-code="223"
-      :base-url="assetsStore.oss"
-      :models="models"
-      :objects="objects"
-      :config="config"
-      :db-name="pageOpts.dbName"
-      :tb-name="pageOpts.tbName"
-      :db-version="pageOpts.dbVersion"
       :dev-env="pageOpts.devEnv"
-      :load-cache="pageOpts.loadCache"
+      :base-url="pageOpts.baseUrl"
+      :bg-color="pageOpts.bgColor"
+      :bg-url="pageOpts.bgUrl"
+      :sky-code="pageOpts.skyCode"
+      :env="pageOpts.env"
+      :colors="pageOpts.colors"
+      :indexDB="pageOpts.indexDB"
+      :camera="pageOpts.camera"
+      :cruise="pageOpts.cruise"
+      :render="pageOpts.render"
+      :controls="pageOpts.controls"
+      :config="pageOpts.config"
+      :grid="pageOpts.grid"
+      :axes="pageOpts.axes"
+      :ambient-light="pageOpts.ambientLight"
+      :directional-light="pageOpts.directionalLight"
+      :status-offset="pageOpts.statusOffset"
+      :models="pageOpts.models"
+      :objects="pageOpts.objects"
       :dot-show-strict="pageOpts.dotShowStrict"
-      :hdr-="pageOpts.hdr"
-      :pipe-mesh-name="pipeMeshName"
-      :pipe-model-type="pipeModelType"
-      :color-mesh-name="colorMeshName"
-      :text-model-type="textModelType"
-      :animation-model-type="animationModelType"
-      :cruise-points="cruisePoints"
+      :anchor-type="pageOpts.anchorType"
+      :text-change-color="pageOpts.textChangeColor"
       :main-body-change-color="pageOpts.mainBodyChangeColor"
-      :cruise-tube-show="pageOpts.cruiseTubeShow"
-      :cruise-path-offset="pageOpts.cruisePathOffse"
-      :path-tension="pageOpts.pathTension"
+      :color-mesh-name="pageOpts.colorMeshName"
+      :animation-model-type="pageOpts.animationModelType"
+      :text-model-type="pageOpts.textModelType"
       :format-object="formatObject"
       :dot-update-object-call="dotUpdateObjectCall"
       :update-object-call="updateObjectCall"
-      :random-update-object-call="randomUpdateObjectCall"
-      @click-dot="onThreeDotClick"
-      @dblclick="onDblclick"
-      @loaded="onLoaded"
+      @init="onInit"
+      @click-dot="onClickDot"
+      @dblclick="onDbclick"
     >
-    </three-scene>
+    </t-device-scene>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { ObjectItem, ThreeModelItem } from '@/components/three-scene/index'
-import { models, colorMeshName, pipeMeshName, pipeModelType, textModelType, animationModelType, getOpts } from './data'
+import tDeviceScene from 'three-scene/components/device-scene/index.vue'
+
+import { getPageOpts } from './data'
 import * as request from './request'
 
-import { useAssetsStore, useWsStore } from '@/stores'
-const assetsStore = useAssetsStore()
+import { useWsStore } from '@/stores'
+import { useResize } from '@/hooks/scene-resize'
 const wsStore = useWsStore()
 
-const pageOpts = reactive(getOpts())
+const pageOpts = reactive(getPageOpts())
 const threeSceneRef = ref()
 
-const objects = ref<import('@/components/three-scene/index').ObjectItem[]>([])
-
-const cruisePoints = ref<number[][]>([])
-
-const config = reactive({
-  to: { x: 0, y: 1300, z: 0 }
-})
-
-// 格式化对接列表
+// 格式化
 const formatObject = list => {
-  const data = wsStore.formatData(list)
-  console.log(list, data)
-  return data
+  return wsStore.formatData(list)
 }
 
 // 点位更新回调
-const dotUpdateObjectCall = (obj: ObjectItem, list: ThreeModelItem[]) => {
+const dotUpdateObjectCall = (obj: ObjectItem, group) => {
   const code = obj.deviceCode || ''
   // const val = wsStore.getKeyValue( code ).value
   const val = Math.random() * 40
@@ -73,7 +77,7 @@ const dotUpdateObjectCall = (obj: ObjectItem, list: ThreeModelItem[]) => {
   }
   const c = code.split('_')[0] || ''
   // const so = wsStore.getRunStatus( c ) > 0
-  const so = list.findIndex(it => it.data && it.data.deviceCode === c && (it.data?.status || 0) > 0) > -1
+  const so = group.children.findIndex(it => it.data && it.data.deviceCode === c && (it.data?.status || 0) > 0) > -1
 
   // 判断在运行则展示 不存在的则为公共参数也展示
   if (so || ['SYS', 'CSC'].includes(c)) {
@@ -87,25 +91,14 @@ const dotUpdateObjectCall = (obj: ObjectItem, list: ThreeModelItem[]) => {
     show: obj.show,
     font: {
       ...(obj.font || {}),
-      color: obj.value > 35 ? '#f00' : null
+      color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
     }
   }
 }
 
-// 更新对象回调
-const updateObjectCall = (obj: ObjectItem) => {
-  const code = obj.deviceCode || ''
-  // console.log( code )
-  const status = wsStore.getRunStatus(code)
-  const error = wsStore.getErrorStatus(code)
-  return {
-    status,
-    error
-  }
-}
-
-// 随机更新回调
-const randomUpdateObjectCall = (_obj: ObjectItem) => {
+// 更新回调
+const updateObjectCall = (_obj: ObjectItem, isRandom) => {
+  console.log(isRandom)
   // const code = _obj.deviceCode || ''
   // console.log( code )
   const status = Math.random() > 0.5 ? 1 : 0
@@ -121,49 +114,71 @@ const randomUpdateObjectCall = (_obj: ObjectItem) => {
   }
 }
 
-// dot 点击
-const onThreeDotClick = e => {
+const onInit = scene => {
+  useResize(scene).resize()
+}
+
+const onClickDot = (item, e) => {
+  console.log(item, e)
+}
+
+const onDbclick = e => {
   console.log(e)
 }
 
-const onDblclick = e => {
-  console.log(toRaw(e.data))
+// 切换巡航点位
+const onChangeCruisePoint = () => {
+  const points = [
+    [450, 0.1, 350],
+    [450, 0.1, -350],
+    [-450, 0.1, -350],
+    [-450, 0.1, 350]
+  ].map(items => {
+    return items.map(t => t * (0.2 - Math.random() * 0.2 + 1))
+  })
+  pageOpts.cruise && (pageOpts.cruise.points = points)
 }
 
-const onLoaded = () => {
-  console.log('loaded')
-}
-const initQuery = () => {
-  request.getMonitorConfig({ id: '123456', type: 0 }).then(res => {
-    let list = res.pipConfig || []
-    list = list.concat(res.jsonList)
-    const url = res.modelUrl
+const onExport = () => threeSceneRef.value?.exportImage()
+
+onMounted(() => {
+  request.getConfig().then(res => {
+    let list = res.JsonList
+    const url = res.ModelUrl
     list.unshift({
-      name: res.name,
+      name: res.Name,
       type: '',
-      url: url ? `${assetsStore.oss}${url}` : ''
+      url: url ? `${pageOpts.baseUrl}${url}` : ''
     })
+    let json: any = {}
+    if (res.ConfigJson instanceof Object) {
+      json = res.ConfigJson
+    } else if (typeof res.ConfigJson == 'string') {
+      try {
+        json = JSON.parse(res.ConfigJson)
+      } catch (er) {}
+    }
 
-    objects.value = list
-    let json: import('@/components/three-scene/index').Config & {
-      cruise?: number[][]
-    } = res.configJson
-
+    if (json.cruise) {
+      pageOpts.cruise && (pageOpts.cruise.points = json.cruise)
+    }
     Object.keys(json).forEach(key => {
-      config[key] = json[key]
+      pageOpts.config && (pageOpts.config[key] = json[key])
     })
 
-    cruisePoints.value = json.cruise || []
+    pageOpts.objects = list.map(item => {
+      if (item.type === 'COLD_ROOM_INLET') {
+        item.onClick = e => {
+          ElMessage.success({
+            message: e.name,
+            grouping: true
+          })
+        }
+      }
+      return item
+    })
   })
-
-  threeSceneRef.value?.setControls({
-    screenSpacePanning: true,
-    minDistance: 100,
-    maxDistance: 2000
-  })
-}
-
-initQuery()
+})
 </script>
 
 <style lang="scss" module>

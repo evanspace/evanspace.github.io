@@ -1,4 +1,4 @@
 export default {
   title: 'device',
-  order: 50,
+  order: 10,
 }

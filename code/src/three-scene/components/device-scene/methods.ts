@@ -33,13 +33,15 @@ export class DeviceThreeScene extends ThreeScene {
 
     this.addDeviceGroup()
     this.addDotGroup()
+    this.bindEvent()
   }
 
   // 添加设备组
   addDeviceGroup() {
-    this.deviceGroup = new THREE.Group()
-    this.deviceGroup.renderOrder = 100
-    this.addObject(this.deviceGroup)
+    const group = new THREE.Group()
+    group.name = '设备组'
+    this.deviceGroup = group
+    this.addObject(group)
   }
 
   // 清除场景设备
@@ -61,6 +63,7 @@ export class DeviceThreeScene extends ThreeScene {
   // 添加点位组
   addDotGroup() {
     const group = new THREE.Group()
+    group.name = '点位组'
     this.scene.add(group)
     this.dotGroup = group
   }
@@ -93,6 +96,90 @@ export class DeviceThreeScene extends ThreeScene {
     label.data = item
     this.dotGroup.add(label)
     return label
+  }
+
+  // 双击
+  onDblclick(e: MouseEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e as PointerEvent, dom, scale)
+
+    if (this.deviceGroup) {
+      // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+      raycaster.setFromCamera(pointer, this.camera)
+      // 检查射线和物体之间的交叉点（包含或不包含后代）
+      const objects = [this.deviceGroup]
+      const interscts = raycaster.intersectObjects(objects)
+      if (interscts.length) {
+        const obj = interscts[0].object
+        const object = this.findParentGroupGroup(obj)
+        if (!object) return
+        if (typeof this.extend?.onDblclick === 'function') this.extend.onDblclick(object)
+      }
+    }
+  }
+
+  // 移动
+  onPointerMove(e: PointerEvent) {
+    this.checkIntersectObjects(e)
+  }
+
+  // 弹起
+  onPointerUp(e: PointerEvent) {
+    super.onPointerUp(e)
+
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < DEFAULTCONFIG.rightClickBackDiffTime
+    if (e.button == 2) {
+      // console.log('你点了右键')
+      if (isClick && typeof this.extend?.onClickRight === 'function') this.extend.onClickRight(e)
+    } else if (e.button == 0) {
+      // console.log('你点了左键')
+      isClick && this.checkIntersectObjects(e)
+    } else if (e.button == 1) {
+      // console.log('你点了滚轮')
+    }
+  }
+
+  // 检查交叉几何体
+  checkIntersectObjects(e: PointerEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e, dom, scale)
+    let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+    const objects = this.deviceGroup.children.filter(it => it.visible && it._isAnchor_)
+
+    // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+    raycaster.setFromCamera(pointer, this.camera)
+    let interscts = raycaster.intersectObjects(objects, isClick)
+    dom.style.cursor = interscts.length > 0 ? 'pointer' : 'auto'
+    if (!isClick) {
+      return
+    }
+
+    if (interscts.length) {
+      const object = interscts[0].object
+      if (!object) return
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(object)
+    } else {
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
+    }
+  }
+
+  // 查找父级组合
+  findParentGroupGroup(object) {
+    const _find = obj => {
+      let parent = obj.parent
+      if (!parent) {
+        return
+      }
+      if (parent && parent._isDevice_) {
+        return parent
+      }
+      return _find(parent)
+    }
+    return _find(object)
   }
 
   modelAnimate() {
