@@ -81,6 +81,9 @@ export const getPageOpts = (): {} & Omit<
 
   statusOffset: {
     TEXT: {
+      JSQ: {
+        position: { x: 0, y: 10, z: 20 }
+      },
       LDB: {
         position: { x: 0, y: 0, z: 75 },
         rotation: { x: 0, y: 90, z: 0 }
@@ -195,6 +198,83 @@ export const getPageOpts = (): {} & Omit<
     },
 
     {
+      key: 'LDH_PIPE_ERECT',
+      type: 'pipe',
+      name: '冷冻回水',
+      size: 0.01,
+      url: '/oss/model/pipe/冷冻回.glb',
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LDH_PIPE_RIGHT_ANGLE',
+      type: 'pipe',
+      name: '冷冻回-弯头',
+      size: 0.12,
+      url: '/oss/model/pipe/冷冻回-弯头.glb',
+      repeat: [1, 0.25],
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LDG_PIPE_ERECT',
+      type: 'pipe',
+      name: '冷冻供水',
+      size: 0.01,
+      url: '/oss/model/pipe/冷冻供.glb',
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LDG_PIPE_RIGHT_ANGLE',
+      type: 'pipe',
+      name: '冷冻供-弯头',
+      size: 0.12,
+      url: '/oss/model/pipe/冷冻供-弯头.glb',
+      repeat: [1, 0.25],
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LQG_PIPE_ERECT',
+      type: 'pipe',
+      name: '冷却供水',
+      size: 0.01,
+      url: '/oss/model/pipe/冷却供.glb',
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LQG_PIPE_RIGHT_ANGLE',
+      type: 'pipe',
+      name: '冷却供-弯头',
+      size: 0.12,
+      repeat: [1, 0.25],
+      url: '/oss/model/pipe/冷却供-弯头.glb',
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LQH_PIPE_ERECT',
+      type: 'pipe',
+      name: '冷却回水',
+      size: 0.01,
+      url: '/oss/model/pipe/冷却回.glb',
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+    {
+      key: 'LQH_PIPE_RIGHT_ANGLE',
+      type: 'pipe',
+      name: '冷却回-弯头',
+      size: 0.12,
+      url: '/oss/model/pipe/冷却回-弯头.glb',
+      repeat: [1, 0.25],
+      mapUrl: '/oss/model/pipe/002.png',
+      mapMeshName: '贴图'
+    },
+
+    {
       key: 'FONT_WRYH',
       name: '微软雅黑字体',
       type: 'font',
@@ -205,12 +285,13 @@ export const getPageOpts = (): {} & Omit<
     if (item.type !== 'sprite' && item.url && item.url.indexOf('/oss') < 0) {
       item.url = '/oss/model/cool' + item.url
     }
-    if (item.mapUrl) {
+    if (item.mapUrl && item.mapUrl.indexOf('/oss') < 0) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),
   objects: [],
+  pipes: [],
   dotShowStrict: true,
   textChangeColor: true,
   mainBodyChangeColor: false,

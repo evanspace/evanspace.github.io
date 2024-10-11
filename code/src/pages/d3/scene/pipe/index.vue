@@ -31,6 +31,7 @@
       :status-offset="pageOpts.statusOffset"
       :models="pageOpts.models"
       :objects="pageOpts.objects"
+      :pipes="pageOpts.pipes"
       :dot-show-strict="pageOpts.dotShowStrict"
       :anchor-type="pageOpts.anchorType"
       :text-change-color="pageOpts.textChangeColor"
@@ -169,6 +170,7 @@ onMounted(() => {
       pageOpts.config && (pageOpts.config[key] = json[key])
     })
 
+    pageOpts.pipes = res.PipeList || []
     pageOpts.objects = list.map(item => {
       if (item.type === 'COLD_ROOM_INLET') {
         item.onClick = e => {
