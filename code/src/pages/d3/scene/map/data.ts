@@ -94,10 +94,10 @@ export const getPageOpts = (): {} & import('three-scene/components/map-scene/ind
     forkColor: COLOR.gridFork
   },
   controls: {
-    // maxPolarAngle: Math.PI * 0.46,
+    maxPolarAngle: Math.PI * 0.46,
     maxDistance: 5000,
-    enableDamping: true
-    // screenSpacePanning: false
+    enableDamping: true,
+    screenSpacePanning: false
   },
   axes: {
     visible: true
