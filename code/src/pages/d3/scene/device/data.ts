@@ -57,7 +57,7 @@ export const getPageOpts = (): {} & Omit<
   },
   controls: {
     screenSpacePanning: false,
-    maxDistance: 5000,
+    maxDistance: 1500,
     maxPolarAngle: Math.PI * 0.46
   },
   grid: {
