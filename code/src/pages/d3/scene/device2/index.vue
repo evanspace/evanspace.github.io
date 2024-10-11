@@ -57,6 +57,9 @@ import * as request from './request'
 
 import { useWsStore } from '@/stores'
 import { useResize } from '@/hooks/scene-resize'
+
+import type { ObjectItem } from '@/three-scene/types/model'
+
 const wsStore = useWsStore()
 
 const pageOpts = reactive(getPageOpts())
