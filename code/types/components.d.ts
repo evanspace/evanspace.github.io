@@ -63,6 +63,5 @@ declare module 'vue' {
     PlaneDevice: typeof import('./../src/components/plane-device/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    ThreeScene: typeof import('./../src/components/three-scene/index.vue')['default']
   }
 }

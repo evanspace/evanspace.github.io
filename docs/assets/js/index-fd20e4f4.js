@@ -1,0 +1,1 @@
+import{_ as s}from"./common-9bcd4cdd.js";import{o,g as a,h as r}from"./vendor-fdf0d3de.js";const t={class:"pagem p-sm"};const n=s({},[["render",function(s,n){return o(),a("div",t,n[0]||(n[0]=[r("div",{class:"container"},[r("img",{src:"/imgs/corrugation.jpg",alt:""})],-1)]))}],["__scopeId","data-v-64ea757f"]]);export{n as default};
