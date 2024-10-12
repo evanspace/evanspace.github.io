@@ -189,9 +189,9 @@ export default ({ mode }) => {
             // return id.toString().split( 'node_modules/' )[ 1 ].split( '/' )[ 0 ].toString()
             return 'vendor'
           }
-          if (id.includes('src/common')) {
-            return 'common'
-          }
+          // if (id.includes('src/common')) {
+          //   return 'common'
+          // }
           // if (id.includes('src/pages')) {
           //   const ids = id.toString().split('/')
           //   let fs = ids[ids.length > 1 ? ids.length - 2 : ids.length - 1].toString()

@@ -1,0 +1,1 @@
+import{_ as s,o as a,g as d,h as o}from"./vendor-509147fa.js";const t={class:"page"};const e=s({},[["render",function(s,e){return a(),d("div",t,e[0]||(e[0]=[o("div",{class:"dot"},null,-1),o("div",{class:"dot"},null,-1)]))}],["__scopeId","data-v-40ed21a2"]]);export{e as default};

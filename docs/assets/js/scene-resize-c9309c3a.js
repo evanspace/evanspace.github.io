@@ -1,1 +1,0 @@
-import{u as e}from"./common-9bcd4cdd.js";import{w as s,ad as o}from"./vendor-fdf0d3de.js";const i=i=>({resize:()=>{const n=()=>null==i?void 0:i.resize();s((()=>e().sidebar.opened),(()=>{setTimeout(n,300)})),window.addEventListener("resize",n,!1),o((()=>{null==i||i.stopAnimate(),null==i||i.dispose(),window.removeEventListener("resize",n)}))}});export{i as u};

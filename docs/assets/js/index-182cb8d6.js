@@ -1,1 +1,0 @@
-import{_ as s}from"./common-426f1774.js";import{o,g as a,h as d}from"./vendor-e4926781.js";const t={class:"page"};const n=s({},[["render",function(s,n){return o(),a("div",t,n[0]||(n[0]=[d("div",{class:"dot"},null,-1),d("div",{class:"dot"},null,-1)]))}],["__scopeId","data-v-40ed21a2"]]);export{n as default};
