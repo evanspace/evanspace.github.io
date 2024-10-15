@@ -25,7 +25,7 @@
     "three": "^0.167.0",
     "three-bvh-csg": "0.0.16",
     "three-mesh-bvh": "^0.7.6",
-    "three-scene": "^0.0.25",
+    "three-scene": "^0.0.27",
     "vue": "^3.5.3",
     "vue-i18n": "^9.9.0",
     "vue-router": "^4.2.5"
