@@ -15,7 +15,8 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   // bgUrl: [`/posX.jpeg`, `/negX.jpeg`, `/posY.jpeg`, `/negY.jpeg`, `/posZ.jpeg`, `/negZ.jpeg`].map(
   //   u => `/oss/img/sky/216${u}`
   // ),
-  env: '/oss/textures/hdr/skidpan_2k.hdr',
+  // env: '/oss/textures/hdr/skidpan_2k.hdr',
+  env: '/oss/textures/hdr/3.hdr',
   camera: {
     far: 1000000
   },

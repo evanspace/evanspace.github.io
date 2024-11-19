@@ -88,6 +88,8 @@ export default {
     unrealBloom: 'unreal bloom',
     device: 'device',
     floor: 'floor',
+    park: 'park',
+
     hemisphere: 'hemisphere',
     simple: 'simple',
     model: 'model',

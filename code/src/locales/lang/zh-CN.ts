@@ -88,6 +88,8 @@ export default {
     unrealBloom: '泛光',
     device: '设备',
     floor: '楼层',
+    park: '园区',
+
     hemisphere: '半球',
     simple: '简单',
     model: '模型',
