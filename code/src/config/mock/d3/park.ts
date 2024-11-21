@@ -13,10 +13,107 @@ let parkData: any[] = [
     position: { x: 0, y: 0, z: 0 }
   },
   {
-    name: '楼栋1',
-    type: 'BUILDING_ONE',
-    position: { x: 0, y: 0, z: 0 }
+    name: '停车位',
+    type: 'PARKING_SPACE',
+    position: { x: 0, y: 0.1, z: 0 }
   },
+  // {
+  //   name: '栏杆群',
+  //   type: 'RAILING_GROUP',
+  //   position: { x: 0, y: 0, z: 0 }
+  // },
+
+  ///////////////////
+  {
+    name: '楼栋1',
+    type: 'BUILDING_1',
+    position: { x: -30.2, y: 0, z: -72.26 }
+  },
+  {
+    name: '楼栋2-1',
+    type: 'BUILDING_2',
+    position: { x: 107.2, y: 0, z: 114.8 }
+  },
+  {
+    name: '楼栋2-2',
+    type: 'BUILDING_2',
+    position: { x: 131.8, y: 0, z: 114.8 }
+  },
+  {
+    name: '楼栋3-1',
+    type: 'BUILDING_3',
+    position: { x: 22.26, y: 0, z: 141.17 },
+    rotation: { x: 0, y: 0, z: 90 }
+  },
+  {
+    name: '楼栋3-2',
+    type: 'BUILDING_3',
+    position: { x: 51.82, y: 0, z: 141.17 },
+    rotation: { x: 0, y: 0, z: 90 }
+  },
+  {
+    name: '楼栋3-3',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: -21.37 }
+  },
+  {
+    name: '楼栋3-4',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: 8.24 }
+  },
+  {
+    name: '楼栋3-5',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: 37.8 }
+  },
+  {
+    name: '楼栋3-6',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: 67.38 }
+  },
+  {
+    name: '楼栋3-7',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: 97.02 }
+  },
+  {
+    name: '楼栋3-8',
+    type: 'BUILDING_3',
+    position: { x: -130.8, y: 0, z: 126.67 }
+  },
+  {
+    name: '楼栋4',
+    type: 'BUILDING_4',
+    position: { x: 102.17, y: 0, z: 139.16 }
+  },
+  {
+    name: '楼栋4',
+    type: 'BUILDING_4',
+    position: { x: 131.07, y: 0, z: 139.16 }
+  },
+  {
+    name: '楼栋5',
+    type: 'BUILDING_5',
+    position: { x: -74.66, y: 0, z: 119.93 }
+  },
+  {
+    name: '楼栋5',
+    type: 'BUILDING_5',
+    position: { x: -68.41, y: 0, z: 103.9 },
+    rotation: { x: 0, y: 0, z: 90 }
+  },
+  {
+    name: '仓库',
+    type: 'BUILDING_WAREHOUSE',
+    position: { x: -27.39, y: 0, z: 98.98 }
+  },
+  {
+    name: '仓库',
+    type: 'BUILDING_WAREHOUSE',
+    position: { x: -103.47, y: 0, z: 128.3 },
+    rotation: { x: 0, y: 0, z: 90 }
+  },
+  ///////////////////
 
   {
     name: '油罐车',

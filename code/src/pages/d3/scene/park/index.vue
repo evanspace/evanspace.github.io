@@ -3,11 +3,11 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject(true)">随机更新</div>
-      <!-- <div class="btn" v-if="cruise.visible" @click="() => scene?.toggleCruise()">定点巡航</div> -->
+      <div class="btn" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
       <div class="btn" @click="() => scene?.controlReset()">控制器重置</div>
-      <!-- <div class="btn" v-if="cruise.visible" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</div> -->
+      <div class="btn" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
@@ -30,17 +30,18 @@
 </template>
 
 <script lang="ts" setup>
-import { getPageOpts } from './data'
+import { ROBOT, CHARACTER, getPageOpts } from './data'
 import {
   ParkThreeScene,
   dotUpdateObjectCall,
   updateObjectCall,
   changeModleStatusColor,
-  executeCarRunging
+  executeCarRunging,
+  getOffsetPoint
 } from './methods'
 import * as request from './request'
 
-import { useBackground } from '@/hooks/background'
+import { useBackground } from 'three-scene/hooks/background'
 import { useResize } from '@/hooks/scene-resize'
 import { useModelLoader } from 'three-scene/hooks/model-loader'
 import * as UTILS from 'three-scene/utils/model'
@@ -51,7 +52,25 @@ import { deepMerge } from 'three-scene/utils/index'
 
 import type { ObjectItem } from 'three-scene/types/model'
 
-const pageOpts = reactive(getPageOpts())
+const pageOpts = reactive(
+  getPageOpts((pos, lookAt, cruiseCurve, t) => {
+    if (robotObj) {
+      // 前置视角前 0.02
+      t = t + 0.02
+      if (t > 1) t = t - 1
+      pos = getOffsetPoint(cruiseCurve.getPointAt(t))
+      const oft = 0.001
+      let ts = t + oft
+      if (ts > 1) ts = ts - 1
+      lookAt = cruiseCurve.getPointAt(ts)
+
+      robotObj.position.set(pos.x, 0, pos.z)
+      // 求正切值
+      const angle = Math.atan2(-lookAt.z + pos.z, lookAt.x - pos.x)
+      robotObj.rotation.z = Math.PI * 0.5 + angle
+    }
+  })
+)
 const containerRef = ref()
 const COLORS = deepMerge(colors, pageOpts.colors)
 
@@ -65,16 +84,18 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 5
+    version: 16
   }
 })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
+  env: '/oss/textures/hdr/3.hdr',
   controls: {
     screenSpacePanning: false,
     maxDistance: 5000,
     maxPolarAngle: Math.PI * 0.46
   },
+  cruise: pageOpts.cruise,
   grid: {
     visible: !true
   },
@@ -91,7 +112,7 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
 const updateDotVisible = (target: ThreeModelItem) => {
   const item = target.data as ObjectItem
   if (typeof dotUpdateObjectCall === 'function') {
-    const res = dotUpdateObjectCall(item, scene.deviceGroup)
+    const res = dotUpdateObjectCall(item, scene.buildingGroup)
     if (typeof res === 'object') {
       Object.keys(res).forEach(key => {
         item[key] = res[key]
@@ -157,7 +178,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 转换方位
   model.rotation.set(...ROT)
 
-  model._isDevice_ = true
+  model._isBuilding_ = true
   model.data = item
 
   // 骑车
@@ -177,7 +198,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     model._isAnchor_ = true
   }
 
-  scene.addDevice(model)
+  scene.addBuilding(model)
 
   return Promise.resolve()
 }
@@ -209,10 +230,13 @@ const assemblyScenario = async () => {
   progress.show = false
 
   // 清除
-  scene.clearDevice()
+  scene.clearBuilding()
 
   await nextTick()
   await initDevices()
+
+  // 巡航
+  scene.setCruisePoint(pageOpts.cruise.points)
 
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
@@ -221,12 +245,31 @@ const assemblyScenario = async () => {
   })
 }
 
+// 创建机器人
+let robotObj: any
+const createRoblt = () => {
+  robotObj = getModel(ROBOT)
+  robotObj.rotation.z = Math.PI * 0.5
+  scene.addObject(robotObj)
+}
+
+// 创建人物
+let characterObj: any
+const createCharacter = () => {
+  characterObj = getModel(CHARACTER)
+  console.log(characterObj)
+  characterObj.position.set(-89.57, 0, 185)
+  characterObj.scale.setScalar(2)
+  scene.addObject(characterObj)
+}
+
 // 加载
 const deviceConfigs = ref<ObjectItem[]>([])
 const load = () => {
   loadModels(pageOpts.models, () => {
+    createRoblt()
+    createCharacter()
     request.getConfig().then(res => {
-      console.log(res)
       let json = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson

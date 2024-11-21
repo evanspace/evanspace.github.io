@@ -1,19 +1,27 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
-import { FloorThreeScene } from 'three-scene/components/floor-scene/methods'
-
-import { useLensflare } from 'three-scene/hooks/lensflare'
+import ThreeScene from 'three-scene'
+import { useRaycaster } from 'three-scene/hooks/raycaster'
+import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
 
 import { Water } from 'three/examples/jsm/objects/Water'
 import { Sky } from 'three/examples/jsm/objects/Sky'
 
-import type { ExtendOptions } from '.'
-import type { ObjectItem } from 'three-scene/types/model'
+import type { Config, ExtendOptions } from '.'
+import { useLensflare } from 'three-scene/hooks/lensflare'
+
+import type { XYZ, ObjectItem } from 'three-scene/types/model'
+
+import DEFAULTCONFIG from './config'
+
+const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
+const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 
 import * as UTILS from 'three-scene/utils/model'
-import { random } from 'three-scene/utils/index'
 
 const { addLensflare } = useLensflare()
+
+const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
 
 const createWater = () => {
   // 创建水面
@@ -21,12 +29,9 @@ const createWater = () => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      new URL('/oss/textures/waternormals.jpg', import.meta.url).href,
-      texture => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      }
-    ),
+    waterNormals: new THREE.TextureLoader().load(base + '/oss/textures/waternormals.jpg', texture => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    }),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,
@@ -41,17 +46,103 @@ const createWater = () => {
   return water
 }
 
-export class ParkThreeScene extends FloorThreeScene {
+export class ParkThreeScene extends ThreeScene {
   // 水面
-  water: InstanceType<typeof Water>
+  water?: InstanceType<typeof Water>
   // 天空
-  sky: InstanceType<typeof Sky>
+  sky?: InstanceType<typeof Sky>
   // 太阳
-  sun: InstanceType<typeof THREE.Vector3>
-  constructor(options: ConstructorParameters<typeof FloorThreeScene>[0], extend: Partial<ExtendOptions>) {
-    super(options, extend)
+  sun?: InstanceType<typeof THREE.Vector3>
+
+  // 建筑集合
+  buildingGroup?: InstanceType<typeof THREE.Group>
+  // 点位集合
+  dotGroup?: InstanceType<typeof THREE.Group>
+  // 扩展参数
+  extend: Partial<ExtendOptions>
+  // CSS2D 渲染器
+  css2DRender: InstanceType<typeof CSS2DRenderer>
+  constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
+    super(options)
+
+    this.extend = extend
+    this.css2DRender = initCSS2DRender(this.options, this.container)
+    this.css2DRender.domElement.className = 'three-scene__dot-wrap'
+
+    this.bindEvent()
+    this.addBuildingGroup()
+    this.addDotGroup()
 
     // 光晕
+    this.addLensflare()
+  }
+
+  // 添加建筑组
+  addBuildingGroup() {
+    const group = new THREE.Group()
+    group.name = '建筑组'
+    this.buildingGroup = group
+    this.addObject(group)
+  }
+
+  // 清除场景建筑
+  clearBuilding() {
+    if (this.buildingGroup) {
+      this.disposeObj(this.buildingGroup)
+    }
+    this.addBuildingGroup()
+    this.clearDot()
+  }
+
+  // 添加建筑
+  addBuilding(...obj) {
+    if (this.buildingGroup) {
+      this.buildingGroup.add(...obj)
+    }
+  }
+
+  // 添加点位组
+  addDotGroup() {
+    const group = new THREE.Group()
+    group.name = '点位组'
+    this.dotGroup = group
+    this.scene.add(group)
+  }
+
+  // 清除场景点位
+  clearDot() {
+    if (this.dotGroup) {
+      this.disposeObj(this.dotGroup)
+    }
+    this.addDotGroup()
+  }
+
+  // 添加点位
+  addDot(item: ObjectItem, clickBack) {
+    const pos = item.position
+    const { size, color } = item.font || {}
+    const { x = 0, y = 0, z = 0 } = pos || {}
+    const label = createCSS2DDom({
+      name: `
+        <div class="bg"></div>
+        <span class="inner" style="${
+          size != void 0 ? `font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
+        } ${color != void 0 ? `color: ${color}` : ''}"></span>
+      `,
+      className: 'dot-2D-label',
+      position: [x, y, z],
+      onClick: clickBack
+    })
+    label.name = item.name
+    label.data = item
+    // 原始点位 备用
+    label._position_ = { x, y, z }
+    this.dotGroup.add(label)
+    return label
+  }
+
+  // 添加太阳光晕
+  addLensflare() {
     const { position = [500, 1000, 800], color = 0xffffff } = this.options.directionalLight
     const [x, y, z] = position
     const lensflare = addLensflare(color, x, y, z)
@@ -60,17 +151,13 @@ export class ParkThreeScene extends FloorThreeScene {
     this.sun = new THREE.Vector3(x, y, z)
     this.water = createWater()
     this.addObject(this.water)
-    this.createSky()
-    this.updateSkyAndSun()
-  }
-
-  createSky() {
     // 创建天空
-    this.sky = new Sky()
-    this.sky.scale.setScalar(10000)
-    // this.addObject(this.sky)
+    // this.sky = new Sky()
+    // this.sky.scale.setScalar(10000)
+    // this.updateSkyAndSun()
   }
 
+  // 更新天空、太阳
   updateSkyAndSun() {
     const { water, sky, sun } = this
     const skyUniforms = sky.material.uniforms
@@ -109,10 +196,122 @@ export class ParkThreeScene extends FloorThreeScene {
     this.renderer.toneMappingExposure = effectController.exposure
   }
 
+  // 模型动画
   modelAnimate(): void {
-    super.modelAnimate()
+    // css2D 渲染器
+    this.css2DRender.render(this.scene, this.camera)
+
+    if (typeof this.extend.animateCall === 'function') this.extend.animateCall()
+
     // 水面波动
     this.water.material.uniforms['time'].value += 1 / 60
+  }
+
+  // 移动
+  onPointerMove(e: PointerEvent) {
+    this.checkIntersectObjects(e)
+  }
+
+  // 弹起
+  onPointerUp(e: PointerEvent) {
+    super.onPointerUp(e)
+
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < DEFAULTCONFIG.rightClickBackDiffTime
+    if (e.button == 2) {
+      // console.log('你点了右键')
+      if (isClick && typeof this.extend?.onClickRight === 'function') this.extend.onClickRight(e)
+    } else if (e.button == 0) {
+      // console.log('你点了左键')
+      isClick && this.checkIntersectObjects(e)
+    } else if (e.button == 1) {
+      // console.log('你点了滚轮')
+    }
+  }
+
+  // 检查交叉几何体
+  checkIntersectObjects(e: PointerEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e, dom, scale)
+    let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+    const objects = this.buildingGroup.children.filter(it => it.visible && it._isAnchor_)
+
+    // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+    raycaster.setFromCamera(pointer, this.camera)
+    let interscts = raycaster.intersectObjects(objects, isClick)
+    dom.style.cursor = interscts.length > 0 ? 'pointer' : 'auto'
+    if (!isClick) {
+      return
+    }
+
+    if (interscts.length) {
+      const object = interscts[0].object
+
+      if (!object) return
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(object)
+    } else {
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
+    }
+  }
+
+  // 查找父级组合
+  findParentGroupGroup(object) {
+    const _find = obj => {
+      let parent = obj.parent
+      if (!parent) {
+        return
+      }
+      if (parent && parent._isBuilding_) {
+        return parent
+      }
+      return _find(parent)
+    }
+    return _find(object)
+  }
+
+  // 获取楼层集合
+  getFloor() {
+    return this.buildingGroup.children.filter(it => it._isFloor_)
+  }
+
+  // 隐藏除楼层之外的对象
+  hideOmitFloor(visible: boolean) {
+    this.buildingGroup.children.forEach(el => {
+      el.visible = el._isFloor_ || visible
+    })
+  }
+
+  // 获取所有对象
+  getAll() {
+    return this.buildingGroup.children.concat(this.dotGroup.children)
+  }
+
+  // 获取跟随目标集合
+  getFlowMark(mark) {
+    return this.getAll().filter(el => el.data?.followMark === mark)
+  }
+
+  // 获取动画目标点
+  getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
+    const to = _to || config.to || { x: -104, y: 7, z: 58 }
+    const target = _target || config.target || { x: 0, y: 0, z: 0 }
+    // 中心点位
+    this.controls.target.set(target.x, target.y, target.z)
+    return to
+  }
+
+  // 获取场景坐标
+  getPosition() {
+    console.log('视角', this.camera.position)
+    console.log('目标位置', this.controls.target)
+  }
+
+  resize() {
+    super.resize()
+    const { width, height } = this.options
+    this.css2DRender.setSize(width, height)
   }
 }
 
@@ -184,7 +383,7 @@ export const executeCarRunging = el => {
   const time = 30 * 1000
 
   // 动画延迟时间
-  const delay = random(0, 10 * 1000)
+  const delay = THREE.MathUtils.randInt(0, 10 * 1000)
 
   // 动画：透明度缩放动画
   el.tween1 = new TWEEN.Tween(el.position)
@@ -206,4 +405,9 @@ export const executeCarRunging = el => {
   // 第二段动画完成后接第一段
   el.tween2.chain(el.tween1)
   el.tween1.start()
+}
+
+// 偏移坐标
+export const getOffsetPoint = (pos, offset = 0) => {
+  return new THREE.Vector3(pos.x, pos.y + offset, pos.z)
 }

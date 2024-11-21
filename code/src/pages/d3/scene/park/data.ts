@@ -2,7 +2,12 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
-export const getPageOpts = () => ({
+export const ROBOT = 'ROBOT'
+export const CHARACTER = 'CHARACTER'
+
+// 点位向上向量
+const POINT_UP = 0.2
+export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
   bgColor: '',
@@ -25,64 +30,163 @@ export const getPageOpts = () => ({
   colors: {},
   config: {},
 
+  cruise: {
+    visible: true,
+    auto: true,
+    // helper: true,
+    mapUrl: '/oss/textures/cruise/line2.png', // 1-18
+    repeat: [0.1, 1],
+    width: 2,
+    segment: 100,
+    tension: 0.1,
+    speed: 20,
+    mapSpeed: 0.01,
+    points: [
+      [-89.57, POINT_UP, 179.4],
+      [-52.28, POINT_UP, 179.4],
+      [-52.28, POINT_UP, 123.05],
+      [-4.43, POINT_UP, 123.05],
+      [-4.43, POINT_UP, 99.18],
+      [6.26, POINT_UP, 99.18],
+      [6.26, POINT_UP, 153.83],
+      [92.71, POINT_UP, 153.83],
+
+      [147.75, POINT_UP, 148.23],
+      [147.75, POINT_UP, 135.93],
+      [144.21, POINT_UP, 133.13],
+      [144.21, POINT_UP, 126.7],
+
+      [86.6, POINT_UP, 126.7],
+      [86.6, POINT_UP, 152.35],
+      [77.55, POINT_UP, 152.35],
+
+      [77.55, POINT_UP, -137.3],
+      // [59.33, POINT_UP, -137.3],
+      [3.34, POINT_UP, -137.3],
+
+      [3.34, POINT_UP, -52.04],
+      [-89.57, POINT_UP, -52.04]
+    ],
+    offset: 1.8,
+    animateBack: animateBack
+  },
+
   models: [
     {
       key: 'SCENE',
-      name: '场景', // 高 140
+      name: '场景',
       size: 28.2,
       url: '/场景.glb'
     },
     {
-      key: 'BUILDING_ONE',
-      name: '楼栋1', // 高 140
+      key: 'PARKING_SPACE',
+      name: '停车位',
+      size: 0.06,
+      url: '/停车位.glb'
+    },
+    // {
+    //   key: 'RAILING_GROUP',
+    //   name: '栏杆群',
+    //   size: 0.06,
+    //   url: '/栏杆群.glb'
+    // },
+
+    /////////////////////
+    {
+      key: 'BUILDING_1',
+      name: '楼栋1',
       size: 1.2,
       url: '/楼栋1.glb'
     },
+    {
+      key: 'BUILDING_2',
+      name: '楼栋2',
+      size: 2,
+      url: '/楼栋2.glb'
+    },
+    {
+      key: 'BUILDING_3',
+      name: '楼栋3',
+      size: 1.6,
+      url: '/楼栋3.glb'
+    },
+    {
+      key: 'BUILDING_4',
+      name: '楼栋4',
+      size: 2.8,
+      url: '/楼栋4.glb'
+    },
+    {
+      key: 'BUILDING_5',
+      name: '楼栋5',
+      size: 1.6,
+      url: '/楼栋5.glb'
+    },
+    {
+      key: 'BUILDING_WAREHOUSE',
+      name: '仓库',
+      size: 0.7,
+      url: '/仓库.glb'
+    },
+    /////////////////////
 
     {
       key: 'CAR_TANKER',
-      name: '油罐车', // 高 140
+      name: '油罐车',
       size: 1,
       url: '/油罐车.glb'
     },
     {
       key: 'CAR_GOODS',
-      name: '货车', // 高 140
+      name: '货车',
       size: 6.4,
       url: '/货车.glb'
     },
     {
       key: 'CAR_TRAILER',
-      name: '拖车', // 高 140
+      name: '拖车',
       size: 2,
       url: '/拖车.glb'
     },
     {
       key: 'CAR_CRANE',
-      name: '吊车', // 高 140
+      name: '吊车',
       size: 4.4,
       url: '/吊车.glb'
     },
 
     {
       key: 'ARBOR_ONE',
-      name: '小树', // 高 140
+      name: '小树',
       size: 2,
       url: '/小树.glb'
     },
 
     {
       key: 'FENCE',
-      name: '围栏', // 高 140
+      name: '围栏',
       size: 0.8,
       url: '/围栏.glb'
     },
 
     {
       key: 'HANDRAIL',
-      name: '栏杆', // 高 140
+      name: '栏杆',
       size: 0.1,
       url: '/栏杆.glb'
+    },
+
+    {
+      key: ROBOT,
+      name: '机器人',
+      size: 0.3,
+      url: '/机器人.glb'
+    },
+    {
+      key: CHARACTER,
+      name: '人物',
+      size: 2.2,
+      url: '/Soldier.glb'
     },
 
     {
