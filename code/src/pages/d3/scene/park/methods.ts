@@ -8,14 +8,21 @@ import { Water } from 'three/examples/jsm/objects/Water'
 import { Sky } from 'three/examples/jsm/objects/Sky'
 
 import type { Config, ExtendOptions } from '.'
-import { useLensflare } from 'three-scene/hooks/lensflare'
-
 import type { XYZ, ObjectItem } from 'three-scene/types/model'
+
+import { useLensflare } from 'three-scene/hooks/lensflare'
+import { useDiffusion } from 'three-scene/hooks/diffusion'
+import { useMoveAnimate } from 'three-scene/hooks/move-animate'
+
+import { useTimer } from '@/hooks/timer'
 
 import DEFAULTCONFIG from './config'
 
 const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
+const { createDiffusion, updateDiffusion } = useDiffusion()
+const { timeOut, clear: clearTimeOut } = useTimer(1 * 1000, true)
+const { createMove, moveAnimate } = useMoveAnimate()
 
 import * as UTILS from 'three-scene/utils/model'
 
@@ -62,12 +69,28 @@ export class ParkThreeScene extends ThreeScene {
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
   css2DRender: InstanceType<typeof CSS2DRenderer>
+  // 鼠标点击地面扩散波效果
+  mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
+  // 行走的人物
+  character?: InstanceType<typeof THREE.Group>
+  // 时间
+  clock: InstanceType<typeof THREE.Clock>
+
   constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
     super(options)
 
     this.extend = extend
     this.css2DRender = initCSS2DRender(this.options, this.container)
     this.css2DRender.domElement.className = 'three-scene__dot-wrap'
+
+    // 鼠标点击地面扩散波效果
+    this.mouseClickDiffusion = createDiffusion(4, void 0, 6)
+    this.mouseClickDiffusion.rotation.x = -Math.PI * 0.5
+    this.mouseClickDiffusion.position.y = 0.5
+    this.mouseClickDiffusion.visible = false
+    this.addObject(this.mouseClickDiffusion)
+
+    this.clock = new THREE.Clock()
 
     this.bindEvent()
     this.addBuildingGroup()
@@ -196,6 +219,71 @@ export class ParkThreeScene extends ThreeScene {
     this.renderer.toneMappingExposure = effectController.exposure
   }
 
+  // 添加人物
+  addCharacter(model) {
+    this.character = model
+
+    const animations = model.animations
+    const mixer = new THREE.AnimationMixer(model)
+
+    const actions = {}
+
+    for (let i = 0; i < animations.length; i++) {
+      const clip = animations[i]
+      const action = mixer.clipAction(clip)
+      actions[clip.name] = action
+    }
+
+    // 舞蹈
+    const dance = actions['Dance']
+    dance.play()
+
+    // 步行
+    const runging = actions['Walking']
+    // runging.play()
+    model.extra = {
+      mixer,
+      actions,
+      runging
+    }
+    this.addObject(model)
+  }
+
+  // 鼠标点击地面
+  mouseClickGround(intersct) {
+    const lookAt = intersct.point
+    const { x, y, z } = intersct.point
+    const obj = this.mouseClickDiffusion
+    obj.position.set(x, y, z)
+
+    const character = this.character
+    const { runging } = character.extra
+    runging.play()
+    console.log(runging)
+    // this.camera.lookAt(new THREE.Vector3(lookAt.x, 6, lookAt.z))
+    // 创建移动
+    createMove(
+      character,
+      lookAt,
+      pos => {
+        console.log('runing', pos)
+        console.log(this.camera)
+        const { x, y, z } = pos
+        this.camera.position.set(x, 5, z)
+      },
+      pos => {
+        console.log('end', pos)
+        runging.stop()
+      }
+    )
+
+    obj.visible = true
+    clearTimeOut()
+    timeOut(() => {
+      obj.visible = false
+    })
+  }
+
   // 模型动画
   modelAnimate(): void {
     // css2D 渲染器
@@ -205,6 +293,19 @@ export class ParkThreeScene extends ThreeScene {
 
     // 水面波动
     this.water.material.uniforms['time'].value += 1 / 60
+
+    // 波纹扩散
+    if (this.mouseClickDiffusion.visible) {
+      updateDiffusion()
+    }
+
+    if (this.character) {
+      const dt = this.clock.getDelta()
+      const mixer = this.character.extra.mixer
+      mixer.update(dt)
+
+      moveAnimate(0.5)
+    }
   }
 
   // 移动
@@ -236,29 +337,35 @@ export class ParkThreeScene extends ThreeScene {
     const scale = this.options.scale
     raycasterUpdate(e, dom, scale)
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
-    const objects = this.buildingGroup.children.filter(it => it.visible && it._isAnchor_)
+    // 锚点或者地面
+    const objects = this.buildingGroup.children.filter(it => it.visible && (it._isAnchor_ || it.__ground__))
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
-    let interscts = raycaster.intersectObjects(objects, isClick)
-    dom.style.cursor = interscts.length > 0 ? 'pointer' : 'auto'
+    let interscts = raycaster.intersectObjects(objects, isClick /* 是否检查所有后代 */)
+
+    dom.style.cursor = !isClick && interscts.length > 0 ? 'pointer' : 'auto'
     if (!isClick) {
       return
     }
 
     if (interscts.length) {
-      const object = interscts[0].object
+      const intersct = interscts[0]
+      const object = intersct.object
 
-      if (!object) return
-      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(object)
+      const obj = this.findParentGroupGroup(object)
+
+      if (!obj) return
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(e, obj, intersct)
     } else {
-      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(e)
     }
   }
 
   // 查找父级组合
   findParentGroupGroup(object) {
     const _find = obj => {
+      if (obj._isBuilding_) return obj
       let parent = obj.parent
       if (!parent) {
         return
@@ -330,7 +437,7 @@ export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
     show: obj.show,
     font: {
       ...(obj.font || {}),
-      color: obj.value > 35 ? '#f00' : null
+      color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
     }
   }
 }

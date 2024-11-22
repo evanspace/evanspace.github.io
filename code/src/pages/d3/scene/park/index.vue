@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ROBOT, CHARACTER, getPageOpts } from './data'
+import { ROBOT, CHARACTER, GROUND, getPageOpts } from './data'
 import {
   ParkThreeScene,
   dotUpdateObjectCall,
@@ -84,16 +84,17 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 16
+    version: 21
   }
 })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
-    screenSpacePanning: false,
     maxDistance: 5000,
-    maxPolarAngle: Math.PI * 0.46
+    maxPolarAngle: Math.PI * 0.46,
+    screenSpacePanning: false,
+    enablePan: false
   },
   cruise: pageOpts.cruise,
   grid: {
@@ -193,6 +194,9 @@ const loopLoadObject = async (item: ObjectItem) => {
     model._isFloor_ = true
   }
 
+  // 地面
+  model.__ground__ = type === GROUND
+
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
@@ -254,13 +258,10 @@ const createRoblt = () => {
 }
 
 // 创建人物
-let characterObj: any
 const createCharacter = () => {
-  characterObj = getModel(CHARACTER)
-  console.log(characterObj)
-  characterObj.position.set(-89.57, 0, 185)
-  characterObj.scale.setScalar(2)
-  scene.addObject(characterObj)
+  const obj = getModel(CHARACTER)
+  obj.position.set(-89.57, 0, 200)
+  scene.addCharacter(obj)
 }
 
 // 加载
@@ -355,8 +356,11 @@ onMounted(() => {
     onDblclick: object => {
       console.log(object)
     },
-    onClickLeft(object) {
+    onClickLeft(_e, object, intersct) {
       console.log(object)
+      if (object && object.data?.type === GROUND) {
+        scene.mouseClickGround(intersct)
+      }
     },
     onClickRight: e => {
       console.log(e)

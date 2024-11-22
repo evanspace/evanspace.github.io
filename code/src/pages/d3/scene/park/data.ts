@@ -2,8 +2,10 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
+// 机器人、人物、地面
 export const ROBOT = 'ROBOT'
 export const CHARACTER = 'CHARACTER'
+export const GROUND = 'GROUND'
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -75,8 +77,14 @@ export const getPageOpts = animateBack => ({
     {
       key: 'SCENE',
       name: '场景',
-      size: 28.2,
+      size: 14.7,
       url: '/场景.glb'
+    },
+    {
+      key: GROUND,
+      name: '地面',
+      size: 4,
+      url: '/地面.glb'
     },
     {
       key: 'PARKING_SPACE',
@@ -186,7 +194,7 @@ export const getPageOpts = animateBack => ({
       key: CHARACTER,
       name: '人物',
       size: 2.2,
-      url: '/Soldier.glb'
+      url: '/RobotExpressive.glb'
     },
 
     {

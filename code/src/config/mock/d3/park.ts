@@ -13,6 +13,11 @@ let parkData: any[] = [
     position: { x: 0, y: 0, z: 0 }
   },
   {
+    name: '地面',
+    type: 'GROUND',
+    position: { x: 0, y: 0, z: 0 }
+  },
+  {
     name: '停车位',
     type: 'PARKING_SPACE',
     position: { x: 0, y: 0.1, z: 0 }

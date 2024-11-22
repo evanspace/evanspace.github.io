@@ -25,7 +25,7 @@ export declare interface Config {
 
 export declare interface ExtendOptions {
   onDblclick: (e) => void
-  onClickLeft: (e?) => void
+  onClickLeft: (e?, object?, intersct?) => void
   onClickRight: (e) => void
   animateCall: () => void
 }
