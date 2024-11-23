@@ -6,6 +6,7 @@ const devEnv = import.meta.env.VITE_MODE !== 'production-'
 export const ROBOT = 'ROBOT'
 export const CHARACTER = 'CHARACTER'
 export const GROUND = 'GROUND'
+export const VIDEOPLAY = 'PARK_VIDEO'
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -25,7 +26,7 @@ export const getPageOpts = animateBack => ({
   // 楼层模块类型
   floorModelType: ['FLOOR_COMMON'],
   // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
-  anchorType: ['PARK_CAMERA', 'PARK_ROOM_INLET', 'PARK_GPS'],
+  anchorType: ['PARK_CAMERA', 'PARK_ROOM_INLET', 'PARK_GPS', 'PARK_VIDEO'],
   // 汽车类型，需要行驶
   carType: ['CAR_TANKER', 'CAR_GOODS', 'CAR_TRAILER', 'CAR_CRANE'],
 
@@ -212,13 +213,21 @@ export const getPageOpts = animateBack => ({
       size: 1,
       range: { x: 18.5, y: 38.5 },
       mapUrl: '/fjdw.png'
+    },
+    {
+      key: VIDEOPLAY,
+      name: '视频播放',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/video.png'
     }
   ].map(item => {
     if (item.url) {
       item.url = '/oss/model/park' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/floor' + item.mapUrl
+      item.mapUrl = '/oss/textures/park' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   })

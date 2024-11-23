@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ROBOT, CHARACTER, GROUND, getPageOpts } from './data'
+import { ROBOT, CHARACTER, GROUND, VIDEOPLAY, getPageOpts } from './data'
 import {
   ParkThreeScene,
   dotUpdateObjectCall,
@@ -46,7 +46,6 @@ import { useResize } from '@/hooks/scene-resize'
 import { useModelLoader } from 'three-scene/hooks/model-loader'
 import * as UTILS from 'three-scene/utils/model'
 import { colors } from './colors'
-// import DEFAULTCONFIG from 'three-scene/config'
 
 import { deepMerge } from 'three-scene/utils/index'
 
@@ -64,7 +63,7 @@ const pageOpts = reactive(
       if (ts > 1) ts = ts - 1
       lookAt = cruiseCurve.getPointAt(ts)
 
-      robotObj.position.set(pos.x, 0, pos.z)
+      robotObj.position.set(pos.x, 0.16, pos.z)
       // 求正切值
       const angle = Math.atan2(-lookAt.z + pos.z, lookAt.x - pos.x)
       robotObj.rotation.z = Math.PI * 0.5 + angle
@@ -91,10 +90,13 @@ const { progress, loadModels, getModel } = useModelLoader({
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
-    maxDistance: 5000,
+    maxDistance: 15,
     maxPolarAngle: Math.PI * 0.46,
     screenSpacePanning: false,
     enablePan: false
+  },
+  camera: {
+    position: [-85.7, 3.6, 208.6]
   },
   cruise: pageOpts.cruise,
   grid: {
@@ -200,9 +202,11 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
-  }
 
-  scene.addBuilding(model)
+    scene.addAnchor(model)
+  } else {
+    scene.addBuilding(model)
+  }
 
   return Promise.resolve()
 }
@@ -242,17 +246,14 @@ const assemblyScenario = async () => {
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
-  const to = scene.getAnimTargetPos(pageOpts.config || {})
-  // 入场动画
-  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
-    scene.controlSave()
-  })
+  // const to = scene.getAnimTargetPos(pageOpts.config || {})
 }
 
 // 创建机器人
 let robotObj: any
 const createRoblt = () => {
   robotObj = getModel(ROBOT)
+  robotObj.position.z = 0.16
   robotObj.rotation.z = Math.PI * 0.5
   scene.addObject(robotObj)
 }
@@ -260,17 +261,33 @@ const createRoblt = () => {
 // 创建人物
 const createCharacter = () => {
   const obj = getModel(CHARACTER)
-  obj.position.set(-89.57, 0, 200)
-  scene.addCharacter(obj)
+  scene.addCharacter(obj, {
+    x: -80.6,
+    y: 0.16,
+    z: 193.4
+  })
+}
+
+// 创建视频播放器
+let videoDom: HTMLVideoElement
+const createVideoPlayer = () => {
+  videoDom = document.createElement('video')
+  let videoSrc = pageOpts.baseUrl + '/oss/textures/park/sintel.mp4'
+  videoDom.src = videoSrc
+  // 自动播放
+  // videoDom.autoplay = true
+  // videoDom.play()
+  // videoDom.pause()
+  // 循环
+  // videoDom.loop = true
+  scene.addVideoMaterial(videoDom)
 }
 
 // 加载
 const deviceConfigs = ref<ObjectItem[]>([])
 const load = () => {
   loadModels(pageOpts.models, () => {
-    createRoblt()
-    createCharacter()
-    request.getConfig().then(res => {
+    request.getConfig().then(async res => {
       let json = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson
@@ -283,7 +300,10 @@ const load = () => {
       Object.keys(json).forEach(key => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
-      assemblyScenario()
+      await assemblyScenario()
+      createRoblt()
+      createCharacter()
+      createVideoPlayer()
     })
   })
 }
@@ -358,8 +378,19 @@ onMounted(() => {
     },
     onClickLeft(_e, object, intersct) {
       console.log(object)
-      if (object && object.data?.type === GROUND) {
-        scene.mouseClickGround(intersct)
+      if (object) {
+        switch (object.data?.type) {
+          case VIDEOPLAY:
+            if (videoDom.paused) {
+              videoDom?.play()
+            } else {
+              videoDom?.pause()
+            }
+            break
+          case GROUND:
+            scene.mouseClickGround(intersct)
+            break
+        }
       }
     },
     onClickRight: e => {

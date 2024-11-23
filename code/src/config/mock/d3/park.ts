@@ -188,6 +188,15 @@ let parkData: any[] = [
       y: 10,
       z: 350
     }
+  },
+  {
+    name: '视频播放',
+    type: 'PARK_VIDEO',
+    position: {
+      x: -75,
+      y: 5,
+      z: 164
+    }
   }
 ]
 
@@ -279,10 +288,8 @@ export default [
           // floorExpandIndex: 3,
           floorExpandMargin: 450,
           floorExpandMode: 'BA',
-          target: { x: -115, y: -2.5, z: 186 },
-          to: { x: -141, y: 14.4, z: 228 }
-          // target: { x: -158, y: 0, z: -50 },
-          // to: { x: -191, y: 10, z: -116 }
+          target: { x: -80.6, y: 2, z: 193.4 },
+          to: { x: -85.7, y: 3.6, z: 208.6 }
         }
       })
   }

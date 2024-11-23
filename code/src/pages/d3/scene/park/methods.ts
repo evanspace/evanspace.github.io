@@ -14,14 +14,11 @@ import { useLensflare } from 'three-scene/hooks/lensflare'
 import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 
-import { useTimer } from '@/hooks/timer'
-
 import DEFAULTCONFIG from './config'
 
 const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
-const { timeOut, clear: clearTimeOut } = useTimer(1 * 1000, true)
 const { createMove, moveAnimate } = useMoveAnimate()
 
 import * as UTILS from 'three-scene/utils/model'
@@ -63,6 +60,8 @@ export class ParkThreeScene extends ThreeScene {
 
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
+  // 锚点集合
+  anchorGroup?: InstanceType<typeof THREE.Group>
   // 点位集合
   dotGroup?: InstanceType<typeof THREE.Group>
   // 扩展参数
@@ -94,6 +93,7 @@ export class ParkThreeScene extends ThreeScene {
 
     this.bindEvent()
     this.addBuildingGroup()
+    this.addAnchorGroup()
     this.addDotGroup()
 
     // 光晕
@@ -114,6 +114,7 @@ export class ParkThreeScene extends ThreeScene {
       this.disposeObj(this.buildingGroup)
     }
     this.addBuildingGroup()
+    this.clearAnchor()
     this.clearDot()
   }
 
@@ -121,6 +122,29 @@ export class ParkThreeScene extends ThreeScene {
   addBuilding(...obj) {
     if (this.buildingGroup) {
       this.buildingGroup.add(...obj)
+    }
+  }
+
+  // 添加锚点组
+  addAnchorGroup() {
+    const group = new THREE.Group()
+    group.name = '锚点组'
+    this.anchorGroup = group
+    this.addObject(group)
+  }
+
+  // 清除场景锚点
+  clearAnchor() {
+    if (this.anchorGroup) {
+      this.disposeObj(this.anchorGroup)
+    }
+    this.addAnchorGroup()
+  }
+
+  // 添加锚点
+  addAnchor(...obj) {
+    if (this.anchorGroup) {
+      this.anchorGroup.add(...obj)
     }
   }
 
@@ -220,12 +244,22 @@ export class ParkThreeScene extends ThreeScene {
   }
 
   // 添加人物
-  addCharacter(model) {
+  addCharacter(model, point) {
+    const { x, y, z } = point
+    model.position.set(x, y, z)
+    this.setControlTarget(point)
+    const [x2, y2, z2] = this.options.camera.position
+
+    // 相机入场动画
+    UTILS.cameraInSceneAnimate(this.camera, { x: x2, y: y2, z: z2 }, this.controls.target).then(() => {
+      this.controlSave()
+    })
+
     this.character = model
 
+    // 动画
     const animations = model.animations
     const mixer = new THREE.AnimationMixer(model)
-
     const actions = {}
 
     for (let i = 0; i < animations.length; i++) {
@@ -240,7 +274,7 @@ export class ParkThreeScene extends ThreeScene {
 
     // 步行
     const runging = actions['Walking']
-    // runging.play()
+
     model.extra = {
       mixer,
       actions,
@@ -249,39 +283,59 @@ export class ParkThreeScene extends ThreeScene {
     this.addObject(model)
   }
 
+  // 设置控制中心点
+  setControlTarget(point) {
+    const height = 2
+    const { x, z } = point
+    this.controls.target.set(x, height, z)
+    this.camera.lookAt(this.controls.target)
+  }
+
   // 鼠标点击地面
   mouseClickGround(intersct) {
-    const lookAt = intersct.point
-    const { x, y, z } = intersct.point
-    const obj = this.mouseClickDiffusion
-    obj.position.set(x, y, z)
-
     const character = this.character
+    if (!character) return
+    const { runing } = this.options.cruise
+    // 自动巡航中不操作
+    if (runing) return
+    const lookAt = intersct.point
+    const obj = this.mouseClickDiffusion
+    console.log(lookAt)
+
     const { runging } = character.extra
     runging.play()
-    console.log(runging)
-    // this.camera.lookAt(new THREE.Vector3(lookAt.x, 6, lookAt.z))
+
+    const { x, y, z } = lookAt
+    obj.position.set(x, y, z)
+    obj.visible = true
+
     // 创建移动
     createMove(
       character,
       lookAt,
       pos => {
-        console.log('runing', pos)
-        console.log(this.camera)
-        const { x, y, z } = pos
-        this.camera.position.set(x, 5, z)
+        this.setControlTarget(pos)
       },
-      pos => {
-        console.log('end', pos)
+      _pos => {
         runging.stop()
+        obj.visible = false
       }
     )
+  }
 
-    obj.visible = true
-    clearTimeOut()
-    timeOut(() => {
-      obj.visible = false
+  // 添加视频材质
+  addVideoMaterial(videoDom) {
+    // video 作为 VideoTexture 参数创建纹理对象
+    const texture = new THREE.VideoTexture(videoDom)
+    const geometry = new THREE.PlaneGeometry(10, 5)
+    const material = new THREE.MeshPhongMaterial({
+      map: texture,
+      side: THREE.DoubleSide
     })
+    const mesh = new THREE.Mesh(geometry, material)
+    mesh.position.set(-75, 5, 160)
+    mesh.name = '视频播放'
+    this.addObject(mesh)
   }
 
   // 模型动画
@@ -306,6 +360,8 @@ export class ParkThreeScene extends ThreeScene {
 
       moveAnimate(0.5)
     }
+
+    this.restoreAnchorMaterial()
   }
 
   // 移动
@@ -338,7 +394,9 @@ export class ParkThreeScene extends ThreeScene {
     raycasterUpdate(e, dom, scale)
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
     // 锚点或者地面
-    const objects = this.buildingGroup.children.filter(it => it.visible && (it._isAnchor_ || it.__ground__))
+    const objects = this.buildingGroup.children
+      .filter(it => it.visible && (isClick || it.__ground__))
+      .concat(this.anchorGroup.children)
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
@@ -346,6 +404,8 @@ export class ParkThreeScene extends ThreeScene {
 
     dom.style.cursor = !isClick && interscts.length > 0 ? 'pointer' : 'auto'
     if (!isClick) {
+      // 处理锚点类型-精灵材质
+      this.hoverAnchor(interscts)
       return
     }
 
@@ -360,6 +420,37 @@ export class ParkThreeScene extends ThreeScene {
     } else {
       if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(e)
     }
+  }
+
+  // 悬浮锚点
+  hoverAnchor(interscts) {
+    if (interscts.length) {
+      const intersct = interscts[0]
+      const object = intersct.object
+      if (!object._isAnchor_) return
+
+      const mat = object.material
+      if (object.__mat_color__ == void 0) {
+        object.__mat_color__ = mat.color
+      }
+      object.__change_color__ = true
+      mat.color = new THREE.Color(0xff0ff0)
+    } else {
+      this.anchorGroup.children.forEach(el => {
+        el.__change_color__ = false
+      })
+    }
+  }
+
+  // 恢复锚点材质
+  restoreAnchorMaterial() {
+    this.anchorGroup.traverse(el => {
+      if (el.isSprite) {
+        if (!el.__change_color__ && el.__mat_color__) {
+          el.material.color = el.__mat_color__
+        }
+      }
+    })
   }
 
   // 查找父级组合
@@ -411,8 +502,8 @@ export class ParkThreeScene extends ThreeScene {
 
   // 获取场景坐标
   getPosition() {
-    console.log('视角', this.camera.position)
-    console.log('目标位置', this.controls.target)
+    console.log('camera.position', this.camera.position)
+    console.log('controls.target', this.controls.target)
   }
 
   resize() {
