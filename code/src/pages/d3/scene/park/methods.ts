@@ -50,6 +50,25 @@ const createWater = () => {
   return water
 }
 
+// 创建视频元素
+const createVideoDom = (src?: string) => {
+  const dom = document.createElement('video')
+  dom.src = base + (src || '/oss/textures/park/sintel.mp4')
+  dom.loop = true
+  // videoDom.autoplay = true
+  return dom
+}
+
+// 视频封面
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/ztny.png', tx => {
+  console.log(tx)
+})
+
+const sightMap = {
+  full: 'FULL',
+  npc: 'NPC'
+}
+
 export class ParkThreeScene extends ThreeScene {
   // 水面
   water?: InstanceType<typeof Water>
@@ -75,6 +94,13 @@ export class ParkThreeScene extends ThreeScene {
   // 时间
   clock: InstanceType<typeof THREE.Clock>
 
+  // 当前视角
+  currentSight: string
+  // 历史中心点（视角切换）
+  historyTarget: InstanceType<typeof THREE.Vector3>
+  // 历史相机坐标（视角切换）
+  historyCameraPosition: InstanceType<typeof THREE.Vector3>
+
   constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
     super(options)
 
@@ -90,6 +116,9 @@ export class ParkThreeScene extends ThreeScene {
     this.addObject(this.mouseClickDiffusion)
 
     this.clock = new THREE.Clock()
+    this.currentSight = sightMap.full
+    this.historyTarget = new THREE.Vector3()
+    this.historyCameraPosition = new THREE.Vector3()
 
     this.bindEvent()
     this.addBuildingGroup()
@@ -247,13 +276,13 @@ export class ParkThreeScene extends ThreeScene {
   addCharacter(model, point) {
     const { x, y, z } = point
     model.position.set(x, y, z)
-    this.setControlTarget(point)
-    const [x2, y2, z2] = this.options.camera.position
+    // this.setControlTarget(point)
+    // const [x2, y2, z2] = this.options.camera.position
 
     // 相机入场动画
-    UTILS.cameraInSceneAnimate(this.camera, { x: x2, y: y2, z: z2 }, this.controls.target).then(() => {
-      this.controlSave()
-    })
+    // UTILS.cameraInSceneAnimate(this.camera, { x: x2, y: y2, z: z2 }, this.controls.target).then(() => {
+    //   this.controlSave()
+    // })
 
     this.character = model
 
@@ -283,6 +312,43 @@ export class ParkThreeScene extends ThreeScene {
     this.addObject(model)
   }
 
+  // 视角切换（人物/全屏）
+  toggleSight() {
+    if (this.options.cruise.runing) {
+      // 定点巡航中，则中断
+      this.toggleCruise(true)
+      return
+    }
+
+    const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
+    this.currentSight = sight
+
+    // 人物视角
+    const isCharacter = sight === sightMap.npc
+
+    // 控制器操作限制切换
+    this.controls.maxDistance = isCharacter ? 15 : 1500
+    this.controls.screenSpacePanning = !isCharacter
+    this.controls.enablePan = !isCharacter
+
+    const target = this.controls.target
+    const position = this.character.position
+    /// 切换到人物视角，暂存控制参数
+    if (isCharacter) {
+      const { x, y, z } = target
+      this.historyTarget = new THREE.Vector3(x, y, z)
+      const { x: x2, y: y2, z: z2 } = position
+      this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
+      this.camera.lookAt(position)
+    } else {
+      UTILS.cameraInSceneAnimate(this.camera, this.historyCameraPosition, position)
+    }
+    new TWEEN.Tween(target)
+      .to(isCharacter ? position : this.historyTarget, 1000 * 1.5)
+      .delay(0)
+      .start()
+  }
+
   // 设置控制中心点
   setControlTarget(point) {
     const height = 2
@@ -293,6 +359,8 @@ export class ParkThreeScene extends ThreeScene {
 
   // 鼠标点击地面
   mouseClickGround(intersct) {
+    if (this.currentSight !== sightMap.npc) return
+
     const character = this.character
     if (!character) return
     const { runing } = this.options.cruise
@@ -300,7 +368,6 @@ export class ParkThreeScene extends ThreeScene {
     if (runing) return
     const lookAt = intersct.point
     const obj = this.mouseClickDiffusion
-    console.log(lookAt)
 
     const { runging } = character.extra
     runging.play()
@@ -324,18 +391,71 @@ export class ParkThreeScene extends ThreeScene {
   }
 
   // 添加视频材质
-  addVideoMaterial(videoDom) {
+  addVideoMaterial() {
+    const videoDom = createVideoDom()
     // video 作为 VideoTexture 参数创建纹理对象
-    const texture = new THREE.VideoTexture(videoDom)
+    const videoTexture = new THREE.VideoTexture(videoDom)
     const geometry = new THREE.PlaneGeometry(10, 5)
     const material = new THREE.MeshPhongMaterial({
-      map: texture,
-      side: THREE.DoubleSide
+      map: videoCoverTexture
+      // side: THREE.DoubleSide
     })
     const mesh = new THREE.Mesh(geometry, material)
-    mesh.position.set(-75, 5, 160)
-    mesh.name = '视频播放'
+    mesh.__video_texture__ = videoTexture
+    mesh.__cover_texture__ = videoCoverTexture
+    mesh.position.set(-75, 2.66, 133)
+    mesh.name = 'small_video'
+    mesh.__video__ = videoDom
+
     this.addObject(mesh)
+
+    // 大屏
+    const dbObj = this.scene.getObjectByName('大屏幕')
+    if (!dbObj) return
+    const videoDom2 = createVideoDom()
+    const videoTexture2 = new THREE.VideoTexture(videoDom2)
+    dbObj.__video_texture__ = videoTexture2
+    dbObj.__cover_texture__ = videoCoverTexture.clone()
+    dbObj.material = material.clone()
+    dbObj.__video__ = videoDom2
+  }
+
+  // 视频播放
+  videoPlay(object) {
+    const vobj = this.scene.getObjectByName(object.data.bind)
+
+    if (vobj && vobj.__video__) {
+      const videoDom = vobj.__video__
+      if (videoDom.paused) {
+        vobj.material.map = vobj.__video_texture__
+        videoDom?.play()
+      } else {
+        videoDom?.pause()
+        vobj.material.map = vobj.__cover_texture__
+      }
+    }
+  }
+
+  // 开门
+  openTheDoor(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    if (!dobj) return
+    console.log(dobj)
+    const position = dobj.position
+    if (dobj.__open__ == void 0) {
+      const { x, y, z } = position
+      dobj.__position__ = new THREE.Vector3(x, y, z)
+    }
+    dobj.__open__ = !dobj.__open__
+    new TWEEN.Tween(position)
+      .to(
+        {
+          x: dobj.__position__.x + (dobj.__open__ ? 800 : 0)
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
   }
 
   // 模型动画
@@ -412,13 +532,20 @@ export class ParkThreeScene extends ThreeScene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
+      console.log(intersct)
+      // 是否点击地面
+      const isClickGround =
+        typeof object.name == 'string' && (this.extend.groundMeshName || []).some(t => object.name.indexOf(t) > -1)
 
       const obj = this.findParentGroupGroup(object)
+      if (isClickGround) {
+        if (typeof this.extend?.onClickGround === 'function') this.extend.onClickGround(obj, intersct)
+      }
 
       if (!obj) return
-      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(e, obj, intersct)
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(obj, intersct)
     } else {
-      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(e)
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
     }
   }
 
@@ -430,11 +557,13 @@ export class ParkThreeScene extends ThreeScene {
       if (!object._isAnchor_) return
 
       const mat = object.material
-      if (object.__mat_color__ == void 0) {
+      if (object.__mat_color__ === void 0) {
         object.__mat_color__ = mat.color
       }
-      object.__change_color__ = true
       mat.color = new THREE.Color(0xff0ff0)
+      this.anchorGroup.children.forEach(el => {
+        el.__change_color__ = el.uuid === object.uuid
+      })
     } else {
       this.anchorGroup.children.forEach(el => {
         el.__change_color__ = false

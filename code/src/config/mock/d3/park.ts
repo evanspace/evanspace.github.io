@@ -31,98 +31,111 @@ let parkData: any[] = [
   ///////////////////
   {
     name: '楼栋1',
-    type: 'BUILDING_1',
+    type: 'building_1',
     position: { x: -30.2, y: 0, z: -72.26 }
   },
   {
     name: '楼栋2-1',
-    type: 'BUILDING_2',
+    type: 'building_2',
     position: { x: 107.2, y: 0, z: 114.8 }
   },
   {
     name: '楼栋2-2',
-    type: 'BUILDING_2',
+    type: 'building_2',
     position: { x: 131.8, y: 0, z: 114.8 }
   },
   {
     name: '楼栋3-1',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: 22.26, y: 0, z: 141.17 },
     rotation: { x: 0, y: 0, z: 90 }
   },
   {
     name: '楼栋3-2',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: 51.82, y: 0, z: 141.17 },
     rotation: { x: 0, y: 0, z: 90 }
   },
   {
     name: '楼栋3-3',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: -21.37 }
   },
   {
     name: '楼栋3-4',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: 8.24 }
   },
   {
     name: '楼栋3-5',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: 37.8 }
   },
   {
     name: '楼栋3-6',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: 67.38 }
   },
   {
     name: '楼栋3-7',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: 97.02 }
   },
   {
     name: '楼栋3-8',
-    type: 'BUILDING_3',
+    type: 'building_3',
     position: { x: -130.8, y: 0, z: 126.67 }
   },
   {
     name: '楼栋4',
-    type: 'BUILDING_4',
+    type: 'building_4',
     position: { x: 102.17, y: 0, z: 139.16 }
   },
   {
     name: '楼栋4',
-    type: 'BUILDING_4',
+    type: 'building_4',
     position: { x: 131.07, y: 0, z: 139.16 }
   },
   {
     name: '楼栋5',
-    type: 'BUILDING_5',
+    type: 'building_5',
     position: { x: -74.66, y: 0, z: 119.93 }
   },
   {
     name: '楼栋5',
-    type: 'BUILDING_5',
+    type: 'building_5',
     position: { x: -68.41, y: 0, z: 103.9 },
     rotation: { x: 0, y: 0, z: 90 }
   },
   {
     name: '仓库',
-    type: 'BUILDING_WAREHOUSE',
+    type: 'building_warehouse',
     position: { x: -27.39, y: 0, z: 98.98 }
   },
   {
     name: '仓库',
-    type: 'BUILDING_WAREHOUSE',
+    type: 'building_warehouse',
     position: { x: -103.47, y: 0, z: 128.3 },
     rotation: { x: 0, y: 0, z: 90 }
+  },
+
+  {
+    name: '商业楼 1',
+    type: 'building_commercial_1',
+    position: { x: 40, y: 0.16, z: 25 },
+    rotation: { x: 0, y: 180, z: 0 }
+  },
+  {
+    name: '商业楼 2',
+    type: 'building_commercial_2',
+    position: { x: 40, y: 0.16, z: -60 },
+    rotation: { x: 0, y: 270, z: 0 }
   },
   ///////////////////
 
   {
     name: '油罐车',
-    type: 'CAR_TANKER',
+    type: 'car_tanker',
     position: { x: -168.5, y: 0, z: 440 },
     rotation: { x: 0, y: 0, z: 270 },
     to: { x: -168.5, y: 0, z: -520 }
@@ -130,7 +143,7 @@ let parkData: any[] = [
 
   {
     name: '货车',
-    type: 'CAR_GOODS',
+    type: 'car_goods',
     position: { x: -175, y: 0, z: 440 },
     rotation: { x: 0, y: 0, z: 270 },
     to: { x: -175, y: 0, z: -520 }
@@ -138,7 +151,7 @@ let parkData: any[] = [
 
   {
     name: '拖车',
-    type: 'CAR_TRAILER',
+    type: 'car_trailer',
     position: { x: -182.6, y: 0, z: -520 },
     rotation: { x: 0, y: 0, z: 0 },
     to: { x: -182.6, y: 0, z: 440 }
@@ -146,17 +159,26 @@ let parkData: any[] = [
 
   {
     name: '吊车',
-    type: 'CAR_CRANE',
+    type: 'car_crane',
     position: { x: -188.6, y: 0, z: -520 },
     rotation: { x: 0, y: 0, z: 180 },
     to: { x: -188.6, y: 0, z: 440 }
   },
 
   {
-    name: '摄像头',
+    name: '摄像头1',
     type: 'PARK_CAMERA',
     position: {
       x: 0,
+      y: 10,
+      z: 300
+    }
+  },
+  {
+    name: '摄像头2',
+    type: 'PARK_CAMERA',
+    position: {
+      x: -100,
       y: 10,
       z: 300
     }
@@ -170,15 +192,7 @@ let parkData: any[] = [
       z: 300
     }
   },
-  {
-    name: '定位',
-    type: 'PARK_GPS',
-    position: {
-      x: 200,
-      y: 10,
-      z: 300
-    }
-  },
+
   {
     name: 'DOT',
     unit: '%',
@@ -190,13 +204,45 @@ let parkData: any[] = [
     }
   },
   {
-    name: '视频播放',
+    name: '小屏幕播放',
     type: 'PARK_VIDEO',
     position: {
       x: -75,
+      y: 2.66,
+      z: 133.5
+    },
+    bind: 'small_video'
+  },
+  {
+    name: '大屏幕播放',
+    type: 'PARK_VIDEO',
+    position: {
+      x: 15,
+      y: 25,
+      z: 25
+    },
+    scale: { x: 4, y: 4, z: 4 },
+    bind: '大屏幕'
+  },
+  {
+    name: '侧门开门-外',
+    type: 'OPEN_THE_DOOR',
+    position: {
+      x: 49.84,
       y: 5,
-      z: 164
-    }
+      z: -15.58
+    },
+    bind: '侧门'
+  },
+  {
+    name: '侧门开门-内',
+    type: 'OPEN_THE_DOOR',
+    position: {
+      x: 49.84,
+      y: 5,
+      z: -10.58
+    },
+    bind: '侧门'
   }
 ]
 
@@ -262,18 +308,6 @@ before.forEach((item, index) => {
   })
 })
 
-parkData.push({
-  name: 'DOT',
-  unit: '%',
-  type: 'DOT',
-  followMark: 'FLOOR_COMMON_3',
-  position: {
-    x: 0,
-    y: 260,
-    z: 100
-  }
-})
-
 export default [
   {
     // 项目楼层数据
@@ -288,8 +322,8 @@ export default [
           // floorExpandIndex: 3,
           floorExpandMargin: 450,
           floorExpandMode: 'BA',
-          target: { x: -80.6, y: 2, z: 193.4 },
-          to: { x: -85.7, y: 3.6, z: 208.6 }
+          target: { x: -89.7, y: -2.6, z: 187.1 },
+          to: { x: -118.4, y: 3, z: 220.4 }
         }
       })
   }

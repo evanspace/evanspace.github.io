@@ -24,8 +24,10 @@ export declare interface Config {
 }
 
 export declare interface ExtendOptions {
+  groundMeshName: string[]
   onDblclick: (e) => void
-  onClickLeft: (e?, object?, intersct?) => void
+  onClickLeft: (object?, intersct?) => void
+  onClickGround: (object?, intersct?) => void
   onClickRight: (e) => void
   animateCall: () => void
 }

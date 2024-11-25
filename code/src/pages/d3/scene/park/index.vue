@@ -3,6 +3,7 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject(true)">随机更新</div>
+      <div class="btn" @click="() => scene.toggleSight()">人物视角切换</div>
       <div class="btn" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
@@ -30,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ROBOT, CHARACTER, GROUND, VIDEOPLAY, getPageOpts } from './data'
+import { ROBOT, CHARACTER, GROUND, VIDEOPLAY, OPEN_THE_DOOR, getPageOpts } from './data'
 import {
   ParkThreeScene,
   dotUpdateObjectCall,
@@ -83,17 +84,17 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 21
+    version: 32
   }
 })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
-    maxDistance: 15,
-    maxPolarAngle: Math.PI * 0.46,
-    screenSpacePanning: false,
-    enablePan: false
+    maxDistance: 1500,
+    maxPolarAngle: Math.PI * 0.46
+    // screenSpacePanning: false,
+    // enablePan: false
   },
   camera: {
     position: [-85.7, 3.6, 208.6]
@@ -246,7 +247,11 @@ const assemblyScenario = async () => {
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
-  // const to = scene.getAnimTargetPos(pageOpts.config || {})
+  const to = scene.getAnimTargetPos(pageOpts.config || {})
+  // 入场动画
+  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+    scene.controlSave()
+  })
 }
 
 // 创建机器人
@@ -266,21 +271,6 @@ const createCharacter = () => {
     y: 0.16,
     z: 193.4
   })
-}
-
-// 创建视频播放器
-let videoDom: HTMLVideoElement
-const createVideoPlayer = () => {
-  videoDom = document.createElement('video')
-  let videoSrc = pageOpts.baseUrl + '/oss/textures/park/sintel.mp4'
-  videoDom.src = videoSrc
-  // 自动播放
-  // videoDom.autoplay = true
-  // videoDom.play()
-  // videoDom.pause()
-  // 循环
-  // videoDom.loop = true
-  scene.addVideoMaterial(videoDom)
 }
 
 // 加载
@@ -303,7 +293,7 @@ const load = () => {
       await assemblyScenario()
       createRoblt()
       createCharacter()
-      createVideoPlayer()
+      scene.addVideoMaterial()
     })
   })
 }
@@ -373,25 +363,26 @@ onMounted(() => {
   options.container = containerRef.value
 
   scene = new ParkThreeScene(options, {
+    groundMeshName: ['Plane001', 'Plane002', 'mesh_0_4'],
     onDblclick: object => {
       console.log(object)
     },
-    onClickLeft(_e, object, intersct) {
-      console.log(object)
-      if (object) {
-        switch (object.data?.type) {
+    onClickLeft(object, _intersct) {
+      if (object && object.data) {
+        const data = object.data
+        switch (data?.type) {
           case VIDEOPLAY:
-            if (videoDom.paused) {
-              videoDom?.play()
-            } else {
-              videoDom?.pause()
-            }
+            scene.videoPlay(object)
             break
-          case GROUND:
-            scene.mouseClickGround(intersct)
+          case OPEN_THE_DOOR:
+            scene.openTheDoor(object)
             break
         }
       }
+    },
+    onClickGround: (_object, intersct) => {
+      console.log(intersct)
+      scene.mouseClickGround(intersct)
     },
     onClickRight: e => {
       console.log(e)

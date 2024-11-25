@@ -2,11 +2,12 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
-// 机器人、人物、地面
+// 机器人、人物、地面、商业建筑
 export const ROBOT = 'ROBOT'
 export const CHARACTER = 'CHARACTER'
 export const GROUND = 'GROUND'
 export const VIDEOPLAY = 'PARK_VIDEO'
+export const OPEN_THE_DOOR = 'OPEN_THE_DOOR'
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -26,9 +27,9 @@ export const getPageOpts = animateBack => ({
   // 楼层模块类型
   floorModelType: ['FLOOR_COMMON'],
   // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
-  anchorType: ['PARK_CAMERA', 'PARK_ROOM_INLET', 'PARK_GPS', 'PARK_VIDEO'],
+  anchorType: ['PARK_CAMERA', 'PARK_ROOM_INLET', VIDEOPLAY, OPEN_THE_DOOR],
   // 汽车类型，需要行驶
-  carType: ['CAR_TANKER', 'CAR_GOODS', 'CAR_TRAILER', 'CAR_CRANE'],
+  carType: ['car_tanker', 'car_goods', 'car_trailer', 'car_crane'],
 
   colors: {},
   config: {},
@@ -102,63 +103,76 @@ export const getPageOpts = animateBack => ({
 
     /////////////////////
     {
-      key: 'BUILDING_1',
+      key: 'building_1',
       name: '楼栋1',
       size: 1.2,
       url: '/楼栋1.glb'
     },
     {
-      key: 'BUILDING_2',
+      key: 'building_2',
       name: '楼栋2',
       size: 2,
       url: '/楼栋2.glb'
     },
     {
-      key: 'BUILDING_3',
+      key: 'building_3',
       name: '楼栋3',
       size: 1.6,
       url: '/楼栋3.glb'
     },
     {
-      key: 'BUILDING_4',
+      key: 'building_4',
       name: '楼栋4',
       size: 2.8,
       url: '/楼栋4.glb'
     },
     {
-      key: 'BUILDING_5',
+      key: 'building_5',
       name: '楼栋5',
       size: 1.6,
       url: '/楼栋5.glb'
     },
     {
-      key: 'BUILDING_WAREHOUSE',
+      key: 'building_warehouse',
       name: '仓库',
       size: 0.7,
       url: '/仓库.glb'
     },
+
+    {
+      key: 'building_commercial_1',
+      name: '商业楼1',
+      size: 0.6,
+      url: '/商业楼1.glb'
+    },
+    {
+      key: 'building_commercial_2',
+      name: '商业楼2',
+      size: 19,
+      url: '/商业楼2.glb'
+    },
     /////////////////////
 
     {
-      key: 'CAR_TANKER',
+      key: 'car_tanker',
       name: '油罐车',
       size: 1,
       url: '/油罐车.glb'
     },
     {
-      key: 'CAR_GOODS',
+      key: 'car_goods',
       name: '货车',
       size: 6.4,
       url: '/货车.glb'
     },
     {
-      key: 'CAR_TRAILER',
+      key: 'car_trailer',
       name: '拖车',
       size: 2,
       url: '/拖车.glb'
     },
     {
-      key: 'CAR_CRANE',
+      key: 'car_crane',
       name: '吊车',
       size: 4.4,
       url: '/吊车.glb'
@@ -221,6 +235,14 @@ export const getPageOpts = animateBack => ({
       size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/video.png'
+    },
+    {
+      key: OPEN_THE_DOOR,
+      name: '开门',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/open.png'
     }
   ].map(item => {
     if (item.url) {
