@@ -8,6 +8,8 @@ export const CHARACTER = 'CHARACTER'
 export const GROUND = 'GROUND'
 export const VIDEOPLAY = 'PARK_VIDEO'
 export const OPEN_THE_DOOR = 'OPEN_THE_DOOR'
+export const HALF_OPEN_THE_DOOR = 'HALF_OPEN_THE_DOOR'
+export const DOUBLE_OPEN_THE_DOOR = 'DOUBLE_OPEN_THE_DOOR'
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -27,9 +29,18 @@ export const getPageOpts = animateBack => ({
   // 楼层模块类型
   floorModelType: ['FLOOR_COMMON'],
   // 锚点模型类型列表（精灵类型）该类型未绑定点击事件函数将作为 dialog 弹窗事件处理
-  anchorType: ['PARK_CAMERA', 'PARK_ROOM_INLET', VIDEOPLAY, OPEN_THE_DOOR],
+  anchorType: [
+    'PARK_CAMERA',
+    'PARK_ROOM_INLET',
+    VIDEOPLAY,
+    OPEN_THE_DOOR,
+    HALF_OPEN_THE_DOOR,
+    DOUBLE_OPEN_THE_DOOR
+  ],
   // 汽车类型，需要行驶
   carType: ['car_tanker', 'car_goods', 'car_trailer', 'car_crane'],
+  // 动画模型类型
+  animationModelType: ['building_commercial_2'],
 
   colors: {},
   config: {},
@@ -151,6 +162,18 @@ export const getPageOpts = animateBack => ({
       size: 19,
       url: '/商业楼2.glb'
     },
+    {
+      key: 'building_commercial_3',
+      name: '商业楼3',
+      size: 0.6,
+      url: '/商业楼3.glb'
+    },
+    {
+      key: 'building_commercial_4',
+      name: '电梯房',
+      size: 6.9,
+      url: '/电梯房.glb'
+    },
     /////////////////////
 
     {
@@ -176,6 +199,19 @@ export const getPageOpts = animateBack => ({
       name: '吊车',
       size: 4.4,
       url: '/吊车.glb'
+    },
+
+    {
+      key: 'car_aodi',
+      name: '奥迪',
+      size: 1,
+      url: '/奥迪.glb'
+    },
+    {
+      key: 'car_kaidilake',
+      name: '凯迪拉克',
+      size: 1.6,
+      url: '/凯迪拉克.glb'
     },
 
     {
@@ -239,6 +275,22 @@ export const getPageOpts = animateBack => ({
     {
       key: OPEN_THE_DOOR,
       name: '开门',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/open.png'
+    },
+    {
+      key: HALF_OPEN_THE_DOOR,
+      name: '半开门',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/open.png'
+    },
+    {
+      key: DOUBLE_OPEN_THE_DOOR,
+      name: '双开门',
       type: 'sprite',
       size: 1,
       range: { x: 1, y: 1 },

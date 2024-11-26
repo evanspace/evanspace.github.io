@@ -33,9 +33,12 @@ const createWater = () => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(base + '/oss/textures/waternormals.jpg', texture => {
-      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-    }),
+    waterNormals: new THREE.TextureLoader().load(
+      base + '/oss/textures/waternormals.jpg',
+      texture => {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+      }
+    ),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,
@@ -60,9 +63,12 @@ const createVideoDom = (src?: string) => {
 }
 
 // 视频封面
-const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/ztny.png', tx => {
-  console.log(tx)
-})
+const videoCoverTexture = new THREE.TextureLoader().load(
+  base + '/oss/textures/park/ztny.png',
+  tx => {
+    console.log(tx)
+  }
+)
 
 const sightMap = {
   full: 'FULL',
@@ -101,7 +107,13 @@ export class ParkThreeScene extends ThreeScene {
   // 历史相机坐标（视角切换）
   historyCameraPosition: InstanceType<typeof THREE.Vector3>
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0], extend: Partial<ExtendOptions>) {
+  // 动画模型集合
+  animateModels: any[]
+
+  constructor(
+    options: ConstructorParameters<typeof ThreeScene>[0],
+    extend: Partial<ExtendOptions>
+  ) {
     super(options)
 
     this.extend = extend
@@ -119,6 +131,7 @@ export class ParkThreeScene extends ThreeScene {
     this.currentSight = sightMap.full
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
+    this.animateModels = []
 
     this.bindEvent()
     this.addBuildingGroup()
@@ -142,6 +155,7 @@ export class ParkThreeScene extends ThreeScene {
     if (this.buildingGroup) {
       this.disposeObj(this.buildingGroup)
     }
+    this.animateModels = []
     this.addBuildingGroup()
     this.clearAnchor()
     this.clearDot()
@@ -436,26 +450,98 @@ export class ParkThreeScene extends ThreeScene {
     }
   }
 
-  // 开门
-  openTheDoor(object) {
+  // 推拉门
+  openTheSlidingDoor(object, isHalf) {
     const dobj = this.scene.getObjectByName(object.data.bind)
     if (!dobj) return
-    console.log(dobj)
-    const position = dobj.position
-    if (dobj.__open__ == void 0) {
-      const { x, y, z } = position
-      dobj.__position__ = new THREE.Vector3(x, y, z)
+
+    if (!isHalf) {
+      const position = dobj.position
+      if (dobj.__open__ == void 0) {
+        const { x, y, z } = position
+        dobj.__position__ = new THREE.Vector3(x, y, z)
+      }
+      dobj.__open__ = !dobj.__open__
+      new TWEEN.Tween(position)
+        .to(
+          {
+            x: dobj.__position__.x + (dobj.__open__ ? 800 : 0)
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .start()
+    } else {
+      dobj.__open__ = !dobj.__open__
+      new TWEEN.Tween(dobj.rotation)
+        .to(
+          {
+            z: dobj.__open__ ? Math.PI * 0.5 : 0
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .onUpdate(e => {
+          console.log(e)
+        })
+        .start()
     }
+  }
+
+  // 双开门
+  openTheDoubleSlidingDoor(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    if (!dobj) return
+    const left = dobj.children.find(el => el.name.indexOf('左') > -1)
+    const right = dobj.children.find(el => el.name.indexOf('右') > -1)
+    console.log(left, right)
+    const lpos = left.position
+    const rpos = right.position
+    if (dobj.__open__ == void 0) {
+      const { x, y, z } = lpos
+      const { x: x2, y: y2, z: z2 } = rpos
+      left.__position__ = new THREE.Vector3(x, y, z)
+      right.__position__ = new THREE.Vector3(x2, y2, z2)
+    }
+
     dobj.__open__ = !dobj.__open__
-    new TWEEN.Tween(position)
+    new TWEEN.Tween(lpos)
       .to(
         {
-          x: dobj.__position__.x + (dobj.__open__ ? 800 : 0)
+          x: left.__position__.x + (dobj.__open__ ? -400 : 0)
         },
         1000 * 1.5
       )
       .delay(0)
       .start()
+    new TWEEN.Tween(rpos)
+      .to(
+        {
+          x: right.__position__.x + (dobj.__open__ ? 400 : 0)
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
+  }
+
+  // 添加模型动画
+  addModelAnimate(model, animations = [], play: boolean = true, timeScale: number = 1) {
+    if (!animations.length) return
+    const mixer = new THREE.AnimationMixer(model)
+    const obj = animations.reduce((ob, cur: any) => {
+      const key = cur.name || ''
+      ob[key] = mixer.clipAction(cur)
+      if (play) {
+        ob[key].play()
+      }
+      ob[key].timeScale = timeScale
+      return ob
+    }, {})
+
+    model.__action__ = obj
+    model.__mixer__ = mixer
+    this.animateModels.push(model)
   }
 
   // 模型动画
@@ -473,15 +559,22 @@ export class ParkThreeScene extends ThreeScene {
       updateDiffusion()
     }
 
+    let delta = this.clock.getDelta()
     if (this.character) {
-      const dt = this.clock.getDelta()
       const mixer = this.character.extra.mixer
-      mixer.update(dt)
+      mixer.update(delta)
 
       moveAnimate(0.5)
     }
 
     this.restoreAnchorMaterial()
+
+    // 模型动画
+    if (this.animateModels.length) {
+      this.animateModels.forEach(el => {
+        el.__mixer__.update(delta)
+      })
+    }
   }
 
   // 移动
@@ -535,11 +628,13 @@ export class ParkThreeScene extends ThreeScene {
       console.log(intersct)
       // 是否点击地面
       const isClickGround =
-        typeof object.name == 'string' && (this.extend.groundMeshName || []).some(t => object.name.indexOf(t) > -1)
+        typeof object.name == 'string' &&
+        (this.extend.groundMeshName || []).some(t => object.name.indexOf(t) > -1)
 
       const obj = this.findParentGroupGroup(object)
       if (isClickGround) {
-        if (typeof this.extend?.onClickGround === 'function') this.extend.onClickGround(obj, intersct)
+        if (typeof this.extend?.onClickGround === 'function')
+          this.extend.onClickGround(obj, intersct)
       }
 
       if (!obj) return

@@ -1,11 +1,6 @@
 // import { mock } from 'mockjs'
 import { builder } from '../util'
 
-const floorMap = {
-  FLOOR_ONE: 138
-}
-
-const list = []
 let parkData: any[] = [
   {
     name: '场地',
@@ -129,7 +124,19 @@ let parkData: any[] = [
     name: '商业楼 2',
     type: 'building_commercial_2',
     position: { x: 40, y: 0.16, z: -60 },
-    rotation: { x: 0, y: 270, z: 0 }
+    rotation: { x: 0, y: 0, z: 270 }
+  },
+  {
+    name: '商业楼 3',
+    type: 'building_commercial_3',
+    position: { x: -50.9, y: 0.16, z: -246 },
+    rotation: { x: 0, y: 0, z: 0 }
+  },
+  {
+    name: '电梯房',
+    type: 'building_commercial_4',
+    position: { x: 116.8, y: 0.16, z: 56.6 },
+    rotation: { x: 0, y: 0, z: 270 }
   },
   ///////////////////
 
@@ -164,6 +171,7 @@ let parkData: any[] = [
     rotation: { x: 0, y: 0, z: 180 },
     to: { x: -188.6, y: 0, z: 440 }
   },
+  ///////////////////
 
   {
     name: '摄像头1',
@@ -243,6 +251,78 @@ let parkData: any[] = [
       z: -10.58
     },
     bind: '侧门'
+  },
+  {
+    name: '半开门-外',
+    type: 'HALF_OPEN_THE_DOOR',
+    position: {
+      x: 16.1,
+      y: 3,
+      z: -50
+    },
+    bind: '单开小门1'
+  },
+  {
+    name: '半开门-内',
+    type: 'HALF_OPEN_THE_DOOR',
+    position: {
+      x: 18.1,
+      y: 3,
+      z: -50
+    },
+    bind: '单开小门1'
+  },
+
+  {
+    name: '半开门-外',
+    type: 'HALF_OPEN_THE_DOOR',
+    position: {
+      x: 22.1,
+      y: 3,
+      z: -74.5
+    },
+    bind: '单开小门002'
+  },
+  {
+    name: '半开门-内',
+    type: 'HALF_OPEN_THE_DOOR',
+    position: {
+      x: 24.1,
+      y: 3,
+      z: -74.5
+    },
+    bind: '单开小门002'
+  },
+
+  {
+    name: '双开门-内',
+    type: 'DOUBLE_OPEN_THE_DOOR',
+    position: {
+      x: -76,
+      y: 3,
+      z: -206.6
+    },
+    bind: '感应门'
+  },
+  {
+    name: '双开门-内',
+    type: 'DOUBLE_OPEN_THE_DOOR',
+    position: {
+      x: -61,
+      y: 3,
+      z: -206.6
+    },
+    bind: '感应门001'
+  },
+  {
+    name: '双开门-内',
+    type: 'DOUBLE_OPEN_THE_DOOR',
+    position: {
+      x: -46,
+      y: 3,
+      z: -206.6
+    },
+    bind: '感应门002'
   }
 ]
 
@@ -307,6 +387,24 @@ before.forEach((item, index) => {
     rotation: { x: 0, y: index < 5 ? 6 : 7.5, z: 0 }
   })
 })
+
+// 奥迪车
+const carSpeed = 90 - 86.5
+let carx = -89.9
+while (carx) {
+  if (carx >= -51) break
+  parkData.push({
+    name: '奥迪' + carx,
+    type: 'car_aodi',
+    position: { x: carx, y: 0, z: -63 }
+  })
+  parkData.push({
+    name: '凯迪拉克' + carx,
+    type: 'car_kaidilake',
+    position: { x: carx, y: 0, z: -86 }
+  })
+  carx += carSpeed
+}
 
 export default [
   {

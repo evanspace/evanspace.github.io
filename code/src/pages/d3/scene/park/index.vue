@@ -31,7 +31,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ROBOT, CHARACTER, GROUND, VIDEOPLAY, OPEN_THE_DOOR, getPageOpts } from './data'
+import {
+  ROBOT,
+  CHARACTER,
+  GROUND,
+  VIDEOPLAY,
+  OPEN_THE_DOOR,
+  HALF_OPEN_THE_DOOR,
+  DOUBLE_OPEN_THE_DOOR,
+  getPageOpts
+} from './data'
 import {
   ParkThreeScene,
   dotUpdateObjectCall,
@@ -84,7 +93,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 32
+    version: 40
   }
 })
 
@@ -167,7 +176,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     return
   }
 
-  const { floorModelType = [], anchorType = [], carType = [] } = pageOpts
+  const { floorModelType = [], anchorType = [], carType = [], animationModelType = [] } = pageOpts
 
   // 深克隆
   let model = UTILS.deepClone(obj)
@@ -185,9 +194,14 @@ const loopLoadObject = async (item: ObjectItem) => {
   model._isBuilding_ = true
   model.data = item
 
-  // 骑车
+  // 汽车
   if (carType.includes(type)) {
     executeCarRunging(model)
+  }
+
+  // 动画
+  if (animationModelType.includes(type)) {
+    scene.addModelAnimate(model, obj.animations, true, 0.1)
   }
 
   // 楼层
@@ -266,11 +280,14 @@ const createRoblt = () => {
 // 创建人物
 const createCharacter = () => {
   const obj = getModel(CHARACTER)
-  scene.addCharacter(obj, {
+  const move = {
     x: -80.6,
     y: 0.16,
     z: 193.4
-  })
+  }
+  // move.x = -70
+  // move.z = -188.6
+  scene.addCharacter(obj, move)
 }
 
 // 加载
@@ -363,7 +380,7 @@ onMounted(() => {
   options.container = containerRef.value
 
   scene = new ParkThreeScene(options, {
-    groundMeshName: ['Plane001', 'Plane002', 'mesh_0_4'],
+    groundMeshName: ['Plane001', 'Plane002', 'Plane003', '楼板', 'mesh_0_4'],
     onDblclick: object => {
       console.log(object)
     },
@@ -374,8 +391,12 @@ onMounted(() => {
           case VIDEOPLAY:
             scene.videoPlay(object)
             break
-          case OPEN_THE_DOOR:
-            scene.openTheDoor(object)
+          case OPEN_THE_DOOR: // 推拉门
+          case HALF_OPEN_THE_DOOR: // 半开门
+            scene.openTheSlidingDoor(object, data.type === HALF_OPEN_THE_DOOR)
+            break
+          case DOUBLE_OPEN_THE_DOOR: // 双开门
+            scene.openTheDoubleSlidingDoor(object)
             break
         }
       }
