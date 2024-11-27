@@ -10,6 +10,7 @@ export const VIDEOPLAY = 'PARK_VIDEO'
 export const OPEN_THE_DOOR = 'OPEN_THE_DOOR'
 export const HALF_OPEN_THE_DOOR = 'HALF_OPEN_THE_DOOR'
 export const DOUBLE_OPEN_THE_DOOR = 'DOUBLE_OPEN_THE_DOOR'
+export const WAIT_LIFT = 'WAIT_LIFT'
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -35,7 +36,8 @@ export const getPageOpts = animateBack => ({
     VIDEOPLAY,
     OPEN_THE_DOOR,
     HALF_OPEN_THE_DOOR,
-    DOUBLE_OPEN_THE_DOOR
+    DOUBLE_OPEN_THE_DOOR,
+    WAIT_LIFT
   ],
   // 汽车类型，需要行驶
   carType: ['car_tanker', 'car_goods', 'car_trailer', 'car_crane'],
@@ -171,7 +173,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'building_commercial_4',
       name: '电梯房',
-      size: 6.9,
+      size: 9.6,
       url: '/电梯房.glb'
     },
     /////////////////////
@@ -295,6 +297,14 @@ export const getPageOpts = animateBack => ({
       size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/open.png'
+    },
+    {
+      key: WAIT_LIFT,
+      name: '旋转门',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/lift.png'
     }
   ].map(item => {
     if (item.url) {
@@ -305,4 +315,16 @@ export const getPageOpts = animateBack => ({
     }
     return item as import('three-scene/types/model').ModelItem
   })
+})
+
+export const getFloorOpts = () => ({
+  active: 1,
+  show: false,
+  list: [
+    // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+    { name: '一楼', key: 1, y: 0.2 },
+    { name: '二楼', key: 2, y: 13.8 },
+    { name: '三楼', key: 3, y: 19.83 },
+    { name: '五楼', key: 5, y: 31.76 }
+  ]
 })

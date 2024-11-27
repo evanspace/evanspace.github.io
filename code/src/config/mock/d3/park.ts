@@ -136,7 +136,7 @@ let parkData: any[] = [
     name: '电梯房',
     type: 'building_commercial_4',
     position: { x: 116.8, y: 0.16, z: 56.6 },
-    rotation: { x: 0, y: 0, z: 270 }
+    rotation: { x: 0, y: 270, z: 0 }
   },
   ///////////////////
 
@@ -323,6 +323,82 @@ let parkData: any[] = [
       z: -206.6
     },
     bind: '感应门002'
+  },
+
+  {
+    name: '半开门',
+    type: 'HALF_OPEN_THE_DOOR',
+    position: {
+      x: 104,
+      y: 3,
+      z: 56.7
+    },
+    bind: '单元门'
+  },
+
+  {
+    name: '-楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 101.3,
+      y: 3,
+      z: 56.3
+    },
+    // 电梯到当前位置
+    to: {
+      x: 1.196,
+      y: 0.2,
+      z: -103.23
+    },
+    bind: '电梯门1'
+  },
+  {
+    name: '二楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 96.2,
+      y: 15.7,
+      z: 56.3
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 13.8,
+      z: -18.2
+    },
+    bind: '电梯门2'
+  },
+  {
+    name: '三楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 96.2,
+      y: 21.9,
+      z: 56.3
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 19.83,
+      z: -18.2
+    },
+    bind: '电梯门3'
+  },
+  {
+    name: '五楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 96.2,
+      y: 33.7,
+      z: 56.3
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 31.76,
+      z: -18.2
+    },
+    bind: '电梯门5'
   }
 ]
 
@@ -420,8 +496,11 @@ export default [
           // floorExpandIndex: 3,
           floorExpandMargin: 450,
           floorExpandMode: 'BA',
-          target: { x: -89.7, y: -2.6, z: 187.1 },
-          to: { x: -118.4, y: 3, z: 220.4 }
+          // target: { x: -89.7, y: -2.6, z: 187.1 },
+          // to: { x: -118.4, y: 3, z: 220.4 }
+
+          target: { x: 95.5, y: -30.1, z: 169.3 },
+          to: { x: 86.36, y: 51.63, z: -31.87 }
         }
       })
   }

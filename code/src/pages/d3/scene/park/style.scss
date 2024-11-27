@@ -11,6 +11,11 @@
   height: 100%;
 }
 
+.floor-select {
+  left: 10px;
+  top: 10px;
+  position: absolute;
+}
 
 @include mixin.scene-loading;
 

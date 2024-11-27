@@ -11,6 +11,17 @@
       <div class="btn" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</div>
     </div>
 
+    <!-- 楼层选择 -->
+    <div :class="$style['floor-select']" v-show="floorOpts.show">
+      <el-button
+        v-for="item in floorOpts.list"
+        type="primary"
+        :disabled="floorOpts.active === item.key"
+        @click="onFloorMoveTo(item)"
+        >{{ item.name }}</el-button
+      >
+    </div>
+
     <div :class="$style.container" ref="containerRef"></div>
 
     <div
@@ -39,7 +50,9 @@ import {
   OPEN_THE_DOOR,
   HALF_OPEN_THE_DOOR,
   DOUBLE_OPEN_THE_DOOR,
-  getPageOpts
+  WAIT_LIFT,
+  getPageOpts,
+  getFloorOpts
 } from './data'
 import {
   ParkThreeScene,
@@ -80,6 +93,7 @@ const pageOpts = reactive(
     }
   })
 )
+const floorOpts = reactive(getFloorOpts())
 const containerRef = ref()
 const COLORS = deepMerge(colors, pageOpts.colors)
 
@@ -93,7 +107,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 40
+    version: 56
   }
 })
 
@@ -117,7 +131,7 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   },
   directionalLight: {
     visible: true,
-    intensity: 1.5
+    intensity: 2
   }
 }
 
@@ -285,8 +299,8 @@ const createCharacter = () => {
     y: 0.16,
     z: 193.4
   }
-  // move.x = -70
-  // move.z = -188.6
+  move.x = 78
+  move.z = 83.8
   scene.addCharacter(obj, move)
 }
 
@@ -369,6 +383,23 @@ const updateObject = isRandom => {
   })
 }
 
+// 楼层移动至
+const onFloorMoveTo = item => {
+  floorOpts.active = item.key
+  const liftName = '电梯门' + item.key
+  scene.waitLift(
+    {
+      data: {
+        bind: liftName,
+        to: {
+          y: item.y
+        }
+      }
+    },
+    true
+  )
+}
+
 const initPage = () => {
   load()
   backgroundLoad(scene, pageOpts.skyCode)
@@ -379,8 +410,17 @@ let scene: InstanceType<typeof ParkThreeScene>
 onMounted(() => {
   options.container = containerRef.value
 
+  const liftMeshName = '轿厢-ground'
   scene = new ParkThreeScene(options, {
-    groundMeshName: ['Plane001', 'Plane002', 'Plane003', '楼板', 'mesh_0_4'],
+    groundMeshName: [
+      'Plane001',
+      'Plane002',
+      'Plane003',
+      '楼板',
+      'mesh_0_4',
+      'ground',
+      liftMeshName
+    ],
     onDblclick: object => {
       console.log(object)
     },
@@ -398,12 +438,17 @@ onMounted(() => {
           case DOUBLE_OPEN_THE_DOOR: // 双开门
             scene.openTheDoubleSlidingDoor(object)
             break
+          case WAIT_LIFT: // 等电梯
+            scene.waitLift(object)
+            break
         }
       }
     },
     onClickGround: (_object, intersct) => {
       console.log(intersct)
-      scene.mouseClickGround(intersct)
+      scene.mouseClickGround(intersct).then(_obj => {
+        floorOpts.show = intersct.object.name === liftMeshName
+      })
     },
     onClickRight: e => {
       console.log(e)

@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
+
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
 import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
@@ -22,6 +24,7 @@ const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 
 import * as UTILS from 'three-scene/utils/model'
+import { resolve } from 'path'
 
 const { addLensflare } = useLensflare()
 
@@ -63,12 +66,7 @@ const createVideoDom = (src?: string) => {
 }
 
 // 视频封面
-const videoCoverTexture = new THREE.TextureLoader().load(
-  base + '/oss/textures/park/ztny.png',
-  tx => {
-    console.log(tx)
-  }
-)
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/ztny.png')
 
 const sightMap = {
   full: 'FULL',
@@ -366,20 +364,20 @@ export class ParkThreeScene extends ThreeScene {
   // 设置控制中心点
   setControlTarget(point) {
     const height = 2
-    const { x, z } = point
-    this.controls.target.set(x, height, z)
+    const { x, y, z } = point
+    this.controls.target.set(x, y + height, z)
     this.camera.lookAt(this.controls.target)
   }
 
   // 鼠标点击地面
   mouseClickGround(intersct) {
-    if (this.currentSight !== sightMap.npc) return
+    if (this.currentSight !== sightMap.npc) return Promise.reject()
 
     const character = this.character
-    if (!character) return
+    if (!character) return Promise.reject()
     const { runing } = this.options.cruise
     // 自动巡航中不操作
-    if (runing) return
+    if (runing) return Promise.reject()
     const lookAt = intersct.point
     const obj = this.mouseClickDiffusion
 
@@ -390,18 +388,21 @@ export class ParkThreeScene extends ThreeScene {
     obj.position.set(x, y, z)
     obj.visible = true
 
-    // 创建移动
-    createMove(
-      character,
-      lookAt,
-      pos => {
-        this.setControlTarget(pos)
-      },
-      _pos => {
-        runging.stop()
-        obj.visible = false
-      }
-    )
+    return new Promise(resolve => {
+      // 创建移动
+      createMove(
+        character,
+        lookAt,
+        pos => {
+          this.setControlTarget(pos)
+        },
+        _pos => {
+          runging.stop()
+          obj.visible = false
+          resolve(character)
+        }
+      )
+    })
   }
 
   // 添加视频材质
@@ -422,6 +423,18 @@ export class ParkThreeScene extends ThreeScene {
     mesh.__video__ = videoDom
 
     this.addObject(mesh)
+
+    // 添加镜面
+    const groundMirror = new Reflector(new THREE.PlaneGeometry(20, 20), {
+      clipBias: 0.003,
+      textureWidth: window.innerWidth * window.devicePixelRatio,
+      textureHeight: window.innerHeight * window.devicePixelRatio,
+      color: 0xb5b5b5
+    })
+    groundMirror.position.set(-75, 0.17, 160)
+    groundMirror.rotateX(-Math.PI / 2)
+    // groundMirror.position.y = 0.5
+    this.addObject(groundMirror)
 
     // 大屏
     const dbObj = this.scene.getObjectByName('大屏幕')
@@ -481,20 +494,17 @@ export class ParkThreeScene extends ThreeScene {
           1000 * 1.5
         )
         .delay(0)
-        .onUpdate(e => {
-          console.log(e)
-        })
         .start()
     }
   }
 
   // 双开门
-  openTheDoubleSlidingDoor(object) {
+  openTheDoubleSlidingDoor(object, scale = 400, isOpen?: boolean) {
     const dobj = this.scene.getObjectByName(object.data.bind)
-    if (!dobj) return
+    if (!dobj) return Promise.reject()
     const left = dobj.children.find(el => el.name.indexOf('左') > -1)
     const right = dobj.children.find(el => el.name.indexOf('右') > -1)
-    console.log(left, right)
+
     const lpos = left.position
     const rpos = right.position
     if (dobj.__open__ == void 0) {
@@ -504,25 +514,109 @@ export class ParkThreeScene extends ThreeScene {
       right.__position__ = new THREE.Vector3(x2, y2, z2)
     }
 
-    dobj.__open__ = !dobj.__open__
-    new TWEEN.Tween(lpos)
-      .to(
+    dobj.__open__ = isOpen !== void 0 ? isOpen : !dobj.__open__
+    return new Promise(resolve => {
+      const rMoveX = right.__position__.x + (dobj.__open__ ? scale : 0)
+      // 坐标不变则直接返回
+      if (rpos.x === rMoveX) return resolve(dobj)
+      new TWEEN.Tween(lpos)
+        .to(
+          {
+            x: left.__position__.x + (dobj.__open__ ? -scale : 0)
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .start()
+      new TWEEN.Tween(rpos)
+        .to(
+          {
+            x: rMoveX
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .start()
+        .onComplete(() => {
+          resolve(dobj)
+        })
+    })
+  }
+
+  // 电梯
+  waitLift(object, fllow?: boolean) {
+    const liftGroupName = '单元1号电梯'
+    // 电梯轿厢
+    const box = this.scene.getObjectByName(liftGroupName)
+    console.log(box)
+    // 当前绑定坐标
+    const cpos = object.data?.to
+    if (!box || !cpos) return
+    // y 轴对比
+    const bpos = box.position
+
+    if (cpos.y != bpos.y) {
+      // 电梯关门
+      const bindLift = box.__bind_lift__
+      if (bindLift !== void 0) {
+        // 绑定过则关闭电梯门
+        this.openTheDoubleSlidingDoor(
+          {
+            data: { bind: bindLift }
+          },
+          200,
+          false
+        )
+      }
+      this.openTheDoubleSlidingDoor(
         {
-          x: left.__position__.x + (dobj.__open__ ? -400 : 0)
+          data: { bind: liftGroupName }
         },
-        1000 * 1.5
-      )
-      .delay(0)
-      .start()
-    new TWEEN.Tween(rpos)
-      .to(
-        {
-          x: right.__position__.x + (dobj.__open__ ? 400 : 0)
-        },
-        1000 * 1.5
-      )
-      .delay(0)
-      .start()
+        200 * 0.02,
+        false
+      ).then(() => {
+        // 电梯移动
+        new TWEEN.Tween(bpos)
+          .to(
+            {
+              y: cpos.y
+            },
+            1000 * 1.5
+          )
+          .delay(0)
+          .start()
+          .onUpdate(pos => {
+            // 人物跟随
+            if (fllow) {
+              this.character.position.y = pos.y
+              this.camera.position.y = pos.y
+              this.setControlTarget(this.character.position)
+            }
+          })
+          .onComplete(() => {
+            console.log('电梯到了！')
+            // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
+            box.__bind_lift__ = object.data.bind
+            // 电梯开门
+            this.openLift(object, liftGroupName)
+          })
+      })
+    } else {
+      this.openLift(object, liftGroupName)
+    }
+  }
+
+  // 电梯开门
+  openLift(object, liftGroupName) {
+    console.log(object)
+    // 电梯门打开
+    this.openTheDoubleSlidingDoor(object, 200)
+    this.openTheDoubleSlidingDoor(
+      {
+        data: { bind: liftGroupName }
+      },
+      200 * 0.02
+    )
   }
 
   // 添加模型动画
@@ -625,7 +719,7 @@ export class ParkThreeScene extends ThreeScene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
-      console.log(intersct)
+
       // 是否点击地面
       const isClickGround =
         typeof object.name == 'string' &&
