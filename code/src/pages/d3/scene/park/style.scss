@@ -17,6 +17,19 @@
   position: absolute;
 }
 
+.tip {
+  height: 0;
+  z-index: 2;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  margin-top: 20px;
+  pointer-events: none;
+  .msg {
+    padding: 5px 10px;
+    background-color: rgba($color: #000000, $alpha: .5);
+  }
+}
+
 @include mixin.scene-loading;
 
 :global {

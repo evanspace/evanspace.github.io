@@ -2,15 +2,15 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
-// 机器人、人物、地面、商业建筑
-export const ROBOT = 'ROBOT'
-export const CHARACTER = 'CHARACTER'
-export const GROUND = 'GROUND'
-export const VIDEOPLAY = 'PARK_VIDEO'
-export const OPEN_THE_DOOR = 'OPEN_THE_DOOR'
-export const HALF_OPEN_THE_DOOR = 'HALF_OPEN_THE_DOOR'
-export const DOUBLE_OPEN_THE_DOOR = 'DOUBLE_OPEN_THE_DOOR'
-export const WAIT_LIFT = 'WAIT_LIFT'
+export const ROBOT = 'ROBOT' // 机器人
+export const CHARACTER = 'CHARACTER' // 人物、
+export const GROUND = 'GROUND' // 地面
+export const VIDEOPLAY = 'PARK_VIDEO' // 视频播放
+export const OPEN_THE_DOOR = 'OPEN_THE_DOOR' // 开门
+export const HALF_OPEN_THE_DOOR = 'HALF_OPEN_THE_DOOR' // 半开门-90 度开门
+export const DOUBLE_OPEN_THE_DOOR = 'DOUBLE_OPEN_THE_DOOR' // 双开门
+export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
+export const SLIDING_DOOR = 'SLIDING_DOOR' // 推拉门
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -37,7 +37,8 @@ export const getPageOpts = animateBack => ({
     OPEN_THE_DOOR,
     HALF_OPEN_THE_DOOR,
     DOUBLE_OPEN_THE_DOOR,
-    WAIT_LIFT
+    WAIT_LIFT,
+    SLIDING_DOOR
   ],
   // 汽车类型，需要行驶
   carType: ['car_tanker', 'car_goods', 'car_trailer', 'car_crane'],
@@ -176,6 +177,12 @@ export const getPageOpts = animateBack => ({
       size: 9.6,
       url: '/电梯房.glb'
     },
+    {
+      key: 'building_commercial_5',
+      name: '现代门窗',
+      size: 78,
+      url: '/现代门窗.glb'
+    },
     /////////////////////
 
     {
@@ -259,14 +266,6 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/sxt.png'
     },
     {
-      key: 'PARK_ROOM_INLET',
-      name: '房间入口',
-      type: 'sprite',
-      size: 1,
-      range: { x: 18.5, y: 38.5 },
-      mapUrl: '/fjdw.png'
-    },
-    {
       key: VIDEOPLAY,
       name: '视频播放',
       type: 'sprite',
@@ -299,8 +298,16 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/open.png'
     },
     {
+      key: SLIDING_DOOR,
+      name: '推拉门',
+      type: 'sprite',
+      size: 1,
+      range: { x: 1, y: 1 },
+      mapUrl: '/open.png'
+    },
+    {
       key: WAIT_LIFT,
-      name: '旋转门',
+      name: '电梯门',
       type: 'sprite',
       size: 1,
       range: { x: 1, y: 1 },
@@ -327,4 +334,13 @@ export const getFloorOpts = () => ({
     { name: '三楼', key: 3, y: 19.83 },
     { name: '五楼', key: 5, y: 31.76 }
   ]
+})
+
+export const getTipOpts = () => ({
+  show: false,
+  style: {
+    left: 0,
+    top: 0
+  },
+  msg: ''
 })

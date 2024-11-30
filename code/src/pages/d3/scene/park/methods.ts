@@ -18,13 +18,12 @@ import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 
 import DEFAULTCONFIG from './config'
 
-const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
+const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 
 import * as UTILS from 'three-scene/utils/model'
-import { resolve } from 'path'
 
 const { addLensflare } = useLensflare()
 
@@ -339,9 +338,10 @@ export class ParkThreeScene extends ThreeScene {
     const isCharacter = sight === sightMap.npc
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 15 : 1500
+    this.controls.maxDistance = isCharacter ? 15 : 150
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
+    this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.49 : 0.45)
 
     const target = this.controls.target
     const position = this.character.position
@@ -351,19 +351,26 @@ export class ParkThreeScene extends ThreeScene {
       this.historyTarget = new THREE.Vector3(x, y, z)
       const { x: x2, y: y2, z: z2 } = position
       this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
-      this.camera.lookAt(position)
+      this.camera.lookAt(new THREE.Vector3(x2, y2 + 3, z2))
     } else {
-      UTILS.cameraInSceneAnimate(this.camera, this.historyCameraPosition, position)
+      // UTILS.cameraInSceneAnimate(this.camera, this.historyCameraPosition, position)
+      const { x, y, z } = this.historyCameraPosition
+      this.camera.position.set(x, y, z)
+      this.camera.lookAt(position)
     }
-    new TWEEN.Tween(target)
-      .to(isCharacter ? position : this.historyTarget, 1000 * 1.5)
-      .delay(0)
-      .start()
+
+    const { x, y, z } = isCharacter ? position : this.historyTarget
+    target.set(x, y, z)
+
+    // new TWEEN.Tween(target)
+    //   .to(isCharacter ? position : this.historyTarget, 1000 * 1)
+    //   .delay(0)
+    //   .start()
   }
 
   // 设置控制中心点
   setControlTarget(point) {
-    const height = 2
+    const height = 3
     const { x, y, z } = point
     this.controls.target.set(x, y + height, z)
     this.camera.lookAt(this.controls.target)
@@ -463,8 +470,8 @@ export class ParkThreeScene extends ThreeScene {
     }
   }
 
-  // 推拉门
-  openTheSlidingDoor(object, isHalf) {
+  // 开门
+  openTheDoor(object, isHalf) {
     const dobj = this.scene.getObjectByName(object.data.bind)
     if (!dobj) return
 
@@ -541,6 +548,34 @@ export class ParkThreeScene extends ThreeScene {
           resolve(dobj)
         })
     })
+  }
+
+  // 推拉门
+  openTheSlidingDoor(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    console.log(object)
+    if (!dobj) return
+    console.log(dobj)
+    const left = dobj.children.find(el => el.name.indexOf('左') > -1)
+    // const right = dobj.children.find(el => el.name.indexOf('右') > -1)
+    const lpos = left.position
+    if (dobj.__open__ == void 0) {
+      const { x, y, z } = lpos
+      left.__position__ = new THREE.Vector3(x, y, z)
+    }
+    dobj.__open__ = !dobj.__open__
+    const scale = 4.5
+    const rMoveY = left.__position__.y + (dobj.__open__ ? scale : 0)
+    if (lpos.y === rMoveY) return
+    new TWEEN.Tween(lpos)
+      .to(
+        {
+          y: left.__position__.y + (dobj.__open__ ? scale : 0)
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
   }
 
   // 电梯
@@ -740,6 +775,9 @@ export class ParkThreeScene extends ThreeScene {
 
   // 悬浮锚点
   hoverAnchor(interscts) {
+    if (typeof this.extend.onHoverAnchor === 'function')
+      this.extend.onHoverAnchor(interscts[0], style)
+
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object

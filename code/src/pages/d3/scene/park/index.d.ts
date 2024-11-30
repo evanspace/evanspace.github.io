@@ -30,6 +30,7 @@ export declare interface ExtendOptions {
   onClickGround: (object?, intersct?) => void
   onClickRight: (e) => void
   animateCall: () => void
+  onHoverAnchor: (object, style) => void
 }
 
 // 改变材质配置

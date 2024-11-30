@@ -38,6 +38,17 @@
         <div :class="$style.text">{{ progress.percentage }}%</div>
       </div>
     </div>
+
+    <div
+      :class="$style.tip"
+      v-if="tipOpts.show"
+      :style="{
+        left: tipOpts.style.left + 'px',
+        top: tipOpts.style.top + 'px'
+      }"
+    >
+      <div :class="$style.msg" v-html="tipOpts.msg"></div>
+    </div>
   </div>
 </template>
 
@@ -51,8 +62,10 @@ import {
   HALF_OPEN_THE_DOOR,
   DOUBLE_OPEN_THE_DOOR,
   WAIT_LIFT,
+  SLIDING_DOOR,
   getPageOpts,
-  getFloorOpts
+  getFloorOpts,
+  getTipOpts
 } from './data'
 import {
   ParkThreeScene,
@@ -94,6 +107,7 @@ const pageOpts = reactive(
   })
 )
 const floorOpts = reactive(getFloorOpts())
+const tipOpts = reactive(getTipOpts())
 const containerRef = ref()
 const COLORS = deepMerge(colors, pageOpts.colors)
 
@@ -107,17 +121,17 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 56
+    version: 61
   }
 })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
-    maxDistance: 1500,
-    maxPolarAngle: Math.PI * 0.46
-    // screenSpacePanning: false,
-    // enablePan: false
+    maxDistance: 150,
+    maxPolarAngle: Math.PI * 0.45,
+    screenSpacePanning: false,
+    enablePan: false
   },
   camera: {
     position: [-85.7, 3.6, 208.6]
@@ -294,13 +308,18 @@ const createRoblt = () => {
 // 创建人物
 const createCharacter = () => {
   const obj = getModel(CHARACTER)
+  obj.traverse(el => {
+    if (el.isMesh) {
+      el.castShadow = true
+    }
+  })
   const move = {
     x: -80.6,
     y: 0.16,
     z: 193.4
   }
-  move.x = 78
-  move.z = 83.8
+  move.x = 98.4
+  move.z = -87
   scene.addCharacter(obj, move)
 }
 
@@ -431,15 +450,18 @@ onMounted(() => {
           case VIDEOPLAY:
             scene.videoPlay(object)
             break
-          case OPEN_THE_DOOR: // 推拉门
-          case HALF_OPEN_THE_DOOR: // 半开门
-            scene.openTheSlidingDoor(object, data.type === HALF_OPEN_THE_DOOR)
+          case OPEN_THE_DOOR: // 开门
+          case HALF_OPEN_THE_DOOR: // 半开门-90 度开门
+            scene.openTheDoor(object, data.type === HALF_OPEN_THE_DOOR)
             break
           case DOUBLE_OPEN_THE_DOOR: // 双开门
             scene.openTheDoubleSlidingDoor(object)
             break
           case WAIT_LIFT: // 等电梯
             scene.waitLift(object)
+            break
+          case SLIDING_DOOR: // 推拉门
+            scene.openTheSlidingDoor(object)
             break
         }
       }
@@ -452,6 +474,20 @@ onMounted(() => {
     },
     onClickRight: e => {
       console.log(e)
+    },
+    onHoverAnchor: (object, style) => {
+      const isShow = !!object && object.object._isAnchor_
+      tipOpts.show = isShow
+      if (isShow) {
+        tipOpts.style.top = style.top
+        tipOpts.style.left = style.left
+        const data = object.object.data
+        tipOpts.msg = `
+          <p>${data.name}</p>
+          <p>类型：${data.type}</p>
+          <p>绑定：${data.bind}</p>
+        `
+      }
     }
   })
 

@@ -129,7 +129,7 @@ let parkData: any[] = [
   {
     name: '商业楼 3',
     type: 'building_commercial_3',
-    position: { x: -50.9, y: 0.16, z: -246 },
+    position: { x: -50.9, y: 0.1, z: -246 },
     rotation: { x: 0, y: 0, z: 0 }
   },
   {
@@ -138,8 +138,17 @@ let parkData: any[] = [
     position: { x: 116.8, y: 0.16, z: 56.6 },
     rotation: { x: 0, y: 270, z: 0 }
   },
-  ///////////////////
+  {
+    name: '现代门窗',
+    type: 'building_commercial_5',
+    position: { x: 115.8, y: 0.16, z: -67.7 },
+    rotation: { x: 0, y: 270, z: 0 },
+    scale: { x: 1.5, y: 1.5, z: 1.5 }
+  }
+]
 
+// 行驶汽车
+const cars = [
   {
     name: '油罐车',
     type: 'car_tanker',
@@ -170,9 +179,27 @@ let parkData: any[] = [
     position: { x: -188.6, y: 0, z: -520 },
     rotation: { x: 0, y: 0, z: 180 },
     to: { x: -188.6, y: 0, z: 440 }
-  },
-  ///////////////////
+  }
+]
+parkData.push(...cars)
 
+// 监测点
+const monitorCameras = [
+  {
+    name: 'DOT',
+    unit: '%',
+    type: 'DOT',
+    position: {
+      x: 300,
+      y: 10,
+      z: 350
+    }
+  }
+]
+parkData.push(...monitorCameras)
+
+// 监控锚点
+const monitors = [
   {
     name: '摄像头1',
     type: 'PARK_CAMERA',
@@ -190,27 +217,12 @@ let parkData: any[] = [
       y: 10,
       z: 300
     }
-  },
-  {
-    name: '房间入口',
-    type: 'PARK_ROOM_INLET',
-    position: {
-      x: 100,
-      y: 10,
-      z: 300
-    }
-  },
+  }
+]
+parkData.push(...monitors)
 
-  {
-    name: 'DOT',
-    unit: '%',
-    type: 'DOT',
-    position: {
-      x: 300,
-      y: 10,
-      z: 350
-    }
-  },
+// 视频锚点
+const videos = [
   {
     name: '小屏幕播放',
     type: 'PARK_VIDEO',
@@ -231,7 +243,12 @@ let parkData: any[] = [
     },
     scale: { x: 4, y: 4, z: 4 },
     bind: '大屏幕'
-  },
+  }
+]
+parkData.push(...videos)
+
+// 商业楼1 开门锚点
+const openDoor1 = [
   {
     name: '侧门开门-外',
     type: 'OPEN_THE_DOOR',
@@ -251,7 +268,12 @@ let parkData: any[] = [
       z: -10.58
     },
     bind: '侧门'
-  },
+  }
+]
+parkData.push(...openDoor1)
+
+// 商业楼2 开门锚点
+const openDoor2 = [
   {
     name: '半开门-外',
     type: 'HALF_OPEN_THE_DOOR',
@@ -292,10 +314,14 @@ let parkData: any[] = [
       z: -74.5
     },
     bind: '单开小门002'
-  },
+  }
+]
+parkData.push(...openDoor2)
 
+// 商业楼3 开门锚点
+const openDoor3 = [
   {
-    name: '双开门-内',
+    name: '双开门-外',
     type: 'DOUBLE_OPEN_THE_DOOR',
     position: {
       x: -76,
@@ -305,7 +331,7 @@ let parkData: any[] = [
     bind: '感应门'
   },
   {
-    name: '双开门-内',
+    name: '双开门-外',
     type: 'DOUBLE_OPEN_THE_DOOR',
     position: {
       x: -61,
@@ -315,7 +341,7 @@ let parkData: any[] = [
     bind: '感应门001'
   },
   {
-    name: '双开门-内',
+    name: '双开门-外',
     type: 'DOUBLE_OPEN_THE_DOOR',
     position: {
       x: -46,
@@ -323,8 +349,12 @@ let parkData: any[] = [
       z: -206.6
     },
     bind: '感应门002'
-  },
+  }
+]
+parkData.push(...openDoor3)
 
+// 电梯房 开门锚点
+const openDoor4 = [
   {
     name: '半开门',
     type: 'HALF_OPEN_THE_DOOR',
@@ -334,8 +364,27 @@ let parkData: any[] = [
       z: 56.7
     },
     bind: '单元门'
-  },
+  }
+]
+parkData.push(...openDoor4)
 
+// 现代门窗 开门锚点
+const openDoor5 = [
+  {
+    name: '推拉门-外',
+    type: 'SLIDING_DOOR',
+    position: {
+      x: 114.3,
+      y: 3,
+      z: -97.4
+    },
+    bind: '推拉门'
+  }
+]
+parkData.push(...openDoor5)
+
+// 电梯房 电梯锚点
+const lifts = [
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
@@ -401,6 +450,7 @@ let parkData: any[] = [
     bind: '电梯门5'
   }
 ]
+parkData.push(...lifts)
 
 // 左边
 // 树木，围栏
@@ -496,11 +546,11 @@ export default [
           // floorExpandIndex: 3,
           floorExpandMargin: 450,
           floorExpandMode: 'BA',
-          // target: { x: -89.7, y: -2.6, z: 187.1 },
-          // to: { x: -118.4, y: 3, z: 220.4 }
+          target: { x: -89.7, y: -2.6, z: 187.1 },
+          to: { x: -118.4, y: 3, z: 220.4 }
 
-          target: { x: 95.5, y: -30.1, z: 169.3 },
-          to: { x: 86.36, y: 51.63, z: -31.87 }
+          // target: { x: 95.5, y: -30.1, z: 169.3 },
+          // to: { x: 86.36, y: 51.63, z: -31.87 }
         }
       })
   }
