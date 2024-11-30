@@ -909,7 +909,7 @@ export const updateObjectCall = (_obj: ObjectItem, isRandom) => {
 
 // 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
 export const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
-  let { el, type, colorObj: cobj, color, paused } = opts
+  let { el, type: _type, colorObj: _cobj, color, paused } = opts
   let colors = UTILS.getColorArr(color)
   color = colors[0]
 
