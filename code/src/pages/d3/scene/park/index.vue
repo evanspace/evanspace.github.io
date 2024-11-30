@@ -85,7 +85,7 @@ import { colors } from './colors'
 
 import { deepMerge } from 'three-scene/utils/index'
 
-import type { ObjectItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
