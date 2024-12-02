@@ -52,7 +52,8 @@ const Api = {
     device: '/d3/device',
     device2: '/d3/device2',
     floor: '/d3/floor',
-    park: '/d3/park'
+    park: '/d3/park',
+    station: '/d3/station'
   },
 
   area: {

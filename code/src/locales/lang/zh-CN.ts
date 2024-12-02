@@ -89,6 +89,7 @@ export default {
     device: '设备',
     floor: '楼层',
     park: '园区',
+    station: '车站',
 
     hemisphere: '半球',
     simple: '简单',

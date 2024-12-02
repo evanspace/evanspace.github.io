@@ -257,11 +257,11 @@ const loopLoadObject = async (item: ObjectItem) => {
 // 初始化设备列表
 const initDevices = () => {
   let i = 0,
-    len = deviceConfigs.value.length
+    len = modelConfigList.value.length
   return new Promise(resolve => {
     if (len == 0) return resolve(null)
     const _loop = async () => {
-      const item = deviceConfigs.value[i]
+      const item = modelConfigList.value[i]
       await loopLoadObject(item)
       i++
       if (i < len) {
@@ -324,7 +324,7 @@ const createCharacter = () => {
 }
 
 // 加载
-const deviceConfigs = ref<ObjectItem[]>([])
+const modelConfigList = ref<ObjectItem[]>([])
 const load = () => {
   loadModels(pageOpts.models, () => {
     request.getConfig().then(async res => {
@@ -336,7 +336,7 @@ const load = () => {
           json = JSON.parse(res.ConfigJson)
         } catch (er) {}
       }
-      deviceConfigs.value = res.JsonList
+      modelConfigList.value = res.JsonList
       Object.keys(json).forEach(key => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
