@@ -819,7 +819,7 @@ export class ParkThreeScene extends ThreeScene {
         typeof object.name == 'string' &&
         (this.extend.groundMeshName || []).some(t => object.name.indexOf(t) > -1)
 
-      const obj = this.findParentGroupGroup(object)
+      const obj = this.findParentGroup(object)
       if (isClickGround) {
         if (typeof this.extend?.onClickGround === 'function')
           this.extend.onClickGround(obj, intersct)
@@ -876,7 +876,7 @@ export class ParkThreeScene extends ThreeScene {
   }
 
   // 查找父级组合
-  findParentGroupGroup(object) {
+  findParentGroup(object) {
     const _find = obj => {
       if (obj._isBuilding_) return obj
       let parent = obj.parent
