@@ -35,6 +35,7 @@ let floorData: any[] = [
     {
       name: '摄像头',
       type: 'COLD_CAMERA',
+      followMark: 'FLOOR_COMMON_5',
       position: {
         x: 0,
         y: 500,
