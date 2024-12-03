@@ -1,19 +1,17 @@
 import * as THREE from 'three'
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
 import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
-import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 
 import type { Config, ExtendOptions } from '.'
+import type { ObjectItem, XYZ } from 'three-scene/types/model'
 
 import DEFAULTCONFIG from './config'
 
 import * as UTILS from 'three-scene/utils/model'
 
 const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
-const { createMove, moveAnimate } = useMoveAnimate()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 
 export class StationThreeScene extends ThreeScene {

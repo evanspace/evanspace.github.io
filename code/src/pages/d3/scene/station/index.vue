@@ -43,7 +43,7 @@ const { progress, loadModels, getModel } = useModelLoader({
 })
 
 const containerRef = ref()
-let options: ConstructorParameters<typeof StationThreeScene>[0] = {
+const options: ConstructorParameters<typeof StationThreeScene>[0] = {
   axes: {
     visible: true
   },
