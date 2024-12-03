@@ -1,5 +1,13 @@
 <template>
   <div :class="$style.page">
+    <!-- 操作按钮 -->
+    <div class="scene-operation">
+      <div class="btn" @click="() => updateObject()">随机更新</div>
+      <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
+      <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
+      <div class="btn" @click="() => scene?.controlReset()">控制器重置</div>
+    </div>
+
     <div :class="$style.container" ref="containerRef"></div>
 
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
@@ -30,7 +38,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 1
+    version: 2
   }
 })
 
@@ -44,13 +52,22 @@ let options: ConstructorParameters<typeof StationThreeScene>[0] = {
     fork: true,
     divisions: 20
   },
+  fog: {
+    visible: !true,
+    near: 1000,
+    far: 3000,
+    color: 0xefd1b5
+  },
   controls: {
-    enableDamping: true,
-    dampingFactor: 0.1,
+    enableDamping: !true,
+    dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.45,
     // enablePan: false
     screenSpacePanning: false,
-    maxDistance: 150
+    maxDistance: 1500
+  },
+  directionalLight: {
+    intensity: 3
   }
 }
 let scene: InstanceType<typeof StationThreeScene>
@@ -221,6 +238,23 @@ const createDotObject = item => {
       console.log(e)
     })
   )
+}
+
+// 更新
+const updateObject = () => {
+  scene.getAll().forEach((el, _i) => {
+    if (!el.data) return
+
+    const data = el.data
+    // 数据参数
+    let type = data.type
+
+    // 点位
+    if (type === pageOpts.dotKey) {
+      updateDotVisible(el)
+      return
+    }
+  })
 }
 </script>
 

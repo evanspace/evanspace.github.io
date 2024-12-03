@@ -307,6 +307,11 @@ export class StationThreeScene extends ThreeScene {
     return _find(object)
   }
 
+  // 获取所有对象
+  getAll() {
+    return this.buildingGroup.children.concat(this.dotGroup.children)
+  }
+
   resize() {
     super.resize()
     const { width, height } = this.options
