@@ -248,12 +248,13 @@ export class StationThreeScene extends ThreeScene {
     raycaster.setFromCamera(pointer, this.camera)
     let interscts = raycaster.intersectObjects(objects, isClick /* 是否检查所有后代 */)
 
-    dom.style.cursor = !isClick && interscts.length > 0 ? 'pointer' : 'auto'
+    // dom.style.cursor = !isClick && interscts.length > 0 ? 'pointer' : 'auto'
     if (!isClick) {
       // 处理锚点类型-精灵材质
       this.hoverAnchor(interscts)
       return
     }
+    dom.style.cursor = 'auto'
 
     if (interscts.length) {
       const intersct = interscts[0]
@@ -286,6 +287,7 @@ export class StationThreeScene extends ThreeScene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
+      this.container.style.cursor = object._isAnchor_ ? 'pointer' : 'auto'
       if (!object._isAnchor_) return
 
       const mat = object.material
@@ -297,6 +299,7 @@ export class StationThreeScene extends ThreeScene {
         el.__change_color__ = el.uuid === object.uuid
       })
     } else {
+      this.container.style.cursor = 'auto'
       this.anchorGroup.children.forEach(el => {
         el.__change_color__ = false
       })
