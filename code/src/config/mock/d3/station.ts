@@ -10,6 +10,9 @@ const JsonList = [
 
 // 楼宇 building
 const buildings = [
+  // [-170, 200],
+  // [170, 200]
+
   [-170, -420],
   [-100, -420],
   [-50, -470],
@@ -17,7 +20,6 @@ const buildings = [
   [-170, -200],
   [170, -200],
   [620, -140],
-  [750, 40],
   [830, -500],
   [950, -500]
 ]
@@ -32,7 +34,7 @@ const getListByPos = (pos, type, name) => {
       position: {
         x,
         y: 0.2,
-        z
+        z: -z
       }
     })
   }
@@ -54,7 +56,6 @@ const residentials = [
   [12, 1310],
   [-114, 1310],
   [500, 910],
-  [370, 100],
   [354, 1220],
   [354, 1332],
   [500, 1400],
@@ -123,7 +124,23 @@ const posList = [
   {
     name: '点位 1',
     type: 'ANCHOR_POS',
-    position: { x: 0, y: 0, z: 0 }
+    position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: 20.2, y: 10.3, z: 218.5 },
+    target: { x: -1.57, y: -2.6, z: 173.4 }
+  },
+  {
+    name: '点位 2',
+    type: 'ANCHOR_POS',
+    position: { x: 113.4, y: 43.6, z: 116.4 },
+    to: { x: 134, y: 56.7, z: 128.9 },
+    target: { x: 15.9, y: -2.6, z: 19.3 }
+  },
+  {
+    name: '点位 3',
+    type: 'ANCHOR_POS',
+    position: { x: -317.9, y: 4, z: 295.6 },
+    to: { x: -364.9, y: 10.5, z: 311.4 },
+    target: { x: -290.8, y: -2.6, z: 274.7 }
   }
 ]
 JsonList.push(...posList)

@@ -18,7 +18,7 @@ export const getPageOpts = () => ({
 
   config: {},
 
-  anchorType: ['monitor_camera'],
+  anchorType: [ANCHOR_POS],
   animationModelType: [MAIN_SCENE],
 
   models: [
@@ -51,7 +51,7 @@ export const getPageOpts = () => ({
       key: ANCHOR_POS,
       name: '定位',
       type: 'sprite',
-      range: { x: 2, y: 2 },
+      range: { x: 4, y: 4 },
       mapUrl: '/pos.png'
     }
   ].map(item => {

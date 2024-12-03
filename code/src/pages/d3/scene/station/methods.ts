@@ -96,10 +96,14 @@ export class StationThreeScene extends ThreeScene {
   }
 
   // 添加锚点
-  addAnchor(...obj) {
+  addAnchor(obj) {
     if (this.anchorGroup) {
-      this.anchorGroup.add(...obj)
+      this.anchorGroup.add(obj)
     }
+
+    const { x, y, z } = obj.position
+    // 创建精灵动画
+    UTILS.createSpriteAnimate(obj, [x, y, z], 1, 8)
   }
 
   // 添加点位组
@@ -170,6 +174,18 @@ export class StationThreeScene extends ThreeScene {
     this.animateModels.push(model)
   }
 
+  // 相机转场
+  cameraTransition(object) {
+    const { to, target = object.position } = object.data
+
+    if (!to) return
+    if (!this.isCameraMove(to)) {
+      const { x, y, z } = target
+      this.controls.target.set(x, y, z)
+      UTILS.cameraInSceneAnimate(this.camera, to, this.controls.target)
+    }
+  }
+
   // 模型动画
   modelAnimate(): void {
     // css2D 渲染器
@@ -183,9 +199,17 @@ export class StationThreeScene extends ThreeScene {
     // 模型动画
     if (this.animateModels.length) {
       this.animateModels.forEach(el => {
-        el.__mixer__.update(delta)
+        if (el.__mixer__) {
+          el.__mixer__.update(delta)
+        }
       })
     }
+
+    this.anchorGroup.children.forEach(el => {
+      if (el.__mixer__) {
+        el.__mixer__.update(delta)
+      }
+    })
   }
 
   // 移动
@@ -236,13 +260,14 @@ export class StationThreeScene extends ThreeScene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
+      console.log(intersct)
 
       // 是否点击地面
       const isClickGround =
         typeof object.name == 'string' &&
         (this.extend.groundMeshName || []).some(t => object.name.indexOf(t) > -1)
 
-      const obj = this.findParentGroupGroup(object)
+      const obj = this.findParentGroup(object)
       if (isClickGround) {
         if (typeof this.extend?.onClickGround === 'function')
           this.extend.onClickGround(obj, intersct)
@@ -292,7 +317,7 @@ export class StationThreeScene extends ThreeScene {
   }
 
   // 查找父级组合
-  findParentGroupGroup(object) {
+  findParentGroup(object) {
     const _find = obj => {
       if (obj._isBuilding_) return obj
       let parent = obj.parent

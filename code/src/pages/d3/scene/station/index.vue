@@ -16,7 +16,7 @@
 
 <script lang="ts" setup>
 import tLoading from 'three-scene/components/loading/index.vue'
-import { getPageOpts } from './data'
+import { getPageOpts, ANCHOR_POS } from './data'
 import * as request from './request'
 
 import { StationThreeScene, dotUpdateObjectCall } from './methods'
@@ -38,7 +38,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 2
+    version: 4
   }
 })
 
@@ -59,12 +59,12 @@ let options: ConstructorParameters<typeof StationThreeScene>[0] = {
     color: 0xefd1b5
   },
   controls: {
-    enableDamping: !true,
+    enableDamping: true,
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.45,
     // enablePan: false
     screenSpacePanning: false,
-    maxDistance: 1500
+    maxDistance: 800
   },
   directionalLight: {
     intensity: 3
@@ -74,7 +74,18 @@ let scene: InstanceType<typeof StationThreeScene>
 
 onMounted(() => {
   options.container = containerRef.value
-  scene = new StationThreeScene(options, {})
+  scene = new StationThreeScene(options, {
+    onClickLeft: (object, _intersct) => {
+      if (object && object.data) {
+        const data = object.data
+        switch (data?.type) {
+          case ANCHOR_POS: // 定位
+            scene.cameraTransition(object)
+            break
+        }
+      }
+    }
+  })
   scene.run()
 
   useResize(scene).resize()
@@ -188,7 +199,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 动画
   if (animationModelType.includes(type)) {
-    scene.addModelAnimate(model, obj.animations, true, 0.1)
+    scene.addModelAnimate(model, obj.animations, true, 1)
   }
 
   // 锚点
