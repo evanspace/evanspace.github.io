@@ -922,12 +922,6 @@ export class ParkThreeScene extends ThreeScene {
     return to
   }
 
-  // 获取场景坐标
-  getPosition() {
-    console.log('camera.position', this.camera.position)
-    console.log('controls.target', this.controls.target)
-  }
-
   resize() {
     super.resize()
     const { width, height } = this.options
