@@ -65,7 +65,7 @@ const createVideoDom = (src?: string) => {
 }
 
 // 视频封面
-const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/ztny.png')
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/cover.jpeg')
 
 const sightMap = {
   full: 'FULL',
@@ -86,6 +86,9 @@ export class ParkThreeScene extends ThreeScene {
   anchorGroup?: InstanceType<typeof THREE.Group>
   // 点位集合
   dotGroup?: InstanceType<typeof THREE.Group>
+  // 灯光组
+  lightGroup?: InstanceType<typeof THREE.Group>
+
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
@@ -106,6 +109,9 @@ export class ParkThreeScene extends ThreeScene {
 
   // 动画模型集合
   animateModels: any[]
+
+  // 移动系数
+  moveFactor: number = 1
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene>[0],
@@ -134,6 +140,7 @@ export class ParkThreeScene extends ThreeScene {
     this.addBuildingGroup()
     this.addAnchorGroup()
     this.addDotGroup()
+    this.addLightGroup()
 
     // 光晕
     this.addLensflare()
@@ -156,6 +163,7 @@ export class ParkThreeScene extends ThreeScene {
     this.addBuildingGroup()
     this.clearAnchor()
     this.clearDot()
+    this.clearLightGroup()
   }
 
   // 添加建筑
@@ -226,6 +234,37 @@ export class ParkThreeScene extends ThreeScene {
     label._position_ = { x, y, z }
     this.dotGroup.add(label)
     return label
+  }
+
+  // 添加灯光组
+  addLightGroup() {
+    const group = new THREE.Group()
+    group.name = '灯光组'
+    this.lightGroup = group
+    this.addObject(group)
+  }
+
+  // 清除灯光组
+  clearLightGroup() {
+    if (this.lightGroup) {
+      this.disposeObj(this.lightGroup)
+    }
+    this.addLightGroup()
+  }
+
+  // 添加灯光
+  addLight(item: ObjectItem, obj, hasHelper?: boolean) {
+    console.log(item, obj)
+    if (this.lightGroup) {
+      obj.name = item.name
+      const { to = { x: 0, y: 0, z: 0 } } = item
+      obj.target.position.set(to.x, to.y, to.z)
+      this.lightGroup.add(obj)
+      if (hasHelper) {
+        const helper = new THREE.SpotLightHelper(obj, obj.color)
+        this.lightGroup.add(helper)
+      }
+    }
   }
 
   // 添加太阳光晕
@@ -338,7 +377,7 @@ export class ParkThreeScene extends ThreeScene {
     const isCharacter = sight === sightMap.npc
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 15 : 150
+    this.controls.maxDistance = isCharacter ? 15 : 1500
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.49 : 0.45)
@@ -366,6 +405,13 @@ export class ParkThreeScene extends ThreeScene {
     //   .to(isCharacter ? position : this.historyTarget, 1000 * 1)
     //   .delay(0)
     //   .start()
+  }
+
+  // 人物加速
+  characterAccelerate() {
+    this.moveFactor++
+    if (this.moveFactor >= 10) this.moveFactor = 10
+    console.log('当前人物速度系数：' + this.moveFactor)
   }
 
   // 设置控制中心点
@@ -403,7 +449,8 @@ export class ParkThreeScene extends ThreeScene {
         pos => {
           this.setControlTarget(pos)
         },
-        _pos => {
+        pos => {
+          this.setControlTarget(pos)
           runging.stop()
           obj.visible = false
           resolve(character)
@@ -485,7 +532,7 @@ export class ParkThreeScene extends ThreeScene {
       new TWEEN.Tween(position)
         .to(
           {
-            x: dobj.__position__.x + (dobj.__open__ ? 800 : 0)
+            x: dobj.__position__.x + (dobj.__open__ ? 7 : 0)
           },
           1000 * 1.5
         )
@@ -654,6 +701,16 @@ export class ParkThreeScene extends ThreeScene {
     )
   }
 
+  // 开关灯
+  lightSwitch(object) {
+    console.log(object)
+    const light = this.lightGroup.getObjectsByProperty('name', object.data?.bind)
+    light.forEach(el => {
+      el.visible = !el.visible
+    })
+    console.log(light)
+  }
+
   // 添加模型动画
   addModelAnimate(model, animations = [], play: boolean = true, timeScale: number = 1) {
     if (!animations.length) return
@@ -693,7 +750,7 @@ export class ParkThreeScene extends ThreeScene {
       const mixer = this.character.extra.mixer
       mixer.update(delta)
 
-      moveAnimate(0.5)
+      moveAnimate(0.5 * this.moveFactor)
     }
 
     this.restoreAnchorMaterial()
@@ -743,17 +800,19 @@ export class ParkThreeScene extends ThreeScene {
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
     let interscts = raycaster.intersectObjects(objects, isClick /* 是否检查所有后代 */)
+    // let interscts = raycaster.intersectObjects(objects, true)
 
-    dom.style.cursor = !isClick && interscts.length > 0 ? 'pointer' : 'auto'
     if (!isClick) {
       // 处理锚点类型-精灵材质
       this.hoverAnchor(interscts)
       return
     }
+    dom.style.cursor = 'auto'
 
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
+      console.log(intersct)
 
       // 是否点击地面
       const isClickGround =
@@ -781,7 +840,13 @@ export class ParkThreeScene extends ThreeScene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
-      if (!object._isAnchor_) return
+      this.container.style.cursor = object._isAnchor_ ? 'pointer' : 'auto'
+      if (!object._isAnchor_) {
+        this.anchorGroup.children.forEach(el => {
+          el.__change_color__ = false
+        })
+        return
+      }
 
       const mat = object.material
       if (object.__mat_color__ === void 0) {
@@ -792,6 +857,7 @@ export class ParkThreeScene extends ThreeScene {
         el.__change_color__ = el.uuid === object.uuid
       })
     } else {
+      this.container.style.cursor = 'auto'
       this.anchorGroup.children.forEach(el => {
         el.__change_color__ = false
       })

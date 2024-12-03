@@ -8,6 +8,7 @@
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
       <div class="btn" @click="() => scene?.controlReset()">控制器重置</div>
+      <div class="btn" @click="() => scene?.characterAccelerate()">人物加速</div>
       <div class="btn" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</div>
     </div>
 
@@ -24,20 +25,11 @@
 
     <div :class="$style.container" ref="containerRef"></div>
 
-    <div
-      class="loading"
-      :class="$style.loading"
-      :style="{ '--bg-color': pageOpts.bgColor ? String(pageOpts.bgColor) : '' }"
-      @dblclick.stop
-      v-if="progress.show"
-    >
-      <div :class="$style.progress" :style="{ '--percentage': progress.percentage + '%' }">
-        <div :class="$style['bar-out']">
-          <div :class="$style.bar"></div>
-        </div>
-        <div :class="$style.text">{{ progress.percentage }}%</div>
-      </div>
-    </div>
+    <t-loading
+      v-model="progress.show"
+      :bg-color="pageOpts.bgColor"
+      :progress="progress.percentage"
+    ></t-loading>
 
     <div
       :class="$style.tip"
@@ -53,6 +45,7 @@
 </template>
 
 <script lang="ts" setup>
+import tLoading from 'three-scene/components/loading/index.vue'
 import {
   ROBOT,
   CHARACTER,
@@ -63,6 +56,7 @@ import {
   DOUBLE_OPEN_THE_DOOR,
   WAIT_LIFT,
   SLIDING_DOOR,
+  LIGHT_SWITCH,
   getPageOpts,
   getFloorOpts,
   getTipOpts
@@ -118,20 +112,20 @@ const { progress, loadModels, getModel } = useModelLoader({
   colors: COLORS,
   colorMeshName: pageOpts.colorMeshName,
   indexDB: {
-    cache: true,
+    cache: !true,
     dbName: 'THREE__PARK__DB',
     tbName: 'TB',
-    version: 61
+    version: 74
   }
 })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
-    maxDistance: 150,
+    maxDistance: 1500,
     maxPolarAngle: Math.PI * 0.45,
-    screenSpacePanning: false,
-    enablePan: false
+    screenSpacePanning: !false,
+    enablePan: !false
   },
   camera: {
     position: [-85.7, 3.6, 208.6]
@@ -145,7 +139,7 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   },
   directionalLight: {
     visible: true,
-    intensity: 2
+    intensity: 3
   }
 }
 
@@ -245,8 +239,11 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
-
     scene.addAnchor(model)
+  }
+  // 聚光灯
+  else if (model.isSpotLight) {
+    scene.addLight(item, model, true)
   } else {
     scene.addBuilding(model)
   }
@@ -318,8 +315,9 @@ const createCharacter = () => {
     y: 0.16,
     z: 193.4
   }
-  move.x = 98.4
-  move.z = -87
+
+  // move.x = 98.4
+  // move.z = -87
   scene.addCharacter(obj, move)
 }
 
@@ -431,15 +429,7 @@ onMounted(() => {
 
   const liftMeshName = '轿厢-ground'
   scene = new ParkThreeScene(options, {
-    groundMeshName: [
-      'Plane001',
-      'Plane002',
-      'Plane003',
-      '楼板',
-      'mesh_0_4',
-      'ground',
-      liftMeshName
-    ],
+    groundMeshName: ['楼板', 'mesh_0_4', 'ground', liftMeshName],
     onDblclick: object => {
       console.log(object)
     },
@@ -463,11 +453,13 @@ onMounted(() => {
           case SLIDING_DOOR: // 推拉门
             scene.openTheSlidingDoor(object)
             break
+          case LIGHT_SWITCH: // 开关灯
+            scene.lightSwitch(object)
+            break
         }
       }
     },
     onClickGround: (_object, intersct) => {
-      console.log(intersct)
       scene.mouseClickGround(intersct).then(_obj => {
         floorOpts.show = intersct.object.name === liftMeshName
       })

@@ -118,7 +118,7 @@ let parkData: any[] = [
     name: '商业楼 1',
     type: 'building_commercial_1',
     position: { x: 40, y: 0.16, z: 25 },
-    rotation: { x: 0, y: 180, z: 0 }
+    rotation: { x: 0, y: 0, z: 180 }
   },
   {
     name: '商业楼 2',
@@ -451,6 +451,82 @@ const lifts = [
   }
 ]
 parkData.push(...lifts)
+
+// 灯光
+const lights = [
+  {
+    name: '楼栋1聚光灯',
+    type: 'spot_light_reception',
+    position: {
+      x: 37,
+      y: 6.8,
+      z: -6
+    },
+    to: {
+      x: 37,
+      y: 0,
+      z: -6
+    }
+  },
+
+  // 单层建筑
+  {
+    name: '前台聚光灯',
+    type: 'spot_light_reception',
+    position: {
+      x: 111.4,
+      y: 18.9,
+      z: -77
+    },
+    to: {
+      x: 111.4,
+      y: 0,
+      z: -77
+    }
+  },
+  {
+    name: '前台聚光灯',
+    type: 'spot_light_reception',
+    position: {
+      x: 111.5,
+      y: 19.6,
+      z: -78
+    },
+    to: {
+      x: 111.5,
+      y: 0,
+      z: -78
+    }
+  }
+]
+parkData.push(...lights)
+
+// 灯关-锚点
+const lightSwitchs = [
+  {
+    name: '楼栋1灯开关',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 37,
+      y: 2,
+      z: -6
+    },
+    bind: '楼栋1聚光灯'
+  },
+
+  // 单层建筑
+  {
+    name: '前台灯开关',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 109.3,
+      y: 1.5,
+      z: -77
+    },
+    bind: '前台聚光灯'
+  }
+]
+parkData.push(...lightSwitchs)
 
 // 左边
 // 树木，围栏

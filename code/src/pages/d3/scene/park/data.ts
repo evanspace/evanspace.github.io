@@ -11,6 +11,7 @@ export const HALF_OPEN_THE_DOOR = 'HALF_OPEN_THE_DOOR' // 半开门-90 度开门
 export const DOUBLE_OPEN_THE_DOOR = 'DOUBLE_OPEN_THE_DOOR' // 双开门
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 export const SLIDING_DOOR = 'SLIDING_DOOR' // 推拉门
+export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 
 // 点位向上向量
 const POINT_UP = 0.2
@@ -38,7 +39,8 @@ export const getPageOpts = animateBack => ({
     HALF_OPEN_THE_DOOR,
     DOUBLE_OPEN_THE_DOOR,
     WAIT_LIFT,
-    SLIDING_DOOR
+    SLIDING_DOOR,
+    LIGHT_SWITCH
   ],
   // 汽车类型，需要行驶
   carType: ['car_tanker', 'car_goods', 'car_trailer', 'car_crane'],
@@ -108,12 +110,6 @@ export const getPageOpts = animateBack => ({
       size: 0.06,
       url: '/停车位.glb'
     },
-    // {
-    //   key: 'RAILING_GROUP',
-    //   name: '栏杆群',
-    //   size: 0.06,
-    //   url: '/栏杆群.glb'
-    // },
 
     /////////////////////
     {
@@ -162,7 +158,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'building_commercial_2',
       name: '商业楼2',
-      size: 19,
+      size: 14.5,
       url: '/商业楼2.glb'
     },
     {
@@ -180,7 +176,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'building_commercial_5',
       name: '现代门窗',
-      size: 78,
+      size: 95,
       url: '/现代门窗.glb'
     },
     /////////////////////
@@ -261,7 +257,6 @@ export const getPageOpts = animateBack => ({
       key: 'PARK_CAMERA',
       name: '摄像头',
       type: 'sprite',
-      size: 1,
       range: { x: 18.5, y: 38.5 },
       mapUrl: '/sxt.png'
     },
@@ -269,7 +264,6 @@ export const getPageOpts = animateBack => ({
       key: VIDEOPLAY,
       name: '视频播放',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/video.png'
     },
@@ -277,7 +271,6 @@ export const getPageOpts = animateBack => ({
       key: OPEN_THE_DOOR,
       name: '开门',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/open.png'
     },
@@ -285,7 +278,6 @@ export const getPageOpts = animateBack => ({
       key: HALF_OPEN_THE_DOOR,
       name: '半开门',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/open.png'
     },
@@ -293,7 +285,6 @@ export const getPageOpts = animateBack => ({
       key: DOUBLE_OPEN_THE_DOOR,
       name: '双开门',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/open.png'
     },
@@ -301,7 +292,6 @@ export const getPageOpts = animateBack => ({
       key: SLIDING_DOOR,
       name: '推拉门',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/open.png'
     },
@@ -309,9 +299,27 @@ export const getPageOpts = animateBack => ({
       key: WAIT_LIFT,
       name: '电梯门',
       type: 'sprite',
-      size: 1,
       range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
+    },
+
+    {
+      key: 'spot_light_reception',
+      type: 'spotlight',
+      name: '聚光灯',
+      // 强度
+      intensity: 8,
+      // 距离
+      distance: 100,
+      // 衰减
+      decay: 0
+    },
+    {
+      key: LIGHT_SWITCH,
+      name: '开关灯',
+      type: 'sprite',
+      range: { x: 1.2, y: 1.2 },
+      mapUrl: '/light.png'
     }
   ].map(item => {
     if (item.url) {
