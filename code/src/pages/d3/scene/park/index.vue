@@ -429,7 +429,7 @@ onMounted(() => {
 
   const liftMeshName = '轿厢-ground'
   scene = new ParkThreeScene(options, {
-    groundMeshName: ['楼板', 'mesh_0_4', 'ground', liftMeshName],
+    groundMeshName: ['地面', '楼板', 'mesh_0_4', 'ground', liftMeshName],
     onDblclick: object => {
       console.log(object)
     },

@@ -1,0 +1,56 @@
+
+
+
+.page {
+  font-size: 14px;
+  padding-top: 10px;
+}
+.container {
+  width: 888px;
+  margin: 40px auto;
+
+
+  table {
+    // background-color: #fff;
+  }
+  table th,
+  table td {
+    padding: 10px;
+  }
+  table th {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  thead th:not(:nth-child(1)),
+  tbody td {
+    width: 100px;
+    height: 45px;
+    text-align: center;
+  }
+
+  tr:nth-child(1) td:nth-child(1),
+  tr:nth-child(5) td:nth-child(1) {
+    width: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+}
+.left,
+.right {
+  margin: 10px;
+  padding: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  background-color: rgba(0, 0, 0, 0.1);
+  .item {
+    color: #fff;
+    cursor: grab;
+    padding: 5px 10px;
+  }
+}
+
+.left .item {
+  margin: 10px 0;
+}
+
+.drop-over {
+  background-color: rgba(0, 0, 0, 0.2);
+}
