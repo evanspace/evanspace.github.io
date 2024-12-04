@@ -61,7 +61,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
   controls: {
     enableDamping: true,
     dampingFactor: 0.48,
-    maxPolarAngle: Math.PI * 0.45,
+    maxPolarAngle: Math.PI * 0.48,
     // enablePan: false
     screenSpacePanning: false,
     maxDistance: 800
