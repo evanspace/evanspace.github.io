@@ -164,17 +164,12 @@ const initDevices = () => {
 // 循环加载对象
 const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
-  const { type, url } = item
+  const { type } = item
   const obj = getModel(type)
   if (!obj) {
-    // 地址存在 属于 base 底座
-    if (!!url) {
-      // await loadBase(item)
-    } else {
-      // 点位
-      if (type === pageOpts.dotKey) {
-        createDotObject(item)
-      }
+    // 点位
+    if (type === pageOpts.dotKey) {
+      createDotObject(item)
     }
     return
   }

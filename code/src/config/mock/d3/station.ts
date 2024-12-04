@@ -154,7 +154,7 @@ export default [
       builder({
         JsonList,
         ModelUrl: '/oss/model/floor/场景.glb',
-        Name: '园区展示',
+        Name: '车站展示',
         ConfigJson: {
           target: { x: -16.17, y: -2.6, z: 114.2 },
           to: { x: -4.85, y: 35.07, z: 351.78 }
