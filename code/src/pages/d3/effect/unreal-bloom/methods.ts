@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import ThreeScene from 'three-scene'
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
@@ -71,29 +70,16 @@ export class NewThreeScene extends ThreeScene {
 
   initModel() {
     loadModel({
-      url: params.glb
+      url: params.glb,
+      key: '',
+      name: ''
     }).then(model => {
       model.scale.setScalar(50)
       this.addObject(model)
 
       // 动画
       const mixer = new THREE.AnimationMixer(model)
-      const clip = gltf.animations[0]
-      // 优化,播放
-      mixer.clipAction(clip.optimize()).play()
-      this.mixer = mixer
-    })
-    return
-    const loader = new GLTFLoader()
-    loader.load(params.glb, gltf => {
-      console.log(gltf)
-      const model = gltf.scene
-      model.scale.setScalar(50)
-      this.addObject(model)
-
-      // 动画
-      const mixer = new THREE.AnimationMixer(model)
-      const clip = gltf.animations[0]
+      const clip = model.animations[0]
       // 优化,播放
       mixer.clipAction(clip.optimize()).play()
       this.mixer = mixer
