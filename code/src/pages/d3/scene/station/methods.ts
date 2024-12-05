@@ -357,6 +357,18 @@ export class StationThreeScene extends ThreeScene {
       this.controls.target.set(x, y, z)
       UTILS.cameraInSceneAnimate(this.camera, to, this.controls.target)
     }
+
+    const { bind } = object.data
+    if (!bind) return
+
+    const obj = this.buildingGroup?.getObjectByName(bind)
+
+    var boxHelper = new THREE.BoxHelper(obj, 0xff0000) // 创建 BoxHelper
+    boxHelper.update() //更新
+    const box = new THREE.Box3().setFromObject(obj) // 获取模型的包围盒
+    const center = box.getCenter(new THREE.Vector3())
+    console.log(center, box, boxHelper)
+    this.addObject(boxHelper) //添加到场景中
   }
 
   // 相机移动聚焦点

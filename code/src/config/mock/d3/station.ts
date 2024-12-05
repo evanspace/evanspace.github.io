@@ -169,7 +169,8 @@ const posList = [
     type: 'ANCHOR_POS',
     position: { x: 205.5, y: 61.6, z: 105.7 },
     to: { x: 161.7, y: 84.2, z: 152.3 },
-    target: { x: 407.7, y: -2.6, z: 13 }
+    target: { x: 407.7, y: -2.6, z: 13 },
+    bind: '_光伏大楼_grp'
   }
 ]
 JsonList.push(...posList)
