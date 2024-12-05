@@ -106,7 +106,7 @@ const containerRef = ref()
 const COLORS = deepMerge(colors, pageOpts.colors)
 
 const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModels, getModel } = useModelLoader({
+const { progress, loadModels, getModel, virtualization, closeVirtualization } = useModelLoader({
   baseUrl: pageOpts.baseUrl,
   // dracoPath: pageOpts.dracoUrl,
   colors: COLORS,
@@ -431,7 +431,18 @@ onMounted(() => {
   scene = new ParkThreeScene(options, {
     groundMeshName: ['地面', '楼板', 'mesh_0_4', 'ground', liftMeshName],
     onDblclick: object => {
-      console.log(object)
+      if (object.data?.type === 'building_commercial_5') {
+        virtualization(
+          object,
+          scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)),
+          {
+            wireframe: !false,
+            opacity: 0.1
+          }
+        )
+      } else {
+        closeVirtualization(scene.buildingGroup?.children)
+      }
     },
     onClickLeft(object, _intersct) {
       if (object && object.data) {

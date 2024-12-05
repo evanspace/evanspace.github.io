@@ -763,6 +763,27 @@ export class ParkThreeScene extends ThreeScene {
     }
   }
 
+  // 双击
+  onDblclick(e: MouseEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e as PointerEvent, dom, scale)
+
+    if (this.buildingGroup) {
+      // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+      raycaster.setFromCamera(pointer, this.camera)
+      // 检查射线和物体之间的交叉点（包含或不包含后代）
+      const objects = [this.buildingGroup]
+      const interscts = raycaster.intersectObjects(objects)
+      if (interscts.length) {
+        const obj = interscts[0].object
+        const object = this.findParentGroup(obj)
+        if (!object) return
+        if (typeof this.extend?.onDblclick === 'function') this.extend.onDblclick(object)
+      }
+    }
+  }
+
   // 移动
   onPointerMove(e: PointerEvent) {
     this.checkIntersectObjects(e)

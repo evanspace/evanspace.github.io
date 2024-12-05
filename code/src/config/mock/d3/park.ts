@@ -533,14 +533,15 @@ parkData.push(...lightSwitchs)
 const step = 10.84
 // -74.3
 let z = -195.58
+let arbors: any[] = []
 while (z) {
   if (z >= -70) break
-  parkData.push({
+  arbors.push({
     name: '小树' + z,
     type: 'ARBOR_ONE',
     position: { x: -140, y: 0, z: z }
   })
-  parkData.push({
+  arbors.push({
     name: '围栏' + z,
     type: 'FENCE',
     position: { x: -138.3, y: 0, z: z },
@@ -551,12 +552,12 @@ while (z) {
 z = -48.2 + step / 2
 while (z) {
   if (z >= 195) break
-  parkData.push({
+  arbors.push({
     name: '小树' + z,
     type: 'ARBOR_ONE',
     position: { x: -140, y: 0, z: z }
   })
-  parkData.push({
+  arbors.push({
     name: '围栏' + z,
     type: 'FENCE',
     position: { x: -138.3, y: 0, z: z },
@@ -564,6 +565,7 @@ while (z) {
   })
   z += step
 }
+parkData.push(...arbors)
 
 // 前边
 const before = [
@@ -580,15 +582,17 @@ const before = [
   [-16.66, 182.47],
   [-5.96, 181.17]
 ]
+let fences: any[] = []
 before.forEach((item, index) => {
   const [x, z] = item
-  parkData.push({
+  fences.push({
     name: '围栏' + z,
     type: 'FENCE',
     position: { x: x, y: 0, z: z },
     rotation: { x: 0, y: index < 5 ? 6 : 7.5, z: 0 }
   })
 })
+parkData.push(...fences)
 
 // 奥迪车
 const carSpeed = 90 - 86.5
