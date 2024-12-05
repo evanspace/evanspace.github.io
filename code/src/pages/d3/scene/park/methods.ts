@@ -738,7 +738,9 @@ export class ParkThreeScene extends ThreeScene {
     if (typeof this.extend.animateCall === 'function') this.extend.animateCall()
 
     // 水面波动
-    this.water.material.uniforms['time'].value += 1 / 60
+    if (this.water) {
+      this.water.material.uniforms['time'].value += 1 / 60
+    }
 
     // 波纹扩散
     if (this.mouseClickDiffusion.visible) {
