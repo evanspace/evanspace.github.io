@@ -115,6 +115,27 @@ const monitorCameras = [
       y: 10,
       z: 350
     }
+  },
+
+  {
+    name: '光伏板',
+    unit: 'kWh',
+    type: 'DOT',
+    position: {
+      x: 263.7,
+      y: 56.3,
+      z: 110.3
+    }
+  },
+  {
+    name: '光伏板',
+    unit: 'kWh',
+    type: 'DOT',
+    position: {
+      x: 242.2,
+      y: 56.3,
+      z: 73.8
+    }
   }
 ]
 JsonList.push(...monitorCameras)
@@ -122,25 +143,33 @@ JsonList.push(...monitorCameras)
 // 定位点
 const posList = [
   {
-    name: '点位 1',
+    name: '一号机位',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: 20.2, y: 10.3, z: 218.5 },
     target: { x: -1.57, y: -2.6, z: 173.4 }
   },
   {
-    name: '点位 2',
+    name: '二号机位',
     type: 'ANCHOR_POS',
     position: { x: 113.4, y: 43.6, z: 116.4 },
     to: { x: 134, y: 56.7, z: 128.9 },
     target: { x: 15.9, y: -2.6, z: 19.3 }
   },
   {
-    name: '点位 3',
+    name: '三号机位',
     type: 'ANCHOR_POS',
     position: { x: -317.9, y: 4, z: 295.6 },
     to: { x: -364.9, y: 10.5, z: 311.4 },
     target: { x: -290.8, y: -2.6, z: 274.7 }
+  },
+
+  {
+    name: '光伏能耗',
+    type: 'ANCHOR_POS',
+    position: { x: 205.5, y: 61.6, z: 105.7 },
+    to: { x: 161.7, y: 84.2, z: 152.3 },
+    target: { x: 407.7, y: -2.6, z: 13 }
   }
 ]
 JsonList.push(...posList)
@@ -156,7 +185,7 @@ export default [
         ModelUrl: '/oss/model/floor/场景.glb',
         Name: '车站展示',
         ConfigJson: {
-          target: { x: -16.17, y: -2.6, z: 114.2 },
+          target: { x: 0, y: -2.6, z: 114.2 },
           to: { x: -4.85, y: 35.07, z: 351.78 }
         }
       })

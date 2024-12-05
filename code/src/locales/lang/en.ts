@@ -89,6 +89,7 @@ export default {
     device: 'device',
     floor: 'floor',
     park: 'park',
+    station: 'station',
 
     hemisphere: 'hemisphere',
     simple: 'simple',

@@ -477,7 +477,7 @@ onMounted(() => {
         tipOpts.msg = `
           <p>${data.name}</p>
           <p>类型：${data.type}</p>
-          <p>绑定：${data.bind}</p>
+          <p>绑定：${data.bind || '无'}</p>
         `
       }
     }

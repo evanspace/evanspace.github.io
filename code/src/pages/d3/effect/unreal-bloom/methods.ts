@@ -8,10 +8,23 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 
+import { useModelLoader } from 'three-scene/hooks/model-loader'
+
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+
+const { loadModel } = useModelLoader({
+  baseUrl: base,
+  indexDB: {
+    cache: false,
+    dbName: 'THREE__BLOOM__DB',
+    tbName: 'TB',
+    version: 1
+  }
+})
 
 const params = {
   glb: `${base}/oss/model/gltf/PrimaryIonDrive.glb`,
+  // glb: `${base}/oss/model/station/楼宇.glb`,
   threshold: 0,
   strength: 1,
   radius: 0,
@@ -57,6 +70,20 @@ export class NewThreeScene extends ThreeScene {
   }
 
   initModel() {
+    loadModel({
+      url: params.glb
+    }).then(model => {
+      model.scale.setScalar(50)
+      this.addObject(model)
+
+      // 动画
+      const mixer = new THREE.AnimationMixer(model)
+      const clip = gltf.animations[0]
+      // 优化,播放
+      mixer.clipAction(clip.optimize()).play()
+      this.mixer = mixer
+    })
+    return
     const loader = new GLTFLoader()
     loader.load(params.glb, gltf => {
       console.log(gltf)

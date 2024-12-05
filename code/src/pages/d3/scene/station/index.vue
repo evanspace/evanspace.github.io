@@ -5,21 +5,46 @@
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
-      <div class="btn" @click="() => scene?.controlReset()">控制器重置</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
 
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+
+    <div :class="$style.camera">
+      <div
+        :class="$style.item"
+        v-for="item in cameraPositionList"
+        @click="onCameraTransition(item)"
+      >
+        {{ item.name }}
+      </div>
+      <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
+      <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
+      <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
+      <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
+      <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
+    </div>
+
+    <div
+      :class="$style.tip"
+      v-if="tipOpts.show"
+      :style="{
+        left: tipOpts.style.left + 'px',
+        top: tipOpts.style.top + 'px'
+      }"
+    >
+      <div :class="$style.msg" v-html="tipOpts.msg"></div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tLoading from 'three-scene/components/loading/index.vue'
-import { getPageOpts, ANCHOR_POS } from './data'
+import { ANCHOR_POS, ROBOT, CRUISE_POINT_UP, CHARACTER, getPageOpts, getTipOpts } from './data'
 import * as request from './request'
 
-import { StationThreeScene, dotUpdateObjectCall } from './methods'
+import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
 import { useBackground } from 'three-scene/hooks/background'
@@ -28,36 +53,41 @@ import * as UTILS from 'three-scene/utils/model'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
-const pageOpts = reactive(getPageOpts())
+const pageOpts = reactive(
+  getPageOpts((pos, lookAt, cruiseCurve, t) => {
+    if (robotObj) {
+      // 前置视角前 0.02
+      t = t + 0.02
+      if (t > 1) t = t - 1
+      pos = getOffsetPoint(cruiseCurve.getPointAt(t))
+      const oft = 0.001
+      let ts = t + oft
+      if (ts > 1) ts = ts - 1
+      lookAt = cruiseCurve.getPointAt(ts)
+
+      robotObj.position.set(pos.x, CRUISE_POINT_UP, pos.z)
+      // 求正切值
+      const angle = Math.atan2(-lookAt.z + pos.z, lookAt.x - pos.x)
+      robotObj.rotation.z = Math.PI * 0.5 + angle
+    }
+  })
+)
+const tipOpts = reactive(getTipOpts())
 
 const { changeBackground, backgroundLoad } = useBackground()
 const { progress, loadModels, getModel } = useModelLoader({
   baseUrl: pageOpts.baseUrl,
-  // colorMeshName: pageOpts.colorMeshName,
   indexDB: {
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 5
+    version: 8
   }
 })
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof StationThreeScene>[0] = {
-  axes: {
-    visible: true
-  },
-  grid: {
-    visible: !true,
-    fork: true,
-    divisions: 20
-  },
-  fog: {
-    visible: !true,
-    near: 1000,
-    far: 3000,
-    color: 0xefd1b5
-  },
+  cruise: pageOpts.cruise,
   controls: {
     enableDamping: true,
     dampingFactor: 0.48,
@@ -75,6 +105,7 @@ let scene: InstanceType<typeof StationThreeScene>
 onMounted(() => {
   options.container = containerRef.value
   scene = new StationThreeScene(options, {
+    groundMeshName: ['行走地面'],
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data
@@ -83,6 +114,28 @@ onMounted(() => {
             scene.cameraTransition(object)
             break
         }
+      }
+    },
+    onClickGround: (_object, intersct) => {
+      scene
+        .mouseClickGround(intersct)
+        .then(obj => {
+          console.log(obj)
+        })
+        .catch(() => {})
+    },
+    onHoverAnchor: (object, style) => {
+      const isShow = !!object && object.object._isAnchor_
+      tipOpts.show = isShow
+      if (isShow) {
+        tipOpts.style.top = style.top
+        tipOpts.style.left = style.left
+        const data = object.object.data
+        tipOpts.msg = `
+          <p>${data.name}</p>
+          <p>类型：${data.type}</p>
+          <p>绑定：${data.bind || '无'}</p>
+        `
       }
     }
   })
@@ -99,6 +152,10 @@ const initPage = () => {
 
 // 加载
 const modelConfigList = ref<ObjectItem[]>([])
+// 定位点位列表
+const cameraPositionList = computed(() =>
+  modelConfigList.value.filter(it => it.type === ANCHOR_POS)
+)
 const load = () => {
   loadModels(pageOpts.models, () => {
     request.getConfig().then(async res => {
@@ -115,6 +172,8 @@ const load = () => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
       await assemblyScenario()
+      createRoblt()
+      createCharacter()
     })
   })
 }
@@ -132,7 +191,7 @@ const assemblyScenario = async () => {
   await initDevices()
 
   // 巡航
-  // scene.setCruisePoint(pageOpts.cruise.points)
+  scene.setCruisePoint(pageOpts.cruise.points)
 
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
@@ -260,6 +319,38 @@ const updateObject = () => {
       updateDotVisible(el)
       return
     }
+  })
+}
+
+// 创建机器人
+let robotObj: any
+const createRoblt = () => {
+  robotObj = getModel(ROBOT)
+  robotObj.position.z = CRUISE_POINT_UP
+  robotObj.rotation.z = Math.PI * 0.5
+  scene.addObject(robotObj)
+}
+
+// 创建人物
+const createCharacter = () => {
+  const obj = getModel(CHARACTER)
+  obj.traverse(el => {
+    if (el.isMesh) {
+      el.castShadow = true
+    }
+  })
+  const move = {
+    x: 0,
+    y: 27.5,
+    z: 122
+  }
+  scene.addCharacter(obj, move)
+}
+
+const onCameraTransition = item => {
+  scene.cameraTransition({
+    position: item.position,
+    data: item
   })
 }
 </script>

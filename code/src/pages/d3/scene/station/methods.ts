@@ -3,6 +3,8 @@ import * as THREE from 'three'
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
 import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
+import { useDiffusion } from 'three-scene/hooks/diffusion'
+import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 
 import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/types/model'
@@ -13,7 +15,13 @@ import * as UTILS from 'three-scene/utils/model'
 
 const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
+const { createDiffusion, updateDiffusion } = useDiffusion()
+const { createMove, moveAnimate } = useMoveAnimate()
 
+const sightMap = {
+  full: 'FULL',
+  npc: 'NPC'
+}
 export class StationThreeScene extends ThreeScene {
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
@@ -25,12 +33,26 @@ export class StationThreeScene extends ThreeScene {
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
   css2DRender: InstanceType<typeof CSS2DRenderer>
+  // 鼠标点击地面扩散波效果
+  mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
+  // 行走的人物
+  character?: InstanceType<typeof THREE.Group>
 
   // 时间
   clock: InstanceType<typeof THREE.Clock>
 
+  // 当前视角
+  currentSight: string
+  // 历史中心点（视角切换）
+  historyTarget: InstanceType<typeof THREE.Vector3>
+  // 历史相机坐标（视角切换）
+  historyCameraPosition: InstanceType<typeof THREE.Vector3>
+
   // 动画模型集合
   animateModels: InstanceType<typeof THREE.Group>[]
+
+  // 移动系数
+  moveFactor: number = 1
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene>[0],
@@ -42,7 +64,17 @@ export class StationThreeScene extends ThreeScene {
     this.css2DRender = initCSS2DRender(this.options, this.container)
     this.css2DRender.domElement.className = 'three-scene__dot-wrap'
 
+    // 鼠标点击地面扩散波效果
+    this.mouseClickDiffusion = createDiffusion(4, void 0, 6)
+    this.mouseClickDiffusion.rotation.x = -Math.PI * 0.5
+    this.mouseClickDiffusion.position.y = 0.5
+    this.mouseClickDiffusion.visible = false
+    this.addObject(this.mouseClickDiffusion)
+
     this.clock = new THREE.Clock()
+    this.currentSight = sightMap.full
+    this.historyTarget = new THREE.Vector3()
+    this.historyCameraPosition = new THREE.Vector3()
     this.animateModels = []
 
     this.bindEvent()
@@ -144,6 +176,134 @@ export class StationThreeScene extends ThreeScene {
     return label
   }
 
+  // 添加人物
+  addCharacter(model, point) {
+    const { x, y, z } = point
+    model.position.set(x, y, z)
+
+    this.character = model
+
+    // 动画
+    const animations = model.animations
+    const mixer = new THREE.AnimationMixer(model)
+    const actions = {}
+
+    for (let i = 0; i < animations.length; i++) {
+      const clip = animations[i]
+      const action = mixer.clipAction(clip)
+      actions[clip.name] = action
+    }
+
+    // 舞蹈
+    const dance = actions['Dance']
+    dance.play()
+
+    // 步行
+    const runging = actions['Walking']
+
+    model.extra = {
+      mixer,
+      actions,
+      runging
+    }
+    this.addObject(model)
+  }
+
+  // 视角切换（人物/全屏）
+  toggleSight() {
+    if (this.judgeCruise()) return
+
+    const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
+    this.currentSight = sight
+
+    // 人物视角
+    const isCharacter = sight === sightMap.npc
+
+    // 控制器操作限制切换
+    this.controls.maxDistance = isCharacter ? 20 : 800
+    this.controls.screenSpacePanning = !isCharacter
+    this.controls.enablePan = !isCharacter
+
+    const target = this.controls.target
+    const position = this.character.position
+    /// 切换到人物视角，暂存控制参数
+    if (isCharacter) {
+      const { x, y, z } = target
+      this.historyTarget = new THREE.Vector3(x, y, z)
+      const { x: x2, y: y2, z: z2 } = position
+      this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
+      this.camera.lookAt(new THREE.Vector3(x2, y2 + 3, z2))
+    } else {
+      const { x, y, z } = this.historyCameraPosition
+      this.camera.position.set(x, y, z)
+      this.camera.lookAt(position)
+    }
+
+    const { x, y, z } = isCharacter ? position : this.historyTarget
+    target.set(x, y, z)
+  }
+
+  // 是否人物视角
+  isPerspectives() {
+    return this.currentSight == sightMap.npc
+  }
+
+  // 人物加速
+  characterAccelerate(speed = 1) {
+    this.moveFactor += speed
+    if (this.moveFactor >= 10) this.moveFactor = 10
+    else if (this.moveFactor <= 1) this.moveFactor = 1
+    ElMessage.success({
+      message: '人物速度：' + this.moveFactor,
+      grouping: true
+    })
+  }
+
+  // 设置控制中心点
+  setControlTarget(point) {
+    const height = 3
+    const { x, y, z } = point
+    this.controls.target.set(x, y + height, z)
+    this.camera.lookAt(this.controls.target)
+  }
+
+  // 鼠标点击地面
+  mouseClickGround(intersct) {
+    if (this.currentSight !== sightMap.npc) return Promise.reject()
+
+    const character = this.character
+    if (!character) return Promise.reject()
+    const { runing } = this.options.cruise
+    // 自动巡航中不操作
+    if (runing) return Promise.reject()
+    const lookAt = intersct.point
+    const obj = this.mouseClickDiffusion
+
+    const { runging } = character.extra
+    runging.play()
+
+    const { x, y, z } = lookAt
+    obj.position.set(x, y, z)
+    obj.visible = true
+
+    return new Promise(resolve => {
+      // 创建移动
+      createMove(
+        character,
+        lookAt,
+        pos => {
+          this.setControlTarget(pos)
+        },
+        pos => {
+          this.setControlTarget(pos)
+          runging.stop()
+          obj.visible = false
+          resolve(character)
+        }
+      )
+    })
+  }
+
   // 获取动画目标点
   getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
     const to = _to || config.to || { x: -104, y: 7, z: 58 }
@@ -174,14 +334,50 @@ export class StationThreeScene extends ThreeScene {
 
   // 相机转场
   cameraTransition(object) {
+    if (this.judgeCruise()) return
+
+    if (this.mouseClickDiffusion.visible) {
+      ElMessage.warning({
+        message: '人物移动中，不可操作！',
+        grouping: true
+      })
+      return
+    }
+
+    if (this.isPerspectives()) {
+      this.toggleSight()
+    }
+
     const { to, target = object.position } = object.data
 
     if (!to) return
+
     if (!this.isCameraMove(to)) {
       const { x, y, z } = target
       this.controls.target.set(x, y, z)
       UTILS.cameraInSceneAnimate(this.camera, to, this.controls.target)
     }
+  }
+
+  // 判断是否巡航中
+  judgeCruise() {
+    if (this.options.cruise.runing) {
+      ElMessage.warning({
+        message: '请退出巡航！',
+        grouping: true
+      })
+      return true
+    }
+    return false
+  }
+
+  // 控制重置视角
+  controlReset() {
+    if (this.judgeCruise()) return
+    if (this.isPerspectives()) {
+      this.toggleSight()
+    }
+    super.controlReset()
   }
 
   // 模型动画
@@ -208,6 +404,18 @@ export class StationThreeScene extends ThreeScene {
         el.__mixer__.update(delta)
       }
     })
+
+    if (this.character) {
+      const mixer = this.character.extra.mixer
+      mixer.update(delta)
+
+      moveAnimate(0.5 * this.moveFactor)
+    }
+
+    // 波纹扩散
+    if (this.mouseClickDiffusion.visible) {
+      updateDiffusion()
+    }
   }
 
   // 移动
@@ -363,4 +571,9 @@ export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
       color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
     }
   }
+}
+
+// 偏移坐标
+export const getOffsetPoint = (pos, offset = 0) => {
+  return new THREE.Vector3(pos.x, pos.y + offset, pos.z)
 }
