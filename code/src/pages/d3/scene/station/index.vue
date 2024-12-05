@@ -299,8 +299,8 @@ const updateDotVisible = (target: ThreeModelItem) => {
 // 创建 dot 点位
 const createDotObject = item => {
   updateDotVisible(
-    scene.addDot(item, e => {
-      console.log(e)
+    scene.addDot(item, _e => {
+      scene.cameraLookatMoveTo(item.position)
     })
   )
 }

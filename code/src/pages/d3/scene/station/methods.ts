@@ -359,6 +359,11 @@ export class StationThreeScene extends ThreeScene {
     }
   }
 
+  // 相机移动聚焦点
+  cameraLookatMoveTo(pos) {
+    UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target)
+  }
+
   // 判断是否巡航中
   judgeCruise() {
     if (this.options.cruise.runing) {
