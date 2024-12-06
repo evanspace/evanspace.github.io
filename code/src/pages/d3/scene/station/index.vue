@@ -81,7 +81,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 11
+    version: 12
   }
 })
 
@@ -105,7 +105,7 @@ let scene: InstanceType<typeof StationThreeScene>
 onMounted(() => {
   options.container = containerRef.value
   scene = new StationThreeScene(options, {
-    groundMeshName: ['行走地面'],
+    groundMeshName: ['行走地面', '平面125', '平面126', '平面127', '平面128', '平面129', '平面130'],
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data

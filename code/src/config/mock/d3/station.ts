@@ -118,7 +118,7 @@ const monitorCameras = [
   },
 
   {
-    name: '光伏板',
+    name: '右侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
     position: {
@@ -128,13 +128,34 @@ const monitorCameras = [
     }
   },
   {
-    name: '光伏板',
+    name: '右侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
     position: {
       x: 242.2,
       y: 56.3,
       z: 73.8
+    }
+  },
+
+  {
+    name: '左侧-光伏板',
+    unit: 'kWh',
+    type: 'DOT',
+    position: {
+      x: -259.5,
+      y: 56.6,
+      z: 111.1
+    }
+  },
+  {
+    name: '左侧-光伏板',
+    unit: 'kWh',
+    type: 'DOT',
+    position: {
+      x: -248.7,
+      y: 56.3,
+      z: 72.3
     }
   }
 ]
@@ -147,7 +168,8 @@ const posList = [
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: 20.2, y: 10.3, z: 218.5 },
-    target: { x: -1.57, y: -2.6, z: 173.4 }
+    target: { x: -1.57, y: -2.6, z: 173.4 },
+    bind: 'Tree-03-2158'
   },
   {
     name: '二号机位',
@@ -165,12 +187,21 @@ const posList = [
   },
 
   {
-    name: '光伏能耗',
+    name: '右侧光伏',
     type: 'ANCHOR_POS',
-    position: { x: 205.5, y: 61.6, z: 105.7 },
-    to: { x: 161.7, y: 84.2, z: 152.3 },
-    target: { x: 407.7, y: -2.6, z: 13 },
-    bind: '_光伏大楼_grp'
+    position: { x: 203.6, y: 61.6, z: 24.5 },
+    to: { x: 150.7, y: 90, z: -24 },
+    target: { x: 343, y: -2.6, z: 158.7 },
+    bind: '_光伏大楼_2_grp'
+  },
+
+  {
+    name: '左侧光伏',
+    type: 'ANCHOR_POS',
+    position: { x: -318, y: 70.9, z: 167.6 },
+    to: { x: -430.9, y: 162.7, z: 258.4 },
+    target: { x: -188.3, y: -2.6, z: 64 },
+    bind: '_光伏大楼_1_grp'
   }
 ]
 JsonList.push(...posList)

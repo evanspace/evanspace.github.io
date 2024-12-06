@@ -5,6 +5,7 @@ import { useRaycaster } from 'three-scene/hooks/raycaster'
 import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
 import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
+import { useFence } from 'three-scene/hooks/fence'
 
 import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/types/model'
@@ -17,6 +18,7 @@ const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
+const { createFence, fenceAnimate } = useFence()
 
 const sightMap = {
   full: 'FULL',
@@ -53,6 +55,9 @@ export class StationThreeScene extends ThreeScene {
 
   // 移动系数
   moveFactor: number = 1
+
+  // 围栏
+  fence?: InstanceType<typeof THREE.Group>
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene>[0],
@@ -353,22 +358,32 @@ export class StationThreeScene extends ThreeScene {
     if (!to) return
 
     if (!this.isCameraMove(to)) {
-      const { x, y, z } = target
-      this.controls.target.set(x, y, z)
-      UTILS.cameraInSceneAnimate(this.camera, to, this.controls.target)
+      UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
 
     const { bind } = object.data
-    if (!bind) return
+    if (!bind) {
+      return
+    }
 
     const obj = this.buildingGroup?.getObjectByName(bind)
+    this.addFence(obj)
+  }
 
-    var boxHelper = new THREE.BoxHelper(obj, 0xff0000) // 创建 BoxHelper
-    boxHelper.update() //更新
-    const box = new THREE.Box3().setFromObject(obj) // 获取模型的包围盒
-    const center = box.getCenter(new THREE.Vector3())
-    console.log(center, box, boxHelper)
-    this.addObject(boxHelper) //添加到场景中
+  // 添加围栏
+  addFence(model?) {
+    // 先删除
+    if (this.fence) {
+      this.disposeObj(this.fence)
+      this.fence = void 0
+    }
+
+    if (model) {
+      // 围栏
+      const fence = createFence(model, 0x09c17e)
+      this.fence = fence
+      this.addObject(fence)
+    }
   }
 
   // 相机移动聚焦点
@@ -433,6 +448,8 @@ export class StationThreeScene extends ThreeScene {
     if (this.mouseClickDiffusion.visible) {
       updateDiffusion()
     }
+
+    fenceAnimate()
   }
 
   // 移动
