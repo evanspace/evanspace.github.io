@@ -380,7 +380,7 @@ export class StationThreeScene extends ThreeScene {
 
     if (model) {
       // 围栏
-      const fence = createFence(model, 0x09c17e)
+      const fence = createFence(model, 0x30ffcf)
       this.fence = fence
       this.addObject(fence)
     }
