@@ -90,6 +90,7 @@ export default {
     floor: 'floor',
     park: 'park',
     station: 'station',
+    office: 'office',
 
     hemisphere: 'hemisphere',
     simple: 'simple',

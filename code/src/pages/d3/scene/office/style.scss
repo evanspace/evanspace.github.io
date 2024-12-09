@@ -1,0 +1,31 @@
+
+@use 'three-scene/assets/css/mixin.scss';
+
+.page {
+  height: 100%;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+
+.container {
+  height: 100%;
+}
+
+.page {
+
+}
+
+
+:global {
+  :local( .page ) {
+    @include mixin.scene-operation;
+  }
+}
+
+:global {
+  :local( .container ) {
+    @include mixin.dot-label;
+  }
+}

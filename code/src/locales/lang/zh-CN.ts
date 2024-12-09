@@ -90,6 +90,7 @@ export default {
     floor: '楼层',
     park: '园区',
     station: '车站',
+    office: '写字楼',
 
     hemisphere: '半球',
     simple: '简单',
