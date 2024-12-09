@@ -87,6 +87,8 @@ const { progress, loadModels, getModel } = useModelLoader({
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof StationThreeScene>[0] = {
+  baseUrl: pageOpts.baseUrl,
+  env: pageOpts.env,
   cruise: pageOpts.cruise,
   controls: {
     enableDamping: true,
@@ -97,7 +99,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     maxDistance: 800
   },
   directionalLight: {
-    intensity: 3
+    intensity: 2.2
   }
 }
 let scene: InstanceType<typeof StationThreeScene>
