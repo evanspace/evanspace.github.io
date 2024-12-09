@@ -585,6 +585,27 @@ export class StationThreeScene extends ThreeScene {
     const { width, height } = this.options
     this.css2DRender.setSize(width, height)
   }
+
+  dispose() {
+    this.animateModels = []
+    this.disposeObj(this.buildingGroup)
+    this.disposeObj(this.character)
+    this.disposeObj(this.dotGroup)
+    this.disposeObj(this.anchorGroup)
+    this.disposeObj(this.fence)
+    this.disposeObj(this.mouseClickDiffusion)
+
+    this.clock = null
+    this.css2DRender = null
+    this.buildingGroup = null
+    this.character = null
+    this.dotGroup = null
+    this.anchorGroup = null
+    this.fence = null
+    this.mouseClickDiffusion = null
+    this.extend = {}
+    super.dispose()
+  }
 }
 
 // 点位更新回调

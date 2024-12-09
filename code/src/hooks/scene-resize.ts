@@ -14,7 +14,6 @@ export const useResize = threeScene => {
     window.addEventListener('resize', _resize, false)
 
     onBeforeUnmount(() => {
-      threeScene?.stopAnimate()
       threeScene?.dispose()
       window.removeEventListener('resize', _resize)
     })

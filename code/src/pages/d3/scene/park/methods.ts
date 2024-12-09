@@ -254,7 +254,6 @@ export class ParkThreeScene extends ThreeScene {
 
   // 添加灯光
   addLight(item: ObjectItem, obj, hasHelper?: boolean) {
-    console.log(item, obj)
     if (this.lightGroup) {
       obj.name = item.name
       const { to = { x: 0, y: 0, z: 0 } } = item
@@ -949,6 +948,31 @@ export class ParkThreeScene extends ThreeScene {
     super.resize()
     const { width, height } = this.options
     this.css2DRender.setSize(width, height)
+  }
+
+  dispose() {
+    this.animateModels = []
+    this.disposeObj(this.water)
+    this.disposeObj(this.sky)
+    this.disposeObj(this.buildingGroup)
+    this.disposeObj(this.character)
+    this.disposeObj(this.dotGroup)
+    this.disposeObj(this.anchorGroup)
+    this.disposeObj(this.lightGroup)
+    this.disposeObj(this.mouseClickDiffusion)
+
+    this.clock = null
+    this.water = null
+    this.sky = null
+    this.css2DRender = null
+    this.buildingGroup = null
+    this.character = null
+    this.dotGroup = null
+    this.anchorGroup = null
+    this.lightGroup = null
+    this.mouseClickDiffusion = null
+    this.extend = {}
+    super.dispose()
   }
 }
 
