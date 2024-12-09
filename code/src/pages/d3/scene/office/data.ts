@@ -85,7 +85,7 @@ export const getPageOpts = animateBack => ({
     visible: true,
     auto: true,
     // helper: true,
-    mapUrl: '/oss/textures/cruise/line6.png', // 1-18
+    mapUrl: '/oss/textures/cruise/line13.png', // 1-18
     repeat: [0.1, 1],
     width: 2,
     segment: 500,

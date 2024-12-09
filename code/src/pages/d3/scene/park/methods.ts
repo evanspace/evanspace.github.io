@@ -387,11 +387,11 @@ export class ParkThreeScene extends ThreeScene {
     if (isCharacter) {
       const { x, y, z } = target
       this.historyTarget = new THREE.Vector3(x, y, z)
-      const { x: x2, y: y2, z: z2 } = position
+      const { x: x2, y: y2, z: z2 } = this.camera.position
       this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
-      this.camera.lookAt(new THREE.Vector3(x2, y2 + 3, z2))
+      const { x: x3, y: y3, z: z3 } = position
+      this.camera.lookAt(new THREE.Vector3(x3, y3 + 3, z3))
     } else {
-      // UTILS.cameraInSceneAnimate(this.camera, this.historyCameraPosition, position)
       const { x, y, z } = this.historyCameraPosition
       this.camera.position.set(x, y, z)
       this.camera.lookAt(position)
