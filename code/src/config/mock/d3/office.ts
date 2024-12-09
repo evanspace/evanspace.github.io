@@ -170,8 +170,12 @@ const posList = [
     to: { x: 20.2, y: 10.3, z: 218.5 },
     target: { x: -1.57, y: -2.6, z: 173.4 },
     bind: 'Tree-03-2158'
-  },
+  }
+]
+JsonList.push(...posList)
 
+// 电梯
+const lifts = [
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
@@ -187,9 +191,115 @@ const posList = [
       z: -103.23
     },
     bind: '电梯门1'
+  },
+  {
+    name: '二楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: -4,
+      y: 17,
+      z: 16.8
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 13.8,
+      z: -18.2
+    },
+    bind: '电梯门2'
+  },
+  {
+    name: '三楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: -4,
+      y: 23.8,
+      z: 16.8
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 19.83,
+      z: -18.2
+    },
+    bind: '电梯门3'
+  },
+  {
+    name: '五楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: -4,
+      y: 35.8,
+      z: 16.8
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0.14,
+      y: 31.76,
+      z: -18.2
+    },
+    bind: '电梯门5'
   }
 ]
-JsonList.push(...posList)
+JsonList.push(...lifts)
+
+// 灯光
+const lights = [
+  {
+    name: '2层聚光灯-1',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 3.6,
+      y: 18.5,
+      z: 5.6
+    },
+    to: {
+      x: 3.6,
+      y: 0,
+      z: 5.6
+    }
+  },
+  {
+    name: '2层聚光灯-2',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 15.4,
+      y: 18.5,
+      z: 5.6
+    },
+    to: {
+      x: 15.4,
+      y: 0,
+      z: 5.6
+    }
+  }
+]
+JsonList.push(...lights)
+
+// 灯关-锚点
+const lightSwitchs = [
+  {
+    name: '2层聚光灯',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 3.6,
+      y: 14.5,
+      z: 5.6
+    },
+    bind: '2层聚光灯-1'
+  },
+  {
+    name: '2层聚光灯',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 15.4,
+      y: 14.5,
+      z: 5.6
+    },
+    bind: '2层聚光灯-2'
+  }
+]
+JsonList.push(...lightSwitchs)
 
 export default [
   {

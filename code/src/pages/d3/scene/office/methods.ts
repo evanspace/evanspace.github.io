@@ -32,6 +32,8 @@ export class OfficeThreeScene extends ThreeScene {
   anchorGroup?: InstanceType<typeof THREE.Group>
   // 点位集合
   dotGroup?: InstanceType<typeof THREE.Group>
+  // 灯光组
+  lightGroup?: InstanceType<typeof THREE.Group>
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
@@ -87,6 +89,7 @@ export class OfficeThreeScene extends ThreeScene {
     this.addBuildingGroup()
     this.addAnchorGroup()
     this.addDotGroup()
+    this.addLightGroup()
   }
 
   // 添加建筑组
@@ -139,7 +142,7 @@ export class OfficeThreeScene extends ThreeScene {
 
     const { x, y, z } = obj.position
     // 创建精灵动画
-    UTILS.createSpriteAnimate(obj, [x, y, z], 1, 8)
+    UTILS.createSpriteAnimate(obj, [x, y, z], 0.2, 8)
   }
 
   // 添加点位组
@@ -180,6 +183,36 @@ export class OfficeThreeScene extends ThreeScene {
     label._position_ = { x, y, z }
     this.dotGroup.add(label)
     return label
+  }
+
+  // 添加灯光组
+  addLightGroup() {
+    const group = new THREE.Group()
+    group.name = '灯光组'
+    this.lightGroup = group
+    this.addObject(group)
+  }
+
+  // 清除灯光组
+  clearLightGroup() {
+    if (this.lightGroup) {
+      this.disposeObj(this.lightGroup)
+    }
+    this.addLightGroup()
+  }
+
+  // 添加灯光
+  addLight(item: ObjectItem, obj, hasHelper?: boolean) {
+    if (this.lightGroup) {
+      obj.name = item.name
+      const { to = { x: 0, y: 0, z: 0 } } = item
+      obj.target.position.set(to.x, to.y, to.z)
+      this.lightGroup.add(obj)
+      if (hasHelper) {
+        const helper = new THREE.SpotLightHelper(obj, obj.color)
+        this.lightGroup.add(helper)
+      }
+    }
   }
 
   // 添加人物
@@ -226,7 +259,7 @@ export class OfficeThreeScene extends ThreeScene {
     const isCharacter = sight === sightMap.npc
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 20 : 800
+    this.controls.maxDistance = isCharacter ? 10 : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
 
@@ -240,7 +273,7 @@ export class OfficeThreeScene extends ThreeScene {
       const { x: x2, y: y2, z: z2 } = this.camera.position
       this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
       const { x: x3, y: y3, z: z3 } = position
-      this.camera.lookAt(new THREE.Vector3(x3, y3 + 3, z3))
+      this.camera.lookAt(new THREE.Vector3(x3, y3 + 1.5, z3))
     } else {
       const { x, y, z } = this.historyCameraPosition
       console.log(this.historyCameraPosition)
@@ -270,18 +303,17 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 设置控制中心点
   setControlTarget(point) {
-    const height = 3
+    const height = 1.5
     const { x, y, z } = point
     this.controls.target.set(x, y + height, z)
     this.camera.lookAt(this.controls.target)
   }
 
   //  等电梯
-  waitLift(object, liftName, fllow?: boolean) {
-    const liftGroupName = '单元1号电梯'
+  waitLift(object, liftGroupName, fllow?: boolean) {
     // 电梯轿厢
     const box = this.scene.getObjectByName(liftGroupName)
-    console.log(box)
+
     // 当前绑定坐标
     const cpos = object.data?.to
     if (!box || !cpos) return
@@ -341,15 +373,23 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 电梯开门
   openLift(object, liftGroupName) {
-    console.log(object)
     // 电梯门打开
-    this.openTheDoubleSlidingDoor(object, 200)
+    this.openTheDoubleSlidingDoor(object, 60)
     this.openTheDoubleSlidingDoor(
       {
         data: { bind: liftGroupName }
       },
-      200 * 0.02
+      60 * 0.02
     )
+  }
+  // 开关灯
+  lightSwitch(object) {
+    console.log(object)
+    const light = this.lightGroup.getObjectsByProperty('name', object.data?.bind)
+    light.forEach(el => {
+      el.visible = !el.visible
+    })
+    console.log(light)
   }
 
   // 双开门(两扇门 往两边平移)
@@ -378,7 +418,7 @@ export class OfficeThreeScene extends ThreeScene {
           {
             x: left.__position__.x + (dobj.__open__ ? -scale : 0)
           },
-          1000 * 1.5
+          1000 * 1
         )
         .delay(0)
         .start()
@@ -387,7 +427,7 @@ export class OfficeThreeScene extends ThreeScene {
           {
             x: rMoveX
           },
-          1000 * 1.5
+          1000 * 1
         )
         .delay(0)
         .start()
@@ -557,7 +597,7 @@ export class OfficeThreeScene extends ThreeScene {
       const mixer = this.character.extra.mixer
       mixer.update(delta)
 
-      moveAnimate(0.5 * this.moveFactor)
+      moveAnimate(0.2 * this.moveFactor)
     }
 
     // 波纹扩散
@@ -709,6 +749,7 @@ export class OfficeThreeScene extends ThreeScene {
     this.disposeObj(this.dotGroup)
     this.disposeObj(this.anchorGroup)
     this.disposeObj(this.fence)
+    this.disposeObj(this.lightGroup)
     this.disposeObj(this.mouseClickDiffusion)
 
     this.clock = null
@@ -717,6 +758,7 @@ export class OfficeThreeScene extends ThreeScene {
     this.character = null
     this.dotGroup = null
     this.anchorGroup = null
+    this.lightGroup = null
     this.fence = null
     this.mouseClickDiffusion = null
     this.extend = {}

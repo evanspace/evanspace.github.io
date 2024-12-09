@@ -7,6 +7,7 @@ export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
+export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
 const mxY = 146,
@@ -33,7 +34,7 @@ export const getPageOpts = animateBack => ({
   dotKey: 'DOT',
   dotShowStrict: false,
 
-  anchorType: [ANCHOR_POS, WAIT_LIFT],
+  anchorType: [ANCHOR_POS, WAIT_LIFT, LIGHT_SWITCH],
   animationModelType: [MAIN_SCENE],
 
   models: [
@@ -70,6 +71,22 @@ export const getPageOpts = animateBack => ({
       name: '人物',
       size: 2.2,
       url: '/oss/model/park/RobotExpressive.glb'
+    },
+
+    {
+      key: 'spot_light_floor_2',
+      type: 'spotlight',
+      name: '聚光灯',
+      intensity: 8,
+      color: 0x00e0ff,
+      distance: 8
+    },
+    {
+      key: LIGHT_SWITCH,
+      name: '开关灯',
+      type: 'sprite',
+      range: { x: 1.2, y: 1.2 },
+      mapUrl: '/light.png'
     }
   ].map(item => {
     if (item.url && item.url.indexOf('oss') < 0) {
@@ -85,7 +102,7 @@ export const getPageOpts = animateBack => ({
     visible: true,
     auto: true,
     // helper: true,
-    mapUrl: '/oss/textures/cruise/line13.png', // 1-18
+    mapUrl: '/oss/textures/cruise/line15.png', // 1-18
     repeat: [0.1, 1],
     width: 2,
     segment: 500,
@@ -97,6 +114,18 @@ export const getPageOpts = animateBack => ({
     offset: 5.2,
     animateBack: animateBack
   }
+})
+
+export const getFloorOpts = () => ({
+  active: 1,
+  show: false,
+  list: [
+    // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+    { name: '一楼', key: 1, y: 0.2 },
+    { name: '二楼', key: 2, y: 13.8 },
+    { name: '三楼', key: 3, y: 19.83 },
+    { name: '五楼', key: 5, y: 31.76 }
+  ]
 })
 
 export const getTipOpts = () => ({

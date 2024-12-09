@@ -25,6 +25,28 @@
       <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
     </div>
+
+    <!-- 楼层选择 -->
+    <div :class="$style['floor-select']" v-show="floorOpts.show">
+      <el-button
+        v-for="item in floorOpts.list"
+        type="primary"
+        :disabled="floorOpts.active === item.key"
+        @click="onFloorMoveTo(item)"
+        >{{ item.name }}</el-button
+      >
+    </div>
+
+    <div
+      :class="$style.tip"
+      v-if="tipOpts.show"
+      :style="{
+        left: tipOpts.style.left + 'px',
+        top: tipOpts.style.top + 'px'
+      }"
+    >
+      <div :class="$style.msg" v-html="tipOpts.msg"></div>
+    </div>
   </div>
 </template>
 
@@ -37,8 +59,10 @@ import {
   ANCHOR_POS,
   CRUISE_POINT_UP,
   WAIT_LIFT,
+  LIGHT_SWITCH,
   getPageOpts,
-  getTipOpts
+  getTipOpts,
+  getFloorOpts
 } from './data'
 import { OfficeThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 import * as request from './request'
@@ -68,6 +92,7 @@ const pageOpts = reactive(
     robotObj.rotation.z = Math.PI * 0.5 + angle
   })
 )
+const floorOpts = reactive(getFloorOpts())
 const tipOpts = reactive(getTipOpts())
 const { changeBackground, backgroundLoad } = useBackground()
 const { progress, loadModels, getModel } = useModelLoader({
@@ -76,7 +101,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 5
+    version: 11
   }
 })
 
@@ -93,7 +118,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     maxDistance: 800
   },
   directionalLight: {
-    intensity: 3
+    // intensity: 3
   },
   axes: {
     visible: true
@@ -101,6 +126,27 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
 }
 let scene: InstanceType<typeof OfficeThreeScene>
 
+const liftGroupName = '单元1号电梯'
+
+// 楼层移动至
+const onFloorMoveTo = item => {
+  floorOpts.active = item.key
+  const liftName = '电梯门' + item.key
+  scene.waitLift(
+    {
+      data: {
+        bind: liftName,
+        to: {
+          y: item.y
+        }
+      }
+    },
+    liftGroupName,
+    true
+  )
+}
+
+// 相机转场
 const onCameraTransition = item => {
   scene.cameraTransition({
     position: item.position,
@@ -223,6 +269,10 @@ const loopLoadObject = async (item: ObjectItem) => {
     model._isAnchor_ = true
 
     scene.addAnchor(model)
+  }
+  // 聚光灯
+  else if (model.isSpotLight) {
+    scene.addLight(item, model, true)
   } else {
     scene.addBuilding(model)
   }
@@ -302,6 +352,7 @@ const createCharacter = () => {
     y: 0,
     z: 0
   }
+  obj.scale.setScalar(0.5)
   scene.addCharacter(obj, move)
 }
 
@@ -312,8 +363,9 @@ const initPage = () => {
 
 onMounted(() => {
   options.container = containerRef.value
+  const liftMeshName = '轿厢-ground'
   scene = new OfficeThreeScene(options, {
-    groundMeshName: ['ground'],
+    groundMeshName: ['ground', liftMeshName],
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data
@@ -322,7 +374,10 @@ onMounted(() => {
             scene.cameraTransition(object)
             break
           case WAIT_LIFT: // 等电梯
-            scene.waitLift(object, '单元1号电梯')
+            scene.waitLift(object, liftGroupName)
+            break
+          case LIGHT_SWITCH: // 开关灯
+            scene.lightSwitch(object)
             break
         }
       }
@@ -330,14 +385,15 @@ onMounted(() => {
     onClickGround: (_object, intersct) => {
       scene
         .mouseClickGround(intersct)
-        .then(obj => {
-          console.log(obj)
+        .then(_obj => {
+          floorOpts.show = intersct.object.name === liftMeshName
         })
         .catch(() => {})
     },
     onHoverAnchor: (object, style) => {
       const isShow = !!object && object.object._isAnchor_
       tipOpts.show = isShow
+
       if (isShow) {
         tipOpts.style.top = style.top
         tipOpts.style.left = style.left
