@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
@@ -214,9 +215,238 @@ export class OfficeThreeScene extends ThreeScene {
     this.addObject(model)
   }
 
+  // 视角切换（人物/全屏）
+  toggleSight() {
+    if (this.judgeCruise()) return
+
+    const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
+    this.currentSight = sight
+
+    // 人物视角
+    const isCharacter = sight === sightMap.npc
+
+    // 控制器操作限制切换
+    this.controls.maxDistance = isCharacter ? 20 : 800
+    this.controls.screenSpacePanning = !isCharacter
+    this.controls.enablePan = !isCharacter
+
+    const target = this.controls.target
+    const position = this.character.position
+    /// 切换到人物视角，暂存控制参数
+    if (isCharacter) {
+      const { x, y, z } = target
+      this.historyTarget = new THREE.Vector3(x, y, z)
+      const { x: x2, y: y2, z: z2 } = position
+      this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
+      this.camera.lookAt(new THREE.Vector3(x2, y2 + 3, z2))
+    } else {
+      const { x, y, z } = this.historyCameraPosition
+      console.log(this.historyCameraPosition)
+      this.camera.position.set(x, y, z)
+      this.camera.lookAt(position)
+    }
+
+    const { x, y, z } = isCharacter ? position : this.historyTarget
+    target.set(x, y, z)
+  }
+
+  // 是否人物视角
+  isPerspectives() {
+    return this.currentSight == sightMap.npc
+  }
+
+  // 人物加速
+  characterAccelerate(speed = 1) {
+    this.moveFactor += speed
+    if (this.moveFactor >= 10) this.moveFactor = 10
+    else if (this.moveFactor <= 1) this.moveFactor = 1
+    ElMessage.success({
+      message: '人物速度：' + this.moveFactor,
+      grouping: true
+    })
+  }
+
+  // 设置控制中心点
+  setControlTarget(point) {
+    const height = 3
+    const { x, y, z } = point
+    this.controls.target.set(x, y + height, z)
+    this.camera.lookAt(this.controls.target)
+  }
+
+  //  等电梯
+  waitLift(object, liftName, fllow?: boolean) {
+    const liftGroupName = '单元1号电梯'
+    // 电梯轿厢
+    const box = this.scene.getObjectByName(liftGroupName)
+    console.log(box)
+    // 当前绑定坐标
+    const cpos = object.data?.to
+    if (!box || !cpos) return
+    // y 轴对比
+    const bpos = box.position
+
+    if (cpos.y != bpos.y) {
+      // 电梯关门
+      const bindLift = box.__bind_lift__
+      if (bindLift !== void 0) {
+        // 绑定过则关闭电梯门
+        this.openTheDoubleSlidingDoor(
+          {
+            data: { bind: bindLift }
+          },
+          200,
+          false
+        )
+      }
+      this.openTheDoubleSlidingDoor(
+        {
+          data: { bind: liftGroupName }
+        },
+        200 * 0.02,
+        false
+      ).then(() => {
+        // 电梯移动
+        new TWEEN.Tween(bpos)
+          .to(
+            {
+              y: cpos.y
+            },
+            1000 * 1.5
+          )
+          .delay(0)
+          .start()
+          .onUpdate(pos => {
+            // 人物跟随
+            if (fllow) {
+              this.character.position.y = pos.y
+              this.camera.position.y = pos.y
+              this.setControlTarget(this.character.position)
+            }
+          })
+          .onComplete(() => {
+            console.log('电梯到了！')
+            // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
+            box.__bind_lift__ = object.data.bind
+            // 电梯开门
+            this.openLift(object, liftGroupName)
+          })
+      })
+    } else {
+      this.openLift(object, liftGroupName)
+    }
+  }
+
+  // 电梯开门
+  openLift(object, liftGroupName) {
+    console.log(object)
+    // 电梯门打开
+    this.openTheDoubleSlidingDoor(object, 200)
+    this.openTheDoubleSlidingDoor(
+      {
+        data: { bind: liftGroupName }
+      },
+      200 * 0.02
+    )
+  }
+
+  // 双开门(两扇门 往两边平移)
+  openTheDoubleSlidingDoor(object, scale = 400, isOpen?: boolean) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    if (!dobj) return Promise.reject()
+    const left = dobj.children.find(el => el.name.indexOf('左') > -1)
+    const right = dobj.children.find(el => el.name.indexOf('右') > -1)
+
+    const lpos = left.position
+    const rpos = right.position
+    if (dobj.__open__ == void 0) {
+      const { x, y, z } = lpos
+      const { x: x2, y: y2, z: z2 } = rpos
+      left.__position__ = new THREE.Vector3(x, y, z)
+      right.__position__ = new THREE.Vector3(x2, y2, z2)
+    }
+
+    dobj.__open__ = isOpen !== void 0 ? isOpen : !dobj.__open__
+    return new Promise(resolve => {
+      const rMoveX = right.__position__.x + (dobj.__open__ ? scale : 0)
+      // 坐标不变则直接返回
+      if (rpos.x === rMoveX) return resolve(dobj)
+      new TWEEN.Tween(lpos)
+        .to(
+          {
+            x: left.__position__.x + (dobj.__open__ ? -scale : 0)
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .start()
+      new TWEEN.Tween(rpos)
+        .to(
+          {
+            x: rMoveX
+          },
+          1000 * 1.5
+        )
+        .delay(0)
+        .start()
+        .onComplete(() => {
+          resolve(dobj)
+        })
+    })
+  }
+
+  // 鼠标点击地面
+  mouseClickGround(intersct) {
+    if (this.currentSight !== sightMap.npc) return Promise.reject()
+
+    const character = this.character
+    if (!character) return Promise.reject()
+    const { runing } = this.options.cruise
+    // 自动巡航中不操作
+    if (runing) return Promise.reject()
+    const lookAt = intersct.point
+    const obj = this.mouseClickDiffusion
+
+    const { runging } = character.extra
+    runging.play()
+
+    const { x, y, z } = lookAt
+    obj.position.set(x, y, z)
+    obj.visible = true
+
+    return new Promise(resolve => {
+      // 创建移动
+      createMove(
+        character,
+        lookAt,
+        pos => {
+          this.setControlTarget(pos)
+        },
+        pos => {
+          this.setControlTarget(pos)
+          runging.stop()
+          obj.visible = false
+          resolve(character)
+        }
+      )
+    })
+  }
+
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
     UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target)
+  }
+
+  // 判断是否巡航中
+  judgeCruise() {
+    if (this.options.cruise.runing) {
+      ElMessage.warning({
+        message: '请退出巡航！',
+        grouping: true
+      })
+      return true
+    }
+    return false
   }
 
   // 获取动画目标点
@@ -245,6 +475,55 @@ export class OfficeThreeScene extends ThreeScene {
     model.__action__ = obj
     model.__mixer__ = mixer
     this.animateModels.push(model)
+  }
+
+  // 相机转场
+  cameraTransition(object) {
+    if (this.judgeCruise()) return
+
+    if (this.mouseClickDiffusion.visible) {
+      ElMessage.warning({
+        message: '人物移动中，不可操作！',
+        grouping: true
+      })
+      return
+    }
+
+    if (this.isPerspectives()) {
+      this.toggleSight()
+    }
+
+    const { to, target = object.position } = object.data
+
+    if (!to) return
+
+    if (!this.isCameraMove(to)) {
+      UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+    }
+
+    const { bind } = object.data
+    if (!bind) {
+      return
+    }
+
+    const obj = this.buildingGroup?.getObjectByName(bind)
+    this.addFence(obj)
+  }
+
+  // 添加围栏
+  addFence(model?) {
+    // 先删除
+    if (this.fence) {
+      this.disposeObj(this.fence)
+      this.fence = void 0
+    }
+
+    if (model) {
+      // 围栏
+      const fence = createFence(model, 0x52ffae)
+      this.fence = fence
+      this.addObject(fence)
+    }
   }
 
   // 模型动画

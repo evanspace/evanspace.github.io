@@ -6,8 +6,19 @@ export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
+export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 
-export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
+export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
+const mxY = 146,
+  maxZ = 104
+const cruisePoints: any[] = []
+
+for (let i = 0; i < 5; i++) {
+  cruisePoints.push([mxY - i * 20, CRUISE_POINT_UP, -maxZ + ((i == 0 ? 1 : i) - 1) * 20])
+  cruisePoints.push([mxY - i * 20, CRUISE_POINT_UP, maxZ - i * 20])
+  cruisePoints.push([-mxY + i * 20, CRUISE_POINT_UP, maxZ - i * 20])
+  cruisePoints.push([-mxY + i * 20, CRUISE_POINT_UP, -maxZ + i * 20])
+}
 
 export const getPageOpts = animateBack => ({
   devEnv,
@@ -22,7 +33,7 @@ export const getPageOpts = animateBack => ({
   dotKey: 'DOT',
   dotShowStrict: false,
 
-  anchorType: [ANCHOR_POS],
+  anchorType: [ANCHOR_POS, WAIT_LIFT],
   animationModelType: [MAIN_SCENE],
 
   models: [
@@ -39,6 +50,13 @@ export const getPageOpts = animateBack => ({
       type: 'sprite',
       range: { x: 4, y: 4 },
       mapUrl: '/pos.png'
+    },
+    {
+      key: WAIT_LIFT,
+      name: '电梯门',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/lift.png'
     },
 
     {
@@ -58,7 +76,7 @@ export const getPageOpts = animateBack => ({
       item.url = '/oss/model/office' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/station' + item.mapUrl
+      item.mapUrl = '/oss/textures/office' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),
@@ -70,21 +88,22 @@ export const getPageOpts = animateBack => ({
     mapUrl: '/oss/textures/cruise/line6.png', // 1-18
     repeat: [0.1, 1],
     width: 2,
-    segment: 100,
+    segment: 500,
     tension: 0,
     speed: 20,
     mapSpeed: 0.01,
-    points: [
-      [102.5, CRUISE_POINT_UP, 9.9],
-      [102.5, CRUISE_POINT_UP, 291.9],
-      [64.1, CRUISE_POINT_UP, 291.9],
-      [64.1, CRUISE_POINT_UP, 129],
-      [-75.2, CRUISE_POINT_UP, 129],
-      [-75.2, CRUISE_POINT_UP, 291.9],
-      [-107.7, CRUISE_POINT_UP, 291.9],
-      [-107.7, CRUISE_POINT_UP, 9.9]
-    ],
-    offset: 1.8,
+    points: cruisePoints,
+    close: false,
+    offset: 5.2,
     animateBack: animateBack
   }
+})
+
+export const getTipOpts = () => ({
+  show: false,
+  style: {
+    left: 0,
+    top: 0
+  },
+  msg: ''
 })

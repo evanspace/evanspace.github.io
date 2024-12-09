@@ -10,13 +10,36 @@
     <div :class="$style.container" ref="containerRef"></div>
 
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+
+    <div :class="$style.camera">
+      <div
+        :class="$style.item"
+        v-for="item in cameraPositionList"
+        @click="onCameraTransition(item)"
+      >
+        {{ item.name }}
+      </div>
+      <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
+      <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
+      <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
+      <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
+      <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tLoading from 'three-scene/components/loading/index.vue'
 
-import { ROBOT, CHARACTER, ANCHOR_POS, CRUISE_POINT_UP, getPageOpts } from './data'
+import {
+  ROBOT,
+  CHARACTER,
+  ANCHOR_POS,
+  CRUISE_POINT_UP,
+  WAIT_LIFT,
+  getPageOpts,
+  getTipOpts
+} from './data'
 import { OfficeThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 import * as request from './request'
 
@@ -31,7 +54,7 @@ const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
     if (!robotObj) return
     // 前置视角前 0.015
-    t = t + 0.02
+    t = t + 0.005
     if (t > 1) t = t - 1
     pos = getOffsetPoint(cruiseCurve.getPointAt(t))
     const oft = 0.001
@@ -45,6 +68,7 @@ const pageOpts = reactive(
     robotObj.rotation.z = Math.PI * 0.5 + angle
   })
 )
+const tipOpts = reactive(getTipOpts())
 const { changeBackground, backgroundLoad } = useBackground()
 const { progress, loadModels, getModel } = useModelLoader({
   baseUrl: pageOpts.baseUrl,
@@ -52,7 +76,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 1
+    version: 4
   }
 })
 
@@ -76,6 +100,13 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   }
 }
 let scene: InstanceType<typeof OfficeThreeScene>
+
+const onCameraTransition = item => {
+  scene.cameraTransition({
+    position: item.position,
+    data: item
+  })
+}
 
 // 更新点位隐现
 const updateDotVisible = (target: ThreeModelItem) => {
@@ -268,8 +299,8 @@ const createCharacter = () => {
   })
   const move = {
     x: 0,
-    y: 27.5,
-    z: 122
+    y: 0,
+    z: 0
   }
   scene.addCharacter(obj, move)
 }
@@ -282,7 +313,42 @@ const initPage = () => {
 onMounted(() => {
   options.container = containerRef.value
   scene = new OfficeThreeScene(options, {
-    groundMeshName: []
+    groundMeshName: ['ground'],
+    onClickLeft: (object, _intersct) => {
+      if (object && object.data) {
+        const data = object.data
+        switch (data?.type) {
+          case ANCHOR_POS: // 定位
+            scene.cameraTransition(object)
+            break
+          case WAIT_LIFT: // 等电梯
+            scene.waitLift(object, '单元1号电梯')
+            break
+        }
+      }
+    },
+    onClickGround: (_object, intersct) => {
+      scene
+        .mouseClickGround(intersct)
+        .then(obj => {
+          console.log(obj)
+        })
+        .catch(() => {})
+    },
+    onHoverAnchor: (object, style) => {
+      const isShow = !!object && object.object._isAnchor_
+      tipOpts.show = isShow
+      if (isShow) {
+        tipOpts.style.top = style.top
+        tipOpts.style.left = style.left
+        const data = object.object.data
+        tipOpts.msg = `
+          <p>${data.name}</p>
+          <p>类型：${data.type}</p>
+          <p>绑定：${data.bind || '无'}</p>
+        `
+      }
+    }
   })
 
   scene.run()
