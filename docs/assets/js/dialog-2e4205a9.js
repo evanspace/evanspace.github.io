@@ -1,0 +1,1 @@
+import{d as o}from"./index-56a6a919.js";import{Y as t,cF as s}from"./vendor-c8aa99b3.js";const e=(e={})=>{const i=t(o({show:!1,style:{left:"",top:""},select:[],data:{},title:"",position:{top:0,left:0}},e));return{dialog:i,options:i,show:s(i.show)}};export{e as u};
