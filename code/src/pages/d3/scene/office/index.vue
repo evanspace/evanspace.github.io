@@ -117,6 +117,12 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     screenSpacePanning: false,
     maxDistance: 800
   },
+  camera: {
+    // near: 1,
+    // far: 500,
+    // orthogonal: true,
+    // position: [0, 150, 0]
+  },
   directionalLight: {
     // intensity: 3
   },

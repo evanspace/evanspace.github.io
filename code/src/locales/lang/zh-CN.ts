@@ -86,6 +86,8 @@ export default {
     cssd2: 'CSS 2D',
     cssd3: 'CSS 3D',
     unrealBloom: '泛光',
+    shaderOver: '着色器过度',
+
     device: '设备',
     floor: '楼层',
     park: '园区',
