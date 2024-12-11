@@ -29,6 +29,7 @@ export class NewThreeScene extends ThreeScene {
 
     gui.add(ctr, 'minDistance', 1, 1000).name('相机最近距离')
     gui.add(ctr, 'maxDistance', 1, 10000).name('相机最远距离')
+    gui.add(ctr, 'minPolarAngle', 0, Math.PI).name('垂直角度下限')
     gui.add(ctr, 'maxPolarAngle', 0, Math.PI).name('垂直角度上限')
     gui.add(ctr, 'maxTargetRadius', 0, 1000).name('目标移动半径')
 
