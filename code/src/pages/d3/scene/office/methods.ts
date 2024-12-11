@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { FlyControls } from 'three/examples/jsm/controls/FlyControls'
 
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
@@ -11,8 +12,8 @@ import { useFence } from 'three-scene/hooks/fence'
 import * as UTILS from 'three-scene/utils/model'
 import DEFAULTCONFIG from './config'
 
-import type { Config, ExtendOptions } from '.'
-import type { ObjectItem, XYZ } from 'three-scene/types/model'
+import type { ExtendOptions } from '.'
+import type { ObjectItem } from 'three-scene/types/model'
 
 const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
@@ -72,6 +73,9 @@ export class OfficeThreeScene extends ThreeScene {
     this.css2DRender = initCSS2DRender(this.options, this.container)
     this.css2DRender.domElement.className = 'three-scene__dot-wrap'
 
+    // 添加飞行控制器
+    this.addFlyControls()
+
     // 鼠标点击地面扩散波效果
     this.mouseClickDiffusion = createDiffusion(4, void 0, 6)
     this.mouseClickDiffusion.rotation.x = -Math.PI * 0.5
@@ -90,6 +94,22 @@ export class OfficeThreeScene extends ThreeScene {
     this.addAnchorGroup()
     this.addDotGroup()
     this.addLightGroup()
+  }
+
+  addFlyControls() {
+    console.log(FlyControls)
+    const ctrl = new FlyControls(this.camera, this.renderer.domElement)
+
+    ctrl.movementSpeed = 1000
+    // ctrl.domElement = renderer.domElement;
+    ctrl.rollSpeed = Math.PI / 24
+    ctrl.autoForward = false
+    ctrl.dragToLook = false
+    // 聚焦坐标
+    // ctrl.target.set(0, 0, 0)
+    // 保存状态
+    // ctrl.saveState()
+    this.controls = ctrl
   }
 
   // 添加建筑组
@@ -489,15 +509,6 @@ export class OfficeThreeScene extends ThreeScene {
       return true
     }
     return false
-  }
-
-  // 获取动画目标点
-  getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
-    const to = _to || config.to || { x: -104, y: 7, z: 58 }
-    const target = _target || config.target || { x: 0, y: 0, z: 0 }
-    // 中心点位
-    this.controls.target.set(target.x, target.y, target.z)
-    return to
   }
 
   // 添加模型动画
