@@ -135,5 +135,7 @@ export class NewThreeScene extends ThreeScene {
     }
   }
 
-  onKeyup(e) {}
+  onKeyup(e) {
+    console.log(e)
+  }
 }

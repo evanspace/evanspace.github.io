@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { NewThreeScene } from './methods'
-import { Sketch } from './test'
+// import { Sketch } from './test'
 
 import { useResize } from '@/hooks/scene-resize'
 
