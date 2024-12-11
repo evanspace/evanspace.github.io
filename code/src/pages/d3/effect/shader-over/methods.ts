@@ -6,7 +6,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const textureLoader = new THREE.TextureLoader()
 
-const imgs = ['01.jpeg', '02.jpeg'].map(it => `${base}/oss/textures/effect/${it}`)
+const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/oss/textures/effect/${it}`)
 
 const loadImg = (): Promise<any[]> => {
   return new Promise(resolve => {
@@ -139,6 +139,7 @@ export class NewThreeScene extends ThreeScene {
   change() {
     if (!this.material) return
     if (!this.isComplete) return
+
     this.isComplete = false
     this.material.uniforms.t1.value = this.textures[this.activeIndex++]
     this.activeIndex %= this.textures.length

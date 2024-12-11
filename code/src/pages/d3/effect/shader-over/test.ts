@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
-const imgs = ['01.jpeg', '02.jpeg'].map(it => `${base}/oss/textures/effect/${it}`)
+const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/oss/textures/effect/${it}`)
 
 export class Sketch {
   width: number
@@ -26,14 +26,14 @@ export class Sketch {
 
   progress: number = 0
   isComplete: boolean = true
-  constructor({ background = '#eee', el = document.body }) {
+  constructor({ el = document.body }) {
     this.width = el.offsetWidth
     this.height = el.offsetHeight
     this.aspect = this.width / this.height
     console.log(this.aspect)
 
     this.scene = new THREE.Scene()
-    this.renderer = this.createRender(background)
+    this.renderer = this.createRender()
     this.camera = this.createCamera()
     this.controls = this.createControls()
 
@@ -51,7 +51,7 @@ export class Sketch {
     return this
   }
 
-  createRender(background) {
+  createRender() {
     const renderer = new THREE.WebGLRenderer({
       // 是否开启反锯齿，设置为true开启反锯齿
       antialias: true,
@@ -76,7 +76,7 @@ export class Sketch {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
 
     renderer.setSize(this.width, this.height)
-    this.renderer.setClearColor(background, 1.0)
+    // renderer.setClearColor(background, 1.0)
     this.scene.background = null
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -248,8 +248,10 @@ export class Sketch {
     if (!this.material) return
     if (!this.isComplete) return
     this.isComplete = false
+
     this.material.uniforms.t1.value = this.textures[this.activeIndex++]
     this.activeIndex %= this.textures.length
+
     this.material.uniforms.t2.value = this.textures[this.activeIndex]
 
     gsap.fromTo(
