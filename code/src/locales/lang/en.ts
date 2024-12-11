@@ -81,6 +81,10 @@ export default {
     scene: 'scene',
     csg: 'CSG',
     example: 'example',
+    controls: 'controls',
+    orbit: 'orbit',
+    fly: 'fly',
+
     geometry: 'geometry',
     water: 'water',
     cssd2: 'CSS 2D',

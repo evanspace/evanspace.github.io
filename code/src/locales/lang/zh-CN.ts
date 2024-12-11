@@ -81,6 +81,10 @@ export default {
     scene: '场景',
     csg: '几何构造集',
     example: '实例',
+    controls: '控制器',
+    orbit: '轨道',
+    fly: '飞行',
+
     geometry: '几何体',
     water: '水面',
     cssd2: 'CSS 2D',
