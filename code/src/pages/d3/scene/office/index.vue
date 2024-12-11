@@ -110,7 +110,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   env: pageOpts.env,
   cruise: pageOpts.cruise,
   controls: {
-    visible: false,
+    visible: !false,
 
     enableDamping: true,
     dampingFactor: 0.48,
@@ -304,6 +304,7 @@ const assemblyScenario = async () => {
   scene.setCruisePoint(pageOpts.cruise.points)
 
   const to = scene.getValidTargetPosition(pageOpts.config || {})
+  console.log(to, scene.controls.target)
   // 入场动画
   UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
