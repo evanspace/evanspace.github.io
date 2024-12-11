@@ -84,6 +84,7 @@ export default {
     controls: 'controls',
     orbit: 'orbit',
     fly: 'fly',
+    pointerLock: 'pointer Lock',
 
     geometry: 'geometry',
     water: 'water',
