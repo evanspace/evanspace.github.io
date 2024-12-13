@@ -4,7 +4,6 @@
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
-      <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
@@ -12,6 +11,7 @@
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
     <div :class="$style.camera">
+      <div :class="$style.item" @click="() => scene?.toggleRoam()">全景漫游</div>
       <div
         :class="$style.item"
         v-for="item in cameraPositionList"
@@ -19,11 +19,14 @@
       >
         {{ item.name }}
       </div>
+    </div>
+    <div :class="[$style.camera, $style.right]">
       <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
       <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
+      <div :class="$style.item" @click="() => changeBackground(scene)">切换背景</div>
     </div>
 
     <div
@@ -108,6 +111,7 @@ onMounted(() => {
   options.container = containerRef.value
   scene = new StationThreeScene(options, {
     groundMeshName: ['行走地面', '平面125', '平面126', '平面127', '平面128', '平面129', '平面130'],
+    roamPoints: pageOpts.roamPoints,
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data

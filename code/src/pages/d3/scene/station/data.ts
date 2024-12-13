@@ -1,6 +1,6 @@
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
-const devEnv = import.meta.env.VITE_MODE !== 'production-'
+const devEnv = import.meta.env.VITE_MODE !== 'production'
 
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
@@ -8,6 +8,7 @@ export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 
 export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
+export const ROAM_POINT_UP = 100 // y 漫游轴向量
 export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
@@ -94,16 +95,24 @@ export const getPageOpts = animateBack => ({
     points: [
       [102.5, CRUISE_POINT_UP, 9.9],
       [102.5, CRUISE_POINT_UP, 291.9],
-      [64.1, CRUISE_POINT_UP, 291.9],
-      [64.1, CRUISE_POINT_UP, 129],
-      [-75.2, CRUISE_POINT_UP, 129],
-      [-75.2, CRUISE_POINT_UP, 291.9],
+      [76, CRUISE_POINT_UP, 291.9],
+      [76, CRUISE_POINT_UP, 129],
+      [-76, CRUISE_POINT_UP, 129],
+      [-76, CRUISE_POINT_UP, 291.9],
       [-107.7, CRUISE_POINT_UP, 291.9],
       [-107.7, CRUISE_POINT_UP, 9.9]
     ],
     offset: 1.8,
     animateBack: animateBack
-  }
+  },
+
+  // 漫游坐标
+  roamPoints: [
+    [-286, ROAM_POINT_UP, 257],
+    [286, ROAM_POINT_UP, 257],
+    [286, ROAM_POINT_UP, -600],
+    [-286, ROAM_POINT_UP, -600]
+  ]
 })
 
 export const getTipOpts = () => ({

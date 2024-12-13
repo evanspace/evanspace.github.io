@@ -6,6 +6,7 @@ import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
 import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 import { useFence } from 'three-scene/hooks/fence'
+import { useRoam } from 'three-scene/hooks/roam'
 
 import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/types/model'
@@ -19,6 +20,13 @@ const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 const { createFence, fenceAnimate } = useFence()
+const {
+  createRoam,
+  executeRoam,
+  pause: roamPause,
+  play: roamPlay,
+  getStatus: getRoamStatus
+} = useRoam()
 
 const sightMap = {
   full: 'FULL',
@@ -413,6 +421,24 @@ export class StationThreeScene extends ThreeScene {
     super.controlReset()
   }
 
+  // 场景漫游
+  toggleRoam() {
+    // 漫游中则暂停
+    if (getRoamStatus()) {
+      roamPause()
+      this.controls.maxDistance = 800
+      return
+    }
+    const points = this.extend.roamPoints || []
+    if (points.length == 0) return
+    this.controls.maxDistance = 20
+    createRoam({
+      points,
+      tension: 0.3
+    })
+    roamPlay()
+  }
+
   // 模型动画
   modelAnimate(): void {
     // css2D 渲染器
@@ -451,6 +477,8 @@ export class StationThreeScene extends ThreeScene {
     }
 
     fenceAnimate()
+
+    executeRoam(this.camera, this.controls)
   }
 
   // 移动

@@ -37,6 +37,11 @@
   position: absolute;
   pointer-events: none;
 
+  &.right {
+    left: auto;
+    right: 10px;
+  }
+
   $size: 60px;
   .item {
     color: #09c17e;

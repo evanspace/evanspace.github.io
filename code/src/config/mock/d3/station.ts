@@ -167,8 +167,10 @@ const posList = [
     name: '一号机位',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: 20.2, y: 10.3, z: 218.5 },
-    target: { x: -1.57, y: -2.6, z: 173.4 },
+    // to: { x: 20.2, y: 10.3, z: 218.5 },
+    // target: { x: -1.57, y: -2.6, z: 173.4 },
+    to: { x: -402.7, y: 185.8, z: 368.2 },
+    target: { x: -43.6, y: -2.6, z: 68.6 },
     bind: 'Tree-03-2158'
   },
   {
@@ -211,15 +213,17 @@ export default [
     // 项目楼层数据
     url: '/d3/station',
     method: 'get',
-    response: () =>
-      builder({
+    response: e => {
+      console.log(e)
+      return builder({
         JsonList,
         ModelUrl: '/oss/model/floor/场景.glb',
         Name: '车站展示',
         ConfigJson: {
           target: { x: 0, y: -2.6, z: 114.2 },
-          to: { x: -4.85, y: 35.07, z: 351.78 }
+          to: { x: 25.3, y: 154.4, z: 637.2 }
         }
       })
+    }
   }
 ]

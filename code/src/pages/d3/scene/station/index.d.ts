@@ -14,6 +14,7 @@ export declare interface Config {
 
 export declare interface ExtendOptions {
   groundMeshName: string[]
+  roamPoints: number[][]
   onDblclick: (e) => void
   onClickLeft: (object?, intersct?) => void
   onClickGround: (object?, intersct?) => void
