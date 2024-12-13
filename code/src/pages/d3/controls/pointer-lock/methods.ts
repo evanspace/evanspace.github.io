@@ -463,6 +463,7 @@ export class NewThreeScene extends ThreeScene {
 
     this.prevTime = time
 
+    return
     if (this.skeleton) {
       let time = this.time,
         T = 25,

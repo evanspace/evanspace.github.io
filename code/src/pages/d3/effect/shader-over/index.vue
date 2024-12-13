@@ -15,6 +15,10 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   axes: {
     visible: true
   },
+  render: {
+    alpha: true
+  },
+  bgColor: void 0,
   camera: {
     position: [2000, 0, 2500]
   },

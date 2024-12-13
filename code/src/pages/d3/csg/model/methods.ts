@@ -88,11 +88,13 @@ const loadBunnyBrush = async () => {
   geometry.computeVertexNormals()
 
   // @ts-ignore
-  const mesh = new Brush(geometry, new THREE.MeshStandardMaterial()) as InstanceType<typeof THREE.Mesh>
+  const mesh = new Brush(geometry, new THREE.MeshStandardMaterial()) as InstanceType<
+    typeof THREE.Mesh
+  >
   // mesh.position.y = 1
   mesh.updateMatrixWorld()
   //对象是否被渲染到阴影贴图中。默认值为false。
-  mesh.castShadow = true
+  // mesh.castShadow = true
 
   mesh.name = '兔子'
   mesh.material.opacity = 0.15
@@ -112,7 +114,9 @@ const createBrushes = scene => {
 
   for (let i = 0; i < 50; i++) {
     // @ts-ignore
-    const b = new Brush(new THREE.SphereGeometry(1 * SCALE_SIZE, 15, 15), material) as InstanceType<typeof THREE.Mesh>
+    const b = new Brush(new THREE.SphereGeometry(1 * SCALE_SIZE, 15, 15), material) as InstanceType<
+      typeof THREE.Mesh
+    >
     b.receiveShadow = true
     scene.add(b)
     brushes.push(b)

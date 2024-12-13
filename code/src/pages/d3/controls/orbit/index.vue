@@ -14,6 +14,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   axes: {
     visible: true
   },
+  render: {
+    alpha: true
+  },
   grid: {
     visible: true
   }

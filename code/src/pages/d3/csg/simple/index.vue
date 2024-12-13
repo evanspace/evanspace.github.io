@@ -14,6 +14,9 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   camera: {
     position: [0, 100, 260]
   },
+  render: {
+    alpha: true
+  },
   grid: {
     visible: true
   },
