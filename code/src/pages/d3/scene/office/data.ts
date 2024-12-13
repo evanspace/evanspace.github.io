@@ -26,7 +26,7 @@ export const getPageOpts = animateBack => ({
   baseUrl: base,
   bgColor: '',
   skyCode: '221',
-  env: '/oss/textures/hdr/14.hdr',
+  env: '/oss/textures/hdr/3.hdr',
 
   config: {},
 
@@ -43,6 +43,13 @@ export const getPageOpts = animateBack => ({
       name: '场景',
       size: 3.1,
       url: '/电梯.glb'
+    },
+
+    {
+      key: 'campany_floor',
+      name: '公司',
+      size: 39.6,
+      url: '/公司总部.glb'
     },
 
     {
@@ -102,8 +109,8 @@ export const getPageOpts = animateBack => ({
     visible: true,
     auto: true,
     // helper: true,
-    mapUrl: '/oss/textures/cruise/line15.png', // 1-18
-    repeat: [0.1, 1],
+    mapUrl: '/oss/textures/cruise/line18.png', // 1-18
+    repeat: [1, 1],
     width: 2,
     segment: 500,
     tension: 0,
