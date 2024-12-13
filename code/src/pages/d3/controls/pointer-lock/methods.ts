@@ -28,7 +28,9 @@ export class NewThreeScene extends ThreeScene {
 
   objects: any[] = []
 
-  simulate: any
+  simulate?: InstanceType<typeof THREE.Group>
+  skeleton?: InstanceType<typeof THREE.Skeleton>
+  time = 0
 
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
@@ -117,7 +119,6 @@ export class NewThreeScene extends ThreeScene {
     this.addObject(mesh)
   }
   createSimulate() {
-    // simulate
     const segmentHeight = 20 // 每段高度
     const segmentCount = 3 // 段数
     const height = segmentHeight * segmentCount // 总高度
@@ -134,11 +135,13 @@ export class NewThreeScene extends ThreeScene {
     // 生成骨骼
     const bones = this.createSimulateBones(options)
     // 生成蒙皮网格
-    const mesh = this.createSimulateMesh(geometry, bones, options)
-    console.log(mesh)
+    const group = this.createSimulateMesh(geometry, bones, options)
+    group.position.set(0, 0, -50)
+    group.rotation.y = Math.PI * 0.5
 
-    mesh.scale.multiplyScalar(2)
-    this.addObject(mesh)
+    group.scale.multiplyScalar(0.1)
+    this.simulate = group
+    this.addObject(group)
   }
 
   createSimulateGeometry(options) {
@@ -238,22 +241,18 @@ export class NewThreeScene extends ThreeScene {
 
     mesh.position.set(0, options.height / 2, 0)
 
-    // 移动骨骼并操纵模型
-    // skeleton.bones[0].rotation.x = -0.2
-    // skeleton.bones[1].rotation.x = 0.1
-    // skeleton.bones[2].rotation.x = 0.05
-    // skeleton.bones[3].rotation.x = -0.1
+    const group = new THREE.Group()
 
     // 创建骨骼显示助手
     let skeletonHelper = new THREE.SkeletonHelper(mesh)
-    this.addObject(skeletonHelper)
+    group.add(mesh, skeletonHelper)
 
-    // this.skeleton = skeleton
+    this.skeleton = skeleton
     // this.n = 0
     // this.T = 25
     // this.step = 0.01
 
-    return mesh
+    return group
   }
 
   createObject() {
@@ -398,8 +397,9 @@ export class NewThreeScene extends ThreeScene {
 
     if (this.controls && this.controls.isLocked === true) {
       const { raycaster, controls, prevTime, velocity, operate, direction, objects } = this
+      const camera = controls.getObject()
       // 复制相机坐标更新原点
-      raycaster.ray.origin.copy(this.controls.getObject().position)
+      raycaster.ray.origin.copy(camera.position)
       raycaster.ray.origin.y -= 10
 
       const intersections = raycaster.intersectObjects(objects, false)
@@ -431,16 +431,61 @@ export class NewThreeScene extends ThreeScene {
       // 前进
       controls.moveForward(-velocity.z * delta)
 
-      controls.getObject().position.y += velocity.y * delta
+      camera.position.y += velocity.y * delta
 
-      if (controls.getObject().position.y < 10) {
+      if (camera.position.y < 10) {
         velocity.y = 0
-        controls.getObject().position.y = 10
+        camera.position.y = 10
 
         this.operate.canJump = true
+      }
+
+      if (this.simulate) {
+        // 向量
+        const dir = new THREE.Vector3()
+        // 获取相机的视线方向
+        camera.getWorldDirection(dir)
+        // dis向量表示相机沿着相机视线方向平移30的位移量
+        const dis = dir.clone().multiplyScalar(30)
+        //记录相机初始位置
+        const pos = camera.position.clone()
+        //相机初始位置+相机偏移向量
+        const newPos = pos.clone().add(dis)
+
+        this.simulate.position.x = newPos.x
+        this.simulate.position.z = newPos.z
+
+        // 角度
+        const rotation = camera.rotation.clone()
+        this.simulate.rotation.setFromVector3(rotation)
       }
     }
 
     this.prevTime = time
+
+    if (this.skeleton) {
+      let time = this.time,
+        T = 25,
+        step = 0.01,
+        skeleton = this.skeleton
+      time += 1
+      if (time < T) {
+        // 改变骨关节角度
+        skeleton.bones[0].rotation.x = skeleton.bones[0].rotation.x - 2 * step
+        skeleton.bones[1].rotation.x = skeleton.bones[1].rotation.x + step
+        skeleton.bones[2].rotation.x = skeleton.bones[2].rotation.x + step / 2
+        // skeleton.bones[3].rotation.x = skeleton.bones[3].rotation.x - step
+      }
+      if (time < 2 * T && time > T) {
+        skeleton.bones[0].rotation.x = skeleton.bones[0].rotation.x + 2 * step
+        skeleton.bones[1].rotation.x = skeleton.bones[1].rotation.x - step
+        skeleton.bones[2].rotation.x = skeleton.bones[2].rotation.x - step / 2
+        // skeleton.bones[3].rotation.x = skeleton.bones[3].rotation.x + step
+      }
+      if (time === 2 * T) {
+        time = 0
+      }
+      this.time = time
+    }
   }
 }
