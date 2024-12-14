@@ -277,7 +277,6 @@ for (let i = 0; i < list.length; i++) {
       y: y,
       z: 584.8
     }
-    // scale: { x: 0.1, y: 0.1, z: 0.1 }
   })
 }
 JsonList.push(...floors)
@@ -287,7 +286,7 @@ export default [
     // 项目楼层数据
     url: '/d3/station',
     method: 'get',
-    response: e => {
+    response: () => {
       return builder({
         JsonList,
         ModelUrl: '/oss/model/floor/场景.glb',
