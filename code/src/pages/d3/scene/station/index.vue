@@ -20,15 +20,18 @@
         {{ item.name }}
       </div>
     </div>
+
     <div :class="[$style.camera, $style.right]">
       <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
       <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
+      <div :class="$style.item" @click="() => scene.changeCharacterAction()">人物动作</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
       <div :class="$style.item" @click="() => changeBackground(scene)">切换背景</div>
     </div>
 
+    <!-- // 提示 -->
     <div
       :class="$style.tip"
       v-if="tipOpts.show"
@@ -39,12 +42,33 @@
     >
       <div :class="$style.msg" v-html="tipOpts.msg"></div>
     </div>
+
+    <!-- 弹窗 -->
+    <div :class="$style.dialog" v-if="dialog.show" :style="dialog.style">
+      <div :class="$style.wrap">
+        <div>{{ dialog.title }}</div>
+        <div :class="$style.content">
+          <div :class="$style.item" v-for="item in dialog.list">
+            <span>{{ item.name }}：</span>
+            <span>{{ item.value }}{{ item.unit || '' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tLoading from 'three-scene/components/loading/index.vue'
-import { ANCHOR_POS, ROBOT, CRUISE_POINT_UP, CHARACTER, getPageOpts, getTipOpts } from './data'
+import {
+  ANCHOR_POS,
+  ANCHOR_TARGET,
+  ROBOT,
+  CRUISE_POINT_UP,
+  CHARACTER,
+  getPageOpts,
+  getTipOpts
+} from './data'
 import * as request from './request'
 
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
@@ -52,6 +76,7 @@ import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './method
 import { useResize } from '@/hooks/scene-resize'
 import { useBackground } from 'three-scene/hooks/background'
 import { useModelLoader } from 'three-scene/hooks/model-loader'
+import { useDialog } from 'three-scene/hooks/dialog'
 import * as UTILS from 'three-scene/utils/model'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
@@ -87,6 +112,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     version: 12
   }
 })
+const { options: dialog } = useDialog()
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof StationThreeScene>[0] = {
@@ -112,12 +138,21 @@ onMounted(() => {
   scene = new StationThreeScene(options, {
     groundMeshName: ['行走地面', '平面125', '平面126', '平面127', '平面128', '平面129', '平面130'],
     roamPoints: pageOpts.roamPoints,
+    onDblclick: object => {
+      scene.floorExpand(object)
+    },
     onClickLeft: (object, _intersct) => {
+      dialog.select = []
+      dialog.show = false
       if (object && object.data) {
         const data = object.data
         switch (data?.type) {
           case ANCHOR_POS: // 定位
             scene.cameraTransition(object)
+            break
+          case ANCHOR_TARGET: // 锚点
+            dialog.select = [object]
+            dialogShowData()
             break
         }
       }
@@ -142,6 +177,14 @@ onMounted(() => {
           <p>类型：${data.type}</p>
           <p>绑定：${data.bind || '无'}</p>
         `
+      }
+    },
+    animateCall: () => {
+      // 弹窗位置
+      if (dialog.show && !!dialog.select.length) {
+        // 设备弹窗信息
+        const object = dialog.select[0]
+        updateDialogPosition(object)
       }
     }
   })
@@ -239,7 +282,7 @@ const loopLoadObject = async (item: ObjectItem) => {
     return
   }
 
-  const { anchorType = [], animationModelType = [] } = pageOpts
+  const { anchorType = [], animationModelType = [], floorModelType = [] } = pageOpts
 
   // 深克隆
   let model = UTILS.deepClone(obj)
@@ -262,11 +305,23 @@ const loopLoadObject = async (item: ObjectItem) => {
     scene.addModelAnimate(model, obj.animations, true, 1)
   }
 
+  // 记录备用坐标(更随标记)
+  if (item.followMark || item.mark) {
+    model._position_ = { x, y, z }
+  }
+
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
 
     scene.addAnchor(model)
+  }
+  // 楼层
+  else if (floorModelType.includes(type)) {
+    // 原始点位 备用
+    model._position_ = { x, y, z }
+    model._isFloor_ = true
+    scene.addFloor(model)
   } else {
     scene.addBuilding(model)
   }
@@ -305,10 +360,35 @@ const updateDotVisible = (target: ThreeModelItem) => {
 // 创建 dot 点位
 const createDotObject = item => {
   updateDotVisible(
-    scene.addDot(item, _e => {
-      scene.cameraLookatMoveTo(item.position)
+    scene.addDot(item, (_e, label) => {
+      dialog.select = [label]
+      dialogShowData()
+      scene.cameraLookatMoveTo(item.position).then(() => {})
     })
   )
+}
+
+// 更新 dialog 坐标
+const updateDialogPosition = object => {
+  const dom = containerRef.value
+  const pos = UTILS.getPlanePosition(dom, object, scene.camera)
+  dialog.position = pos
+  dialog.style.left = pos.left + 'px'
+  dialog.style.top = pos.top + 'px'
+  return pos
+}
+
+// 弹窗展示数据
+const dialogShowData = () => {
+  const object = dialog.select[0]
+  const data = object.data
+  dialog.data = data as Partial<ObjectItem>
+  dialog.title = data?.name || ''
+  dialog.list = [
+    { name: '属性 1', value: (Math.random() * 100).toFixed(2), unit: '%' },
+    { name: '属性 2', value: (Math.random() * 100).toFixed(2), unit: '%' }
+  ]
+  dialog.show = true
 }
 
 // 更新

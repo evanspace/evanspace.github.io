@@ -3,6 +3,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const devEnv = import.meta.env.VITE_MODE !== 'production'
 
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
+export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
@@ -22,8 +23,12 @@ export const getPageOpts = animateBack => ({
 
   config: {},
 
-  anchorType: [ANCHOR_POS],
+  // 锚点类型
+  anchorType: [ANCHOR_POS, ANCHOR_TARGET],
+  // 动画模型类型
   animationModelType: [MAIN_SCENE],
+  // 楼层类型
+  floorModelType: ['floor_common'],
 
   models: [
     {
@@ -52,11 +57,25 @@ export const getPageOpts = animateBack => ({
     },
 
     {
+      key: 'floor_common',
+      name: '楼层',
+      size: 6.3,
+      url: '/楼层.glb'
+    },
+
+    {
       key: ANCHOR_POS,
       name: '定位',
       type: 'sprite',
       range: { x: 4, y: 4 },
       mapUrl: '/pos.png'
+    },
+    {
+      key: ANCHOR_TARGET,
+      name: '锚点',
+      type: 'sprite',
+      range: { x: 4, y: 4 },
+      mapUrl: '/dw.png'
     },
 
     {

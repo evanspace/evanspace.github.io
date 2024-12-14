@@ -7,6 +7,7 @@ import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 import { useFence } from 'three-scene/hooks/fence'
 import { useRoam } from 'three-scene/hooks/roam'
+import { useFloor } from 'three-scene/hooks/floor'
 
 import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/types/model'
@@ -27,6 +28,7 @@ const {
   play: roamPlay,
   getStatus: getRoamStatus
 } = useRoam()
+const { floorAnimate } = useFloor()
 
 const sightMap = {
   full: 'FULL',
@@ -47,6 +49,8 @@ export class StationThreeScene extends ThreeScene {
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
   character?: InstanceType<typeof THREE.Group>
+  // 楼层集合（分层）
+  floorGroup?: InstanceType<typeof THREE.Group>
 
   // 时间
   clock: InstanceType<typeof THREE.Clock>
@@ -92,6 +96,7 @@ export class StationThreeScene extends ThreeScene {
 
     this.bindEvent()
     this.addBuildingGroup()
+    this.addFloorGroup()
     this.addAnchorGroup()
     this.addDotGroup()
   }
@@ -111,8 +116,10 @@ export class StationThreeScene extends ThreeScene {
     }
     this.animateModels = []
     this.addBuildingGroup()
+
     this.clearAnchor()
     this.clearDot()
+    this.clearFloor()
   }
 
   // 添加建筑
@@ -154,7 +161,7 @@ export class StationThreeScene extends ThreeScene {
     const group = new THREE.Group()
     group.name = '点位组'
     this.dotGroup = group
-    this.scene.add(group)
+    this.addObject(group)
   }
 
   // 清除场景点位
@@ -189,6 +196,29 @@ export class StationThreeScene extends ThreeScene {
     return label
   }
 
+  // 添加楼层
+  addFloorGroup() {
+    const group = new THREE.Group()
+    group.name = '楼层组'
+    this.floorGroup = group
+    this.addObject(group)
+  }
+
+  // 清除楼层组
+  clearFloor() {
+    if (this.floorGroup) {
+      this.disposeObj(this.floorGroup)
+    }
+    this.addFloorGroup()
+  }
+
+  // 添加楼层
+  addFloor(...obj) {
+    if (this.floorGroup) {
+      this.floorGroup.add(...obj)
+    }
+  }
+
   // 添加人物
   addCharacter(model, point) {
     const { x, y, z } = point
@@ -207,19 +237,69 @@ export class StationThreeScene extends ThreeScene {
       actions[clip.name] = action
     }
 
-    // 舞蹈
-    const dance = actions['Dance']
+    // 空闲
+    const key = 'Idle'
+    const dance = actions[key]
     dance.play()
 
     // 步行
     const runging = actions['Walking']
 
     model.extra = {
+      key,
       mixer,
       actions,
       runging
     }
     this.addObject(model)
+  }
+
+  // 人物动作
+  changeCharacterAction() {
+    let { key, actions } = this.character.extra
+    // 空闲、步行、跑步、舞蹈、死亡、坐着、站立、弹跳、出拳、点赞、行走跳跃、点头、摇头、打招呼
+    const all = [
+      'Idle',
+      /* 'Walking',  */ 'Running',
+      'Dance',
+      'Death',
+      'Sitting',
+      'Standing',
+      'Jump',
+      'Punch',
+      'ThumbsUp',
+      'WalkJump',
+      'Yes',
+      'No',
+      'Wave'
+    ]
+    const text = [
+      '空闲',
+      '跑步',
+      '舞蹈',
+      '死亡',
+      '坐着',
+      '站立',
+      '弹跳',
+      '出拳',
+      '点赞',
+      '行走跳跃',
+      '点头',
+      '摇头',
+      '打招呼'
+    ]
+    let index = all.findIndex(it => it === key) || 0
+    actions[key].stop()
+    index++
+    if (index >= all.length) index = 0
+    key = all[index]
+    console.log(key, actions)
+    actions[key].play()
+    ElMessage.success({
+      message: text[index],
+      grouping: true
+    })
+    this.character.extra.key = key
   }
 
   // 视角切换（人物/全屏）
@@ -397,7 +477,32 @@ export class StationThreeScene extends ThreeScene {
 
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
-    UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target)
+    return new Promise((resolve, reject) => {
+      if (getRoamStatus()) {
+        ElMessage.warning({
+          message: '请退出漫游！',
+          grouping: true
+        })
+        reject(false)
+        return
+      }
+      this.controls.maxDistance = 100
+      UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target).then(() => {
+        this.controls.maxDistance = 800
+        resolve(this.camera)
+      })
+    })
+  }
+
+  toggleCruise(close?: boolean) {
+    if (getRoamStatus()) {
+      ElMessage.warning({
+        message: '请退出漫游！',
+        grouping: true
+      })
+      return
+    }
+    super.toggleCruise(close)
   }
 
   // 判断是否巡航中
@@ -405,6 +510,13 @@ export class StationThreeScene extends ThreeScene {
     if (this.options.cruise.runing) {
       ElMessage.warning({
         message: '请退出巡航！',
+        grouping: true
+      })
+      return true
+    }
+    if (getRoamStatus()) {
+      ElMessage.warning({
+        message: '请退出漫游！',
         grouping: true
       })
       return true
@@ -437,6 +549,15 @@ export class StationThreeScene extends ThreeScene {
       tension: 0.3
     })
     roamPlay()
+  }
+
+  // 楼层展开
+  floorExpand(object) {
+    const data = object.data
+    const list = this.getFloorByGroup(data.group)
+    if (!list.length) return
+    const index = list.findIndex(el => object.uuid === el.uuid)
+    floorAnimate(list, index, mark => this.getFlowMark(mark))
   }
 
   // 模型动画
@@ -479,6 +600,27 @@ export class StationThreeScene extends ThreeScene {
     fenceAnimate()
 
     executeRoam(this.camera, this.controls)
+  }
+
+  // 双击
+  onDblclick(e: MouseEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e as PointerEvent, dom, scale)
+
+    if (this.floorGroup) {
+      // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+      raycaster.setFromCamera(pointer, this.camera)
+      // 检查射线和物体之间的交叉点（包含或不包含后代）
+      const objects = this.floorGroup.children
+      const interscts = raycaster.intersectObjects(objects)
+      if (interscts.length) {
+        const obj = interscts[0].object
+        const object = this.findParentGroup(obj)
+        if (!object) return
+        if (typeof this.extend?.onDblclick === 'function') this.extend.onDblclick(object)
+      }
+    }
   }
 
   // 移动
@@ -606,7 +748,20 @@ export class StationThreeScene extends ThreeScene {
 
   // 获取所有对象
   getAll() {
-    return this.buildingGroup.children.concat(this.dotGroup.children)
+    return this.buildingGroup.children
+      .concat(this.dotGroup.children)
+      .concat(this.floorGroup.children)
+      .concat(this.anchorGroup.children)
+  }
+
+  // 获取楼层组
+  getFloorByGroup(name) {
+    return this.floorGroup.children.filter(it => it.data.group === name)
+  }
+
+  // 获取跟随目标集合
+  getFlowMark(mark) {
+    return this.getAll().filter(el => el.data?.followMark === mark)
   }
 
   resize() {
@@ -623,6 +778,7 @@ export class StationThreeScene extends ThreeScene {
     this.disposeObj(this.anchorGroup)
     this.disposeObj(this.fence)
     this.disposeObj(this.mouseClickDiffusion)
+    this.disposeObj(this.floorGroup)
 
     this.clock = null
     this.css2DRender = null
@@ -632,6 +788,7 @@ export class StationThreeScene extends ThreeScene {
     this.anchorGroup = null
     this.fence = null
     this.mouseClickDiffusion = null
+    this.floorGroup = null
     this.extend = {}
     super.dispose()
   }

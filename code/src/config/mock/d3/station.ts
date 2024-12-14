@@ -157,6 +157,17 @@ const monitorCameras = [
       y: 56.3,
       z: 72.3
     }
+  },
+  {
+    name: '楼层监测点',
+    followMark: 'floor_common_0',
+    unit: 'kWh',
+    type: 'DOT',
+    position: {
+      x: 218.4,
+      y: 1,
+      z: 584.8
+    }
   }
 ]
 JsonList.push(...monitorCameras)
@@ -204,9 +215,72 @@ const posList = [
     to: { x: -430.9, y: 162.7, z: 258.4 },
     target: { x: -188.3, y: -2.6, z: 64 },
     bind: '_光伏大楼_1_grp'
+  },
+
+  {
+    name: '楼栋分层',
+    type: 'ANCHOR_POS',
+    position: { x: 207.4, y: 70.9, z: 603.2 },
+    to: { x: 408.6, y: 146, z: 808 },
+    target: { x: 13.3, y: -2.6, z: 486.6 },
+    bind: 'build_1'
   }
 ]
 JsonList.push(...posList)
+
+// 锚点
+const anchors = [
+  {
+    name: '右侧光伏',
+    type: 'ANCHOR_TARGET',
+    position: { x: 249.5, y: 60.4, z: 89.5 }
+  },
+  {
+    name: '左侧光伏',
+    type: 'ANCHOR_TARGET',
+    position: { x: -249.5, y: 60.4, z: 101.4 }
+  }
+]
+JsonList.push(...anchors)
+
+// 抽屉楼层
+const floors: any[] = []
+const floorMap = {
+  floor_common: 20
+}
+
+const list = [
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common',
+  'floor_common'
+]
+let y = 0.2
+for (let i = 0; i < list.length; i++) {
+  y += floorMap[list[i - 1]] ?? 0
+  floors.push({
+    name: `${i + 1}楼`,
+    type: list[i],
+    mark: list[i] + '_' + i,
+    group: 'build_1',
+    position: {
+      x: 218.4,
+      y: y,
+      z: 584.8
+    }
+    // scale: { x: 0.1, y: 0.1, z: 0.1 }
+  })
+}
+JsonList.push(...floors)
 
 export default [
   {
@@ -214,7 +288,6 @@ export default [
     url: '/d3/station',
     method: 'get',
     response: e => {
-      console.log(e)
       return builder({
         JsonList,
         ModelUrl: '/oss/model/floor/场景.glb',
