@@ -110,7 +110,10 @@ export default {
     navigator: 'navigator',
     share: 'share',
 
-    echarts: 'echarts'
+    echarts: 'echarts',
+
+    tool: 'tool',
+    convert: 'convert'
   },
 
   user: {

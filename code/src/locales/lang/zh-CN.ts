@@ -111,7 +111,12 @@ export default {
     navigator: 'navigator',
     share: '分享',
 
-    echarts: 'echarts'
+    echarts: 'echarts',
+
+    tool: '工具',
+    convert: '转换',
+
+    modelConvert: '@:route.model@:route.convert'
   },
 
   user: {
