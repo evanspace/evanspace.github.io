@@ -12,6 +12,7 @@
 
     <div :class="$style.camera">
       <div :class="$style.item" @click="() => scene?.toggleRoam()">全景漫游</div>
+      <div :class="$style.item" @click="() => toCoolMachineRoom()">制冷机房</div>
       <div
         :class="$style.item"
         v-for="item in cameraPositionList"
@@ -103,13 +104,13 @@ const pageOpts = reactive(
 const tipOpts = reactive(getTipOpts())
 
 const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModels, getModel } = useModelLoader({
+const { progress, loadModels, getModel, virtualization, closeVirtualization } = useModelLoader({
   baseUrl: pageOpts.baseUrl,
   indexDB: {
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 12
+    version: 14
   }
 })
 const { options: dialog } = useDialog()
@@ -124,7 +125,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false
-    screenSpacePanning: false,
+    // screenSpacePanning: false,
     maxDistance: 800
   },
   directionalLight: {
@@ -433,11 +434,36 @@ const createCharacter = () => {
   scene.addCharacter(obj, move)
 }
 
+// 相机转场
 const onCameraTransition = item => {
   scene.cameraTransition({
     position: item.position,
     data: item
   })
+}
+
+// z制冷机房
+const toCoolMachineRoom = () => {
+  // virtualization
+
+  const name = '_机房_grp'
+  // 查找机房
+  const room = scene.scene.getObjectByName(name)
+  console.log(room)
+  const isFocus = room.__isFocus__
+  room.__isFocus__ = !isFocus
+  if (isFocus) {
+    closeVirtualization(scene.buildingGroup?.children)
+    return
+  }
+  virtualization(
+    room,
+    scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)),
+    {
+      wireframe: !false,
+      opacity: 0.1
+    }
+  )
 }
 </script>
 

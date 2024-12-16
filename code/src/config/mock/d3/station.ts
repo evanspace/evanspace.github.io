@@ -5,6 +5,11 @@ const JsonList = [
     name: '场地',
     type: 'MAIN_SCENE',
     position: { x: 0, y: 0, z: 0 }
+  },
+  {
+    name: '机房',
+    type: 'machine_room',
+    position: { x: -161.3, y: 13.7, z: 72.5 }
   }
 ]
 
