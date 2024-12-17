@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
 
-import { useModel } from 'three-scene/hooks/model'
+import { useMaterial } from 'three-scene/hooks/material'
 import { useBackground } from 'three-scene/hooks/background'
 
 import * as UTILS from 'three-scene/utils/model'
@@ -16,7 +16,7 @@ const {
   setMetalnessMaterial,
   setGlassMaterial,
   centerBoxHelper
-} = useModel()
+} = useMaterial()
 const { backgroundLoad } = useBackground()
 
 const _ElMessage = opts => {
