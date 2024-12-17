@@ -457,7 +457,7 @@ export class OfficeThreeScene extends ThreeScene {
     new TWEEN.Tween(left.rotation)
       .to(
         {
-          y: dobj.__open__ ? Math.PI * 0.5 : 0
+          z: dobj.__open__ ? Math.PI * 0.5 : 0
         },
         1000 * 1.5
       )
@@ -466,7 +466,7 @@ export class OfficeThreeScene extends ThreeScene {
     new TWEEN.Tween(right.rotation)
       .to(
         {
-          z: dobj.__open__ ? Math.PI * 0.5 : 0
+          z: dobj.__open__ ? -Math.PI * 0.5 : 0
         },
         1000 * 1.5
       )
