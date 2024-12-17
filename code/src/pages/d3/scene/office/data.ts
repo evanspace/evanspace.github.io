@@ -9,6 +9,8 @@ export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
+export const GATE_TYPE = 'access_gate' // 闸机类型
+export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
 const mxY = 146,
@@ -35,7 +37,7 @@ export const getPageOpts = animateBack => ({
   dotKey: 'DOT',
   dotShowStrict: false,
 
-  anchorType: [ANCHOR_POS, ANCHOR_TARGET, WAIT_LIFT, LIGHT_SWITCH],
+  anchorType: [ANCHOR_POS, ANCHOR_TARGET, WAIT_LIFT, LIGHT_SWITCH, GATE_SWITCH],
   animationModelType: [MAIN_SCENE],
 
   models: [
@@ -46,11 +48,17 @@ export const getPageOpts = animateBack => ({
       url: '/电梯.glb'
     },
 
+    // {
+    //   key: 'campany_floor',
+    //   name: '公司',
+    //   size: 39.6,
+    //   url: '/公司总部.glb'
+    // },
     {
-      key: 'campany_floor',
-      name: '公司',
-      size: 39.6,
-      url: '/公司总部.glb'
+      key: GATE_TYPE,
+      name: '闸机',
+      size: 0.3,
+      url: '/闸机.glb'
     },
 
     {
@@ -73,6 +81,13 @@ export const getPageOpts = animateBack => ({
       type: 'sprite',
       range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
+    },
+    {
+      key: GATE_SWITCH,
+      name: '闸机',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/gate.png'
     },
 
     {

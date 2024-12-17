@@ -60,6 +60,8 @@ import {
   CRUISE_POINT_UP,
   WAIT_LIFT,
   LIGHT_SWITCH,
+  GATE_TYPE,
+  GATE_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -101,7 +103,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 11
+    version: 12
   }
 })
 
@@ -272,12 +274,18 @@ const loopLoadObject = async (item: ObjectItem) => {
     scene.addModelAnimate(model, obj.animations, true, 1)
   }
 
+  // 闸机类型
+  if (type === GATE_TYPE) {
+    model.name = item.name
+  }
+
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
 
     scene.addAnchor(model)
   }
+
   // 聚光灯
   else if (model.isSpotLight) {
     scene.addLight(item, model, true)
@@ -387,6 +395,9 @@ onMounted(() => {
             break
           case LIGHT_SWITCH: // 开关灯
             scene.lightSwitch(object)
+            break
+          case GATE_SWITCH: // 闸机
+            scene.openGate(object)
             break
         }
       }

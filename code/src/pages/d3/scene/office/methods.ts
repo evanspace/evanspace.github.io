@@ -402,10 +402,8 @@ export class OfficeThreeScene extends ThreeScene {
     const lpos = left.position
     const rpos = right.position
     if (dobj.__open__ == void 0) {
-      const { x, y, z } = lpos
-      const { x: x2, y: y2, z: z2 } = rpos
-      left.__position__ = new THREE.Vector3(x, y, z)
-      right.__position__ = new THREE.Vector3(x2, y2, z2)
+      left.__position__ = new THREE.Vector3().copy(lpos)
+      right.__position__ = new THREE.Vector3().copy(rpos)
     }
 
     dobj.__open__ = isOpen !== void 0 ? isOpen : !dobj.__open__
@@ -435,6 +433,45 @@ export class OfficeThreeScene extends ThreeScene {
           resolve(dobj)
         })
     })
+  }
+
+  // 闸机
+  openGate(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    if (!dobj) return
+
+    const left = dobj.getObjectByName('左-玻璃')
+    const right = dobj.getObjectByName('右-玻璃')
+    console.log(left, right)
+
+    const lpos = left.position
+    const rpos = right.position
+
+    if (dobj.__open__ == void 0) {
+      left.__position__ = new THREE.Vector3().copy(lpos)
+      right.__position__ = new THREE.Vector3().copy(rpos)
+    }
+
+    dobj.__open__ = !dobj.__open__
+
+    new TWEEN.Tween(left.rotation)
+      .to(
+        {
+          y: dobj.__open__ ? Math.PI * 0.5 : 0
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
+    new TWEEN.Tween(right.rotation)
+      .to(
+        {
+          z: dobj.__open__ ? Math.PI * 0.5 : 0
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
   }
 
   // 鼠标点击地面
