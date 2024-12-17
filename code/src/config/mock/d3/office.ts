@@ -12,6 +12,13 @@ const JsonList = [
     type: 'campany_floor',
     position: { x: 0, y: 0, z: 0 },
     scale: { x: 0.1, y: 0.1, z: 0.1 }
+  },
+
+  {
+    name: '通道闸机',
+    type: 'access_gate',
+    position: { x: 0, y: 0, z: 4 },
+    scale: { x: 0.1, y: 0.1, z: 0.1 }
   }
 ]
 
@@ -154,6 +161,17 @@ const lightSwitchs = [
   }
 ]
 JsonList.push(...lightSwitchs)
+
+// 闸机
+const tages = [
+  {
+    name: '通道闸机',
+    type: 'GATE_SWITCH',
+    position: { x: 0, y: 1, z: 2.5 },
+    bind: '通道闸机'
+  }
+]
+JsonList.push(...tages)
 
 export default [
   {

@@ -8,8 +8,8 @@ const JsonList = [
   },
   {
     name: '机房',
-    type: 'machine_room'
-    // position: { x: -156.6, y: 13.7, z: 56.2 }
+    type: 'machine_room',
+    position: { x: -156.6, y: 1, z: 103 }
   }
 ]
 
@@ -177,9 +177,9 @@ const monitorCameras = [
     unit: '%',
     type: 'DOT',
     position: {
-      x: -146.5,
-      y: 22.5,
-      z: 51
+      x: -167.6,
+      y: 27.5,
+      z: 60.8
     }
   }
 ]
@@ -262,7 +262,7 @@ const openDoors = [
     name: '机房门禁',
     type: 'OPEN_DOOR',
     position: { x: -187.5, y: 29, z: 44.7 },
-    bind: '-------'
+    bind: '南天门'
   }
 ]
 JsonList.push(...openDoors)

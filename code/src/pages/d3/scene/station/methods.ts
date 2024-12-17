@@ -567,8 +567,8 @@ export class StationThreeScene extends ThreeScene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = { x: -168.7, y: -12.6, z: 34.3 }
-      to = { x: -92.6, y: 71.3, z: 131.3 }
+      target = { x: -171.5, y: -6.5, z: 125.2 }
+      to = { x: -169.5, y: 34.9, z: 46.1 }
     }
     UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
@@ -583,7 +583,7 @@ export class StationThreeScene extends ThreeScene {
     new TWEEN.Tween(dobj.rotation)
       .to(
         {
-          z: dobj.__open__ ? Math.PI * 0.5 : 0
+          y: dobj.__open__ ? Math.PI * 0.5 : 0
         },
         1000 * 1.5
       )

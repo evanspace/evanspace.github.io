@@ -111,7 +111,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } = 
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 22
+    version: 28
   }
 })
 const { options: dialog } = useDialog()
@@ -138,7 +138,20 @@ let scene: InstanceType<typeof StationThreeScene>
 onMounted(() => {
   options.container = containerRef.value
   scene = new StationThreeScene(options, {
-    groundMeshName: ['行走地面', '平面125', '平面126', '平面127', '平面128', '平面129', '平面130'],
+    groundMeshName: [
+      '行走地面',
+      '平面125',
+      '平面126',
+      '平面127',
+      '平面128',
+      '平面129',
+      '平面130',
+      '楼梯',
+      '机房地面',
+      '地面002',
+      '立方体128',
+      '立方体780_1'
+    ],
     roamPoints: pageOpts.roamPoints,
     onDblclick: object => {
       scene.floorExpand(object)
@@ -454,10 +467,17 @@ const toCoolMachineRoom = () => {
     scene.toggleSight()
   }
 
-  const name = '_机房_grp'
+  const name = '机房'
   // 查找机房
   const room = scene.scene.getObjectByName(name)
   console.log(room)
+  if (!room) {
+    ElMessage.warning({
+      message: '未找到机房模块！',
+      grouping: true
+    })
+    return
+  }
   const isFocus = room.__isFocus__
   room.__isFocus__ = !isFocus
   if (isFocus) {
