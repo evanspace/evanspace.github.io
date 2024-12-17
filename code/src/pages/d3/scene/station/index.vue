@@ -110,7 +110,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } = 
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 14
+    version: 17
   }
 })
 const { options: dialog } = useDialog()
@@ -125,7 +125,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false
-    // screenSpacePanning: false,
+    screenSpacePanning: false,
     maxDistance: 800
   },
   directionalLight: {
@@ -454,16 +454,27 @@ const toCoolMachineRoom = () => {
   room.__isFocus__ = !isFocus
   if (isFocus) {
     closeVirtualization(scene.buildingGroup?.children)
+    scene.toCoolMachineRoom(false)
     return
   }
-  virtualization(
-    room,
-    scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)),
-    {
-      wireframe: !false,
-      opacity: 0.1
-    }
-  )
+  scene.toCoolMachineRoom(true)
+  virtualization(scene.buildingGroup?.children, room, {
+    wireframe: !false,
+    opacity: 0.1,
+    filter: [
+      '_基础_grp',
+      '平面109_1',
+      '地面001',
+      '地面002',
+      '平面601',
+      'Landscape001',
+      'Landscape002',
+      'Landscape003',
+      'Landscape008',
+      'Landscape009'
+    ]
+    // filterMatch: ['BezierCurve']
+  })
 }
 </script>
 

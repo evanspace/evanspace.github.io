@@ -321,12 +321,9 @@ export class StationThreeScene extends ThreeScene {
     const position = this.character.position
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
-      const { x, y, z } = target
-      this.historyTarget = new THREE.Vector3(x, y, z)
-      const { x: x2, y: y2, z: z2 } = this.camera.position
-      this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
-      const { x: x3, y: y3, z: z3 } = position
-      this.camera.lookAt(new THREE.Vector3(x3, y3 + 3, z3))
+      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
+      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
+      this.camera.lookAt(new THREE.Vector3().copy(position))
     } else {
       const { x, y, z } = this.historyCameraPosition
       this.camera.position.set(x, y, z)
@@ -558,6 +555,21 @@ export class StationThreeScene extends ThreeScene {
     if (!list.length) return
     const index = list.findIndex(el => object.uuid === el.uuid)
     floorAnimate(list, index, mark => this.getFlowMark(mark))
+  }
+
+  // 机房视角-其他虚化
+  toCoolMachineRoom(isFocus) {
+    let target = this.historyTarget
+    let to = this.historyCameraPosition
+    // 聚焦移动 暂存场景参数
+    if (isFocus) {
+      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
+      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
+
+      target = { x: -168.7, y: -2.6, z: 34.3 }
+      to = { x: -92.6, y: 71.3, z: 131.3 }
+    }
+    UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 
   // 模型动画

@@ -433,8 +433,8 @@ onMounted(() => {
     onDblclick: object => {
       if (object.data?.type === 'building_commercial_5') {
         virtualization(
-          object,
           scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)),
+          object,
           {
             wireframe: !false,
             opacity: 0.1
