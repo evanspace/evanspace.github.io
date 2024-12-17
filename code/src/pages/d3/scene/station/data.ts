@@ -7,7 +7,6 @@ export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
-export const MACHINE_ROOM = 'machine_room' // 人物
 
 export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
 export const ROAM_POINT_UP = 100 // y 漫游轴向量
@@ -35,11 +34,11 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 54.8,
+      size: 49.8,
       url: '/深圳北站.glb'
     },
     {
-      key: MACHINE_ROOM,
+      key: 'machine_room',
       name: '机房',
       size: 3.7,
       url: '/机房.glb'

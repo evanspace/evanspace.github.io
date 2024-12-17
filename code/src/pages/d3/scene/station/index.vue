@@ -110,7 +110,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } = 
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 17
+    version: 22
   }
 })
 const { options: dialog } = useDialog()
@@ -442,10 +442,8 @@ const onCameraTransition = item => {
   })
 }
 
-// z制冷机房
+// 制冷机房
 const toCoolMachineRoom = () => {
-  // virtualization
-
   const name = '_机房_grp'
   // 查找机房
   const room = scene.scene.getObjectByName(name)
@@ -465,8 +463,14 @@ const toCoolMachineRoom = () => {
       '_基础_grp',
       '平面109_1',
       '地面001',
+      '地面012',
       '地面002',
       '平面601',
+      '平面613',
+      '平面642',
+      '平面643',
+      '平面241',
+      '平面243',
       'Landscape001',
       'Landscape002',
       'Landscape003',

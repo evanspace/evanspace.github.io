@@ -75,12 +75,13 @@
     right: 10px;
   }
 
+  $color: #27ffb0;
   $size: 60px;
   .item {
-    color: #09c17e;
+    color: $color;
     width: $size;
     height: $size;
-    border: 1px solid #09c17e;
+    border: 1px solid #{ $color };
     cursor: pointer;
     padding: 0 10px;
     display: flex;
@@ -91,12 +92,12 @@
     pointer-events: all;
     justify-content: center;
     backdrop-filter: saturate(50%) blur(2px);
-    background-color: rgba($color: #09c17e, $alpha: .1);
+    background-color: rgba($color: $color, $alpha: .1);
     & + .item {
       margin-top: 10px;
     }
     &:hover {
-      background-color: rgba($color: #09c17e, $alpha: .3);
+      background-color: rgba($color: $color, $alpha: .3);
     }
   }
 }
