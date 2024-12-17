@@ -7,6 +7,8 @@ export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
+export const FLOOR = 'floor_common' // 楼层
+export const OPEN_DOOR = 'OPEN_DOOR' // 开门
 
 export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
 export const ROAM_POINT_UP = 100 // y 漫游轴向量
@@ -24,11 +26,11 @@ export const getPageOpts = animateBack => ({
   config: {},
 
   // 锚点类型
-  anchorType: [ANCHOR_POS, ANCHOR_TARGET],
+  anchorType: [ANCHOR_POS, ANCHOR_TARGET, OPEN_DOOR],
   // 动画模型类型
   animationModelType: [MAIN_SCENE],
   // 楼层类型
-  floorModelType: ['floor_common'],
+  floorModelType: [FLOOR],
 
   models: [
     {
@@ -63,7 +65,7 @@ export const getPageOpts = animateBack => ({
     },
 
     {
-      key: 'floor_common',
+      key: FLOOR,
       name: '楼层',
       size: 6.3,
       url: '/楼层.glb'
@@ -82,6 +84,13 @@ export const getPageOpts = animateBack => ({
       type: 'sprite',
       range: { x: 4, y: 4 },
       mapUrl: '/dw.png'
+    },
+    {
+      key: OPEN_DOOR,
+      name: '开门',
+      type: 'sprite',
+      range: { x: 2, y: 2 },
+      mapUrl: '/pos.png'
     },
 
     {

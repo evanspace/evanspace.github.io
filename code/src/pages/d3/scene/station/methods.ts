@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import ThreeScene from 'three-scene'
 import { useRaycaster } from 'three-scene/hooks/raycaster'
@@ -566,10 +567,28 @@ export class StationThreeScene extends ThreeScene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = { x: -168.7, y: -2.6, z: 34.3 }
+      target = { x: -168.7, y: -12.6, z: 34.3 }
       to = { x: -92.6, y: 71.3, z: 131.3 }
     }
     UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+  }
+
+  // 开门
+  openTheDoor(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind)
+    if (!dobj) return
+    console.log(dobj)
+
+    dobj.__open__ = !dobj.__open__
+    new TWEEN.Tween(dobj.rotation)
+      .to(
+        {
+          z: dobj.__open__ ? Math.PI * 0.5 : 0
+        },
+        1000 * 1.5
+      )
+      .delay(0)
+      .start()
   }
 
   // 模型动画

@@ -67,6 +67,7 @@ import {
   ROBOT,
   CRUISE_POINT_UP,
   CHARACTER,
+  OPEN_DOOR,
   getPageOpts,
   getTipOpts
 } from './data'
@@ -125,7 +126,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false
-    screenSpacePanning: false,
+    // screenSpacePanning: false,
     maxDistance: 800
   },
   directionalLight: {
@@ -154,6 +155,9 @@ onMounted(() => {
           case ANCHOR_TARGET: // 锚点
             dialog.select = [object]
             dialogShowData()
+            break
+          case OPEN_DOOR: // 开门-90° 旋转开门
+            scene.openTheDoor(object)
             break
         }
       }
@@ -444,6 +448,12 @@ const onCameraTransition = item => {
 
 // 制冷机房
 const toCoolMachineRoom = () => {
+  if (scene.judgeCruise()) return
+
+  if (scene.isPerspectives()) {
+    scene.toggleSight()
+  }
+
   const name = '_机房_grp'
   // 查找机房
   const room = scene.scene.getObjectByName(name)

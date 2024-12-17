@@ -256,6 +256,17 @@ const anchors = [
 ]
 JsonList.push(...anchors)
 
+// 开门锚点
+const openDoors = [
+  {
+    name: '机房门禁',
+    type: 'OPEN_DOOR',
+    position: { x: -187.5, y: 29, z: 44.7 },
+    bind: '-------'
+  }
+]
+JsonList.push(...openDoors)
+
 // 抽屉楼层
 const floors: any[] = []
 const floorMap = {
