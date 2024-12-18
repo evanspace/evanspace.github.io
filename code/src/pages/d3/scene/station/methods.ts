@@ -317,20 +317,26 @@ export class StationThreeScene extends ThreeScene {
     this.controls.maxDistance = isCharacter ? 20 : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
+    this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
-    const target = this.controls.target
     const position = this.character.position
+
+    // 向量
+    const up = new THREE.Vector3(0, 2, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
-      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
-      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
-      this.camera.lookAt(new THREE.Vector3().copy(position))
+      this.historyTarget = this.controls.target.clone()
+      this.historyCameraPosition = this.camera.position.clone()
+      const pos = position.clone().add(up)
+      this.camera.lookAt(pos)
     } else {
       this.camera.position.copy(this.historyCameraPosition)
       this.camera.lookAt(position)
     }
 
-    target.copy(isCharacter ? position : this.historyTarget)
+    const vect = isCharacter ? position : this.historyTarget
+    const pos = vect.clone().add(up)
+    this.controls.target.copy(pos)
   }
 
   // 是否人物视角
