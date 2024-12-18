@@ -125,6 +125,66 @@ export class ConvertThreeScene extends ThreeScene {
 
     this.transformControls = controls
     this.addObject(controls)
+
+    const onKeydown = e => this.onKeydown(e)
+    const onKeyup = e => {
+      console.log(e)
+    }
+
+    window.addEventListener('keydown', onKeydown, false)
+    window.addEventListener('keyup', onKeyup, false)
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('keydown', onKeydown)
+      window.removeEventListener('keyup', onKeyup)
+    })
+  }
+
+  onKeydown(e) {
+    const control = this.transformControls
+    switch (e.key) {
+      case 'w':
+        control.setMode('translate')
+        break
+
+      case 'e':
+        control.setMode('rotate')
+        break
+
+      case 'r':
+        control.setMode('scale')
+        break
+
+      case '+':
+      case '=':
+        control.setSize(control.size + 0.1)
+        break
+
+      case '-':
+      case '_':
+        control.setSize(Math.max(control.size - 0.1, 0.1))
+        break
+
+      case 'x':
+        control.showX = !control.showX
+        break
+
+      case 'y':
+        control.showY = !control.showY
+        break
+
+      case 'z':
+        control.showZ = !control.showZ
+        break
+
+      case ' ':
+        control.enabled = !control.enabled
+        break
+
+      case 'Escape':
+        control.reset()
+        break
+    }
   }
 
   addGui() {
@@ -182,14 +242,13 @@ export class ConvertThreeScene extends ThreeScene {
         this.export()
       },
       exportPoints: () => {
-        if (!this.judgeUploadModel()) return
-        const dotText = this.modelGroup.children.map(el => {
+        const dotText = [this.setPiece].map(el => {
           let p = <any>el.position
           return `{ "x": ${p.x.toFixed(2) * 1}, "y": ${p.y.toFixed(2) * 1}, "z": ${
             p.z.toFixed(2) * 1
           } }`
         })
-        guiOpts.dotText = dotText
+        guiOpts.dotText = dotText.join(',')
         this.copyTextarea('坐标复制成功！')
       },
       target: () => {
@@ -813,6 +872,18 @@ export class ConvertThreeScene extends ThreeScene {
 
     // 判断指针按下与弹起的距离是否为0 则解除对象
     if (pointer.distanceTo(onUpPosition) == 0) this.transformControls?.detach()
+
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < 200
+    if (e.button == 2) {
+      // console.log('你点了右键')
+    } else if (e.button == 0) {
+      // console.log('你点了左键')
+      isClick && this.checkIntersectObjects(e)
+    } else if (e.button == 1) {
+      // console.log('你点了滚轮')
+    }
   }
 
   // 检查交叉几何体
@@ -820,18 +891,26 @@ export class ConvertThreeScene extends ThreeScene {
     const dom = this.container
     const scale = this.options.scale
     raycasterUpdate(e, dom, scale)
-    // 锚点或者地面
-    const objects = [this.setPiece]
 
+    let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+
+    // 计算对象列表
+    const objects = isClick ? this.modelGroup.children : [this.setPiece]
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
 
-    let intersects = raycaster.intersectObjects(objects, false)
+    let intersects = raycaster.intersectObjects(objects, isClick /* 是否检查所有后代 */)
     if (intersects.length > 0) {
-      let object = intersects[0].object
-      if (object !== this.transformControls.object) {
-        // 转换控制器 设置当前对象
-        this.transformControls.attach(object)
+      const intersect = intersects[0]
+      console.log(intersect)
+      let object = intersect.object
+      if (isClick) {
+        this.setPiece.position.copy(intersect.point)
+      } else {
+        if (object !== this.transformControls.object) {
+          // 转换控制器 设置当前对象
+          this.transformControls.attach(object)
+        }
       }
     }
   }

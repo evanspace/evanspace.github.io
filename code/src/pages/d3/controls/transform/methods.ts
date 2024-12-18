@@ -110,12 +110,15 @@ export class NewThreeScene extends ThreeScene {
     // 添加需要变换的网格
     this.transformControls.attach(boxMesh)
 
-    window.addEventListener('keydown', this.onKeydown.bind(this))
-    window.addEventListener('keyup', this.onKeyup.bind(this))
+    const onKeydown = e => this.onKeydown(e)
+    const onKeyup = e => this.onKeyup(e)
+
+    window.addEventListener('keydown', onKeydown, false)
+    window.addEventListener('keyup', onKeyup, false)
 
     onBeforeUnmount(() => {
-      window.removeEventListener('keydown', this.onKeydown.bind(this))
-      window.removeEventListener('keyup', this.onKeyup.bind(this))
+      window.removeEventListener('keydown', onKeydown)
+      window.removeEventListener('keyup', onKeyup)
     })
   }
 
