@@ -15,17 +15,6 @@
 :global {
   :local(.page) {
     .gui-wrap {
-      top: 0px; 
-      right: 0px; 
-      width: 260px !important;
-      position: absolute; 
-      max-height: 100%; 
-      margin-right: 0;
-      padding-bottom: 20px;
-      & > ul {
-        height: auto !important;
-        overflow: auto;
-      }
     }
   }
 }

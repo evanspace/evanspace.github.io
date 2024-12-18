@@ -92,6 +92,7 @@ export default {
     cssd3: 'CSS 3D',
     unrealBloom: '泛光',
     shaderOver: '着色器过度',
+    side: '边面',
 
     device: '设备',
     floor: '楼层',

@@ -92,6 +92,8 @@ export default {
     cssd3: 'CSS 3D',
     unrealBloom: 'unreal bloom',
     shaderOver: 'shader over',
+    side: 'side',
+
     device: 'device',
     floor: 'floor',
     park: 'park',
