@@ -111,7 +111,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } = 
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 28
+    version: 29
   }
 })
 const { options: dialog } = useDialog()
@@ -126,7 +126,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false
-    // screenSpacePanning: false,
+    screenSpacePanning: false,
     maxDistance: 800
   },
   directionalLight: {
@@ -150,7 +150,9 @@ onMounted(() => {
       '机房地面',
       '地面002',
       '立方体128',
-      '立方体780_1'
+      '立方体780_1',
+      '11111',
+      '22222'
     ],
     roamPoints: pageOpts.roamPoints,
     onDblclick: object => {

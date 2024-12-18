@@ -8,8 +8,8 @@ const JsonList = [
   },
   {
     name: '机房',
-    type: 'machine_room',
-    position: { x: -156.6, y: 1, z: 103 }
+    type: 'machine_room'
+    // position: { x: -156.6, y: 1, z: 103 }
   }
 ]
 
@@ -177,9 +177,9 @@ const monitorCameras = [
     unit: '%',
     type: 'DOT',
     position: {
-      x: -167.6,
-      y: 27.5,
-      z: 60.8
+      x: -163,
+      y: 12,
+      z: 91.2
     }
   }
 ]

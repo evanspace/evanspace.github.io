@@ -326,13 +326,11 @@ export class StationThreeScene extends ThreeScene {
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
       this.camera.lookAt(new THREE.Vector3().copy(position))
     } else {
-      const { x, y, z } = this.historyCameraPosition
-      this.camera.position.set(x, y, z)
+      this.camera.position.copy(this.historyCameraPosition)
       this.camera.lookAt(position)
     }
 
-    const { x, y, z } = isCharacter ? position : this.historyTarget
-    target.set(x, y, z)
+    target.copy(isCharacter ? position : this.historyTarget)
   }
 
   // 是否人物视角
@@ -476,14 +474,12 @@ export class StationThreeScene extends ThreeScene {
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
     return new Promise((resolve, reject) => {
-      if (getRoamStatus()) {
-        ElMessage.warning({
-          message: '请退出漫游！',
-          grouping: true
-        })
-        reject(false)
-        return
+      if (this.judgeCruise(true)) return reject(false)
+
+      if (this.isPerspectives()) {
+        return reject(false)
       }
+
       this.controls.maxDistance = 100
       UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target).then(() => {
         this.controls.maxDistance = 800
@@ -504,8 +500,9 @@ export class StationThreeScene extends ThreeScene {
   }
 
   // 判断是否巡航中
-  judgeCruise() {
+  judgeCruise(isSilent?: boolean) {
     if (this.options.cruise.runing) {
+      if (isSilent) return false
       ElMessage.warning({
         message: '请退出巡航！',
         grouping: true
@@ -513,6 +510,7 @@ export class StationThreeScene extends ThreeScene {
       return true
     }
     if (getRoamStatus()) {
+      if (isSilent) return false
       ElMessage.warning({
         message: '请退出漫游！',
         grouping: true
@@ -529,6 +527,8 @@ export class StationThreeScene extends ThreeScene {
       this.toggleSight()
     }
     super.controlReset()
+    this.historyTarget = new THREE.Vector3().copy(this.controls.target)
+    this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
   }
 
   // 场景漫游
