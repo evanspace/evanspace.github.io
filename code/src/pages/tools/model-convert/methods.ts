@@ -1,9 +1,11 @@
 import * as THREE from 'three'
+import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
 
 import { useMaterial } from 'three-scene/hooks/material'
 import { useBackground } from 'three-scene/hooks/background'
+import { useRaycaster } from 'three-scene/hooks/raycaster'
 
 import * as UTILS from 'three-scene/utils/model'
 import DefaultConfig from './config'
@@ -18,6 +20,7 @@ const {
   centerBoxHelper
 } = useMaterial()
 const { backgroundLoad } = useBackground()
+const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
 
 const _ElMessage = opts => {
   return ElMessage(opts)
@@ -51,6 +54,16 @@ export const guiOpts = reactive({
   dotText: ''
 })
 
+// 创建点位球
+const createPointSphere = () => {
+  const sphere = new THREE.SphereGeometry(1.75, 10, 10)
+  const material = new THREE.MeshBasicMaterial({ color: Math.random() * 0xffffff, wireframe: true })
+  const mesh = new THREE.Mesh(sphere, material)
+  mesh.name = '点位'
+  mesh.position.set(0, 140, 0)
+  return mesh
+}
+
 export class ConvertThreeScene extends ThreeScene {
   clock: InstanceType<typeof THREE.Clock>
   gui: InstanceType<typeof GUI>
@@ -59,6 +72,8 @@ export class ConvertThreeScene extends ThreeScene {
   helperGroup?: InstanceType<typeof THREE.Group>
 
   groundMesh?: InstanceType<typeof THREE.Mesh>
+
+  transformControls?: InstanceType<typeof TransformControls>
 
   guiOpts = {
     // 缩放
@@ -78,9 +93,13 @@ export class ConvertThreeScene extends ThreeScene {
     opacity: 0.6
   }
 
+  // 定位球
+  setPiece: InstanceType<typeof THREE.Mesh>
+
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
+    this.addControls()
     this.clock = new THREE.Clock()
 
     this.gui = new GUI()
@@ -88,6 +107,24 @@ export class ConvertThreeScene extends ThreeScene {
     this.addGround()
     this.addGui()
     this.addModelGroup()
+
+    this.setPiece = createPointSphere()
+    this.addObject(this.setPiece)
+
+    this.bindEvent()
+  }
+
+  addControls() {
+    const camera = this.camera
+    const controls = new TransformControls(camera, this.renderer.domElement)
+
+    // 监听相机变化
+    controls.addEventListener('dragging-changed', e => {
+      this.controls.enabled = !e.value
+    })
+
+    this.transformControls = controls
+    this.addObject(controls)
   }
 
   addGui() {
@@ -760,6 +797,42 @@ export class ConvertThreeScene extends ThreeScene {
   addHelper(obj) {
     if (this.helperGroup) {
       this.helperGroup.add(obj)
+    }
+  }
+
+  // 移动
+  onPointerMove(e: PointerEvent) {
+    this.checkIntersectObjects(e)
+  }
+
+  // 弹起
+  onPointerUp(e: PointerEvent) {
+    super.onPointerUp(e)
+
+    const onUpPosition = new THREE.Vector2(e.clientX, e.clientY)
+
+    // 判断指针按下与弹起的距离是否为0 则解除对象
+    if (pointer.distanceTo(onUpPosition) == 0) this.transformControls?.detach()
+  }
+
+  // 检查交叉几何体
+  checkIntersectObjects(e: PointerEvent) {
+    const dom = this.container
+    const scale = this.options.scale
+    raycasterUpdate(e, dom, scale)
+    // 锚点或者地面
+    const objects = [this.setPiece]
+
+    // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+    raycaster.setFromCamera(pointer, this.camera)
+
+    let intersects = raycaster.intersectObjects(objects, false)
+    if (intersects.length > 0) {
+      let object = intersects[0].object
+      if (object !== this.transformControls.object) {
+        // 转换控制器 设置当前对象
+        this.transformControls.attach(object)
+      }
     }
   }
 
