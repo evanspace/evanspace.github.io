@@ -178,12 +178,7 @@ onMounted(() => {
       }
     },
     onClickGround: (_object, intersct) => {
-      scene
-        .mouseClickGround(intersct)
-        .then(obj => {
-          console.log(obj)
-        })
-        .catch(() => {})
+      scene.mouseClickGround(intersct)
     },
     onHoverAnchor: (object, style) => {
       const isShow = !!object && object.object._isAnchor_
@@ -472,7 +467,7 @@ const toCoolMachineRoom = () => {
   const name = '机房'
   // 查找机房
   const room = scene.scene.getObjectByName(name)
-  console.log(room)
+
   if (!room) {
     ElMessage.warning({
       message: '未找到机房模块！',

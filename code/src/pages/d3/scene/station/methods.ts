@@ -278,7 +278,7 @@ export class StationThreeScene extends ThreeScene {
       '空闲',
       '跑步',
       '舞蹈',
-      '死亡',
+      '散架',
       '坐着',
       '站立',
       '弹跳',
@@ -294,7 +294,7 @@ export class StationThreeScene extends ThreeScene {
     index++
     if (index >= all.length) index = 0
     key = all[index]
-    console.log(key, actions)
+
     actions[key].play()
     ElMessage.success({
       message: text[index],
@@ -577,7 +577,6 @@ export class StationThreeScene extends ThreeScene {
   openTheDoor(object) {
     const dobj = this.scene.getObjectByName(object.data.bind)
     if (!dobj) return
-    console.log(dobj)
 
     dobj.__open__ = !dobj.__open__
     new TWEEN.Tween(dobj.rotation)
