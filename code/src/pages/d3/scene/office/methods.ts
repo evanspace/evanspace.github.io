@@ -7,6 +7,7 @@ import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
 import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 import { useFence } from 'three-scene/hooks/fence'
+import { useEvent } from 'three-scene/hooks/event'
 
 import * as UTILS from 'three-scene/utils/model'
 import DEFAULTCONFIG from './config'
@@ -19,6 +20,7 @@ const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 const { createFence, fenceAnimate } = useFence()
+const { bindEvent, removeEvent } = useEvent()
 
 const sightMap = {
   full: 'FULL',
@@ -246,6 +248,11 @@ export class OfficeThreeScene extends ThreeScene {
       runging
     }
     this.addObject(model)
+
+    bindEvent('keydown', e => {
+      if (!this.isPerspectives()) return
+      console.log(e)
+    })
   }
 
   // 视角切换（人物/全屏）
@@ -814,6 +821,7 @@ export class OfficeThreeScene extends ThreeScene {
   }
 
   dispose() {
+    removeEvent()
     this.animateModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.character)

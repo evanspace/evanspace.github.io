@@ -312,7 +312,7 @@ const assemblyScenario = async () => {
   scene.setCruisePoint(pageOpts.cruise.points)
 
   const to = scene.getValidTargetPosition(pageOpts.config || {})
-  console.log(to, scene.controls.target)
+
   // 入场动画
   UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
