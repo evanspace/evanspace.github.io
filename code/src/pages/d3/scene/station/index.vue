@@ -111,7 +111,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } = 
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 29
+    version: 31
   }
 })
 const { options: dialog } = useDialog()
