@@ -19,7 +19,7 @@ const {
   setGlassMaterial,
   centerBoxHelper
 } = useMaterial()
-const { backgroundLoad } = useBackground()
+const { backgroundLoad, skys } = useBackground()
 const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
 
 const _ElMessage = opts => {
@@ -539,9 +539,8 @@ export class ConvertThreeScene extends ThreeScene {
       group.add(this.renderer.shadowMap, 'enabled').name('开启阴影')
     }
 
-    const bgOptions = ['216', '217', '218', '219', '220', '221', '222', '223', '224', '225']
     group
-      .add(option, 'bgCode', bgOptions)
+      .add(option, 'bgCode', skys)
       .name('背景')
       .onChange(e => {
         backgroundLoad(this.scene, e)
