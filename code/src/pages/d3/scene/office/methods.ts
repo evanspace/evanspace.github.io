@@ -262,27 +262,27 @@ export class OfficeThreeScene extends ThreeScene {
     this.controls.maxDistance = isCharacter ? 10 : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
+    this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
-    const target = this.controls.target
     const position = this.character.position
 
+    // 向量
+    const up = new THREE.Vector3(0, 1.5, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
-      const { x, y, z } = target
-      this.historyTarget = new THREE.Vector3(x, y, z)
-      const { x: x2, y: y2, z: z2 } = this.camera.position
-      this.historyCameraPosition = new THREE.Vector3(x2, y2, z2)
-      const { x: x3, y: y3, z: z3 } = position
-      this.camera.lookAt(new THREE.Vector3(x3, y3 + 1.5, z3))
+      this.historyTarget = this.controls.target.clone()
+      this.historyCameraPosition = this.camera.position.clone()
+      const pos = position.clone().add(up)
+      console.log(pos)
+      this.camera.lookAt(pos)
     } else {
-      const { x, y, z } = this.historyCameraPosition
-      console.log(this.historyCameraPosition)
-      this.camera.position.set(x, y, z)
+      this.camera.position.copy(this.historyCameraPosition)
       this.camera.lookAt(position)
     }
 
-    const { x, y, z } = isCharacter ? position : this.historyTarget
-    target.set(x, y, z)
+    const vect = isCharacter ? position : this.historyTarget
+    const pos = vect.clone().add(up)
+    this.controls.target.copy(pos)
   }
 
   // 是否人物视角
@@ -440,6 +440,9 @@ export class OfficeThreeScene extends ThreeScene {
     const dobj = this.scene.getObjectByName(object.data.bind)
     if (!dobj) return
 
+    // 清楚定时
+    clearTimeout(object.__timer__)
+
     const left = dobj.getObjectByName('左-玻璃')
     const right = dobj.getObjectByName('右-玻璃')
     console.log(left, right)
@@ -454,12 +457,13 @@ export class OfficeThreeScene extends ThreeScene {
 
     dobj.__open__ = !dobj.__open__
 
+    const ans = 1.5
     new TWEEN.Tween(left.rotation)
       .to(
         {
           z: dobj.__open__ ? Math.PI * 0.5 : 0
         },
-        1000 * 1.5
+        1000 * ans
       )
       .delay(0)
       .start()
@@ -468,10 +472,17 @@ export class OfficeThreeScene extends ThreeScene {
         {
           z: dobj.__open__ ? -Math.PI * 0.5 : 0
         },
-        1000 * 1.5
+        1000 * ans
       )
       .delay(0)
       .start()
+
+    // 延迟 2 秒后自动关闭
+    if (dobj.__open__) {
+      object.__timer__ = setTimeout(() => {
+        this.openGate(object)
+      }, 1000 * (2 + ans))
+    }
   }
 
   // 鼠标点击地面
@@ -493,13 +504,45 @@ export class OfficeThreeScene extends ThreeScene {
     obj.position.set(x, y, z)
     obj.visible = true
 
+    // 检测射线
+    const raycaster = new THREE.Raycaster()
+
     return new Promise(resolve => {
       // 创建移动
       createMove(
         character,
         lookAt,
-        pos => {
+        (pos, stop) => {
           this.setControlTarget(pos)
+          // console.log(pos)
+          // 当前目标坐标,Y轴加一个固定量，代表纵轴射线发射（检测碰撞的）位置
+          const origin = pos.clone().add(new THREE.Vector3(0, 2, 0))
+          // 获取目标朝向
+          const direction = new THREE.Vector3()
+          this.character.getWorldDirection(direction)
+          direction.normalize()
+
+          // 设置射线发射位置
+          raycaster.ray.origin.copy(origin)
+          // 设置射线发射方向
+          raycaster.ray.direction.copy(direction)
+          // 开始【前、后】检测：对于blender制作的模型，需要递归遍历所有child，否则无法实现射线碰撞检测{[childs], true}
+          const intersects = raycaster.intersectObjects(this.buildingGroup.children, true)
+          if (intersects.length) {
+            const intersect = intersects[0]
+            console.log(intersect)
+
+            // 于目标距离
+            if (intersect.distance < 0.2) {
+              ElMessage.warning({
+                message: '撞到了！',
+                grouping: true
+              })
+              stop()
+              runging.stop()
+              obj.visible = false
+            }
+          }
         },
         pos => {
           this.setControlTarget(pos)
