@@ -93,6 +93,7 @@ export default {
     unrealBloom: 'unreal bloom',
     shaderOver: 'shader over',
     side: 'side',
+    particle: 'particle',
 
     device: 'device',
     floor: 'floor',

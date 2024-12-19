@@ -93,6 +93,7 @@ export default {
     unrealBloom: '泛光',
     shaderOver: '着色器过度',
     side: '边面',
+    particle: '粒子',
 
     device: '设备',
     floor: '楼层',
