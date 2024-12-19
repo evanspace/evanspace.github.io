@@ -17,7 +17,7 @@ const JsonList = [
   {
     name: '通道闸机',
     type: 'access_gate',
-    position: { x: 0, y: 0, z: 4 },
+    position: { x: 0, y: -0.4, z: 4 },
     scale: { x: 0.1, y: 0.1, z: 0.1 },
     rotation: { x: 0, y: 180, z: 0 }
   }

@@ -7,7 +7,8 @@ import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
 import { useDiffusion } from 'three-scene/hooks/diffusion'
 import { useMoveAnimate } from 'three-scene/hooks/move-animate'
 import { useFence } from 'three-scene/hooks/fence'
-import { useEvent } from 'three-scene/hooks/event'
+import { useKeyboardState } from 'three-scene/hooks/keyboard-state'
+import { useCollide } from 'three-scene/hooks/collide'
 
 import * as UTILS from 'three-scene/utils/model'
 import DEFAULTCONFIG from './config'
@@ -20,7 +21,8 @@ const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 const { createFence, fenceAnimate } = useFence()
-const { bindEvent, removeEvent } = useEvent()
+const { keyboardPressed, destroyEvent, insertEvent } = useKeyboardState()
+const { checkCollide } = useCollide()
 
 const sightMap = {
   full: 'FULL',
@@ -249,10 +251,23 @@ export class OfficeThreeScene extends ThreeScene {
     }
     this.addObject(model)
 
-    bindEvent('keydown', e => {
-      if (!this.isPerspectives()) return
-      console.log(e)
-    })
+    const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
+
+    // 插入事件 播放/暂停 动作
+    insertEvent(
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.play()
+        }
+      },
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.stop()
+        }
+      }
+    )
   }
 
   // 视角切换（人物/全屏）
@@ -277,6 +292,10 @@ export class OfficeThreeScene extends ThreeScene {
     const up = new THREE.Vector3(0, 1.5, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
+      ElMessage.success({
+        message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向！',
+        duration: 15 * 1000
+      })
       this.historyTarget = this.controls.target.clone()
       this.historyCameraPosition = this.camera.position.clone()
       const pos = position.clone().add(up)
@@ -310,9 +329,7 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 设置控制中心点
   setControlTarget(point) {
-    const height = 1.5
-    const { x, y, z } = point
-    this.controls.target.set(x, y + height, z)
+    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, 1.5, 0)))
     this.camera.lookAt(this.controls.target)
   }
 
@@ -493,7 +510,7 @@ export class OfficeThreeScene extends ThreeScene {
   }
 
   // 鼠标点击地面
-  mouseClickGround(intersct) {
+  mouseClickGround(intersct, filterName) {
     if (this.currentSight !== sightMap.npc) return Promise.reject()
 
     const character = this.character
@@ -507,13 +524,10 @@ export class OfficeThreeScene extends ThreeScene {
     const { runging } = character.extra
     runging.play()
 
-    const { x, y, z } = lookAt
-    obj.position.set(x, y, z)
+    obj.position.copy(lookAt)
     obj.visible = true
 
-    // 检测射线
-    const raycaster = new THREE.Raycaster()
-
+    character.__runing__ = true
     return new Promise(resolve => {
       // 创建移动
       createMove(
@@ -521,44 +535,45 @@ export class OfficeThreeScene extends ThreeScene {
         lookAt,
         (pos, stop) => {
           this.setControlTarget(pos)
-          // console.log(pos)
-          // 当前目标坐标,Y轴加一个固定量，代表纵轴射线发射（检测碰撞的）位置
-          const origin = pos.clone().add(new THREE.Vector3(0, 2, 0))
-          // 获取目标朝向
-          const direction = new THREE.Vector3()
-          this.character.getWorldDirection(direction)
-          direction.normalize()
-
-          // 设置射线发射位置
-          raycaster.ray.origin.copy(origin)
-          // 设置射线发射方向
-          raycaster.ray.direction.copy(direction)
-          // 开始【前、后】检测：对于blender制作的模型，需要递归遍历所有child，否则无法实现射线碰撞检测{[childs], true}
-          const intersects = raycaster.intersectObjects(this.buildingGroup.children, true)
-          if (intersects.length) {
-            const intersect = intersects[0]
-            console.log(intersect)
-
-            // 于目标距离
-            if (intersect.distance < 0.2) {
-              ElMessage.warning({
-                message: '撞到了！',
-                grouping: true
-              })
-              stop()
-              runging.stop()
-              obj.visible = false
-            }
+          if (this.checkCharacterCollide(pos, intersct.object.name === filterName ? 2 : 0.14)) {
+            stop()
+            runging.stop()
+            character.__runing__ = false
+            obj.visible = false
           }
         },
         pos => {
           this.setControlTarget(pos)
           runging.stop()
+          character.__runing__ = false
           obj.visible = false
           resolve(character)
         }
       )
     })
+  }
+
+  // 检测人物碰撞
+  checkCharacterCollide(pos, y = 0.14) {
+    // 检测碰撞
+    const intersects = checkCollide(
+      this.character,
+      pos,
+      this.buildingGroup.children,
+      true,
+      new THREE.Vector3(0, y, 0)
+    )
+    if (intersects.length) {
+      const intersect = intersects[0]
+      // 于目标距离
+      if (intersect.distance < 0.2) {
+        ElMessage.warning({
+          message: '撞到了！',
+          grouping: true
+        })
+        return true
+      }
+    }
   }
 
   // 相机移动聚焦点
@@ -684,6 +699,37 @@ export class OfficeThreeScene extends ThreeScene {
     }
 
     fenceAnimate()
+
+    // 人物视角
+    if (this.isPerspectives() && !this.character.__runing__) {
+      // 移动速度
+      const steep = 10 * delta
+      // 旋转速度
+      const angle = Math.PI * 0.2 * delta
+      const target = this.character
+      const isS = keyboardPressed('S')
+      if (keyboardPressed('W') || isS) {
+        // 向量
+        const dir = new THREE.Vector3()
+        // 获取相机的视线方向
+        target.getWorldDirection(dir)
+        // dis向量表示相机沿着相机视线方向平移30的位移量
+        const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
+        //相机初始位置+相机偏移向量
+        const newPos = target.position.clone().add(dis)
+        if (this.checkCharacterCollide(newPos)) {
+        } else {
+          target.position.copy(newPos)
+          this.setControlTarget(target.position)
+        }
+      }
+
+      if (keyboardPressed('A')) {
+        target.rotation.y += angle
+      } else if (keyboardPressed('D')) {
+        target.rotation.y -= angle
+      }
+    }
   }
 
   // 移动
@@ -821,7 +867,7 @@ export class OfficeThreeScene extends ThreeScene {
   }
 
   dispose() {
-    removeEvent()
+    destroyEvent()
     this.animateModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.character)

@@ -103,7 +103,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 12
+    version: 14
   }
 })
 
@@ -404,7 +404,7 @@ onMounted(() => {
     },
     onClickGround: (_object, intersct) => {
       scene
-        .mouseClickGround(intersct)
+        .mouseClickGround(intersct, liftMeshName)
         .then(_obj => {
           floorOpts.show = intersct.object.name === liftMeshName
         })

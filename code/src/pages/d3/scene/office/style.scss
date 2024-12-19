@@ -27,6 +27,7 @@
   position: absolute;
   transform: translate(-50%, -50%);
   margin-top: 20px;
+  white-space: nowrap;
   pointer-events: none;
   .msg {
     padding: 5px 10px;
