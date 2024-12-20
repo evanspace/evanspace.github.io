@@ -137,9 +137,9 @@ export const getPageOpts = animateBack => ({
     // mapUrl: '/oss/textures/cruise/diffuse.jpg', // 1-18
     repeat: [1, 1],
     width: 2,
-    segment: 500,
-    tension: 0,
-    speed: 20,
+    segment: 30,
+    tension: 0.01,
+    speed: 1,
     mapSpeed: 0.01,
     points: cruisePoints,
     close: false,
