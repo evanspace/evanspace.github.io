@@ -565,7 +565,7 @@ export class OfficeThreeScene extends ThreeScene {
     )
     if (intersects.length) {
       const intersect = intersects[0]
-      console.log(intersect)
+
       // 于目标距离
       if (intersect.distance < 0.2) {
         ElMessage.warning({
