@@ -1,5 +1,5 @@
 // import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import ThreeScene from 'three-scene/build/three-scene.module'
 
 // import { ParticleEngine } from 'three-scene/plugin/particle-engine'
 // import { Examples } from './examples'
@@ -9,9 +9,9 @@ export class NewThreeScene extends ThreeScene {
   constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
     super(options)
 
-    this.createClock()
+    // this.createClock()
 
-    this.addModel()
+    // this.addModel()
   }
 
   addModel() {
@@ -22,7 +22,7 @@ export class NewThreeScene extends ThreeScene {
     // this.addObject(engine)
   }
 
-  animate() {
+  modelAnimate() {
     // const dt = this.clock?.getDelta()
 
     if (this.engine) {

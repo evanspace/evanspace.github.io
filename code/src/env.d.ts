@@ -3,14 +3,12 @@
 /// <reference types="./common/global.d.ts" />
 /// <reference types="./components/index.d.ts" />
 
-
 // 解决引入 vue 组件文件错误提示
 declare module '*.vue' {
   import { DefineComponent } from 'vue'
   const component: DefineComponent<{}, {}, any>
   export default component
 }
-
 
 declare module 'path-browserify'
 declare module 'nprogress'

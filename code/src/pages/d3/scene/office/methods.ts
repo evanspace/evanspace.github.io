@@ -256,6 +256,7 @@ export class OfficeThreeScene extends ThreeScene {
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
+        console.log(e)
         if (model.__runing__) return
         if (keys.includes(e.keyCode)) {
           runging.play()
