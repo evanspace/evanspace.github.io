@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
@@ -7,7 +7,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 
-import { useModelLoader } from 'three-scene/hooks/model-loader'
+import { useModelLoader } from 'three-scene/src/hooks/model-loader'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
@@ -30,12 +30,12 @@ const params = {
   exposure: 1
 }
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   bloomPass: InstanceType<typeof UnrealBloomPass> | undefined
   composer: InstanceType<typeof EffectComposer> | undefined
   mixer: InstanceType<typeof THREE.AnimationMixer> | undefined
   clock: InstanceType<typeof THREE.Clock>
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     // 通道：它只会渲染场景，但不会把结果输出到场景
@@ -93,12 +93,14 @@ export class NewThreeScene extends ThreeScene {
       .add(params, 'threshold', 0, 1)
       .name('限制发光值')
       .onChange(v => {
+        if (!this.bloomPass) return
         this.bloomPass.threshold = Number(v)
       })
     bloomFolder
       .add(params, 'strength', 0, 3)
       .name('强度')
       .onChange(v => {
+        if (!this.bloomPass) return
         this.bloomPass.strength = Number(v)
       })
     bloomFolder
@@ -106,6 +108,7 @@ export class NewThreeScene extends ThreeScene {
       .step(0.01)
       .name('半径')
       .onChange(v => {
+        if (!this.bloomPass) return
         this.bloomPass.radius = Number(v)
       })
 
@@ -118,6 +121,7 @@ export class NewThreeScene extends ThreeScene {
         this.renderer.toneMappingExposure = Math.pow(v, 4)
       })
 
+    // @ts-ignore
     gui.domElement.style = 'position: absolute; top: 10px; right: 10px'
     this.container?.appendChild(gui.domElement)
   }

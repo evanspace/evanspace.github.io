@@ -1,16 +1,15 @@
 // import * as THREE from 'three'
-import ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
+console.log(ThreeScene)
 
 // import { ParticleEngine } from 'three-scene/plugin/particle-engine'
 // import { Examples } from './examples'
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   engine?: any
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
-
     // this.createClock()
-
     // this.addModel()
   }
 

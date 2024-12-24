@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 const createBufferGeometry = () => {
   // 三角形数量
@@ -146,20 +146,20 @@ const createLine = () => {
   return new THREE.Line(geometry, material)
 }
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   mesh: InstanceType<typeof THREE.Mesh>
   // 射线拾取
   raycaster: InstanceType<typeof THREE.Raycaster>
   // 坐标（二维向量）
-  pointer: InstanceType<typeof THREE.Vector2>
+  position: InstanceType<typeof THREE.Vector2>
   // 线网格
   line: InstanceType<typeof THREE.Line>
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.mesh = createBufferGeometry()
     this.raycaster = new THREE.Raycaster()
-    this.pointer = new THREE.Vector2()
+    this.position = new THREE.Vector2()
     this.line = createLine()
     this.bindEvent()
   }
@@ -168,7 +168,7 @@ export class NewThreeScene extends ThreeScene {
     this.addObject(this.mesh)
     this.addObject(this.line)
 
-    this.renderer.domElement.addEventListener('pointermove', this.onPointerMove.bind(this))
+    this.renderer.domElement.addEventListener('positionmove', this.onPointerMove.bind(this))
   }
 
   onPointerMove(e) {
@@ -179,8 +179,8 @@ export class NewThreeScene extends ThreeScene {
     const scale = this.options.scale
 
     // 设置二维向量坐标 （-1， 1 范围）
-    this.pointer.x = ((e.clientX - rect.left) / (dom.clientWidth * scale)) * 2 - 1
-    this.pointer.y = -((e.clientY - rect.top) / (dom.clientHeight * scale)) * 2 + 1
+    this.position.x = ((e.clientX - rect.left) / (dom.clientWidth * scale)) * 2 - 1
+    this.position.y = -((e.clientY - rect.top) / (dom.clientHeight * scale)) * 2 + 1
   }
 
   modelAnimate() {
@@ -190,17 +190,17 @@ export class NewThreeScene extends ThreeScene {
     this.mesh.rotation.y = ts * 0.25
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
-    this.raycaster.setFromCamera(this.pointer, this.camera)
+    this.raycaster.setFromCamera(this.position, this.camera)
     // 检查射线和物体之间的交叉点（包含或不包含后代）
     const interscts = this.raycaster.intersectObject(this.mesh)
 
     if (interscts.length > 0) {
       const intersect = interscts[0]
       // 面
-      const face = intersect.face
+      const face = intersect.face as any
 
-      const linePosition = this.line.geometry.attributes.position
-      const meshPosition = this.mesh.geometry.attributes.position
+      const linePosition = this.line.geometry.attributes.position as any
+      const meshPosition = this.mesh.geometry.attributes.position as any
 
       // 复制 (索引， 属性，索引 )
       linePosition.copyAt(0, meshPosition, face.a)

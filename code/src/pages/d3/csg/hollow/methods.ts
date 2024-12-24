@@ -8,7 +8,7 @@ import {
   // @ts-ignore
   HOLLOW_INTERSECTION
 } from 'three-bvh-csg'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 let csgEvaluator = new Evaluator()
 csgEvaluator.attributes = ['position', 'normal', 'color']
@@ -161,11 +161,11 @@ const createGround = () => {
 }
 
 type NewBrush = InstanceType<typeof Brush> & InstanceType<typeof THREE.Mesh>
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   brush1: NewBrush | undefined
   brush2: NewBrush | undefined
   brushResult: InstanceType<typeof THREE.Mesh> | undefined
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.addModel()
@@ -177,7 +177,7 @@ export class NewThreeScene extends ThreeScene {
       vertexColors: true,
       side: THREE.DoubleSide,
       roughness: 0.2
-    })
+    }) as any
 
     // @ts-ignore
     this.brush1 = new Brush(geo, mat)
@@ -209,9 +209,12 @@ export class NewThreeScene extends ThreeScene {
 
   createGUI() {
     const gui = new GUI()
-    gui.add(params, 'operation', { NONE: -1, HOLLOW_INTERSECTION, HOLLOW_SUBTRACTION }).name('布尔类型')
+    gui
+      .add(params, 'operation', { NONE: -1, HOLLOW_INTERSECTION, HOLLOW_SUBTRACTION })
+      .name('布尔类型')
     gui.add(params, 'displayBrush').name('计算元素')
 
+    // @ts-ignore
     gui.domElement.style = 'position: absolute; top: 10px; right: 10px'
     this.container?.appendChild(gui.domElement)
   }
@@ -225,12 +228,13 @@ export class NewThreeScene extends ThreeScene {
       brush2.visible = params.displayBrush
       brush2.updateMatrixWorld(true)
     }
+    if (!brushResult || !brush1 || !brush2 || !brushResult) return
     if (params.operation === -1) {
-      this.brushResult.geometry.dispose()
-      this.brushResult.geometry.copy(this.brush1.geometry)
-      this.brushResult.position.y = 1
+      brushResult.geometry.dispose()
+      brushResult.geometry.copy(brush1?.geometry as any)
+      brushResult.position.y = 1
     } else {
-      this.brushResult = csgEvaluator.evaluate(brush1, brush2, params.operation, brushResult)
+      this.brushResult = csgEvaluator.evaluate(brush1, brush2, params.operation, brushResult as any)
       this.brushResult.position.y = 0
       this.brushResult.castShadow = true
     }

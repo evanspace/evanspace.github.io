@@ -1,14 +1,14 @@
 import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { GUI } from 'dat.gui'
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   gui: InstanceType<typeof GUI>
 
   material?: InstanceType<typeof THREE.MeshPhongMaterial>
   outLineMaterial?: InstanceType<typeof THREE.MeshPhongMaterial>
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
     this.addModel()
 
@@ -41,7 +41,7 @@ export class NewThreeScene extends ThreeScene {
     torusMesh.position.y = gap
     torusMesh.castShadow = true
 
-    const outMat = new THREE.MeshBasicMaterial({
+    const outMat = new THREE.MeshPhongMaterial({
       color: 0xffde7d,
       side: THREE.BackSide
     })
@@ -76,9 +76,11 @@ export class NewThreeScene extends ThreeScene {
         DoubleSide: THREE.DoubleSide
       })
       .onChange(e => {
-        this.material.side = Number(e)
+        if (!this.material) return
+        this.material.side = Number(e) as any
       })
 
+    if (!this.outLineMaterial) return
     const option = {
       color: this.outLineMaterial.color.getHex()
     }
@@ -86,7 +88,7 @@ export class NewThreeScene extends ThreeScene {
       .addColor(option, 'color')
       .name('轮廓颜色')
       .onChange(e => {
-        console.log(e)
+        if (!this.outLineMaterial) return
         this.outLineMaterial.color.set(e)
       })
 

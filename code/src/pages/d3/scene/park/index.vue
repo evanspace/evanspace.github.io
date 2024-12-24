@@ -6,7 +6,7 @@
       <div class="btn" @click="() => scene.toggleSight()">人物视角切换</div>
       <div class="btn" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
-      <div class="btn" @click="() => changeBackground(scene)">切换背景</div>
+      <div class="btn" @click="() => changeBackground(scene as any)">切换背景</div>
       <div class="btn" @click="() => scene?.controlReset()">控制器重置</div>
       <div class="btn" @click="() => scene?.characterAccelerate()">人物加速</div>
       <div class="btn" @click="() => scene?.toggleCruiseDepthTest()">巡航深度</div>
@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import tLoading from 'three-scene/components/loading/index.vue'
+import tLoading from 'three-scene/src/components/loading/index.vue'
 import {
   ROBOT,
   CHARACTER,
@@ -71,15 +71,14 @@ import {
 } from './methods'
 import * as request from './request'
 
-import { useBackground } from 'three-scene/hooks/background'
+import { useBackground, useModelLoader } from 'three-scene/src/hooks/index'
 import { useResize } from '@/hooks/scene-resize'
-import { useModelLoader } from 'three-scene/hooks/model-loader'
-import * as UTILS from 'three-scene/utils/model'
+import * as UTILS from 'three-scene/src/utils/index'
 import { colors } from './colors'
 
-import { deepMerge } from 'three-scene/utils/index'
+import { deepMerge } from 'three-scene/src/utils/index'
 
-import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
@@ -201,7 +200,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   const { floorModelType = [], anchorType = [], carType = [], animationModelType = [] } = pageOpts
 
   // 深克隆
-  let model = UTILS.deepClone(obj)
+  let model = UTILS.modelDeepClone(obj)
   const { position: POS, scale: SCA, rotation: ROT } = UTILS.get_P_S_R_param(model, item)
   const [x, y, z] = POS
 
@@ -288,6 +287,7 @@ const assemblyScenario = async () => {
 
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
+  // @ts-ignore
   UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
   })
@@ -350,7 +350,7 @@ const load = () => {
 const updateObject = isRandom => {
   const emitData: ObjectItem[] = []
 
-  scene.getAll().forEach((el, _i) => {
+  scene.getAll().forEach((el: any, _i) => {
     if (!el.data) return
 
     const data = el.data
@@ -419,7 +419,7 @@ const onFloorMoveTo = item => {
 
 const initPage = () => {
   load()
-  backgroundLoad(scene, pageOpts.skyCode)
+  backgroundLoad(scene, pageOpts.skyCode as any)
 }
 
 let scene: InstanceType<typeof ParkThreeScene>

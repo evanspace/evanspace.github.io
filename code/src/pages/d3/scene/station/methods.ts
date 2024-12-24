@@ -1,21 +1,25 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
-import ThreeScene from 'three-scene'
-import { useRaycaster } from 'three-scene/hooks/raycaster'
-import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
-import { useDiffusion } from 'three-scene/hooks/diffusion'
-import { useMoveAnimate } from 'three-scene/hooks/move-animate'
-import { useFence } from 'three-scene/hooks/fence'
-import { useRoam } from 'three-scene/hooks/roam'
-import { useFloor } from 'three-scene/hooks/floor'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
+
+import {
+  useRaycaster,
+  useCSS2D,
+  CSS2DRenderer,
+  useDiffusion,
+  useMoveAnimate,
+  useFence,
+  useRoam,
+  useFloor
+} from 'three-scene/src/hooks/index'
 
 import type { Config, ExtendOptions } from '.'
-import type { ObjectItem, XYZ } from 'three-scene/types/model'
+import type { ObjectItem, XYZ } from 'three-scene/src/types/model'
 
 import DEFAULTCONFIG from './config'
 
-import * as UTILS from 'three-scene/utils/model'
+import * as UTILS from 'three-scene/src/utils/model'
 
 const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
@@ -35,7 +39,7 @@ const sightMap = {
   full: 'FULL',
   npc: 'NPC'
 }
-export class StationThreeScene extends ThreeScene {
+export class StationThreeScene extends ThreeScene.Scene {
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
   // 锚点集合
@@ -49,12 +53,15 @@ export class StationThreeScene extends ThreeScene {
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
-  character?: InstanceType<typeof THREE.Group>
+  character?: InstanceType<typeof THREE.Group> & {
+    extra: {
+      key: string
+      mixer: any
+      actions: any[]
+    }
+  }
   // 楼层集合（分层）
   floorGroup?: InstanceType<typeof THREE.Group>
-
-  // 时间
-  clock: InstanceType<typeof THREE.Clock>
 
   // 当前视角
   currentSight: string
@@ -64,7 +71,9 @@ export class StationThreeScene extends ThreeScene {
   historyCameraPosition: InstanceType<typeof THREE.Vector3>
 
   // 动画模型集合
-  animateModels: InstanceType<typeof THREE.Group>[]
+  animateModels: (InstanceType<typeof THREE.Group> & {
+    __mixer__: any
+  })[]
 
   // 移动系数
   moveFactor: number = 1
@@ -73,7 +82,7 @@ export class StationThreeScene extends ThreeScene {
   fence?: InstanceType<typeof THREE.Group>
 
   constructor(
-    options: ConstructorParameters<typeof ThreeScene>[0],
+    options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
   ) {
     super(options)
@@ -89,7 +98,7 @@ export class StationThreeScene extends ThreeScene {
     this.mouseClickDiffusion.visible = false
     this.addObject(this.mouseClickDiffusion)
 
-    this.clock = new THREE.Clock()
+    this.createClock()
     this.currentSight = sightMap.full
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
@@ -193,7 +202,7 @@ export class StationThreeScene extends ThreeScene {
     label.data = item
     // 原始点位 备用
     label._position_ = { x, y, z }
-    this.dotGroup.add(label)
+    this.dotGroup?.add(label)
     return label
   }
 
@@ -257,7 +266,8 @@ export class StationThreeScene extends ThreeScene {
 
   // 人物动作
   changeCharacterAction() {
-    let { key, actions } = this.character.extra
+    if (!this.character) return
+    let { key, actions } = this.character.extra as any
     // 空闲、步行、跑步、舞蹈、死亡、坐着、站立、弹跳、出拳、点赞、行走跳跃、点头、摇头、打招呼
     const all = [
       'Idle',
@@ -313,12 +323,14 @@ export class StationThreeScene extends ThreeScene {
     // 人物视角
     const isCharacter = sight === sightMap.npc
 
+    if (!this.controls) return
     // 控制器操作限制切换
     this.controls.maxDistance = isCharacter ? 20 : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
+    if (!this.character) return
     const position = this.character.position
 
     // 向量
@@ -357,6 +369,7 @@ export class StationThreeScene extends ThreeScene {
 
   // 设置控制中心点
   setControlTarget(point) {
+    if (!this.controls) return
     const height = 3
     const { x, y, z } = point
     this.controls.target.set(x, y + height, z)
@@ -375,7 +388,7 @@ export class StationThreeScene extends ThreeScene {
     const lookAt = intersct.point
     const obj = this.mouseClickDiffusion
 
-    const { runging } = character.extra
+    const { runging } = character.extra as any
     runging.play()
 
     const { x, y, z } = lookAt
@@ -402,6 +415,7 @@ export class StationThreeScene extends ThreeScene {
 
   // 获取动画目标点
   getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
+    if (!this.controls) return
     const to = _to || config.to || { x: -104, y: 7, z: 58 }
     const target = _target || config.target || { x: 0, y: 0, z: 0 }
     // 中心点位
@@ -449,7 +463,12 @@ export class StationThreeScene extends ThreeScene {
     if (!to) return
 
     if (!this.isCameraMove(to)) {
-      UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+      UTILS.cameraLinkageControlsAnimate(
+        this.controls,
+        this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
+        to,
+        target
+      )
     }
 
     const { bind } = object.data
@@ -486,9 +505,15 @@ export class StationThreeScene extends ThreeScene {
         return reject(false)
       }
 
+      if (!this.controls) return
+
       this.controls.maxDistance = 100
-      UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target).then(() => {
-        this.controls.maxDistance = 800
+      UTILS.cameraLookatAnimate(
+        this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
+        pos,
+        this.controls.target
+      ).then(() => {
+        this.controls && (this.controls.maxDistance = 800)
         resolve(this.camera)
       })
     })
@@ -533,12 +558,14 @@ export class StationThreeScene extends ThreeScene {
       this.toggleSight()
     }
     super.controlReset()
+    if (!this.controls) return
     this.historyTarget = new THREE.Vector3().copy(this.controls.target)
     this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
   }
 
   // 场景漫游
   toggleRoam() {
+    if (!this.controls) return
     // 漫游中则暂停
     if (getRoamStatus()) {
       roamPause()
@@ -558,7 +585,7 @@ export class StationThreeScene extends ThreeScene {
   // 楼层展开
   floorExpand(object) {
     const data = object.data
-    const list = this.getFloorByGroup(data.group)
+    const list = this.getFloorByGroup(data.group) as any[]
     if (!list.length) return
     const index = list.findIndex(el => object.uuid === el.uuid)
     floorAnimate(list, index, mark => this.getFlowMark(mark))
@@ -566,22 +593,29 @@ export class StationThreeScene extends ThreeScene {
 
   // 机房视角-其他虚化
   toCoolMachineRoom(isFocus) {
+    if (!this.controls) return
     let target = this.historyTarget
-    let to = this.historyCameraPosition
+    let to = this.historyCameraPosition as XYZ
+
     // 聚焦移动 暂存场景参数
     if (isFocus) {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = { x: -171.5, y: -6.5, z: 125.2 }
+      target = new THREE.Vector3(-171.5, -6.5, 125.2)
       to = { x: -169.5, y: 34.9, z: 46.1 }
     }
-    UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+    UTILS.cameraLinkageControlsAnimate(
+      this.controls,
+      this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
+      to,
+      target
+    )
   }
 
   // 开门
   openTheDoor(object) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     if (!dobj) return
 
     dobj.__open__ = !dobj.__open__
@@ -605,7 +639,7 @@ export class StationThreeScene extends ThreeScene {
 
     this.restoreAnchorMaterial()
 
-    let delta = this.clock.getDelta()
+    let delta = this.clock?.getDelta()
     // 模型动画
     if (this.animateModels.length) {
       this.animateModels.forEach(el => {
@@ -615,7 +649,8 @@ export class StationThreeScene extends ThreeScene {
       })
     }
 
-    this.anchorGroup.children.forEach(el => {
+    if (!this.anchorGroup) return
+    this.anchorGroup.children.forEach((el: any) => {
       if (el.__mixer__) {
         el.__mixer__.update(delta)
       }
@@ -689,9 +724,10 @@ export class StationThreeScene extends ThreeScene {
     raycasterUpdate(e, dom, scale)
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
     // 锚点或者地面
-    const objects = this.buildingGroup.children
-      .filter(it => it.visible && (isClick || it.__ground__))
-      .concat(this.anchorGroup.children)
+    const objects =
+      this.buildingGroup?.children
+        .filter((it: any) => it.visible && (isClick || it.__ground__))
+        .concat(this.anchorGroup?.children || []) || []
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
@@ -744,12 +780,12 @@ export class StationThreeScene extends ThreeScene {
         object.__mat_color__ = mat.color
       }
       mat.color = new THREE.Color(0xff0ff0)
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = el.uuid === object.uuid
       })
     } else {
       this.container.style.cursor = 'auto'
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = false
       })
     }
@@ -757,7 +793,7 @@ export class StationThreeScene extends ThreeScene {
 
   // 恢复锚点材质
   restoreAnchorMaterial() {
-    this.anchorGroup.traverse(el => {
+    this.anchorGroup?.traverse((el: any) => {
       if (el.isSprite) {
         if (!el.__change_color__ && el.__mat_color__) {
           el.material.color = el.__mat_color__
@@ -784,20 +820,22 @@ export class StationThreeScene extends ThreeScene {
 
   // 获取所有对象
   getAll() {
-    return this.buildingGroup.children
-      .concat(this.dotGroup.children)
-      .concat(this.floorGroup.children)
-      .concat(this.anchorGroup.children)
+    return (
+      this.buildingGroup?.children
+        .concat(this.dotGroup?.children || [])
+        .concat(this.floorGroup?.children || [])
+        .concat(this.anchorGroup?.children || []) || []
+    )
   }
 
   // 获取楼层组
   getFloorByGroup(name) {
-    return this.floorGroup.children.filter(it => it.data.group === name)
+    return this.floorGroup?.children.filter((it: any) => it.data.group === name)
   }
 
   // 获取跟随目标集合
   getFlowMark(mark) {
-    return this.getAll().filter(el => el.data?.followMark === mark)
+    return this.getAll().filter((el: any) => el.data?.followMark === mark)
   }
 
   resize() {
@@ -816,15 +854,17 @@ export class StationThreeScene extends ThreeScene {
     this.disposeObj(this.mouseClickDiffusion)
     this.disposeObj(this.floorGroup)
 
-    this.clock = null
-    this.css2DRender = null
-    this.buildingGroup = null
-    this.character = null
-    this.dotGroup = null
-    this.anchorGroup = null
-    this.fence = null
-    this.mouseClickDiffusion = null
-    this.floorGroup = null
+    this.clock = void 0
+    // @ts-ignore
+    this.css2DRender = void 0
+    this.buildingGroup = void 0
+    this.character = void 0
+    this.dotGroup = void 0
+    this.anchorGroup = void 0
+    this.fence = void 0
+    // @ts-ignore
+    this.mouseClickDiffusion = void 0
+    this.floorGroup = void 0
     this.extend = {}
     super.dispose()
   }

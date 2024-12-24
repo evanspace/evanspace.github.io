@@ -2,7 +2,10 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
-export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-scene/index').Props, 'formatObject'> => ({
+export const getPageOpts = (): {} & Omit<
+  import('three-scene/src/components/floor-scene/index').Props,
+  'formatObject'
+> => ({
   devEnv,
   baseUrl: base,
   bgColor: '',
@@ -32,6 +35,10 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
   cruise: {
     visible: true,
     // helper: true,
+    segment: 20,
+    tension: 0.1,
+    speed: 10,
+    alway: true,
     points: [
       [450, 490, 450],
       [450, 490, -450],
@@ -103,7 +110,7 @@ export const getPageOpts = (): {} & Omit<import('three-scene/components/floor-sc
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
-    return item as import('three-scene/types/model').ModelItem
+    return item as import('three-scene/src/types/model').ModelItem
   }),
   objects: [],
   config: {},

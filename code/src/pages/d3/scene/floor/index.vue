@@ -3,7 +3,12 @@
     <div :class="$style.operate">
       <div class="flex flex-ac">
         <span>点位：</span>
-        <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
+        <el-switch
+          v-model="pageOpts.dotShowStrict"
+          active-text="严格"
+          inactive-text="全显"
+          inline-prompt
+        ></el-switch>
       </div>
       <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
       <el-link type="primary" size="small" @click="onExport">导出</el-link>
@@ -53,11 +58,11 @@
 </template>
 
 <script lang="ts" setup>
-import tFloorScene from 'three-scene/components/floor-scene/index.vue'
+import tFloorScene from 'three-scene/src/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 
-import type { ObjectItem } from 'three-scene/types/model.d'
+import type { ObjectItem } from 'three-scene/src/types/model.d'
 
 import { useResize } from '@/hooks/scene-resize'
 

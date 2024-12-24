@@ -2,19 +2,21 @@ import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
 
-import ThreeScene from 'three-scene'
-import { useRaycaster } from 'three-scene/hooks/raycaster'
-import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
+import {
+  useRaycaster,
+  useCSS2D,
+  CSS2DRenderer,
+  useLensflare,
+  useDiffusion,
+  useMoveAnimate
+} from 'three-scene/src/hooks/index'
 
 import { Water } from 'three/examples/jsm/objects/Water'
 import { Sky } from 'three/examples/jsm/objects/Sky'
 
 import type { Config, ExtendOptions } from '.'
-import type { XYZ, ObjectItem } from 'three-scene/types/model'
-
-import { useLensflare } from 'three-scene/hooks/lensflare'
-import { useDiffusion } from 'three-scene/hooks/diffusion'
-import { useMoveAnimate } from 'three-scene/hooks/move-animate'
+import type { XYZ, ObjectItem } from 'three-scene/src/types/model'
 
 import DEFAULTCONFIG from './config'
 
@@ -23,7 +25,7 @@ const { initCSS2DRender, createCSS2DDom } = useCSS2D()
 const { createDiffusion, updateDiffusion } = useDiffusion()
 const { createMove, moveAnimate } = useMoveAnimate()
 
-import * as UTILS from 'three-scene/utils/model'
+import * as UTILS from 'three-scene/src/utils/model'
 
 const { addLensflare } = useLensflare()
 
@@ -72,7 +74,7 @@ const sightMap = {
   npc: 'NPC'
 }
 
-export class ParkThreeScene extends ThreeScene {
+export class ParkThreeScene extends ThreeScene.Scene {
   // 水面
   water?: InstanceType<typeof Water>
   // 天空
@@ -96,9 +98,9 @@ export class ParkThreeScene extends ThreeScene {
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
-  character?: InstanceType<typeof THREE.Group>
-  // 时间
-  clock: InstanceType<typeof THREE.Clock>
+  character?: InstanceType<typeof THREE.Group> & {
+    extra?: any
+  }
 
   // 当前视角
   currentSight: string
@@ -114,7 +116,7 @@ export class ParkThreeScene extends ThreeScene {
   moveFactor: number = 1
 
   constructor(
-    options: ConstructorParameters<typeof ThreeScene>[0],
+    options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
   ) {
     super(options)
@@ -130,7 +132,7 @@ export class ParkThreeScene extends ThreeScene {
     this.mouseClickDiffusion.visible = false
     this.addObject(this.mouseClickDiffusion)
 
-    this.clock = new THREE.Clock()
+    this.createClock()
     this.currentSight = sightMap.full
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
@@ -232,7 +234,7 @@ export class ParkThreeScene extends ThreeScene {
     label.data = item
     // 原始点位 备用
     label._position_ = { x, y, z }
-    this.dotGroup.add(label)
+    this.dotGroup?.add(label)
     return label
   }
 
@@ -285,7 +287,8 @@ export class ParkThreeScene extends ThreeScene {
   // 更新天空、太阳
   updateSkyAndSun() {
     const { water, sky, sun } = this
-    const skyUniforms = sky.material.uniforms
+    const skyUniforms = sky?.material.uniforms
+    if (!skyUniforms) return
     // 系数控制参数
     const effectController = {
       turbidity: 10, // 浑浊
@@ -294,7 +297,7 @@ export class ParkThreeScene extends ThreeScene {
       mieDirectionalG: 0.2, // 方向
       elevation: 4, // 太阳高度
       azimuth: 180, // 太阳角度
-      exposure: null // 光晕强度
+      exposure: 1 // 光晕强度
     }
     skyUniforms['turbidity'].value = effectController.turbidity
     skyUniforms['rayleigh'].value = effectController.rayleigh
@@ -304,18 +307,20 @@ export class ParkThreeScene extends ThreeScene {
     const phi = THREE.MathUtils.degToRad(90 - effectController.elevation)
     const theta = THREE.MathUtils.degToRad(effectController.azimuth)
 
+    if (!sun) return
     // 设置球坐标系
     sun.setFromSphericalCoords(1, phi, theta)
     // 太阳方位
     sky.material.uniforms['sunPosition'].value.copy(sun)
 
+    if (!water) return
     // 太阳方向
     water.material.uniforms['sunDirection'].value.copy(sun).normalize()
 
     // 环境映射
     const pmremGenerator = new THREE.PMREMGenerator(this.renderer)
     // 场景环境
-    this.scene.environment = pmremGenerator.fromScene(sky).texture
+    this.scene.environment = pmremGenerator.fromScene(sky as any).texture
 
     // 场景光晕强度
     this.renderer.toneMappingExposure = effectController.exposure
@@ -369,12 +374,13 @@ export class ParkThreeScene extends ThreeScene {
       return
     }
 
+    if (!this.controls || !this.character) return
+
     const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
     this.currentSight = sight
 
     // 人物视角
     const isCharacter = sight === sightMap.npc
-
     // 控制器操作限制切换
     this.controls.maxDistance = isCharacter ? 15 : 1500
     this.controls.screenSpacePanning = !isCharacter
@@ -415,6 +421,7 @@ export class ParkThreeScene extends ThreeScene {
 
   // 设置控制中心点
   setControlTarget(point) {
+    if (!this.controls) return
     const height = 3
     const { x, y, z } = point
     this.controls.target.set(x, y + height, z)
@@ -468,7 +475,7 @@ export class ParkThreeScene extends ThreeScene {
       map: videoCoverTexture
       // side: THREE.DoubleSide
     })
-    const mesh = new THREE.Mesh(geometry, material)
+    const mesh = new THREE.Mesh(geometry, material) as any
     mesh.__video_texture__ = videoTexture
     mesh.__cover_texture__ = videoCoverTexture
     mesh.position.set(-75, 2.66, 133)
@@ -490,7 +497,7 @@ export class ParkThreeScene extends ThreeScene {
     this.addObject(groundMirror)
 
     // 大屏
-    const dbObj = this.scene.getObjectByName('大屏幕')
+    const dbObj = this.scene.getObjectByName('大屏幕') as any
     if (!dbObj) return
     const videoDom2 = createVideoDom()
     const videoTexture2 = new THREE.VideoTexture(videoDom2)
@@ -502,7 +509,7 @@ export class ParkThreeScene extends ThreeScene {
 
   // 视频播放
   videoPlay(object) {
-    const vobj = this.scene.getObjectByName(object.data.bind)
+    const vobj = this.scene.getObjectByName(object.data.bind) as any
 
     if (vobj && vobj.__video__) {
       const videoDom = vobj.__video__
@@ -518,7 +525,7 @@ export class ParkThreeScene extends ThreeScene {
 
   // 开门
   openTheDoor(object, isHalf) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     if (!dobj) return
 
     if (!isHalf) {
@@ -553,10 +560,10 @@ export class ParkThreeScene extends ThreeScene {
 
   // 双开门
   openTheDoubleSlidingDoor(object, scale = 400, isOpen?: boolean) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     if (!dobj) return Promise.reject()
-    const left = dobj.children.find(el => el.name.indexOf('左') > -1)
-    const right = dobj.children.find(el => el.name.indexOf('右') > -1)
+    const left = dobj.children.find(el => el.name.indexOf('左') > -1) as any
+    const right = dobj.children.find(el => el.name.indexOf('右') > -1) as any
 
     const lpos = left.position
     const rpos = right.position
@@ -598,7 +605,7 @@ export class ParkThreeScene extends ThreeScene {
 
   // 推拉门
   openTheSlidingDoor(object) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     console.log(object)
     if (!dobj) return
     console.log(dobj)
@@ -628,7 +635,7 @@ export class ParkThreeScene extends ThreeScene {
   waitLift(object, fllow?: boolean) {
     const liftGroupName = '单元1号电梯'
     // 电梯轿厢
-    const box = this.scene.getObjectByName(liftGroupName)
+    const box = this.scene.getObjectByName(liftGroupName) as any
     console.log(box)
     // 当前绑定坐标
     const cpos = object.data?.to
@@ -669,6 +676,7 @@ export class ParkThreeScene extends ThreeScene {
           .onUpdate(pos => {
             // 人物跟随
             if (fllow) {
+              if (!this.character) return
               this.character.position.y = pos.y
               this.camera.position.y = pos.y
               this.setControlTarget(this.character.position)
@@ -703,7 +711,7 @@ export class ParkThreeScene extends ThreeScene {
   // 开关灯
   lightSwitch(object) {
     console.log(object)
-    const light = this.lightGroup.getObjectsByProperty('name', object.data?.bind)
+    const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind) as any
     light.forEach(el => {
       el.visible = !el.visible
     })
@@ -746,7 +754,7 @@ export class ParkThreeScene extends ThreeScene {
       updateDiffusion()
     }
 
-    let delta = this.clock.getDelta()
+    let delta = this.clock?.getDelta() as number
     if (this.character) {
       const mixer = this.character.extra.mixer
       mixer.update(delta)
@@ -815,9 +823,10 @@ export class ParkThreeScene extends ThreeScene {
     raycasterUpdate(e, dom, scale)
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
     // 锚点或者地面
-    const objects = this.buildingGroup.children
-      .filter(it => it.visible && (isClick || it.__ground__))
-      .concat(this.anchorGroup.children)
+    const objects =
+      this.buildingGroup?.children
+        .filter((it: any) => it.visible && (isClick || it.__ground__))
+        .concat(this.anchorGroup?.children || []) || []
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
@@ -861,10 +870,10 @@ export class ParkThreeScene extends ThreeScene {
 
     if (interscts.length) {
       const intersct = interscts[0]
-      const object = intersct.object
+      const object = intersct.object as any
       this.container.style.cursor = object._isAnchor_ ? 'pointer' : 'auto'
       if (!object._isAnchor_) {
-        this.anchorGroup.children.forEach(el => {
+        this.anchorGroup?.children.forEach((el: any) => {
           el.__change_color__ = false
         })
         return
@@ -875,12 +884,12 @@ export class ParkThreeScene extends ThreeScene {
         object.__mat_color__ = mat.color
       }
       mat.color = new THREE.Color(0xff0ff0)
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = el.uuid === object.uuid
       })
     } else {
       this.container.style.cursor = 'auto'
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = false
       })
     }
@@ -888,7 +897,7 @@ export class ParkThreeScene extends ThreeScene {
 
   // 恢复锚点材质
   restoreAnchorMaterial() {
-    this.anchorGroup.traverse(el => {
+    this.anchorGroup?.traverse((el: any) => {
       if (el.isSprite) {
         if (!el.__change_color__ && el.__mat_color__) {
           el.material.color = el.__mat_color__
@@ -915,28 +924,29 @@ export class ParkThreeScene extends ThreeScene {
 
   // 获取楼层集合
   getFloor() {
-    return this.buildingGroup.children.filter(it => it._isFloor_)
+    return this.buildingGroup?.children.filter((it: any) => it._isFloor_)
   }
 
   // 隐藏除楼层之外的对象
   hideOmitFloor(visible: boolean) {
-    this.buildingGroup.children.forEach(el => {
+    this.buildingGroup?.children.forEach((el: any) => {
       el.visible = el._isFloor_ || visible
     })
   }
 
   // 获取所有对象
   getAll() {
-    return this.buildingGroup.children.concat(this.dotGroup.children)
+    return this.buildingGroup?.children.concat(this.dotGroup?.children || []) || []
   }
 
   // 获取跟随目标集合
   getFlowMark(mark) {
-    return this.getAll().filter(el => el.data?.followMark === mark)
+    return this.getAll().filter((el: any) => el.data?.followMark === mark)
   }
 
   // 获取动画目标点
   getAnimTargetPos(config: Partial<Config>, _to?: XYZ, _target?: XYZ) {
+    if (!this.controls) return
     const to = _to || config.to || { x: -104, y: 7, z: 58 }
     const target = _target || config.target || { x: 0, y: 0, z: 0 }
     // 中心点位
@@ -961,16 +971,18 @@ export class ParkThreeScene extends ThreeScene {
     this.disposeObj(this.lightGroup)
     this.disposeObj(this.mouseClickDiffusion)
 
-    this.clock = null
-    this.water = null
-    this.sky = null
-    this.css2DRender = null
-    this.buildingGroup = null
-    this.character = null
-    this.dotGroup = null
-    this.anchorGroup = null
-    this.lightGroup = null
-    this.mouseClickDiffusion = null
+    this.clock = void 0
+    this.water = void 0
+    this.sky = void 0
+    // @ts-ignore
+    this.css2DRender = void 0
+    this.buildingGroup = void 0
+    this.character = void 0
+    this.dotGroup = void 0
+    this.anchorGroup = void 0
+    this.lightGroup = void 0
+    // @ts-ignore
+    this.mouseClickDiffusion = void 0
     this.extend = {}
     super.dispose()
   }

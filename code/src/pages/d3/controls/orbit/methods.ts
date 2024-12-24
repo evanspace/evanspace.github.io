@@ -1,10 +1,10 @@
 import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   gui: InstanceType<typeof GUI>
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.gui = new GUI()
@@ -13,8 +13,10 @@ export class NewThreeScene extends ThreeScene {
 
   addGui() {
     const gui = this.gui
-    const ctr = this.controls
+    const ctr = this.controls as any
     console.log(ctr)
+    if (!ctr) return
+
     gui.add(ctr, 'autoRotate').name('自动旋转')
     gui.add(ctr, 'autoRotateSpeed', 0.1, 30).name('自动旋转速度')
     gui.add(ctr, 'enableDamping').name('阻尼（惯性）')
@@ -39,15 +41,17 @@ export class NewThreeScene extends ThreeScene {
 
     gui.add(ctr, 'rotateSpeed', 0, 10).name('旋转速度')
     gui.add(ctr, 'screenSpacePanning').name('空间内平移/垂直平面平移')
-    gui.domElement.style = 'position: absolute; top: 0px; right: 0px'
+    gui.domElement.style.position = 'absolute'
+    gui.domElement.style.top = 'opx'
+    gui.domElement.style.right = 'opx'
     this.container.parentNode?.appendChild(gui.domElement)
   }
 
   initModel() {
     const geo = new THREE.PlaneGeometry(300, 300)
     const mat = new THREE.MeshStandardMaterial({
-      color: 0xb2dbdb,
-      shininess: 10
+      color: 0xb2dbdb
+      // shininess: 10
     })
     const ground = new THREE.Mesh(geo, mat)
     ground.name = 'ground'
@@ -59,8 +63,8 @@ export class NewThreeScene extends ThreeScene {
     const size = 50
     const box = new THREE.BoxGeometry(size, size, size)
     const boxMat = new THREE.MeshStandardMaterial({
-      color: 0x137b02,
-      shininess: 10
+      color: 0x137b02
+      // shininess: 10
     })
     const boxMesh = new THREE.Mesh(box, boxMat)
     boxMesh.position.y = size / 2

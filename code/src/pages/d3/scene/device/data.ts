@@ -3,7 +3,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
 export const getPageOpts = (): {} & Omit<
-  import('three-scene/components/device-scene/index').Props,
+  import('three-scene/src/components/device-scene/index').Props,
   'formatObject'
 > => ({
   devEnv,
@@ -192,7 +192,7 @@ export const getPageOpts = (): {} & Omit<
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
-    return item as import('three-scene/types/model').ModelItem
+    return item as import('three-scene/src/types/model').ModelItem
   }),
   objects: [],
   dotShowStrict: true,

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 const params = {
   wireframe: true,
@@ -17,15 +17,16 @@ const createGUI = container => {
   gui.addColor(params, 'skyColor').name('天空光颜色')
   gui.addColor(params, 'groundColor').name('地面光颜色')
 
+  // @ts-ignore
   gui.domElement.style = 'position: absolute; top: 10px; right: 10px'
   container?.appendChild(gui.domElement)
 }
 
-export class NewThreeScene extends ThreeScene {
-  hemisphereLight: InstanceType<typeof THREE.HemisphereLight>
-  hemisphereLightHelper: InstanceType<typeof THREE.HemisphereLightHelper>
-  wireframe: InstanceType<typeof THREE.Mesh>
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+export class NewThreeScene extends ThreeScene.Scene {
+  hemisphereLight?: InstanceType<typeof THREE.HemisphereLight>
+  hemisphereLightHelper?: InstanceType<typeof THREE.HemisphereLightHelper>
+  wireframe?: InstanceType<typeof THREE.Mesh>
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.addModel()

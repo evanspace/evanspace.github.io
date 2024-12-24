@@ -44,7 +44,14 @@ export const createPerspectiveCamera = (dom: HTMLElement, near = 0.1, far = 1000
 }
 
 // 创建方向光
-export const createDirectionalLight = (color = 0xffffff, intensity = 1, s = 800, size = 2048, near = 1, far = 2000) => {
+export const createDirectionalLight = (
+  color = 0xffffff,
+  intensity = 1,
+  s = 800,
+  size = 2048,
+  near = 1,
+  far = 2000
+) => {
   // 平行光
   const dirLight = new THREE.DirectionalLight(color, intensity)
   dirLight.position.set(500, 800, 500)
@@ -251,7 +258,11 @@ export const exportPoints = (list: Array<any>) => {
   let points = list.map((el: any) => {
     let p = <any>el.position
     // text.push( `${ el.name }： ${ p.x.toFixed(1) * 1 }, ${ p.y.toFixed(1) * 1 }, ${ p.z.toFixed(1) * 1 }` )
-    text.push(`${el.name}：{ "x": ${p.x.toFixed(1) * 1}, "y": ${p.y.toFixed(1) * 1}, "z": ${p.z.toFixed(1) * 1} },`)
+    text.push(
+      `${el.name}：{ "x": ${p.x.toFixed(1) * 1}, "y": ${p.y.toFixed(1) * 1}, "z": ${
+        p.z.toFixed(1) * 1
+      } },`
+    )
 
     return `new THREE.Vector3( ${p.x}, ${p.y}, ${p.z} )`
   })
@@ -296,7 +307,7 @@ export const uploadFile = (files: any, onSuccess: Function, onProgress?: Functio
       })
     } else if (type == 'fbx') {
       const loader = new FBXLoader()
-      const object = loader.parse(contents)
+      const object = loader.parse(contents, '')
       console.log(type, ' 模型', object)
       onSuccess(object)
     }

@@ -29,7 +29,7 @@
       <div :class="$style.item" @click="() => scene.changeCharacterAction()">人物动作</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
-      <div :class="$style.item" @click="() => changeBackground(scene)">切换背景</div>
+      <div :class="$style.item" @click="() => changeBackground(scene as any)">切换背景</div>
     </div>
 
     <!-- // 提示 -->
@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import tLoading from 'three-scene/components/loading/index.vue'
+import tLoading from 'three-scene/src/components/loading/index.vue'
 import {
   ANCHOR_POS,
   ANCHOR_TARGET,
@@ -76,12 +76,10 @@ import * as request from './request'
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
-import { useBackground } from 'three-scene/hooks/background'
-import { useModelLoader } from 'three-scene/hooks/model-loader'
-import { useDialog } from 'three-scene/hooks/dialog'
-import * as UTILS from 'three-scene/utils/model'
+import { useBackground, useModelLoader, useDialog } from 'three-scene/src/hooks/index'
+import * as UTILS from 'three-scene/src/utils/index'
 
-import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
@@ -211,7 +209,7 @@ onMounted(() => {
 
 const initPage = () => {
   load()
-  backgroundLoad(scene, pageOpts.skyCode)
+  backgroundLoad(scene, pageOpts.skyCode as any)
 }
 
 // 加载
@@ -259,6 +257,7 @@ const assemblyScenario = async () => {
 
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
+  // @ts-ignore
   UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
   })
@@ -300,7 +299,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   const { anchorType = [], animationModelType = [], floorModelType = [] } = pageOpts
 
   // 深克隆
-  let model = UTILS.deepClone(obj)
+  let model = UTILS.modelDeepClone(obj)
   const { position: POS, scale: SCA, rotation: ROT } = UTILS.get_P_S_R_param(model, item)
   const [x, y, z] = POS
 
@@ -386,7 +385,7 @@ const createDotObject = item => {
 // 更新 dialog 坐标
 const updateDialogPosition = object => {
   const dom = containerRef.value
-  const pos = UTILS.getPlanePosition(dom, object, scene.camera)
+  const pos = UTILS.getPlanePosition(dom, object, scene.camera as any)
   dialog.position = pos
   dialog.style.left = pos.left + 'px'
   dialog.style.top = pos.top + 'px'
@@ -408,7 +407,7 @@ const dialogShowData = () => {
 
 // 更新
 const updateObject = () => {
-  scene.getAll().forEach((el, _i) => {
+  scene.getAll().forEach((el: any, _i) => {
     if (!el.data) return
 
     const data = el.data
@@ -466,7 +465,7 @@ const toCoolMachineRoom = () => {
 
   const name = '机房'
   // 查找机房
-  const room = scene.scene.getObjectByName(name)
+  const room = scene.scene.getObjectByName(name) as any
 
   if (!room) {
     ElMessage.warning({

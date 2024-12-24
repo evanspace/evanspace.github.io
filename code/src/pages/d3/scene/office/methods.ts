@@ -1,20 +1,32 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
-import ThreeScene from 'three-scene'
-import { useRaycaster } from 'three-scene/hooks/raycaster'
-import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
-import { useDiffusion } from 'three-scene/hooks/diffusion'
-import { useMoveAnimate } from 'three-scene/hooks/move-animate'
-import { useFence } from 'three-scene/hooks/fence'
-import { useKeyboardState } from 'three-scene/hooks/keyboard-state'
-import { useCollide } from 'three-scene/hooks/collide'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
-import * as UTILS from 'three-scene/utils/model'
+import {
+  useRaycaster,
+  useCSS2D,
+  CSS2DRenderer,
+  useDiffusion,
+  useMoveAnimate,
+  useFence,
+  useKeyboardState,
+  useCollide
+} from 'three-scene/src/hooks/index'
+
+// import { useRaycaster } from 'three-scene/hooks/raycaster'
+// import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
+// import { useDiffusion } from 'three-scene/hooks/diffusion'
+// import { useMoveAnimate } from 'three-scene/hooks/move-animate'
+// import { useFence } from 'three-scene/hooks/fence'
+// import { useKeyboardState } from 'three-scene/hooks/keyboard-state'
+// import { useCollide } from 'three-scene/hooks/collide'
+
+import * as UTILS from 'three-scene/src/utils/index'
 import DEFAULTCONFIG from './config'
 
 import type { ExtendOptions } from '.'
-import type { ObjectItem } from 'three-scene/types/model'
+import type { ObjectItem } from 'three-scene/src/types/model'
 
 const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
 const { initCSS2DRender, createCSS2DDom } = useCSS2D()
@@ -29,7 +41,7 @@ const sightMap = {
   npc: 'NPC'
 }
 
-export class OfficeThreeScene extends ThreeScene {
+export class OfficeThreeScene extends ThreeScene.Scene {
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
   // 锚点集合
@@ -45,10 +57,9 @@ export class OfficeThreeScene extends ThreeScene {
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
-  character?: InstanceType<typeof THREE.Group>
-
-  // 时间
-  clock: InstanceType<typeof THREE.Clock>
+  character?: InstanceType<typeof THREE.Group> & {
+    __runing__?: boolean
+  }
 
   // 当前视角
   currentSight: string
@@ -67,7 +78,7 @@ export class OfficeThreeScene extends ThreeScene {
   fence?: InstanceType<typeof THREE.Group>
 
   constructor(
-    options: ConstructorParameters<typeof ThreeScene>[0],
+    options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
   ) {
     super(options)
@@ -83,7 +94,7 @@ export class OfficeThreeScene extends ThreeScene {
     this.mouseClickDiffusion.visible = false
     this.addObject(this.mouseClickDiffusion)
 
-    this.clock = new THREE.Clock()
+    this.createClock()
     this.currentSight = sightMap.full
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
@@ -185,7 +196,7 @@ export class OfficeThreeScene extends ThreeScene {
     label.data = item
     // 原始点位 备用
     label._position_ = { x, y, z }
-    this.dotGroup.add(label)
+    this.dotGroup?.add(label)
     return label
   }
 
@@ -280,6 +291,7 @@ export class OfficeThreeScene extends ThreeScene {
 
     // 人物视角
     const isCharacter = sight === sightMap.npc
+    if (!this.controls) return
 
     // 控制器操作限制切换
     this.controls.maxDistance = isCharacter ? 10 : 800
@@ -287,6 +299,7 @@ export class OfficeThreeScene extends ThreeScene {
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
+    if (!this.character) return
     const position = this.character.position
 
     // 向量
@@ -330,6 +343,7 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 设置控制中心点
   setControlTarget(point) {
+    if (!this.controls) return
     this.controls.target.copy(point.clone().add(new THREE.Vector3(0, 1.5, 0)))
     this.camera.lookAt(this.controls.target)
   }
@@ -337,7 +351,7 @@ export class OfficeThreeScene extends ThreeScene {
   //  等电梯
   waitLift(object, liftGroupName, fllow?: boolean) {
     // 电梯轿厢
-    const box = this.scene.getObjectByName(liftGroupName)
+    const box = this.scene.getObjectByName(liftGroupName) as any
 
     // 当前绑定坐标
     const cpos = object.data?.to
@@ -378,6 +392,7 @@ export class OfficeThreeScene extends ThreeScene {
           .onUpdate(pos => {
             // 人物跟随
             if (fllow) {
+              if (!this.character) return
               this.character.position.y = pos.y
               this.camera.position.y = pos.y
               this.setControlTarget(this.character.position)
@@ -410,7 +425,8 @@ export class OfficeThreeScene extends ThreeScene {
   // 开关灯
   lightSwitch(object) {
     console.log(object)
-    const light = this.lightGroup.getObjectsByProperty('name', object.data?.bind)
+    const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
+    if (!light) return
     light.forEach(el => {
       el.visible = !el.visible
     })
@@ -419,10 +435,10 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 双开门(两扇门 往两边平移)
   openTheDoubleSlidingDoor(object, scale = 400, isOpen?: boolean) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     if (!dobj) return Promise.reject()
-    const left = dobj.children.find(el => el.name.indexOf('左') > -1)
-    const right = dobj.children.find(el => el.name.indexOf('右') > -1)
+    const left = dobj.children.find(el => el.name.indexOf('左') > -1) as any
+    const right = dobj.children.find(el => el.name.indexOf('右') > -1) as any
 
     const lpos = left.position
     const rpos = right.position
@@ -462,7 +478,7 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 闸机
   openGate(object) {
-    const dobj = this.scene.getObjectByName(object.data.bind)
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
     if (!dobj) return
 
     // 清楚定时
@@ -514,7 +530,7 @@ export class OfficeThreeScene extends ThreeScene {
   mouseClickGround(intersct, filterName) {
     if (this.currentSight !== sightMap.npc) return Promise.reject()
 
-    const character = this.character
+    const character = this.character as any
     if (!character) return Promise.reject()
     const { runing } = this.options.cruise
     // 自动巡航中不操作
@@ -556,11 +572,12 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 检测人物碰撞
   checkCharacterCollide(pos, y = 0.14) {
+    if (!this.character) return
     // 检测碰撞
     const intersects = checkCollide(
       this.character,
       pos,
-      this.buildingGroup.children,
+      this.buildingGroup?.children,
       true,
       new THREE.Vector3(0, y, 0)
     )
@@ -580,7 +597,8 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
-    UTILS.cameraLookatAnimate(this.camera, pos, this.controls.target)
+    if (!this.controls) return
+    UTILS.cameraLookatAnimate(this.camera as any, pos, this.controls.target)
   }
 
   // 判断是否巡航中
@@ -635,6 +653,7 @@ export class OfficeThreeScene extends ThreeScene {
     if (!to) return
 
     if (!this.isCameraMove(to)) {
+      // @ts-ignore
       UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
 
@@ -672,24 +691,24 @@ export class OfficeThreeScene extends ThreeScene {
 
     this.restoreAnchorMaterial()
 
-    let delta = this.clock.getDelta()
+    let delta = this.clock?.getDelta() as number
     // 模型动画
     if (this.animateModels.length) {
-      this.animateModels.forEach(el => {
+      this.animateModels.forEach((el: any) => {
         if (el.__mixer__) {
           el.__mixer__.update(delta)
         }
       })
     }
 
-    this.anchorGroup.children.forEach(el => {
+    this.anchorGroup?.children.forEach((el: any) => {
       if (el.__mixer__) {
         el.__mixer__.update(delta)
       }
     })
 
     if (this.character) {
-      const mixer = this.character.extra.mixer
+      const mixer = (this.character as any).extra.mixer
       mixer.update(delta)
 
       moveAnimate(0.2 * this.moveFactor)
@@ -703,26 +722,27 @@ export class OfficeThreeScene extends ThreeScene {
     fenceAnimate()
 
     // 人物视角
-    if (this.isPerspectives() && !this.character.__runing__) {
+    if (this.isPerspectives() && !this.character?.__runing__) {
       // 移动速度
       const steep = 10 * delta
       // 旋转速度
       const angle = Math.PI * 0.2 * delta
       const target = this.character
+      if (!target) return
       const isS = keyboardPressed('S')
       if (keyboardPressed('W') || isS) {
         // 向量
         const dir = new THREE.Vector3()
         // 获取相机的视线方向
-        target.getWorldDirection(dir)
+        target?.getWorldDirection(dir)
         // dis向量表示相机沿着相机视线方向平移30的位移量
         const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
         //相机初始位置+相机偏移向量
-        const newPos = target.position.clone().add(dis)
+        const newPos = target?.position.clone().add(dis) || new THREE.Vector3()
         if (this.checkCharacterCollide(newPos)) {
         } else {
-          target.position.copy(newPos)
-          this.setControlTarget(target.position)
+          target?.position.copy(newPos)
+          this.setControlTarget(target?.position)
         }
       }
 
@@ -764,9 +784,10 @@ export class OfficeThreeScene extends ThreeScene {
     raycasterUpdate(e, dom, scale)
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
     // 锚点或者地面
-    const objects = this.buildingGroup.children
-      .filter(it => it.visible && (isClick || it.__ground__))
-      .concat(this.anchorGroup.children)
+    const objects =
+      this.buildingGroup?.children
+        .filter((it: any) => it.visible && (isClick || it.__ground__))
+        .concat(this.anchorGroup?.children || []) || []
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
@@ -819,12 +840,12 @@ export class OfficeThreeScene extends ThreeScene {
         object.__mat_color__ = mat.color
       }
       mat.color = new THREE.Color(0xff0ff0)
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = el.uuid === object.uuid
       })
     } else {
       this.container.style.cursor = 'auto'
-      this.anchorGroup.children.forEach(el => {
+      this.anchorGroup?.children.forEach((el: any) => {
         el.__change_color__ = false
       })
     }
@@ -832,7 +853,7 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 恢复锚点材质
   restoreAnchorMaterial() {
-    this.anchorGroup.traverse(el => {
+    this.anchorGroup?.traverse((el: any) => {
       if (el.isSprite) {
         if (!el.__change_color__ && el.__mat_color__) {
           el.material.color = el.__mat_color__
@@ -859,7 +880,7 @@ export class OfficeThreeScene extends ThreeScene {
 
   // 获取所有对象
   getAll() {
-    return this.buildingGroup.children.concat(this.dotGroup.children)
+    return this.buildingGroup?.children.concat(this.dotGroup?.children || []) || []
   }
 
   resize() {
@@ -879,15 +900,17 @@ export class OfficeThreeScene extends ThreeScene {
     this.disposeObj(this.lightGroup)
     this.disposeObj(this.mouseClickDiffusion)
 
-    this.clock = null
-    this.css2DRender = null
-    this.buildingGroup = null
-    this.character = null
-    this.dotGroup = null
-    this.anchorGroup = null
-    this.lightGroup = null
-    this.fence = null
-    this.mouseClickDiffusion = null
+    this.clock = void 0
+    // @ts-ignore
+    this.css2DRender = void 0
+    this.buildingGroup = void 0
+    this.character = void 0
+    this.dotGroup = void 0
+    this.anchorGroup = void 0
+    this.lightGroup = void 0
+    this.fence = void 0
+    // @ts-ignore
+    this.mouseClickDiffusion = void 0
     this.extend = {}
     super.dispose()
   }

@@ -193,22 +193,18 @@ export class Sketch {
       `,
       uniforms: {
         progress: {
-          type: 'f',
           value: 0
         },
         time: {
-          type: 'f',
           value: 0
         },
         resolution: {
           value: new THREE.Vector4()
         },
         t1: {
-          type: 't',
           value: this.textures[0]
         },
         t2: {
-          type: 't',
           value: this.textures[1]
         }
       },

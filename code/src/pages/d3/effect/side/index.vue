@@ -8,7 +8,7 @@
 import { NewThreeScene } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
-import { useBackground } from 'three-scene/hooks/background'
+import { useBackground } from 'three-scene/src/hooks/background'
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {

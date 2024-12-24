@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { SUBTRACTION, INTERSECTION, ADDITION, Brush, Evaluator } from 'three-bvh-csg'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 const params = {
   operation: SUBTRACTION,
@@ -58,16 +58,17 @@ const createGUI = container => {
   gui.add(params, 'wireframe').name('线框材质')
   gui.add(params, 'useGroups').name('使用组合')
 
+  // @ts-ignore
   gui.domElement.style = 'position: absolute; top: 10px; right: 10px'
   container?.appendChild(gui.domElement)
 }
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   evaluator: InstanceType<typeof Evaluator>
   baseBrush: InstanceType<typeof Brush>
   brush: InstanceType<typeof Brush>
   wireframe: InstanceType<typeof THREE.Mesh>
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
     this.evaluator = new Evaluator()
 

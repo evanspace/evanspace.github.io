@@ -1,13 +1,11 @@
 import * as THREE from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { GUI } from 'dat.gui'
 
-import { useMaterial } from 'three-scene/hooks/material'
-import { useBackground } from 'three-scene/hooks/background'
-import { useRaycaster } from 'three-scene/hooks/raycaster'
+import { useMaterial, useRaycaster, useBackground } from 'three-scene/src/hooks/index'
 
-import * as UTILS from 'three-scene/utils/model'
+import * as UTILS from 'three-scene/src/utils/index'
 import DefaultConfig from './config'
 
 const {
@@ -64,7 +62,7 @@ const createPointSphere = () => {
   return mesh
 }
 
-export class ConvertThreeScene extends ThreeScene {
+export class ConvertThreeScene extends ThreeScene.Scene {
   clock: InstanceType<typeof THREE.Clock>
   gui: InstanceType<typeof GUI>
 
@@ -96,7 +94,7 @@ export class ConvertThreeScene extends ThreeScene {
   // 定位球
   setPiece: InstanceType<typeof THREE.Mesh>
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.addControls()
@@ -120,7 +118,7 @@ export class ConvertThreeScene extends ThreeScene {
 
     // 监听相机变化
     controls.addEventListener('dragging-changed', e => {
-      this.controls.enabled = !e.value
+      this.controls && (this.controls.enabled = !e.value)
     })
 
     this.transformControls = controls
@@ -142,6 +140,7 @@ export class ConvertThreeScene extends ThreeScene {
 
   onKeydown(e) {
     const control = this.transformControls
+    if (!control) return
     switch (e.key) {
       case 'w':
         control.setMode('translate')
@@ -212,8 +211,8 @@ export class ConvertThreeScene extends ThreeScene {
   addGround() {
     const geo = new THREE.PlaneGeometry(5000, 5000)
     const mat = new THREE.MeshStandardMaterial({
-      color: 0xa0adaf,
-      shininess: 10
+      color: 0xa0adaf
+      // shininess: 10
     })
     const mesh = new THREE.Mesh(geo, mat)
     mesh.name = 'ground'
@@ -252,7 +251,7 @@ export class ConvertThreeScene extends ThreeScene {
         this.copyTextarea('坐标复制成功！')
       },
       target: () => {
-        const vs = this.controls.target
+        const vs = this.controls?.target as InstanceType<typeof THREE.Vector3>
         guiOpts.dotText = `{ x: ${vs.x}, y: ${vs.y}, z: ${vs.z} }`
         this.copyTextarea('中心点复制成功！')
       },
@@ -437,7 +436,7 @@ export class ConvertThreeScene extends ThreeScene {
       .add(option, 'rotation', 0, 360)
       .name('旋转')
       .onChange(e => {
-        this.modelGroup.children.forEach(model => {
+        this.modelGroup?.children.forEach(model => {
           const r = (Math.PI / 180) * e
           model.rotation.set(0, r, 0)
         })
@@ -447,7 +446,7 @@ export class ConvertThreeScene extends ThreeScene {
       .step(0.01)
       .name('缩放')
       .onChange(e => {
-        this.modelGroup.children.forEach(model => {
+        this.modelGroup?.children.forEach(model => {
           model.scale.set(e, e, e)
         })
       })
@@ -455,7 +454,7 @@ export class ConvertThreeScene extends ThreeScene {
       .add(option, 'timeScale', 0.1, 10)
       .name('动画速度')
       .onChange(e => {
-        this.modelGroup.children.forEach(model => {
+        this.modelGroup?.children.forEach((model: any) => {
           if (model.__action__) {
             Object.keys(model.__action__).forEach(key => {
               model.__action__[key].timeScale = e
@@ -482,7 +481,7 @@ export class ConvertThreeScene extends ThreeScene {
     if (ambientLight) {
       group.add(ambientLight, 'intensity', 0, 10).name('环境光强度')
     }
-    const directionalLights = this.scene.getObjectsByProperty('isDirectionalLight', true)
+    const directionalLights = this.scene.getObjectsByProperty('isDirectionalLight', true) as any[]
     if (directionalLights.length) {
       const [dirLight1, dirLight2] = directionalLights
 
@@ -495,7 +494,7 @@ export class ConvertThreeScene extends ThreeScene {
         .name('平行光颜色')
         .onChange(e => {
           dirLight1.color.set(e)
-          dirLightHelper1.traverse(el => {
+          dirLightHelper1.traverse((el: any) => {
             if (el.color) {
               el.color.set(e)
             } else if (el.isLine) {
@@ -520,7 +519,7 @@ export class ConvertThreeScene extends ThreeScene {
           .name('平行光颜色')
           .onChange(e => {
             dirLight2.color.set(e)
-            dirLightHelper2.traverse(el => {
+            dirLightHelper2.traverse((el: any) => {
               if (el.color) {
                 el.color.set(e)
               } else if (el.isLine) {
@@ -578,7 +577,7 @@ export class ConvertThreeScene extends ThreeScene {
     obj.__upload_model__ = true
 
     if (this.modelGroup) {
-      const find = this.modelGroup.children.find(it => it.name === filename)
+      const find = this.modelGroup.children.find(it => it.name === filename) as any
       this.disposeObj(find)
       this.modelGroup.remove(find)
     }
@@ -638,13 +637,13 @@ export class ConvertThreeScene extends ThreeScene {
         y: 100,
         z: 300
       },
-      this.controls.target
+      this.controls?.target
     )
   }
 
   // 是否上传过模型
   judgeUploadModel() {
-    const list = this.modelGroup.children
+    const list = this.modelGroup?.children || []
     if (list.length == 0) {
       Message.warning('未上传模型！')
       return false
@@ -654,10 +653,10 @@ export class ConvertThreeScene extends ThreeScene {
 
   // 导出
   export(isGlb?: boolean) {
-    const list = this.modelGroup.children
+    const list = this.modelGroup?.children || []
     if (!this.judgeUploadModel()) return
     const isOne = list.length == 1
-    const model = isOne ? list[0] : this.modelGroup
+    const model: any = isOne ? list[0] : this.modelGroup
     const animations = getAnimations(model)
     exportGlb(model, animations, isOne ? model.name : '综合场景', isGlb)
   }
@@ -666,7 +665,7 @@ export class ConvertThreeScene extends ThreeScene {
   glistenToggle() {
     let roughness = this.guiOpts.glisten ? 0 : 0.9
     console.log(roughness)
-    this.modelGroup.traverse(el => {
+    this.modelGroup?.traverse((el: any) => {
       if (el.isMesh) {
         if (el.material instanceof Array) {
           el.material.forEach(mat => {
@@ -682,7 +681,7 @@ export class ConvertThreeScene extends ThreeScene {
   // 地面反光
   groundGlisten() {
     let roughness = this.guiOpts.groundReflection ? 0 : 0.9
-    this.modelGroup.traverse(el => {
+    this.modelGroup?.traverse((el: any) => {
       if (el.isMesh && DefaultConfig.receiveShadowName.find(it => el.name.indexOf(it) > -1)) {
         if (el.material instanceof Array) {
           el.material.forEach(mat => {
@@ -699,7 +698,8 @@ export class ConvertThreeScene extends ThreeScene {
   sideMaterialToggle() {
     const side = this.guiOpts.side ? THREE.DoubleSide : THREE.FrontSide
     console.log(side)
-    this.modelGroup.traverse(el => {
+    if (!this.modelGroup) return
+    this.modelGroup.traverse((el: any) => {
       if (el.isMesh) {
         if (el.material instanceof Array) {
           el.material.forEach(mat => {
@@ -716,7 +716,7 @@ export class ConvertThreeScene extends ThreeScene {
   opacitySkin() {
     const { opacitySkin, opacity } = this.guiOpts
     console.log(opacitySkin, opacity)
-    this.modelGroup.traverse(el => {
+    this.modelGroup?.traverse((el: any) => {
       if (DefaultConfig.transparentName.find(it => el.name.indexOf(it) > -1)) {
         changeTransparent(el, opacitySkin ? opacity : 1)
       }
@@ -725,7 +725,7 @@ export class ConvertThreeScene extends ThreeScene {
 
   // 金属材质更新
   metalnessMaterialUpdate = ({ metalness, roughness }) => {
-    this.modelGroup.children.forEach(model => {
+    this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
         if (/[金属]/.test(el.name) || model.children.length == 0) {
@@ -744,7 +744,7 @@ export class ConvertThreeScene extends ThreeScene {
 
   // 玻璃材质更新
   glassMaterialUpdate = opts => {
-    this.modelGroup.children.forEach(model => {
+    this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
         if (/[玻璃]/.test(el.name) || model.children.length == 0) {
@@ -763,7 +763,7 @@ export class ConvertThreeScene extends ThreeScene {
 
   // 线框材质更新
   blurringMaterialUpdate = opts => {
-    this.modelGroup.children.forEach(model => {
+    this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
         if (opts.all || model.children.length == 0 || /[线框]/.test(el.name)) {
@@ -795,16 +795,16 @@ export class ConvertThreeScene extends ThreeScene {
 
   // 模型居中
   modelCenter() {
-    this.helperGroup.children.forEach(el => {
+    this.helperGroup?.children.forEach((el: any) => {
       if (el.type === 'BoxHelper') {
         this.disposeObj(el)
-        this.helperGroup.remove(el)
+        this.helperGroup?.remove(el)
       }
     })
 
     const list: any[] = []
-    this.modelGroup.children.forEach(el => {
-      const { helper, center } = centerBoxHelper(el, 0xff0000)
+    this.modelGroup?.children.forEach((el: any) => {
+      const { helper, center } = centerBoxHelper(el, 0xff0000) as any
       this.addHelper(helper)
       center.name = el.name
       const { x, y, z } = el.position
@@ -819,7 +819,7 @@ export class ConvertThreeScene extends ThreeScene {
     })
     list.forEach(el => {
       this.disposeObj(el)
-      this.modelGroup.remove(el)
+      this.modelGroup?.remove(el)
     })
     console.log(this)
   }
@@ -894,7 +894,7 @@ export class ConvertThreeScene extends ThreeScene {
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
 
     // 计算对象列表
-    const objects = isClick ? this.modelGroup.children : [this.setPiece]
+    const objects = isClick ? this.modelGroup?.children || [] : [this.setPiece]
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
     raycaster.setFromCamera(pointer, this.camera)
 
@@ -906,9 +906,9 @@ export class ConvertThreeScene extends ThreeScene {
       if (isClick) {
         this.setPiece.position.copy(intersect.point)
       } else {
-        if (object !== this.transformControls.object) {
+        if (object !== this.transformControls?.object) {
           // 转换控制器 设置当前对象
-          this.transformControls.attach(object)
+          this.transformControls?.attach(object)
         }
       }
     }
@@ -919,7 +919,7 @@ export class ConvertThreeScene extends ThreeScene {
 
     let delta = this.clock.getDelta()
     for (let i = 0; i < this.modelGroup.children.length; i++) {
-      const model = this.modelGroup.children[i]
+      const model = this.modelGroup.children[i] as any
       if (model.__mixer__) {
         model.__mixer__.update(delta)
       }

@@ -1,4 +1,4 @@
-import type { Colors } from 'three-scene/types/color'
+import type { Colors } from 'three-scene/src/types/color'
 
 // 颜色
 const color = {

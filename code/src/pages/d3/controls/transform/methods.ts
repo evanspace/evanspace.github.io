@@ -1,14 +1,14 @@
 import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   clock: InstanceType<typeof THREE.Clock>
   gui: InstanceType<typeof GUI>
   transformControls?: InstanceType<typeof TransformControls>
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.clock = new THREE.Clock()
@@ -32,7 +32,7 @@ export class NewThreeScene extends ThreeScene {
 
     // 监听相机变化
     controls.addEventListener('dragging-changed', e => {
-      this.controls.enabled = !e.value
+      this.controls && (this.controls.enabled = !e.value)
     })
 
     this.transformControls = controls
@@ -42,6 +42,7 @@ export class NewThreeScene extends ThreeScene {
   addGui() {
     const gui = this.gui
     const control = this.transformControls
+    if (!control) return
     const params = {
       w: () => {
         control.setMode('translate')
@@ -79,6 +80,7 @@ export class NewThreeScene extends ThreeScene {
     group.add(params, 'sub').name('“-”,"_"坐标系缩小)')
     group.add(control, 'enabled').name('“空格”坐标系禁/启用)')
 
+    // @ts-ignore
     gui.domElement.style = 'position: absolute; top: 0px; right: 0px'
     this.container.parentNode?.appendChild(gui.domElement)
   }
@@ -86,8 +88,8 @@ export class NewThreeScene extends ThreeScene {
   initModel() {
     const geo = new THREE.PlaneGeometry(300, 300)
     const mat = new THREE.MeshStandardMaterial({
-      color: 0xb2dbdb,
-      shininess: 10
+      color: 0xb2dbdb
+      // shininess: 10
     })
     const ground = new THREE.Mesh(geo, mat)
     ground.name = 'ground'
@@ -99,8 +101,8 @@ export class NewThreeScene extends ThreeScene {
     const size = 50
     const box = new THREE.BoxGeometry(size, size, size)
     const boxMat = new THREE.MeshStandardMaterial({
-      color: 0x137b02,
-      shininess: 10
+      color: 0x137b02
+      // shininess: 10
     })
     const boxMesh = new THREE.Mesh(box, boxMat)
     boxMesh.position.y = size / 2
@@ -108,7 +110,7 @@ export class NewThreeScene extends ThreeScene {
     this.addObject(boxMesh)
 
     // 添加需要变换的网格
-    this.transformControls.attach(boxMesh)
+    this.transformControls?.attach(boxMesh)
 
     const onKeydown = e => this.onKeydown(e)
     const onKeyup = e => this.onKeyup(e)
@@ -127,6 +129,7 @@ export class NewThreeScene extends ThreeScene {
   onKeydown(e) {
     console.log(e, this)
     const control = this.transformControls
+    if (!control) return
     switch (e.key) {
       case 'w':
         control.setMode('translate')

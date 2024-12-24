@@ -47,7 +47,7 @@ const COLOR = {
   scatterColor2: 0x61fbfd
 }
 
-export const getPageOpts = (): {} & import('three-scene/components/map-scene/index').Props => ({
+export const getPageOpts = (): {} & import('three-scene/src/components/map-scene/index').Props => ({
   devEnv: devEnv,
   baseUrl: base,
   // skyCode: '217',

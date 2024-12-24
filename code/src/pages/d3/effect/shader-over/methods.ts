@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
@@ -23,9 +23,9 @@ const loadImg = (): Promise<any[]> => {
   })
 }
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   textures: InstanceType<typeof THREE.TextureLoader>[] = []
-  material: InstanceType<typeof THREE.ShaderMaterial>
+  material?: InstanceType<typeof THREE.ShaderMaterial>
 
   isPlaying: boolean = false
   time: number = 0
@@ -35,7 +35,7 @@ export class NewThreeScene extends ThreeScene {
   progress: number = 0
   isComplete: boolean = true
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     return this
@@ -83,22 +83,18 @@ export class NewThreeScene extends ThreeScene {
       `,
       uniforms: {
         progress: {
-          type: 'f',
           value: 0
         },
         time: {
-          type: 'f',
           value: 0
         },
         resolution: {
           value: new THREE.Vector4()
         },
         t1: {
-          type: 't',
           value: this.textures[0]
         },
         t2: {
-          type: 't',
           value: this.textures[1]
         }
       },

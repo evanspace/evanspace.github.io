@@ -1,9 +1,9 @@
 import * as THREE from 'three'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   gui: InstanceType<typeof GUI>
 
   // 操作
@@ -32,7 +32,7 @@ export class NewThreeScene extends ThreeScene {
   skeleton?: InstanceType<typeof THREE.Skeleton>
   time = 0
 
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.addControls()
@@ -52,7 +52,7 @@ export class NewThreeScene extends ThreeScene {
   addControls() {
     const camera = this.camera
     camera.lookAt(0, 10, 0)
-    const controls = new PointerLockControls(camera, this.container)
+    const controls = new PointerLockControls(camera, this.container) as any
     // controls.dragToLook = false
 
     console.log(controls)
@@ -61,7 +61,7 @@ export class NewThreeScene extends ThreeScene {
   }
 
   initModel() {
-    this.createGround()
+    this.addModel()
 
     this.createSimulate()
 
@@ -70,8 +70,7 @@ export class NewThreeScene extends ThreeScene {
     this.bindOperateEvent()
   }
 
-  // 创建地面
-  createGround() {
+  addModel() {
     let ground = new THREE.PlaneGeometry(2000, 2000, 100, 100)
     ground.rotateX(-Math.PI * 0.5)
 
@@ -94,6 +93,7 @@ export class NewThreeScene extends ThreeScene {
 
     // 确保每个面都有唯一的顶点
     // 转换为非索引几何体
+    // @ts-ignore
     ground = ground.toNonIndexed()
 
     position = ground.attributes.position
@@ -222,7 +222,7 @@ export class NewThreeScene extends ThreeScene {
   createSimulateMesh(geometry, bones, options) {
     // 创建一个蒙皮材质
     const material = new THREE.MeshPhongMaterial({
-      skinning: true, // 重点
+      // skinning: true, // 重点
       color: 0x156289,
       emissive: 0x072534,
       side: THREE.DoubleSide,
@@ -298,7 +298,8 @@ export class NewThreeScene extends ThreeScene {
   }
 
   bindOperateEvent() {
-    const controls = this.controls
+    const controls = this.controls as any
+    if (!controls) return
 
     const blocker = document.getElementById('blocker')
     const instructions = document.getElementById('instructions')
@@ -328,14 +329,16 @@ export class NewThreeScene extends ThreeScene {
 
   addGui() {
     const gui = this.gui
-    const control = this.controls
-
+    const control = this.controls as any
+    if (!control) return
     gui.add(control, 'minPolarAngle', 0, Math.PI).name('垂直角度下限')
     gui.add(control, 'maxPolarAngle', 0, Math.PI).name('垂直角度上限')
 
     gui.add(control, 'pointerSpeed', 0.01, 1).name('旋转速度')
 
-    gui.domElement.style = 'position: absolute; top: 0px; right: 0px'
+    gui.domElement.style.position = 'absolute'
+    gui.domElement.style.top = 'opx'
+    gui.domElement.style.right = 'opx'
     this.container.parentNode?.appendChild(gui.domElement)
   }
 
@@ -394,9 +397,10 @@ export class NewThreeScene extends ThreeScene {
 
   modelAnimate() {
     const time = performance.now()
+    const controls = this.controls as any
 
-    if (this.controls && this.controls.isLocked === true) {
-      const { raycaster, controls, prevTime, velocity, operate, direction, objects } = this
+    if (controls && controls.isLocked === true) {
+      const { raycaster, prevTime, velocity, operate, direction, objects } = this
       const camera = controls.getObject()
       // 复制相机坐标更新原点
       raycaster.ray.origin.copy(camera.position)
@@ -427,9 +431,9 @@ export class NewThreeScene extends ThreeScene {
       }
 
       // 右转
-      controls.moveRight(-velocity.x * delta)
+      controls?.moveRight(-velocity.x * delta)
       // 前进
-      controls.moveForward(-velocity.z * delta)
+      controls?.moveForward(-velocity.z * delta)
 
       camera.position.y += velocity.y * delta
 
@@ -468,7 +472,7 @@ export class NewThreeScene extends ThreeScene {
       let time = this.time,
         T = 25,
         step = 0.01,
-        skeleton = this.skeleton
+        skeleton = this.skeleton as any
       time += 1
       if (time < T) {
         // 改变骨关节角度

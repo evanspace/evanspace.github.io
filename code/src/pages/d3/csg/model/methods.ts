@@ -16,7 +16,7 @@ import {
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
-import ThreeScene from 'three-scene'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
@@ -68,6 +68,7 @@ const loadBunnyBrush = async () => {
   obj.updateMatrixWorld()
 
   // 获取geometry的副本，以免修改原始geometry
+  // @ts-ignore
   const geometry = obj.geometry.clone()
   // 矩阵
   const matrix = new THREE.Matrix4()
@@ -88,9 +89,7 @@ const loadBunnyBrush = async () => {
   geometry.computeVertexNormals()
 
   // @ts-ignore
-  const mesh = new Brush(geometry, new THREE.MeshStandardMaterial()) as InstanceType<
-    typeof THREE.Mesh
-  >
+  const mesh = new Brush(geometry, new THREE.MeshStandardMaterial()) as any
   // mesh.position.y = 1
   mesh.updateMatrixWorld()
   //对象是否被渲染到阴影贴图中。默认值为false。
@@ -125,13 +124,13 @@ const createBrushes = scene => {
 }
 
 type NewBrush = InstanceType<typeof Brush> & InstanceType<typeof THREE.Mesh>
-export class NewThreeScene extends ThreeScene {
+export class NewThreeScene extends ThreeScene.Scene {
   bunnyBrush: NewBrush | undefined
   brushResult: NewBrush | undefined
   wireframeResult: InstanceType<typeof THREE.Mesh> | undefined
   brushes: NewBrush[]
   surfaceSampler: InstanceType<typeof MeshSurfaceSampler> | undefined
-  constructor(options: ConstructorParameters<typeof ThreeScene>[0]) {
+  constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
     this.brushes = []
@@ -167,7 +166,7 @@ export class NewThreeScene extends ThreeScene {
     this.surfaceSampler = surfaceSampler
 
     const { brushes, material } = createBrushes(this.scene)
-    this.brushes = brushes
+    this.brushes = brushes as any
 
     // 缓存材质
     let mat
@@ -199,7 +198,7 @@ export class NewThreeScene extends ThreeScene {
     )
     brushResult.castShadow = true
     brushResult.receiveShadow = true
-    this.brushResult = brushResult
+    this.brushResult = brushResult as any
     this.addObject(brushResult)
 
     // 线框材质
@@ -227,6 +226,7 @@ export class NewThreeScene extends ThreeScene {
     const brushes = this.brushes
     const bunnyBrush = this.bunnyBrush
 
+    if (!bunnyBrush) return
     for (let i = 0; i < brushes.length; i++) {
       const b = brushes[i]
       surfaceSampler.sample(b.position)
@@ -242,6 +242,7 @@ export class NewThreeScene extends ThreeScene {
 
   updateCSG() {
     const { brushes, bunnyBrush, brushResult } = this
+    if (!bunnyBrush || !brushResult) return
     let finalBrush = brushes[0]
     csgEvaluator.useGroups = params.useGroups
 
@@ -258,7 +259,7 @@ export class NewThreeScene extends ThreeScene {
     csgEvaluator.evaluate(bunnyBrush, finalBrush, params.operation, brushResult)
 
     if (params.useGroups) {
-      brushResult.material = brushResult.material.map(m => materialMap.get(m))
+      brushResult.material = (brushResult.material as any[]).map(m => materialMap.get(m))
     } else {
       brushResult.material = materialMap.get(bunnyBrush.material)
     }
@@ -306,6 +307,7 @@ export class NewThreeScene extends ThreeScene {
       )
       .name('随机更新')
 
+    // @ts-ignore
     gui.domElement.style = 'position: absolute; top: 10px; right: 10px'
     this.container?.appendChild(gui.domElement)
   }

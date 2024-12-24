@@ -3,7 +3,12 @@
     <div :class="$style.operate">
       <div class="flex flex-ac">
         <span>点位：</span>
-        <el-switch v-model="pageOpts.dotShowStrict" active-text="严格" inactive-text="全显" inline-prompt></el-switch>
+        <el-switch
+          v-model="pageOpts.dotShowStrict"
+          active-text="严格"
+          inactive-text="全显"
+          inline-prompt
+        ></el-switch>
       </div>
       <el-link type="success" @click="onChangeCruisePoint">切换巡航点位</el-link>
       <el-link type="primary" size="small" @click="onExport">导出</el-link>
@@ -58,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import tDeviceScene from 'three-scene/components/device-scene/index.vue'
+import tDeviceScene from 'three-scene/src/components/device-scene/index.vue'
 
 import { getPageOpts } from './data'
 import * as request from './request'
@@ -66,7 +71,7 @@ import * as request from './request'
 import { useWsStore } from '@/stores'
 import { useResize } from '@/hooks/scene-resize'
 
-import type { ObjectItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
 const wsStore = useWsStore()
 
@@ -79,7 +84,7 @@ const formatObject = list => {
 }
 
 // 点位更新回调
-const dotUpdateObjectCall = (obj: ObjectItem, group) => {
+const dotUpdateObjectCall = (obj: ObjectItem, list: ThreeModelItem[]) => {
   const code = obj.deviceCode || ''
   // const val = wsStore.getKeyValue( code ).value
   const val = Math.random() * 40
@@ -88,7 +93,8 @@ const dotUpdateObjectCall = (obj: ObjectItem, group) => {
   }
   const c = code.split('_')[0] || ''
   // const so = wsStore.getRunStatus( c ) > 0
-  const so = group.children.findIndex(it => it.data && it.data.deviceCode === c && (it.data?.status || 0) > 0) > -1
+  const so =
+    list.findIndex(it => it.data && it.data.deviceCode === c && (it.data?.status || 0) > 0) > -1
 
   // 判断在运行则展示 不存在的则为公共参数也展示
   if (so || ['SYS', 'CSC'].includes(c)) {

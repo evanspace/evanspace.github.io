@@ -3,7 +3,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
 export const getPageOpts = (): {} & Omit<
-  import('three-scene/components/device-scene/index').Props,
+  import('three-scene/src/components/device-scene/index').Props,
   'formatObject'
 > => ({
   devEnv,
@@ -288,7 +288,7 @@ export const getPageOpts = (): {} & Omit<
     if (item.mapUrl && item.mapUrl.indexOf('/oss') < 0) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
-    return item as import('three-scene/types/model').ModelItem
+    return item as import('three-scene/src/types/model').ModelItem
   }),
   objects: [],
   pipes: [],
@@ -297,7 +297,18 @@ export const getPageOpts = (): {} & Omit<
   mainBodyChangeColor: false,
 
   anchorType: ['COLD_CAMERA', 'COLD_ROOM_INLET', 'COLD_GPS'],
-  colorMeshName: ['电动阀门', '叶轮', '螺杆A', '螺杆B', '螺杆C', '螺杆D', '螺杆E', '螺杆F', '螺杆G', '螺杆H'],
+  colorMeshName: [
+    '电动阀门',
+    '叶轮',
+    '螺杆A',
+    '螺杆B',
+    '螺杆C',
+    '螺杆D',
+    '螺杆E',
+    '螺杆F',
+    '螺杆G',
+    '螺杆H'
+  ],
   animationModelType: ['LDB', 'LQB', 'SB', 'LXJ', 'LGJ', 'LGJ_3', 'LQT'],
   textModelType: ['LDB', 'LQB', 'JSQ', 'LXJ', 'LGJ', 'LGJ_3', 'LQT', 'BSHLQ']
 })
