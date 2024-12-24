@@ -1,0 +1,1 @@
+import{c as e}from"./index-c95106e6.js";import{w as s,af as i}from"./vendor-16889df9.js";const o=o=>({resize:()=>{const r=()=>null==o?void 0:o.resize();s((()=>e().sidebar.opened),(()=>{setTimeout(r,300)})),window.addEventListener("resize",r,!1),i((()=>{null==o||o.dispose(),window.removeEventListener("resize",r)}))}});export{o as u};
