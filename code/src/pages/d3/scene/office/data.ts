@@ -5,12 +5,16 @@ const devEnv = import.meta.env.VITE_MODE !== 'production-'
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
+export const CONPANT_FLOOR = 'campany_floor' // 公司楼层
+
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
-export const GATE_TYPE = 'access_gate' // 闸机类型
 export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
+export const DUBLE_HORIZONTAL_SWITCH = 'DUBLE_HORIZONTAL_SWITCH' // 双开横推门
+export const DUBLE_ROTATE_SWITCH = 'DUBLE_ROTATE_SWITCH' // 双旋转开门
+export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
 const mxY = 146,
@@ -29,7 +33,7 @@ export const getPageOpts = animateBack => ({
   baseUrl: base,
   bgColor: '',
   skyCode: '221',
-  env: '/oss/textures/hdr/3.hdr',
+  env: '/oss/textures/hdr/6.hdr',
 
   config: {},
 
@@ -37,28 +41,43 @@ export const getPageOpts = animateBack => ({
   dotKey: 'DOT',
   dotShowStrict: false,
 
-  anchorType: [ANCHOR_POS, ANCHOR_TARGET, WAIT_LIFT, LIGHT_SWITCH, GATE_SWITCH],
-  animationModelType: [MAIN_SCENE],
+  anchorType: [
+    ANCHOR_POS,
+    ANCHOR_TARGET,
+    WAIT_LIFT,
+    LIGHT_SWITCH,
+    GATE_SWITCH,
+    VIDEO_SWITCH,
+    DUBLE_HORIZONTAL_SWITCH,
+    DUBLE_ROTATE_SWITCH
+  ],
+  animationModelType: [CONPANT_FLOOR],
 
   models: [
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 3.1,
-      url: '/电梯.glb'
+      size: 18.6,
+      url: '/公司总部.glb'
+    },
+    {
+      key: 'floor_low',
+      name: '低层',
+      size: 26.7,
+      url: '/低层.glb'
+    },
+    {
+      key: 'floor_heigh',
+      name: '高层',
+      size: 11.3,
+      url: '/高层.glb'
     },
 
-    // {
-    //   key: 'campany_floor',
-    //   name: '公司',
-    //   size: 39.6,
-    //   url: '/公司总部.glb'
-    // },
     {
-      key: GATE_TYPE,
-      name: '闸机',
-      size: 0.3,
-      url: '/闸机.glb'
+      key: CONPANT_FLOOR,
+      name: '公司',
+      size: 54.4,
+      url: '/二十五楼.glb'
     },
 
     {
@@ -83,11 +102,33 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/lift.png'
     },
     {
+      key: DUBLE_HORIZONTAL_SWITCH,
+      name: '横推开关门',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/lift.png'
+    },
+    {
+      key: DUBLE_ROTATE_SWITCH,
+      name: '旋转开关门',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/lift.png'
+    },
+    {
       key: GATE_SWITCH,
       name: '闸机',
       type: 'sprite',
       range: { x: 1, y: 1 },
       mapUrl: '/gate.png'
+    },
+
+    {
+      key: VIDEO_SWITCH,
+      name: '视频',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/video.png'
     },
 
     {
@@ -109,7 +150,7 @@ export const getPageOpts = animateBack => ({
       name: '聚光灯',
       intensity: 8,
       color: 0x00e0ff,
-      distance: 8
+      distance: 10
     },
     {
       key: LIGHT_SWITCH,
@@ -153,10 +194,8 @@ export const getFloorOpts = () => ({
   show: false,
   list: [
     // key 值需要与 配置的等电梯点位 bing 字段尾数相同
-    { name: '一楼', key: 1, y: 0.2 },
-    { name: '二楼', key: 2, y: 13.8 },
-    { name: '三楼', key: 3, y: 19.83 },
-    { name: '五楼', key: 5, y: 31.76 }
+    { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-1_grp' },
+    { name: '公司', key: 2, y: 184.7, bind: '电梯外门001' }
   ]
 })
 

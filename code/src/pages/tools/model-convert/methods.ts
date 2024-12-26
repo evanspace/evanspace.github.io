@@ -3,9 +3,8 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 import * as ThreeScene from 'three-scene/build/three-scene.module'
 import { GUI } from 'dat.gui'
 
-import { useMaterial, useRaycaster, useBackground } from 'three-scene/src/hooks/index'
-
-import * as UTILS from 'three-scene/src/utils/index'
+const Utils = ThreeScene.Utils
+const Hooks = ThreeScene.Hooks
 import DefaultConfig from './config'
 
 const {
@@ -16,9 +15,9 @@ const {
   setMetalnessMaterial,
   setGlassMaterial,
   centerBoxHelper
-} = useMaterial()
-const { backgroundLoad, skys } = useBackground()
-const { raycaster, pointer, update: raycasterUpdate } = useRaycaster()
+} = Hooks.useMaterial()
+const { backgroundLoad, skys } = Hooks.useBackground()
+const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
 
 const _ElMessage = opts => {
   return ElMessage(opts)
@@ -81,7 +80,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     // 入场动画
     insetAnimate: false,
     // 转换材质
-    transformMaterial: true,
+    transformMaterial: false,
     // 地面反光
     groundReflection: false,
     // 材质反光
@@ -122,7 +121,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     })
 
     this.transformControls = controls
-    this.addObject(controls)
+    this.addObject(controls.getHelper())
 
     const onKeydown = e => this.onKeydown(e)
     const onKeyup = e => {
@@ -542,7 +541,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       .add(option, 'bgCode', skys)
       .name('背景')
       .onChange(e => {
-        backgroundLoad(this.scene, e)
+        backgroundLoad(this, e)
       })
     group
       .add(
@@ -593,7 +592,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     }
 
     obj.name = filename
-    let model = obj.clone()
+    let model = Utils.modelDeepClone(obj)
     const p = model.position
     guiOpts.dotText = `模型初始坐标: {
       "x": ${p.x},
@@ -630,7 +629,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
 
   // 视角重置
   cameraViewReset() {
-    UTILS.cameraInSceneAnimate(
+    Utils.cameraInSceneAnimate(
       this.camera,
       {
         x: 0,
@@ -718,6 +717,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     console.log(opacitySkin, opacity)
     this.modelGroup?.traverse((el: any) => {
       if (DefaultConfig.transparentName.find(it => el.name.indexOf(it) > -1)) {
+        console.log(el)
         changeTransparent(el, opacitySkin ? opacity : 1)
       }
     })

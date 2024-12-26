@@ -3,38 +3,21 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import * as ThreeScene from 'three-scene/build/three-scene.module'
 
-import {
-  useRaycaster,
-  useCSS2D,
-  CSS2DRenderer,
-  useDiffusion,
-  useMoveAnimate,
-  useFence,
-  useKeyboardState,
-  useCollide
-} from 'three-scene/src/hooks/index'
-
-// import { useRaycaster } from 'three-scene/hooks/raycaster'
-// import { useCSS2D, CSS2DRenderer } from 'three-scene/hooks/css2d'
-// import { useDiffusion } from 'three-scene/hooks/diffusion'
-// import { useMoveAnimate } from 'three-scene/hooks/move-animate'
-// import { useFence } from 'three-scene/hooks/fence'
-// import { useKeyboardState } from 'three-scene/hooks/keyboard-state'
-// import { useCollide } from 'three-scene/hooks/collide'
-
-import * as UTILS from 'three-scene/src/utils/index'
 import DEFAULTCONFIG from './config'
 
 import type { ExtendOptions } from '.'
 import type { ObjectItem } from 'three-scene/src/types/model'
 
-const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
-const { initCSS2DRender, createCSS2DDom } = useCSS2D()
-const { createDiffusion, updateDiffusion } = useDiffusion()
-const { createMove, moveAnimate } = useMoveAnimate()
-const { createFence, fenceAnimate } = useFence()
-const { keyboardPressed, destroyEvent, insertEvent } = useKeyboardState()
-const { checkCollide } = useCollide()
+const Hooks = ThreeScene.Hooks
+const Utils = ThreeScene.Utils
+const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
+const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
+const { createDiffusion, updateDiffusion } = Hooks.useDiffusion()
+const { createMove, moveAnimate } = Hooks.useMoveAnimate()
+const { createFence, fenceAnimate } = Hooks.useFence()
+const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
+const { checkCollide } = Hooks.useCollide()
+const { dubleHorizontal, dubleRotate } = Hooks.useOpenTheDoor()
 
 const sightMap = {
   full: 'FULL',
@@ -53,7 +36,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
-  css2DRender: InstanceType<typeof CSS2DRenderer>
+  css2DRender: InstanceType<typeof Hooks.CSS2DRenderer>
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
@@ -157,7 +140,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     const { x, y, z } = obj.position
     // 创建精灵动画
-    UTILS.createSpriteAnimate(obj, [x, y, z], 0.2, 8)
+    Utils.createSpriteAnimate(obj, [x, y, z], 0.2, 8)
   }
 
   // 添加点位组
@@ -267,7 +250,6 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
-        console.log(e)
         if (model.__runing__) return
         if (keys.includes(e.keyCode)) {
           runging.play()
@@ -303,7 +285,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const position = this.character.position
 
     // 向量
-    const up = new THREE.Vector3(0, 1.5, 0)
+    const up = new THREE.Vector3(0, 2.5, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
@@ -313,8 +295,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       this.historyTarget = this.controls.target.clone()
       this.historyCameraPosition = this.camera.position.clone()
       const pos = position.clone().add(up)
-      console.log(pos)
+
       this.camera.lookAt(pos)
+      // 相机高度距离人物大于 8
+      if (Math.abs(this.camera.position.y - pos.y) > 8) {
+        this.camera.position.y = pos.y
+      }
     } else {
       this.camera.position.copy(this.historyCameraPosition)
       this.camera.lookAt(position)
@@ -344,7 +330,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, 1.5, 0)))
+    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, 2.5, 0)))
     this.camera.lookAt(this.controls.target)
   }
 
@@ -359,33 +345,39 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     // y 轴对比
     const bpos = box.position
 
-    if (cpos.y != bpos.y) {
+    // 判断间距
+    if (Math.abs(cpos.y - bpos.y) > 0.2) {
       // 电梯关门
       const bindLift = box.__bind_lift__
       if (bindLift !== void 0) {
         // 绑定过则关闭电梯门
-        this.openTheDoubleSlidingDoor(
+        this.dubleHorizontalDoor(
           {
             data: { bind: bindLift }
           },
-          200,
+          2.3,
           false
         )
       }
-      this.openTheDoubleSlidingDoor(
+      this.dubleHorizontalDoor(
         {
           data: { bind: liftGroupName }
         },
-        200 * 0.02,
+        2.3,
         false
       ).then(() => {
+        const duration = 1000 * 5
+        ElMessage.success({
+          message: `电梯移动中，请稍候，${duration / 1000}秒后到达!`,
+          duration: duration
+        })
         // 电梯移动
         new TWEEN.Tween(bpos)
           .to(
             {
               y: cpos.y
             },
-            1000 * 1.5
+            duration
           )
           .delay(0)
           .start()
@@ -399,7 +391,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
             }
           })
           .onComplete(() => {
-            console.log('电梯到了！')
+            console.log('电梯到了！', box)
             // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
             box.__bind_lift__ = object.data.bind
             // 电梯开门
@@ -414,14 +406,15 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 电梯开门
   openLift(object, liftGroupName) {
     // 电梯门打开
-    this.openTheDoubleSlidingDoor(object, 60)
-    this.openTheDoubleSlidingDoor(
+    this.dubleHorizontalDoor(object, 2.3)
+    this.dubleHorizontalDoor(
       {
         data: { bind: liftGroupName }
       },
-      60 * 0.02
+      2.3
     )
   }
+
   // 开关灯
   lightSwitch(object) {
     console.log(object)
@@ -434,96 +427,32 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 双开门(两扇门 往两边平移)
-  openTheDoubleSlidingDoor(object, scale = 400, isOpen?: boolean) {
-    const dobj = this.scene.getObjectByName(object.data.bind) as any
-    if (!dobj) return Promise.reject()
-    const left = dobj.children.find(el => el.name.indexOf('左') > -1) as any
-    const right = dobj.children.find(el => el.name.indexOf('右') > -1) as any
+  dubleHorizontalDoor(object, scale = 400, isOpen?: boolean) {
+    const { bind, axle = 'z' } = object.data
+    return dubleHorizontal(this.scene, {
+      value: bind,
+      axle,
+      scale,
+      isOpen
+    })
+  }
 
-    const lpos = left.position
-    const rpos = right.position
-    if (dobj.__open__ == void 0) {
-      left.__position__ = new THREE.Vector3().copy(lpos)
-      right.__position__ = new THREE.Vector3().copy(rpos)
-    }
-
-    dobj.__open__ = isOpen !== void 0 ? isOpen : !dobj.__open__
-    return new Promise(resolve => {
-      const rMoveX = right.__position__.x + (dobj.__open__ ? scale : 0)
-      // 坐标不变则直接返回
-      if (rpos.x === rMoveX) return resolve(dobj)
-      new TWEEN.Tween(lpos)
-        .to(
-          {
-            x: left.__position__.x + (dobj.__open__ ? -scale : 0)
-          },
-          1000 * 1
-        )
-        .delay(0)
-        .start()
-      new TWEEN.Tween(rpos)
-        .to(
-          {
-            x: rMoveX
-          },
-          1000 * 1
-        )
-        .delay(0)
-        .start()
-        .onComplete(() => {
-          resolve(dobj)
-        })
+  // 双旋转开门
+  dubleRotateDoor(object) {
+    const { bind, axle = 'y', left = '右', right = '左', internal } = object.data
+    console.log(left, right)
+    return dubleRotate(this.scene, {
+      value: bind,
+      axle,
+      angle: Math.PI * (internal ? -0.5 : 0.5),
+      leftMatch: left,
+      rightMatch: right
     })
   }
 
   // 闸机
   openGate(object) {
-    const dobj = this.scene.getObjectByName(object.data.bind) as any
-    if (!dobj) return
-
-    // 清楚定时
-    clearTimeout(object.__timer__)
-
-    const left = dobj.getObjectByName('左-玻璃')
-    const right = dobj.getObjectByName('右-玻璃')
-    console.log(left, right)
-
-    const lpos = left.position
-    const rpos = right.position
-
-    if (dobj.__open__ == void 0) {
-      left.__position__ = new THREE.Vector3().copy(lpos)
-      right.__position__ = new THREE.Vector3().copy(rpos)
-    }
-
-    dobj.__open__ = !dobj.__open__
-
-    const ans = 1.5
-    new TWEEN.Tween(left.rotation)
-      .to(
-        {
-          z: dobj.__open__ ? Math.PI * 0.5 : 0
-        },
-        1000 * ans
-      )
-      .delay(0)
-      .start()
-    new TWEEN.Tween(right.rotation)
-      .to(
-        {
-          z: dobj.__open__ ? -Math.PI * 0.5 : 0
-        },
-        1000 * ans
-      )
-      .delay(0)
-      .start()
-
-    // 延迟 2 秒后自动关闭
-    if (dobj.__open__) {
-      object.__timer__ = setTimeout(() => {
-        this.openGate(object)
-      }, 1000 * (2 + ans))
-    }
+    return this.dubleRotateDoor(object)
   }
 
   // 鼠标点击地面
@@ -552,7 +481,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         lookAt,
         (pos, stop) => {
           this.setControlTarget(pos)
-          if (this.checkCharacterCollide(pos, intersct.object.name === filterName ? 2 : 0.14)) {
+          if (this.checkCharacterCollide(pos, intersct.object.name === filterName ? 2 : 0.3)) {
             stop()
             runging.stop()
             character.__runing__ = false
@@ -571,7 +500,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 检测人物碰撞
-  checkCharacterCollide(pos, y = 0.14) {
+  checkCharacterCollide(pos, y = 0.3) {
     if (!this.character) return
     // 检测碰撞
     const intersects = checkCollide(
@@ -598,7 +527,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
     if (!this.controls) return
-    UTILS.cameraLookatAnimate(this.camera as any, pos, this.controls.target)
+    Utils.cameraLookatAnimate(this.camera as any, pos, this.controls.target)
   }
 
   // 判断是否巡航中
@@ -654,7 +583,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     if (!this.isCameraMove(to)) {
       // @ts-ignore
-      UTILS.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+      Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
 
     const { bind } = object.data
@@ -726,7 +655,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       // 移动速度
       const steep = 10 * delta
       // 旋转速度
-      const angle = Math.PI * 0.2 * delta
+      const angle = Math.PI * 0.4 * delta
       const target = this.character
       if (!target) return
       const isS = keyboardPressed('S')

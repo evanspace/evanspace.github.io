@@ -60,8 +60,9 @@ import {
   CRUISE_POINT_UP,
   WAIT_LIFT,
   LIGHT_SWITCH,
-  GATE_TYPE,
   GATE_SWITCH,
+  DUBLE_HORIZONTAL_SWITCH,
+  DUBLE_ROTATE_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -73,8 +74,6 @@ import { useResize } from '@/hooks/scene-resize'
 import { useBackground } from 'three-scene/src/hooks/background'
 import { useModelLoader } from 'three-scene/src/hooks/model-loader'
 import * as UTILS from 'three-scene/src/utils/index'
-
-console.log(UTILS)
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
@@ -105,7 +104,7 @@ const { progress, loadModels, getModel } = useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 15
+    version: 27
   }
 })
 
@@ -119,31 +118,26 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     enableDamping: true,
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
-    // enablePan: false
+    // enablePan: false,
     screenSpacePanning: false,
-    maxDistance: 800
+    maxDistance: 1500
   },
-  camera: {
-    // near: 1,
-    // far: 500,
-    // orthogonal: true,
-    // position: [0, 150, 0]
-  },
-  directionalLight: {
-    // intensity: 3
-  },
+  camera: {},
+  directionalLight: {},
   axes: {
-    visible: true
+    visible: true,
+    size: 1000
   }
 }
 let scene: InstanceType<typeof OfficeThreeScene>
 
-const liftGroupName = '单元1号电梯'
+const liftGroupName = '电梯-2'
 
 // 楼层移动至
 const onFloorMoveTo = item => {
   floorOpts.active = item.key
-  const liftName = '电梯门' + item.key
+  const liftName = item.bind
+  console.log(item)
   scene.waitLift(
     {
       data: {
@@ -276,11 +270,6 @@ const loopLoadObject = async (item: ObjectItem) => {
     scene.addModelAnimate(model, obj.animations, true, 1)
   }
 
-  // 闸机类型
-  if (type === GATE_TYPE) {
-    model.name = item.name
-  }
-
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
@@ -368,11 +357,13 @@ const createCharacter = () => {
     }
   })
   const move = {
-    x: 0,
+    x: -69.4,
     y: 0,
-    z: 0
+    z: 127.3
   }
-  obj.scale.setScalar(0.5)
+  move.x = 33.7
+  move.z = 25.3
+  obj.scale.setScalar(0.75)
   scene.addCharacter(obj, move)
 }
 
@@ -383,9 +374,24 @@ const initPage = () => {
 
 onMounted(() => {
   options.container = containerRef.value
-  const liftMeshName = '轿厢-ground'
+  const liftMeshName = '电梯地板002'
   scene = new OfficeThreeScene(options, {
-    groundMeshName: ['ground', liftMeshName],
+    groundMeshName: [
+      '地面002',
+      '立方体306',
+      '平面118',
+      '立方体475',
+      '立方体514',
+      '立方体552',
+      '地面020',
+      '地面',
+      '平面391',
+
+      '立方体474',
+      '立方体1617',
+      'ground',
+      liftMeshName
+    ],
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data
@@ -401,6 +407,12 @@ onMounted(() => {
             break
           case GATE_SWITCH: // 闸机
             scene.openGate(object)
+            break
+          case DUBLE_HORIZONTAL_SWITCH: // 双开横推门
+            scene.dubleHorizontalDoor(object, 5.4)
+            break
+          case DUBLE_ROTATE_SWITCH: // 双旋转开门
+            scene.dubleRotateDoor(object)
             break
         }
       }
