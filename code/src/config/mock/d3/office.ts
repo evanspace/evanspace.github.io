@@ -269,6 +269,19 @@ const companyDoors = [
     axle: 'y'
     // 内部
     // internal: 1
+  },
+
+  {
+    name: '老板办公室',
+    type: 'DUBLE_ROTATE_SWITCH',
+    position: { x: 51, y: 186, z: 5.9 },
+    bind: '_老板办公室-门_grp'
+  },
+  {
+    name: '老板办公室',
+    type: 'DUBLE_ROTATE_SWITCH',
+    position: { x: 51, y: 186, z: 4.8 },
+    bind: '_老板办公室-门_grp'
   }
 ]
 JsonList.push(...companyDoors)
