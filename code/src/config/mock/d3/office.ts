@@ -7,6 +7,11 @@ const JsonList = [
     position: { x: 0, y: 0, z: 0 }
   },
   {
+    name: '窗帘',
+    type: 'curtain',
+    position: { x: 0, y: 0, z: 0 }
+  },
+  {
     name: '1-24',
     type: 'floor_low',
     position: { x: 0, y: 0, z: 0 }
@@ -53,6 +58,9 @@ const lifts = [
       y: 0.1,
       z: 8.9
     },
+    // 目标
+    target: '电梯-2',
+    // 门
     bind: '_一楼电梯门-1_grp',
     left: '左006',
     right: '右006'
@@ -71,9 +79,53 @@ const lifts = [
       y: 184.7,
       z: 8.9
     },
+    // 目标
+    target: '电梯-2',
     bind: '电梯外门001',
     left: '左005',
     right: '右005'
+  },
+
+  {
+    name: '-楼等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 4.3,
+      y: 3,
+      z: 9.5
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0,
+      y: 0.1,
+      z: 8.9
+    },
+    // 目标
+    target: '电梯-1',
+    // 门
+    bind: '_一楼电梯门-2_grp',
+    left: '左001',
+    right: '右001'
+  },
+  {
+    name: '公司楼层等电梯',
+    type: 'WAIT_LIFT',
+    position: {
+      x: 4.3,
+      y: 187,
+      z: 9.5
+    },
+    // 电梯到当前位置
+    to: {
+      x: 0,
+      y: 184.7,
+      z: 8.9
+    },
+    // 目标
+    target: '电梯-1',
+    bind: '电梯外门',
+    left: '左004',
+    right: '右004'
   }
 ]
 JsonList.push(...lifts)
@@ -215,6 +267,16 @@ const lightSwitchs = [
       z: 57
     },
     bind: '主机照明灯-1'
+  },
+
+  {
+    name: '灯光总开关',
+    type: 'LIGHT_MAIN_SWITCH',
+    position: {
+      x: 12,
+      y: 188,
+      z: 49
+    }
   }
 ]
 JsonList.push(...lightSwitchs)
@@ -278,8 +340,59 @@ const companyDoors = [
     name: '副总裁室',
     type: 'ODD_ROTATE_SWITCH',
     position: { x: 55.4, y: anchorHeight, z: 21.4 },
-    bind: '_老板办公室-门_grp',
-    autoClose: 0
+    bind: '_程总办公室-门_grp'
+  },
+  {
+    name: '大洽谈室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: 55.4, y: anchorHeight, z: 26.5 },
+    bind: '_大洽谈室-门_grp',
+    internal: 1
+  },
+  {
+    name: '茶室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: 46.5, y: anchorHeight, z: 16.3 },
+    bind: '_茶室-门_grp',
+    internal: 1
+  },
+  {
+    name: '中洽谈室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: 46.5, y: anchorHeight, z: 20.9 },
+    bind: '_中洽谈室-门_grp'
+  },
+  {
+    name: '陈总办公室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: -40.1, y: anchorHeight, z: 29.5 },
+    bind: '_陈总办公室-门_grp'
+  },
+  {
+    name: '逄总办公室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: -40.1, y: anchorHeight, z: 9.6 },
+    bind: '_逄总办公室_grp'
+  },
+  {
+    name: '财务室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: -40.1, y: anchorHeight, z: -11.1 },
+    bind: '_财务室-门_grp'
+  },
+  {
+    name: 'CFO办公室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: -40.1, y: anchorHeight, z: -16.5 },
+    bind: '_CFO办公室-门_grp',
+    internal: 1
+  },
+  {
+    name: '小洽谈室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: -29.7, y: anchorHeight, z: -12.4 },
+    bind: '_小洽谈室-门_grp',
+    internal: 1
   },
 
   {
@@ -309,6 +422,17 @@ const videos = [
   }
 ]
 JsonList.push(...videos)
+
+// 窗帘
+const curtains = [
+  {
+    name: '窗帘开关',
+    type: 'CURTAIN_SWITCH',
+    position: { x: 10.7, y: 188, z: 49 },
+    bind: '_GROUP_013_grp'
+  }
+]
+JsonList.push(...curtains)
 
 export default [
   {

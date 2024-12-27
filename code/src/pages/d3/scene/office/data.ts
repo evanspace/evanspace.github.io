@@ -6,28 +6,28 @@ export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
 export const CONPANT_FLOOR = 'campany_floor' // 公司楼层
+export const CURTAIN = 'curtain' // 窗帘
 
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
+export const LIGHT_MAIN_SWITCH = 'LIGHT_MAIN_SWITCH' // 灯总开关
 export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
 export const DUBLE_HORIZONTAL_SWITCH = 'DUBLE_HORIZONTAL_SWITCH' // 双开横推门
 export const DUBLE_ROTATE_SWITCH = 'DUBLE_ROTATE_SWITCH' // 双旋转开门
 export const ODD_ROTATE_SWITCH = 'ODD_ROTATE_SWITCH' // 单旋转开门
 export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
+export const CURTAIN_SWITCH = 'CURTAIN_SWITCH' // 窗帘开关
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
-const mxY = 146,
-  maxZ = 104
-const cruisePoints: any[] = []
 
-for (let i = 0; i < 5; i++) {
-  cruisePoints.push([mxY - i * 20, CRUISE_POINT_UP, -maxZ + ((i == 0 ? 1 : i) - 1) * 20])
-  cruisePoints.push([mxY - i * 20, CRUISE_POINT_UP, maxZ - i * 20])
-  cruisePoints.push([-mxY + i * 20, CRUISE_POINT_UP, maxZ - i * 20])
-  cruisePoints.push([-mxY + i * 20, CRUISE_POINT_UP, -maxZ + i * 20])
-}
+const cruisePoints: number[][] = [
+  [-120, CRUISE_POINT_UP, 101],
+  [139, CRUISE_POINT_UP, 101],
+  [139, CRUISE_POINT_UP, -122],
+  [-120, CRUISE_POINT_UP, -122]
+]
 
 export const getPageOpts = animateBack => ({
   devEnv,
@@ -47,12 +47,15 @@ export const getPageOpts = animateBack => ({
     ANCHOR_TARGET,
     WAIT_LIFT,
     LIGHT_SWITCH,
+    LIGHT_MAIN_SWITCH,
     GATE_SWITCH,
     VIDEO_SWITCH,
     DUBLE_HORIZONTAL_SWITCH,
-    DUBLE_ROTATE_SWITCH
+    ODD_ROTATE_SWITCH,
+    DUBLE_ROTATE_SWITCH,
+    CURTAIN_SWITCH
   ],
-  animationModelType: [CONPANT_FLOOR],
+  animationModelType: [CONPANT_FLOOR, CURTAIN],
 
   models: [
     {
@@ -66,6 +69,12 @@ export const getPageOpts = animateBack => ({
       name: '低层',
       size: 26.7,
       url: '/低层.glb'
+    },
+    {
+      key: CURTAIN,
+      name: '窗帘',
+      size: 0.2,
+      url: '/窗帘.glb'
     },
     // {
     //   key: 'floor_heigh',
@@ -92,42 +101,36 @@ export const getPageOpts = animateBack => ({
       key: ANCHOR_TARGET,
       name: '锚点',
       type: 'sprite',
-      range: { x: 4, y: 4 },
       mapUrl: '/dw.png'
     },
     {
       key: WAIT_LIFT,
       name: '电梯门',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
     },
     {
       key: DUBLE_HORIZONTAL_SWITCH,
       name: '双横推开关门',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
     },
     {
       key: DUBLE_ROTATE_SWITCH,
       name: '双旋转开关门',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
     },
     {
       key: ODD_ROTATE_SWITCH,
       name: '单旋转开关门',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
     },
     {
       key: GATE_SWITCH,
       name: '闸机',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/gate.png'
     },
 
@@ -135,8 +138,13 @@ export const getPageOpts = animateBack => ({
       key: VIDEO_SWITCH,
       name: '视频',
       type: 'sprite',
-      range: { x: 1, y: 1 },
       mapUrl: '/video.png'
+    },
+    {
+      key: CURTAIN_SWITCH,
+      name: '窗帘',
+      type: 'sprite',
+      mapUrl: '/curtain.png'
     },
 
     {
@@ -164,7 +172,12 @@ export const getPageOpts = animateBack => ({
       key: LIGHT_SWITCH,
       name: '开关灯',
       type: 'sprite',
-      range: { x: 1.2, y: 1.2 },
+      mapUrl: '/light.png'
+    },
+    {
+      key: LIGHT_MAIN_SWITCH,
+      name: '开关灯',
+      type: 'sprite',
       mapUrl: '/light.png'
     }
   ].map(item => {
@@ -180,18 +193,16 @@ export const getPageOpts = animateBack => ({
   cruise: {
     visible: true,
     auto: true,
-    // helper: true,
-    // tube: true,
     mapUrl: '/oss/textures/cruise/line18.png', // 1-18
     // mapUrl: '/oss/textures/cruise/diffuse.jpg', // 1-18
     repeat: [1, 1],
     width: 2,
-    segment: 30,
+    segment: 100,
     tension: 0.01,
-    speed: 1,
-    mapSpeed: 0.01,
+    speed: 10,
+    mapSpeed: 0.1,
     points: cruisePoints,
-    close: false,
+    close: true,
     offset: 5.2,
     animateBack: animateBack
   }
@@ -200,6 +211,7 @@ export const getPageOpts = animateBack => ({
 export const getFloorOpts = () => ({
   active: 1,
   show: false,
+  targetName: '',
   list: [
     // key 值需要与 配置的等电梯点位 bing 字段尾数相同
     { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-1_grp' },

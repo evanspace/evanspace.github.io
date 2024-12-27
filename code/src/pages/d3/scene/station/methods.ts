@@ -3,37 +3,27 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import * as ThreeScene from 'three-scene/build/three-scene.module'
 
-import {
-  useRaycaster,
-  useCSS2D,
-  CSS2DRenderer,
-  useDiffusion,
-  useMoveAnimate,
-  useFence,
-  useRoam,
-  useFloor
-} from 'three-scene/src/hooks/index'
-
 import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/src/types/model'
 
 import DEFAULTCONFIG from './config'
 
-import * as UTILS from 'three-scene/src/utils/model'
+const Hooks = ThreeScene.Hooks
+const Utils = ThreeScene.Utils
 
-const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
-const { initCSS2DRender, createCSS2DDom } = useCSS2D()
-const { createDiffusion, updateDiffusion } = useDiffusion()
-const { createMove, moveAnimate } = useMoveAnimate()
-const { createFence, fenceAnimate } = useFence()
+const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
+const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
+const { createDiffusion, updateDiffusion } = Hooks.useDiffusion()
+const { createMove, moveAnimate } = Hooks.useMoveAnimate()
+const { createFence, fenceAnimate } = Hooks.useFence()
 const {
   createRoam,
   executeRoam,
   pause: roamPause,
   play: roamPlay,
   getStatus: getRoamStatus
-} = useRoam()
-const { floorAnimate } = useFloor()
+} = Hooks.useRoam()
+const { floorAnimate } = Hooks.useFloor()
 
 const sightMap = {
   full: 'FULL',
@@ -49,7 +39,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
-  css2DRender: InstanceType<typeof CSS2DRenderer>
+  css2DRender: InstanceType<typeof Hooks.CSS2DRenderer>
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
@@ -163,7 +153,7 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     const { x, y, z } = obj.position
     // 创建精灵动画
-    UTILS.createSpriteAnimate(obj, [x, y, z], 1, 8)
+    Utils.createSpriteAnimate(obj, [x, y, z], 1, 8)
   }
 
   // 添加点位组
@@ -463,7 +453,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     if (!to) return
 
     if (!this.isCameraMove(to)) {
-      UTILS.cameraLinkageControlsAnimate(
+      Utils.cameraLinkageControlsAnimate(
         this.controls,
         this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
         to,
@@ -508,7 +498,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       if (!this.controls) return
 
       this.controls.maxDistance = 100
-      UTILS.cameraLookatAnimate(
+      Utils.cameraLookatAnimate(
         this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
         pos,
         this.controls.target
@@ -605,7 +595,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       target = new THREE.Vector3(-171.5, -6.5, 125.2)
       to = { x: -169.5, y: 34.9, z: 46.1 }
     }
-    UTILS.cameraLinkageControlsAnimate(
+    Utils.cameraLinkageControlsAnimate(
       this.controls,
       this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
       to,

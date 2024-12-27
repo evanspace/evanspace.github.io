@@ -55,15 +55,18 @@ import tLoading from 'three-scene/components/loading/index.vue'
 
 import {
   ROBOT,
+  CURTAIN,
   CHARACTER,
   ANCHOR_POS,
   CRUISE_POINT_UP,
   WAIT_LIFT,
   LIGHT_SWITCH,
+  LIGHT_MAIN_SWITCH,
   GATE_SWITCH,
   DUBLE_HORIZONTAL_SWITCH,
   DUBLE_ROTATE_SWITCH,
   ODD_ROTATE_SWITCH,
+  CURTAIN_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -106,7 +109,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 27
+    version: 28
   }
 })
 
@@ -133,23 +136,21 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
 }
 let scene: InstanceType<typeof OfficeThreeScene>
 
-const liftGroupName = '电梯-2'
-
 // 楼层移动至
 const onFloorMoveTo = item => {
   floorOpts.active = item.key
   const liftName = item.bind
-  console.log(item)
+
   scene.waitLift(
     {
       data: {
         bind: liftName,
         to: {
           y: item.y
-        }
+        },
+        target: floorOpts.targetName
       }
     },
-    liftGroupName,
     true
   )
 }
@@ -269,7 +270,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 动画
   if (animationModelType.includes(type)) {
-    scene.addModelAnimate(model, obj.animations, true, 1)
+    scene.addModelAnimate(model, obj.animations, type !== CURTAIN, 1)
   }
 
   // 锚点
@@ -380,7 +381,7 @@ const initPage = () => {
 
 onMounted(() => {
   options.container = containerRef.value
-  const liftMeshName = '电梯地板002'
+  const liftMeshNames = ['电梯地板002', '电梯地板']
   scene = new OfficeThreeScene(options, {
     groundMeshName: [
       '地面002',
@@ -396,7 +397,7 @@ onMounted(() => {
       '立方体474',
       '立方体1617',
       'ground',
-      liftMeshName
+      ...liftMeshNames
     ],
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
@@ -406,10 +407,16 @@ onMounted(() => {
             scene.cameraTransition(object)
             break
           case WAIT_LIFT: // 等电梯
-            scene.waitLift(object, liftGroupName)
+            floorOpts.targetName = object.data.targetName
+            scene.waitLift(object)
             break
           case LIGHT_SWITCH: // 开关灯
             scene.lightSwitch(object)
+            break
+          case LIGHT_MAIN_SWITCH: // 灯总开关
+            console.log(object)
+            object.__close__ = !object.__close__
+            scene.closeLightGroup(!object.__close__)
             break
           case GATE_SWITCH: // 闸机
             scene.openGate(object)
@@ -423,14 +430,17 @@ onMounted(() => {
           case DUBLE_ROTATE_SWITCH: // 双旋转开门
             scene.dubleRotateDoor(object)
             break
+          case CURTAIN_SWITCH: // 窗帘动画
+            scene.toggleCurtain(object)
+            break
         }
       }
     },
     onClickGround: (_object, intersct) => {
       scene
-        .mouseClickGround(intersct, liftMeshName)
+        .mouseClickGround(intersct, liftMeshNames)
         .then(_obj => {
-          floorOpts.show = intersct.object.name === liftMeshName
+          floorOpts.show = liftMeshNames.includes(intersct.object.name)
         })
         .catch(() => {})
     },

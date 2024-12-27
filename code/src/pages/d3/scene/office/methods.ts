@@ -6,7 +6,7 @@ import * as ThreeScene from 'three-scene/build/three-scene.module'
 import DEFAULTCONFIG from './config'
 
 import type { ExtendOptions } from '.'
-import type { ObjectItem } from 'three-scene/src/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
 const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
@@ -52,7 +52,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   historyCameraPosition: InstanceType<typeof THREE.Vector3>
 
   // 动画模型集合
-  animateModels: InstanceType<typeof THREE.Group>[]
+  animateModels: ThreeModelItem[]
 
   // 移动系数
   moveFactor: number = 1
@@ -201,8 +201,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 关闭所有灯光
   closeLightGroup(isCOpen: boolean = false) {
-    this.lightGroup?.children.forEach(el => {
-      el.visible = isCOpen
+    this.lightGroup?.children.forEach((el: any) => {
+      if (el.isSpotLight) {
+        el.visible = isCOpen
+      }
     })
   }
 
@@ -344,9 +346,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   //  等电梯
-  waitLift(object, liftGroupName, fllow?: boolean) {
+  waitLift(object, fllow?: boolean) {
+    const targetName = object.data.target
     // 电梯轿厢
-    const box = this.scene.getObjectByName(liftGroupName) as any
+    const box = this.scene.getObjectByName(targetName) as any
 
     // 当前绑定坐标
     const cpos = object.data?.to
@@ -370,14 +373,14 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       }
       this.dubleHorizontalDoor(
         {
-          data: { bind: liftGroupName }
+          data: { bind: targetName }
         },
         2.3,
         false
       ).then(() => {
         const duration = 1000 * 5
         ElMessage.success({
-          message: `电梯移动中，请稍候，${duration / 1000}秒后到达!`,
+          message: `${targetName}移动中，请稍候，${duration / 1000}秒后到达!`,
           duration: duration
         })
         // 电梯移动
@@ -404,21 +407,22 @@ export class OfficeThreeScene extends ThreeScene.Scene {
             // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
             box.__bind_lift__ = object.data.bind
             // 电梯开门
-            this.openLift(object, liftGroupName)
+            this.openLift(object)
           })
       })
     } else {
-      this.openLift(object, liftGroupName)
+      this.openLift(object)
     }
   }
 
   // 电梯开门
-  openLift(object, liftGroupName) {
+  openLift(object) {
+    const targetName = object.data.target
     // 电梯门打开
     this.dubleHorizontalDoor(object, 2.3)
     this.dubleHorizontalDoor(
       {
-        data: { bind: liftGroupName }
+        data: { bind: targetName }
       },
       2.3
     )
@@ -446,8 +450,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 单旋转开门
   oddRotateDoor(object) {
-    const { bind, axle = 'y', internal, autoClose = true } = object.data
-    console.log(object.data)
+    const { bind, axle = 'y', internal, autoClose = false } = object.data
+
     return oddRotate(this.scene, {
       value: bind,
       axle,
@@ -459,7 +463,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 双旋转开门
   dubleRotateDoor(object) {
     const { bind, axle = 'y', left = '右', right = '左', internal, autoClose = true } = object.data
-    console.log(left, right)
+
     return dubleRotate(this.scene, {
       value: bind,
       axle,
@@ -475,8 +479,31 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     return this.dubleRotateDoor(object)
   }
 
+  // 窗帘动画
+  toggleCurtain(object) {
+    const dobj = this.animateModels.find(el => el.name === object.data?.bind)
+    console.log(dobj)
+    if (!dobj) return
+
+    dobj.__open__ = !dobj.__open__
+
+    const { __action__, __mixer__ } = dobj
+    Object.keys(__action__).forEach(key => {
+      if (dobj.__open__) {
+        __action__[key].loop = THREE.LoopOnce
+        __action__[key].clampWhenFinished = true
+        __action__[key].play()
+      } else {
+        // __action__[key].paused = true
+      }
+    })
+    if (!dobj.__open__) {
+      __mixer__.stopAllAction()
+    }
+  }
+
   // 鼠标点击地面
-  mouseClickGround(intersct, filterName) {
+  mouseClickGround(intersct, filterName: string[]) {
     if (this.currentSight !== sightMap.npc) return Promise.reject()
 
     const character = this.character as any
@@ -501,7 +528,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         lookAt,
         (pos, stop) => {
           this.setControlTarget(pos)
-          if (this.checkCharacterCollide(pos, intersct.object.name === filterName ? 2 : 0.3)) {
+          if (
+            this.checkCharacterCollide(pos, filterName.includes(intersct.object.name) ? 2 : 0.3)
+          ) {
             stop()
             runging.stop()
             character.__runing__ = false
