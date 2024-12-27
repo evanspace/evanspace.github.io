@@ -14,6 +14,7 @@ export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
 export const DUBLE_HORIZONTAL_SWITCH = 'DUBLE_HORIZONTAL_SWITCH' // 双开横推门
 export const DUBLE_ROTATE_SWITCH = 'DUBLE_ROTATE_SWITCH' // 双旋转开门
+export const ODD_ROTATE_SWITCH = 'ODD_ROTATE_SWITCH' // 单旋转开门
 export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
@@ -66,12 +67,12 @@ export const getPageOpts = animateBack => ({
       size: 26.7,
       url: '/低层.glb'
     },
-    {
-      key: 'floor_heigh',
-      name: '高层',
-      size: 11.3,
-      url: '/高层.glb'
-    },
+    // {
+    //   key: 'floor_heigh',
+    //   name: '高层',
+    //   size: 11.3,
+    //   url: '/高层.glb'
+    // },
 
     {
       key: CONPANT_FLOOR,
@@ -103,14 +104,21 @@ export const getPageOpts = animateBack => ({
     },
     {
       key: DUBLE_HORIZONTAL_SWITCH,
-      name: '横推开关门',
+      name: '双横推开关门',
       type: 'sprite',
       range: { x: 1, y: 1 },
       mapUrl: '/lift.png'
     },
     {
       key: DUBLE_ROTATE_SWITCH,
-      name: '旋转开关门',
+      name: '双旋转开关门',
+      type: 'sprite',
+      range: { x: 1, y: 1 },
+      mapUrl: '/lift.png'
+    },
+    {
+      key: ODD_ROTATE_SWITCH,
+      name: '单旋转开关门',
       type: 'sprite',
       range: { x: 1, y: 1 },
       mapUrl: '/lift.png'

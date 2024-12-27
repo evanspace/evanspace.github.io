@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts" setup>
-import tLoading from 'three-scene/src/components/loading/index.vue'
+import tLoading from 'three-scene/components/loading/index.vue'
 
 import {
   ROBOT,
@@ -63,6 +63,7 @@ import {
   GATE_SWITCH,
   DUBLE_HORIZONTAL_SWITCH,
   DUBLE_ROTATE_SWITCH,
+  ODD_ROTATE_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -71,11 +72,12 @@ import { OfficeThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods
 import * as request from './request'
 
 import { useResize } from '@/hooks/scene-resize'
-import { useBackground } from 'three-scene/src/hooks/background'
-import { useModelLoader } from 'three-scene/src/hooks/model-loader'
-import * as UTILS from 'three-scene/src/utils/index'
+import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
+
+const Utils = ThreeScene.Utils
+const Hooks = ThreeScene.Hooks
 
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
@@ -97,8 +99,8 @@ const pageOpts = reactive(
 )
 const floorOpts = reactive(getFloorOpts())
 const tipOpts = reactive(getTipOpts())
-const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModels, getModel } = useModelLoader({
+const { changeBackground, backgroundLoad } = Hooks.useBackground()
+const { progress, loadModels, getModel } = Hooks.useModelLoader({
   baseUrl: pageOpts.baseUrl,
   indexDB: {
     cache: true,
@@ -250,8 +252,8 @@ const loopLoadObject = async (item: ObjectItem) => {
   const { anchorType = [], animationModelType = [] } = pageOpts
 
   // 深克隆
-  let model = UTILS.modelDeepClone(obj)
-  const { position: POS, scale: SCA, rotation: ROT } = UTILS.get_P_S_R_param(model, item)
+  let model = Utils.modelDeepClone(obj)
+  const { position: POS, scale: SCA, rotation: ROT } = Utils.get_P_S_R_param(model, item)
   const [x, y, z] = POS
 
   // 缩放
@@ -306,8 +308,12 @@ const assemblyScenario = async () => {
 
   // 入场动画
   // @ts-ignore
-  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
+    setTimeout(() => {
+      // 关灯
+      scene.closeLightGroup()
+    }, 100)
   })
 }
 
@@ -410,6 +416,9 @@ onMounted(() => {
             break
           case DUBLE_HORIZONTAL_SWITCH: // 双开横推门
             scene.dubleHorizontalDoor(object, 5.4)
+            break
+          case ODD_ROTATE_SWITCH: // 单旋转开门
+            scene.oddRotateDoor(object)
             break
           case DUBLE_ROTATE_SWITCH: // 双旋转开门
             scene.dubleRotateDoor(object)

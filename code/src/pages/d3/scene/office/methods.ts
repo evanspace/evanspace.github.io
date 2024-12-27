@@ -17,7 +17,7 @@ const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 const { createFence, fenceAnimate } = Hooks.useFence()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { checkCollide } = Hooks.useCollide()
-const { dubleHorizontal, dubleRotate } = Hooks.useOpenTheDoor()
+const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 
 const sightMap = {
   full: 'FULL',
@@ -199,12 +199,21 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.addLightGroup()
   }
 
+  // 关闭所有灯光
+  closeLightGroup(isCOpen: boolean = false) {
+    this.lightGroup?.children.forEach(el => {
+      el.visible = isCOpen
+    })
+  }
+
   // 添加灯光
   addLight(item: ObjectItem, obj, hasHelper?: boolean) {
     if (this.lightGroup) {
       obj.name = item.name
       const { to = { x: 0, y: 0, z: 0 } } = item
       obj.target.position.set(to.x, to.y, to.z)
+      // 开灯
+      obj.visible = true
       this.lightGroup.add(obj)
       if (hasHelper) {
         const helper = new THREE.SpotLightHelper(obj, obj.color)
@@ -417,13 +426,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 开关灯
   lightSwitch(object) {
-    console.log(object)
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
     light.forEach(el => {
       el.visible = !el.visible
     })
-    console.log(light)
   }
 
   // 双开门(两扇门 往两边平移)
@@ -437,13 +444,26 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     })
   }
 
+  // 单旋转开门
+  oddRotateDoor(object) {
+    const { bind, axle = 'y', internal, autoClose = true } = object.data
+    console.log(object.data)
+    return oddRotate(this.scene, {
+      value: bind,
+      axle,
+      angle: Math.PI * (internal ? -0.5 : 0.5),
+      autoClose
+    })
+  }
+
   // 双旋转开门
   dubleRotateDoor(object) {
-    const { bind, axle = 'y', left = '右', right = '左', internal } = object.data
+    const { bind, axle = 'y', left = '右', right = '左', internal, autoClose = true } = object.data
     console.log(left, right)
     return dubleRotate(this.scene, {
       value: bind,
       axle,
+      autoClose,
       angle: Math.PI * (internal ? -0.5 : 0.5),
       leftMatch: left,
       rightMatch: right

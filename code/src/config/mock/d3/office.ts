@@ -78,64 +78,6 @@ const lifts = [
 ]
 JsonList.push(...lifts)
 
-// 灯光
-const lights = [
-  {
-    name: '前台灯聚光灯-1',
-    type: 'spot_light_floor_2',
-    position: {
-      x: 14.7,
-      y: 191,
-      z: 56
-    },
-    to: {
-      x: 14.7,
-      y: 186,
-      z: 56
-    }
-  },
-  {
-    name: '主机照明灯-1',
-    type: 'spot_light_floor_2',
-    position: {
-      x: 22.5,
-      y: 191,
-      z: 58
-    },
-    to: {
-      x: 22.5,
-      y: 186,
-      z: 58
-    }
-  }
-]
-JsonList.push(...lights)
-
-// 灯关-锚点
-const lightSwitchs = [
-  {
-    name: '前台灯',
-    type: 'LIGHT_SWITCH',
-    position: {
-      x: 14.7,
-      y: 186,
-      z: 56
-    },
-    bind: '前台灯聚光灯-1'
-  },
-  {
-    name: '主机照明灯',
-    type: 'LIGHT_SWITCH',
-    position: {
-      x: 22.5,
-      y: 186,
-      z: 57
-    },
-    bind: '主机照明灯-1'
-  }
-]
-JsonList.push(...lightSwitchs)
-
 // 闸机
 const tages = [
   {
@@ -216,12 +158,73 @@ const tages = [
 ]
 JsonList.push(...tages)
 
+// 灯光
+const lights = [
+  {
+    name: '前台灯聚光灯-1',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 14.7,
+      y: 191,
+      z: 56
+    },
+    to: {
+      x: 14.7,
+      y: 186,
+      z: 56
+    }
+  },
+  {
+    name: '主机照明灯-1',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 22.5,
+      y: 191,
+      z: 58
+    },
+    to: {
+      x: 22.5,
+      y: 186,
+      z: 58
+    }
+  }
+]
+JsonList.push(...lights)
+
+// 公司锚点高度
+const anchorHeight = 186
+
+// 灯关-锚点
+const lightSwitchs = [
+  {
+    name: '前台灯',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 14.7,
+      y: anchorHeight,
+      z: 56
+    },
+    bind: '前台灯聚光灯-1'
+  },
+  {
+    name: '主机照明灯',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 22.5,
+      y: anchorHeight,
+      z: 57
+    },
+    bind: '主机照明灯-1'
+  }
+]
+JsonList.push(...lightSwitchs)
+
 // 公司门
 const companyDoors = [
   {
     name: '公司大门',
     type: 'DUBLE_HORIZONTAL_SWITCH',
-    position: { x: 14.5, y: 186, z: 28.7 },
+    position: { x: 14.5, y: anchorHeight, z: 28.7 },
     bind: '_公司大门_grp',
     // 移动轴
     axle: 'x'
@@ -229,7 +232,7 @@ const companyDoors = [
   {
     name: '公司大门',
     type: 'DUBLE_HORIZONTAL_SWITCH',
-    position: { x: 14.5, y: 186, z: 30 },
+    position: { x: 14.5, y: anchorHeight, z: 30 },
     bind: '_公司大门_grp',
     // 移动轴
     axle: 'x'
@@ -238,7 +241,7 @@ const companyDoors = [
   {
     name: '小会议室',
     type: 'DUBLE_HORIZONTAL_SWITCH',
-    position: { x: -10.2, y: 186, z: 29.5 },
+    position: { x: -10.2, y: anchorHeight, z: 29.5 },
     bind: '_小会议室-门_grp',
     // 移动轴
     axle: 'x'
@@ -246,7 +249,7 @@ const companyDoors = [
   {
     name: '小会议室',
     type: 'DUBLE_HORIZONTAL_SWITCH',
-    position: { x: -10.2, y: 186, z: 30.5 },
+    position: { x: -10.2, y: anchorHeight, z: 30.5 },
     bind: '_小会议室-门_grp',
     // 移动轴
     axle: 'x'
@@ -255,7 +258,7 @@ const companyDoors = [
   {
     name: '大会议室',
     type: 'DUBLE_ROTATE_SWITCH',
-    position: { x: -28, y: 186, z: 53.8 },
+    position: { x: -28, y: anchorHeight, z: 53.8 },
     bind: '_大会议室-门_grp',
     // 旋转轴
     axle: 'y'
@@ -263,7 +266,7 @@ const companyDoors = [
   {
     name: '大会议室',
     type: 'DUBLE_ROTATE_SWITCH',
-    position: { x: -29, y: 186, z: 53.8 },
+    position: { x: -29, y: anchorHeight, z: 53.8 },
     bind: '_大会议室-门_grp',
     // 旋转轴
     axle: 'y'
@@ -272,17 +275,27 @@ const companyDoors = [
   },
 
   {
-    name: '老板办公室',
-    type: 'DUBLE_ROTATE_SWITCH',
-    position: { x: 51, y: 186, z: 5.9 },
-    bind: '_老板办公室-门_grp'
+    name: '副总裁室',
+    type: 'ODD_ROTATE_SWITCH',
+    position: { x: 55.4, y: anchorHeight, z: 21.4 },
+    bind: '_老板办公室-门_grp',
+    autoClose: 0
   },
+
   {
     name: '老板办公室',
     type: 'DUBLE_ROTATE_SWITCH',
-    position: { x: 51, y: 186, z: 4.8 },
-    bind: '_老板办公室-门_grp'
+    position: { x: 51, y: anchorHeight, z: 5.9 },
+    bind: '_老板办公室-门_grp',
+    autoClose: 0
   }
+  // {
+  //   name: '老板办公室',
+  //   type: 'DUBLE_ROTATE_SWITCH',
+  //   position: { x: 51, y: anchorHeight, z: 4.8 },
+  //   bind: '_老板办公室-门_grp',
+  //   autoClose: 0
+  // }
 ]
 JsonList.push(...companyDoors)
 
