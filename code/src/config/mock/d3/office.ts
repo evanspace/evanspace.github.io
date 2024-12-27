@@ -61,7 +61,7 @@ const lifts = [
     // 目标
     target: '电梯-2',
     // 门
-    bind: '_一楼电梯门-1_grp',
+    bind: '_一楼电梯门-2_grp',
     left: '左006',
     right: '右006'
   },
@@ -81,7 +81,7 @@ const lifts = [
     },
     // 目标
     target: '电梯-2',
-    bind: '电梯外门001',
+    bind: '_电梯外门_2_grp',
     left: '左005',
     right: '右005'
   },
@@ -103,7 +103,7 @@ const lifts = [
     // 目标
     target: '电梯-1',
     // 门
-    bind: '_一楼电梯门-2_grp',
+    bind: '_一楼电梯门-1_grp',
     left: '左001',
     right: '右001'
   },
@@ -123,7 +123,7 @@ const lifts = [
     },
     // 目标
     target: '电梯-1',
-    bind: '电梯外门',
+    bind: '_电梯外门_1_grp',
     left: '左004',
     right: '右004'
   }
@@ -213,31 +213,89 @@ JsonList.push(...tages)
 // 灯光
 const lights = [
   {
-    name: '前台灯聚光灯-1',
+    name: '前台聚光灯',
     type: 'spot_light_floor_2',
     position: {
-      x: 14.7,
+      x: 17.7,
       y: 191,
-      z: 56
+      z: 55.7
     },
     to: {
-      x: 14.7,
-      y: 186,
-      z: 56
+      x: 17.7,
+      y: 180,
+      z: 55.7
     }
   },
   {
-    name: '主机照明灯-1',
+    name: '前台聚光灯',
     type: 'spot_light_floor_2',
     position: {
-      x: 22.5,
+      x: 14.1,
       y: 191,
-      z: 58
+      z: 55.7
     },
     to: {
-      x: 22.5,
-      y: 186,
+      x: 14.1,
+      y: 180,
+      z: 55.7
+    }
+  },
+
+  // 主机灯
+  {
+    name: '主机照明灯',
+    type: 'spot_light_floor_1',
+    position: {
+      x: 23,
+      y: 190.7,
+      z: 54.6
+    },
+    to: {
+      x: 22.4,
+      y: 190.4,
       z: 58
+    }
+  },
+  {
+    name: '主机照明灯',
+    type: 'spot_light_floor_1',
+    position: {
+      x: 25.1,
+      y: 190.7,
+      z: 54.6
+    },
+    to: {
+      x: 25.1,
+      y: 188.7,
+      z: 58.4
+    }
+  },
+  {
+    name: '主机照明灯',
+    type: 'spot_light_floor_1',
+    position: {
+      x: 27.8,
+      y: 190.7,
+      z: 54.6
+    },
+    to: {
+      x: 27.8,
+      y: 189.1,
+      z: 58.6
+    }
+  },
+  {
+    name: '主机照明灯',
+    type: 'spot_light_floor_1',
+    position: {
+      x: 30,
+      y: 190.7,
+      z: 54.6
+    },
+    to: {
+      x: 30.5,
+      y: 189,
+      z: 58.5
     }
   }
 ]
@@ -256,17 +314,17 @@ const lightSwitchs = [
       y: anchorHeight,
       z: 56
     },
-    bind: '前台灯聚光灯-1'
+    bind: '前台聚光灯'
   },
   {
     name: '主机照明灯',
     type: 'LIGHT_SWITCH',
     position: {
-      x: 22.5,
+      x: 26.7,
       y: anchorHeight,
-      z: 57
+      z: 57.5
     },
-    bind: '主机照明灯-1'
+    bind: '主机照明灯'
   },
 
   {
@@ -419,6 +477,18 @@ const videos = [
     type: 'VIDEO_SWITCH',
     position: { x: 34.5, y: 189.2, z: 34 },
     bind: '公司大屏'
+  },
+  {
+    name: '小会议室大屏',
+    type: 'VIDEO_SWITCH',
+    position: { x: -10.2, y: 189.2, z: 8.5 },
+    bind: '小会议室大屏'
+  },
+  {
+    name: '大会议电视屏幕',
+    type: 'VIDEO_SWITCH',
+    position: { x: -48, y: 187.4, z: 52.5 },
+    bind: '大会议电视屏幕'
   }
 ]
 JsonList.push(...videos)

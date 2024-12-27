@@ -19,10 +19,24 @@ const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { checkCollide } = Hooks.useCollide()
 const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 
+const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
+
 const sightMap = {
   full: 'FULL',
   npc: 'NPC'
 }
+
+// 创建视频元素
+const createVideoDom = (src?: string) => {
+  const dom = document.createElement('video')
+  dom.src = base + (src || '/oss/textures/park/sintel.mp4')
+  dom.loop = true
+  // videoDom.autoplay = true
+  return dom
+}
+
+// 视频封面
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/office/cover.jpg')
 
 export class OfficeThreeScene extends ThreeScene.Scene {
   // 建筑集合
@@ -347,9 +361,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   //  等电梯
   waitLift(object, fllow?: boolean) {
-    const targetName = object.data.target
+    // 电梯组
+    const liftName = object.data.target
     // 电梯轿厢
-    const box = this.scene.getObjectByName(targetName) as any
+    const box = this.scene.getObjectByName(liftName) as any
+    console.log(box, liftName)
 
     // 当前绑定坐标
     const cpos = object.data?.to
@@ -373,14 +389,14 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       }
       this.dubleHorizontalDoor(
         {
-          data: { bind: targetName }
+          data: { bind: liftName }
         },
         2.3,
         false
       ).then(() => {
         const duration = 1000 * 5
         ElMessage.success({
-          message: `${targetName}移动中，请稍候，${duration / 1000}秒后到达!`,
+          message: `${liftName}移动中，请稍候，${duration / 1000}秒后到达!`,
           duration: duration
         })
         // 电梯移动
@@ -407,22 +423,21 @@ export class OfficeThreeScene extends ThreeScene.Scene {
             // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
             box.__bind_lift__ = object.data.bind
             // 电梯开门
-            this.openLift(object)
+            this.openLift(object, liftName)
           })
       })
     } else {
-      this.openLift(object)
+      this.openLift(object, liftName)
     }
   }
 
   // 电梯开门
-  openLift(object) {
-    const targetName = object.data.target
+  openLift(object, liftName) {
     // 电梯门打开
     this.dubleHorizontalDoor(object, 2.3)
     this.dubleHorizontalDoor(
       {
-        data: { bind: targetName }
+        data: { bind: liftName }
       },
       2.3
     )
@@ -440,6 +455,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 双开门(两扇门 往两边平移)
   dubleHorizontalDoor(object, scale = 400, isOpen?: boolean) {
     const { bind, axle = 'z' } = object.data
+    console.log(bind)
     return dubleHorizontal(this.scene, {
       value: bind,
       axle,
@@ -493,12 +509,44 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         __action__[key].loop = THREE.LoopOnce
         __action__[key].clampWhenFinished = true
         __action__[key].play()
-      } else {
-        // __action__[key].paused = true
       }
     })
     if (!dobj.__open__) {
       __mixer__.stopAllAction()
+    }
+  }
+
+  // 视频材质
+  addVideoMaterial(names: string[]) {
+    const material = new THREE.MeshPhongMaterial({
+      map: videoCoverTexture
+      // side: THREE.DoubleSide
+    })
+
+    for (let i = 0; i < names.length; i++) {
+      const dbObj = this.scene.getObjectByName(names[i]) as any
+      if (!dbObj) continue
+      const videoDom2 = createVideoDom()
+      const videoTexture2 = new THREE.VideoTexture(videoDom2)
+      dbObj.__video_texture__ = videoTexture2
+      dbObj.__cover_texture__ = videoCoverTexture.clone()
+      dbObj.material = material.clone()
+      dbObj.__video__ = videoDom2
+    }
+  }
+
+  // 视频播放
+  videoPlay(object) {
+    const vobj = this.scene.getObjectByName(object.data.bind) as any
+    if (vobj && vobj.__video__) {
+      const videoDom = vobj.__video__
+      if (videoDom.paused) {
+        vobj.material.map = vobj.__video_texture__
+        videoDom?.play()
+      } else {
+        videoDom?.pause()
+        vobj.material.map = vobj.__cover_texture__
+      }
     }
   }
 
@@ -563,7 +611,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const intersect = intersects[0]
 
       // 于目标距离
-      if (intersect.distance < 0.2) {
+      if (intersect.distance < 0.3) {
         ElMessage.warning({
           message: '撞到了！',
           grouping: true

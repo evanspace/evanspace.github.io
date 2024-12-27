@@ -29,7 +29,7 @@
     <!-- 楼层选择 -->
     <div :class="$style['floor-select']" v-show="floorOpts.show">
       <el-button
-        v-for="item in floorOpts.list"
+        v-for="item in floorItems"
         type="primary"
         :disabled="floorOpts.active === item.key"
         @click="onFloorMoveTo(item)"
@@ -67,6 +67,7 @@ import {
   DUBLE_ROTATE_SWITCH,
   ODD_ROTATE_SWITCH,
   CURTAIN_SWITCH,
+  VIDEO_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -109,7 +110,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 28
+    version: 34
   }
 })
 
@@ -124,7 +125,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false,
-    screenSpacePanning: false,
+    // screenSpacePanning: false,
     maxDistance: 1500
   },
   camera: {},
@@ -135,6 +136,11 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   }
 }
 let scene: InstanceType<typeof OfficeThreeScene>
+
+// 电梯到达楼层
+const floorItems = computed(() => {
+  return floorOpts.list.find(it => it.target === floorOpts.targetName)?.items || []
+})
 
 // 楼层移动至
 const onFloorMoveTo = item => {
@@ -342,6 +348,7 @@ const load = () => {
       await assemblyScenario()
       createRoblt()
       createCharacter()
+      scene.addVideoMaterial(res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind))
     })
   })
 }
@@ -407,7 +414,7 @@ onMounted(() => {
             scene.cameraTransition(object)
             break
           case WAIT_LIFT: // 等电梯
-            floorOpts.targetName = object.data.targetName
+            floorOpts.targetName = object.data.target
             scene.waitLift(object)
             break
           case LIGHT_SWITCH: // 开关灯
@@ -432,6 +439,9 @@ onMounted(() => {
             break
           case CURTAIN_SWITCH: // 窗帘动画
             scene.toggleCurtain(object)
+            break
+          case VIDEO_SWITCH: // 窗帘动画
+            scene.videoPlay(object)
             break
         }
       }

@@ -86,7 +86,7 @@ export const getPageOpts = animateBack => ({
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 54.4,
+      size: 57.8,
       url: '/二十五楼.glb'
     },
 
@@ -161,6 +161,14 @@ export const getPageOpts = animateBack => ({
     },
 
     {
+      key: 'spot_light_floor_1',
+      type: 'spotlight',
+      name: '聚光灯',
+      intensity: 8,
+      color: 0x62d2a2,
+      distance: 20
+    },
+    {
       key: 'spot_light_floor_2',
       type: 'spotlight',
       name: '聚光灯',
@@ -213,9 +221,22 @@ export const getFloorOpts = () => ({
   show: false,
   targetName: '',
   list: [
-    // key 值需要与 配置的等电梯点位 bing 字段尾数相同
-    { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-1_grp' },
-    { name: '公司', key: 2, y: 184.7, bind: '电梯外门001' }
+    {
+      target: '电梯-2',
+      items: [
+        // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+        { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-2_grp' },
+        { name: '公司', key: 2, y: 184.7, bind: '_电梯外门_2_grp' }
+      ]
+    },
+    {
+      target: '电梯-1',
+      items: [
+        // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+        { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-1_grp' },
+        { name: '公司', key: 2, y: 184.7, bind: '_电梯外门_1_grp' }
+      ]
+    }
   ]
 })
 
