@@ -7,11 +7,11 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 
-import { useModelLoader } from 'three-scene/src/hooks/model-loader'
+const Hooks = ThreeScene.Hooks
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
-const { loadModel } = useModelLoader({
+const { loadModel } = Hooks.useModelLoader({
   baseUrl: base,
   indexDB: {
     cache: false,

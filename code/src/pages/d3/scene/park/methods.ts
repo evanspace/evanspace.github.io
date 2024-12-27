@@ -3,14 +3,6 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { Reflector } from 'three/examples/jsm/objects/Reflector.js'
 
 import * as ThreeScene from 'three-scene/build/three-scene.module'
-import {
-  useRaycaster,
-  useCSS2D,
-  CSS2DRenderer,
-  useLensflare,
-  useDiffusion,
-  useMoveAnimate
-} from 'three-scene/src/hooks/index'
 
 import { Water } from 'three/examples/jsm/objects/Water'
 import { Sky } from 'three/examples/jsm/objects/Sky'
@@ -20,14 +12,15 @@ import type { XYZ, ObjectItem } from 'three-scene/src/types/model'
 
 import DEFAULTCONFIG from './config'
 
-const { raycaster, pointer, update: raycasterUpdate, style } = useRaycaster()
-const { initCSS2DRender, createCSS2DDom } = useCSS2D()
-const { createDiffusion, updateDiffusion } = useDiffusion()
-const { createMove, moveAnimate } = useMoveAnimate()
+const Hooks = ThreeScene.Hooks
+const Utils = ThreeScene.Utils
 
-import * as UTILS from 'three-scene/src/utils/model'
+const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
+const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
+const { createDiffusion, updateDiffusion } = Hooks.useDiffusion()
+const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 
-const { addLensflare } = useLensflare()
+const { addLensflare } = Hooks.useLensflare()
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
 
@@ -94,7 +87,7 @@ export class ParkThreeScene extends ThreeScene.Scene {
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
-  css2DRender: InstanceType<typeof CSS2DRenderer>
+  css2DRender: InstanceType<typeof Hooks.CSS2DRenderer>
   // 鼠标点击地面扩散波效果
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
@@ -334,7 +327,7 @@ export class ParkThreeScene extends ThreeScene.Scene {
     // const [x2, y2, z2] = this.options.camera.position
 
     // 相机入场动画
-    // UTILS.cameraInSceneAnimate(this.camera, { x: x2, y: y2, z: z2 }, this.controls.target).then(() => {
+    // Utils.cameraInSceneAnimate(this.camera, { x: x2, y: y2, z: z2 }, this.controls.target).then(() => {
     //   this.controlSave()
     // })
 
@@ -1029,7 +1022,7 @@ export const updateObjectCall = (_obj: ObjectItem, isRandom) => {
 // 修改模型部件状态及颜色 (类型、模型、颜色对象、颜色、动画暂停状态、故障状态)
 export const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpts) => {
   let { el, type: _type, colorObj: _cobj, color, paused } = opts
-  let colors = UTILS.getColorArr(color)
+  let colors = Utils.getColorArr(color)
   color = colors[0]
 
   // 场景
@@ -1042,7 +1035,7 @@ export const changeModleStatusColor = (opts: import('./index').ChangeMaterialOpt
     if (color != void 0) {
       const meshs = extra.meshs || []
       meshs.forEach(e => {
-        UTILS.setMaterialColor(e, color)
+        Utils.setMaterialColor(e, color)
       })
     }
   }

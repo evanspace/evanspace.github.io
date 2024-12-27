@@ -58,11 +58,11 @@
 </template>
 
 <script lang="ts" setup>
-import tFloorScene from 'three-scene/src/components/floor-scene/index.vue'
+import tFloorScene from 'three-scene/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 
-import type { ObjectItem } from 'three-scene/src/types/model.d'
+import type { ObjectItem } from 'three-scene/src/types/model'
 
 import { useResize } from '@/hooks/scene-resize'
 

@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts" setup>
-import tDeviceScene from 'three-scene/src/components/device-scene/index.vue'
+import tDeviceScene from 'three-scene/components/device-scene/index.vue'
 
 import { getPageOpts } from './data'
 import * as request from './request'

@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import tLoading from 'three-scene/src/components/loading/index.vue'
+import tLoading from 'three-scene/components/loading/index.vue'
 import {
   ROBOT,
   CHARACTER,
@@ -71,12 +71,9 @@ import {
 } from './methods'
 import * as request from './request'
 
-import { useBackground, useModelLoader } from 'three-scene/src/hooks/index'
+import { Hooks, Utils } from 'three-scene'
 import { useResize } from '@/hooks/scene-resize'
-import * as UTILS from 'three-scene/src/utils/index'
 import { colors } from './colors'
-
-import { deepMerge } from 'three-scene/src/utils/index'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
@@ -102,21 +99,22 @@ const pageOpts = reactive(
 const floorOpts = reactive(getFloorOpts())
 const tipOpts = reactive(getTipOpts())
 const containerRef = ref()
-const COLORS = deepMerge(colors, pageOpts.colors)
+const COLORS = Utils.deepMerge(colors, pageOpts.colors)
 
-const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModels, getModel, virtualization, closeVirtualization } = useModelLoader({
-  baseUrl: pageOpts.baseUrl,
-  // dracoPath: pageOpts.dracoUrl,
-  colors: COLORS,
-  colorMeshName: pageOpts.colorMeshName,
-  indexDB: {
-    cache: !true,
-    dbName: 'THREE__PARK__DB',
-    tbName: 'TB',
-    version: 74
-  }
-})
+const { changeBackground, backgroundLoad } = Hooks.useBackground()
+const { progress, loadModels, getModel, virtualization, closeVirtualization } =
+  Hooks.useModelLoader({
+    baseUrl: pageOpts.baseUrl,
+    // dracoPath: pageOpts.dracoUrl,
+    colors: COLORS,
+    colorMeshName: pageOpts.colorMeshName,
+    indexDB: {
+      cache: !true,
+      dbName: 'THREE__PARK__DB',
+      tbName: 'TB',
+      version: 74
+    }
+  })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
@@ -200,8 +198,8 @@ const loopLoadObject = async (item: ObjectItem) => {
   const { floorModelType = [], anchorType = [], carType = [], animationModelType = [] } = pageOpts
 
   // 深克隆
-  let model = UTILS.modelDeepClone(obj)
-  const { position: POS, scale: SCA, rotation: ROT } = UTILS.get_P_S_R_param(model, item)
+  let model = Utils.modelDeepClone(obj)
+  const { position: POS, scale: SCA, rotation: ROT } = Utils.get_P_S_R_param(model, item)
   const [x, y, z] = POS
 
   // 缩放
@@ -288,7 +286,7 @@ const assemblyScenario = async () => {
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
   // @ts-ignore
-  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
   })
 }
@@ -433,7 +431,7 @@ onMounted(() => {
     onDblclick: object => {
       if (object.data?.type === 'building_commercial_5') {
         virtualization(
-          scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)),
+          scene.buildingGroup?.children.filter(el => !['地面', '场景'].includes(el.name)) || [],
           object,
           {
             wireframe: !false,

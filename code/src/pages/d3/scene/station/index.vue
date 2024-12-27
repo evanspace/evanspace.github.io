@@ -76,8 +76,7 @@ import * as request from './request'
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
-import { useBackground, useModelLoader, useDialog } from 'three-scene/src/hooks/index'
-import * as UTILS from 'three-scene/src/utils/index'
+import { Hooks, Utils } from 'three-scene'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 
@@ -102,17 +101,18 @@ const pageOpts = reactive(
 )
 const tipOpts = reactive(getTipOpts())
 
-const { changeBackground, backgroundLoad } = useBackground()
-const { progress, loadModels, getModel, virtualization, closeVirtualization } = useModelLoader({
-  baseUrl: pageOpts.baseUrl,
-  indexDB: {
-    cache: true,
-    dbName: 'THREE__STATION__DB',
-    tbName: 'TB',
-    version: 34
-  }
-})
-const { options: dialog } = useDialog()
+const { changeBackground, backgroundLoad } = Hooks.useBackground()
+const { progress, loadModels, getModel, virtualization, closeVirtualization } =
+  Hooks.useModelLoader({
+    baseUrl: pageOpts.baseUrl,
+    indexDB: {
+      cache: true,
+      dbName: 'THREE__STATION__DB',
+      tbName: 'TB',
+      version: 34
+    }
+  })
+const { options: dialog } = Hooks.useDialog()
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof StationThreeScene>[0] = {
@@ -194,7 +194,7 @@ onMounted(() => {
     },
     animateCall: () => {
       // 弹窗位置
-      if (dialog.show && !!dialog.select.length) {
+      if (dialog.show && dialog.select && !!dialog.select.length) {
         // 设备弹窗信息
         const object = dialog.select[0]
         updateDialogPosition(object)
@@ -258,7 +258,7 @@ const assemblyScenario = async () => {
   const to = scene.getAnimTargetPos(pageOpts.config || {})
   // 入场动画
   // @ts-ignore
-  UTILS.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
   })
 }
@@ -299,8 +299,8 @@ const loopLoadObject = async (item: ObjectItem) => {
   const { anchorType = [], animationModelType = [], floorModelType = [] } = pageOpts
 
   // 深克隆
-  let model = UTILS.modelDeepClone(obj)
-  const { position: POS, scale: SCA, rotation: ROT } = UTILS.get_P_S_R_param(model, item)
+  let model = Utils.modelDeepClone(obj)
+  const { position: POS, scale: SCA, rotation: ROT } = Utils.get_P_S_R_param(model, item)
   const [x, y, z] = POS
 
   // 缩放
@@ -385,15 +385,18 @@ const createDotObject = item => {
 // 更新 dialog 坐标
 const updateDialogPosition = object => {
   const dom = containerRef.value
-  const pos = UTILS.getPlanePosition(dom, object, scene.camera as any)
+  const pos = Utils.getPlanePosition(dom, object, scene.camera as any)
   dialog.position = pos
-  dialog.style.left = pos.left + 'px'
-  dialog.style.top = pos.top + 'px'
+  if (dialog.style) {
+    dialog.style.left = pos.left + 'px'
+    dialog.style.top = pos.top + 'px'
+  }
   return pos
 }
 
 // 弹窗展示数据
 const dialogShowData = () => {
+  if (!dialog.select) return
   const object = dialog.select[0]
   const data = object.data
   dialog.data = data as Partial<ObjectItem>
@@ -482,7 +485,7 @@ const toCoolMachineRoom = () => {
     return
   }
   scene.toCoolMachineRoom(true)
-  virtualization(scene.buildingGroup?.children, room, {
+  virtualization(scene.buildingGroup?.children || [], room, {
     wireframe: !false,
     opacity: 0.1,
     filter: [
