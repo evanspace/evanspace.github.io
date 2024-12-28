@@ -110,7 +110,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 34
+    version: 35
   }
 })
 
