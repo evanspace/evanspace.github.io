@@ -20,7 +20,7 @@ import { guiOpts, ConvertThreeScene } from './methods'
 import { getPageOpts, getUploadOpts } from './data'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks } from 'three-scene'
+import { Hooks } from 'three-scene/build/three-scene.module'
 
 const pageOpts = reactive(getPageOpts())
 const { uploadModel } = Hooks.useUpload({

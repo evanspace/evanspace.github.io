@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    DeviceScene: typeof import('./../src/components/device-scene/index.vue')['default']
     Echarts: typeof import('./../src/components/echarts/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
@@ -50,6 +51,7 @@ declare module 'vue' {
     ElTimeSelect: typeof import('element-plus/es')['ElTimeSelect']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    FloorScene: typeof import('./../src/components/floor-scene/index.vue')['default']
     'IconEp:delete': typeof import('~icons/ep/delete')['default']
     'IconEp:plus': typeof import('~icons/ep/plus')['default']
     IconEpArrowLeft: typeof import('~icons/ep/arrow-left')['default']
@@ -60,6 +62,8 @@ declare module 'vue' {
     IconEpMic: typeof import('~icons/ep/mic')['default']
     IconEpVideoPause: typeof import('~icons/ep/video-pause')['default']
     IconEpVideoPlay: typeof import('~icons/ep/video-play')['default']
+    Loading: typeof import('./../src/components/loading/index.vue')['default']
+    MapScene: typeof import('./../src/components/map-scene/index.vue')['default']
     PlaneDevice: typeof import('./../src/components/plane-device/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

@@ -61,7 +61,7 @@
 </template>
 
 <script lang="ts" setup>
-import tMapScene from 'three-scene/components/map-scene/index.vue'
+import tMapScene from '@/components/map-scene/index.vue'
 
 import * as request from './request'
 import { getPageOpts } from './data'
@@ -69,7 +69,7 @@ import { getPageOpts } from './data'
 import { numConverter } from '@/common/utils/reckon'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks } from 'three-scene'
+import { Hooks } from 'three-scene/build/three-scene.module'
 
 const { load } = Hooks.useFileLoader()
 

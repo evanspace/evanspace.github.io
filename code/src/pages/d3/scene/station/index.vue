@@ -76,7 +76,7 @@ import * as request from './request'
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks, Utils } from 'three-scene'
+import { Hooks, Utils } from 'three-scene/build/three-scene.module'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
 

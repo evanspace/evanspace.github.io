@@ -58,7 +58,7 @@
 </template>
 
 <script lang="ts" setup>
-import tFloorScene from 'three-scene/components/floor-scene/index.vue'
+import tFloorScene from '@/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 

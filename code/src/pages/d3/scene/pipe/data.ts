@@ -3,7 +3,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
 export const getPageOpts = (): {} & Omit<
-  import('three-scene/src/components/device-scene/index').Props,
+  import('@/components/device-scene/index').Props,
   'formatObject'
 > => ({
   devEnv,

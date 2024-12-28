@@ -71,7 +71,7 @@ import {
 } from './methods'
 import * as request from './request'
 
-import { Hooks, Utils } from 'three-scene'
+import { Hooks, Utils } from 'three-scene/build/three-scene.module'
 import { useResize } from '@/hooks/scene-resize'
 import { colors } from './colors'
 
