@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import tLoading from 'three-scene/components/loading/index.vue'
+import tLoading from '@/components/loading/index.vue'
 import {
   ANCHOR_POS,
   ANCHOR_TARGET,
