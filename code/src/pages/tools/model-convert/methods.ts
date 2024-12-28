@@ -980,10 +980,19 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     let intersects = raycaster.intersectObjects(objects, isClick /* 是否检查所有后代 */)
     if (intersects.length > 0) {
       const intersect = intersects[0]
-      console.log(intersect)
       let object = intersect.object
       if (isClick) {
+        console.log(intersect)
         this.setPiece.position.copy(intersect.point)
+
+        const dotText = [this.setPiece].map(el => {
+          let p = <any>el.position
+          return `{ "x": ${p.x.toFixed(2) * 1}, "y": ${p.y.toFixed(2) * 1}, "z": ${
+            p.z.toFixed(2) * 1
+          } }`
+        })
+        guiOpts.dotText = dotText.join(',')
+        this.copyTextarea('中心点复制成功！')
       } else {
         if (object !== this.transformControls?.object) {
           // 转换控制器 设置当前对象
