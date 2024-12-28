@@ -233,6 +233,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       // 开灯
       obj.visible = true
       this.lightGroup.add(obj)
+      this.lightGroup.add(obj.target)
       if (hasHelper) {
         const helper = new THREE.SpotLightHelper(obj, obj.color)
         this.lightGroup.add(helper)
@@ -546,7 +547,6 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const obj = videos[i]
       const { __video__, __cover_texture__, __video_texture__ } = obj
       if (__video__) {
-        console.log(obj.__video__, __cover_texture__, __video_texture__)
         __video__.pause()
         __video__.remove()
         __cover_texture__?.dispose()
