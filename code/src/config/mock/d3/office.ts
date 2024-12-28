@@ -322,7 +322,7 @@ const lightSwitchs = [
     position: {
       x: 26.7,
       y: anchorHeight,
-      z: 57.5
+      z: 57
     },
     bind: '主机照明灯'
   },

@@ -194,6 +194,9 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     // 材质处理
     this.addMaterial()
 
+    // 灯光
+    this.addLight()
+
     // 网格名称处理
     this.addNameGroupGui()
 
@@ -258,6 +261,9 @@ export class ConvertThreeScene extends ThreeScene.Scene {
         const vs = this.camera.position
         guiOpts.dotText = `{ x: ${vs.x}, y: ${vs.y}, z: ${vs.z} }`
         this.copyTextarea('相机坐标复制成功！')
+      },
+      clearScene: () => {
+        this.clearModelGroup()
       }
     }
     const group = gui.addFolder('主功能')
@@ -267,6 +273,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     group.add(option, 'exportPoints').name('导出坐标')
     group.add(option, 'target').name('中心点')
     group.add(option, 'camera').name('相机坐标')
+    group.add(option, 'clearScene').name('清空场景')
     group.open()
   }
 
@@ -297,7 +304,60 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       .add(this.guiOpts, 'opacity', 0, 1)
       .name('透明度')
       .onChange(() => this.opacitySkin())
+
     group.open()
+  }
+
+  // 灯光
+  addLight() {
+    const gui = this.gui
+    if (!this.container) return
+    const group = gui.addFolder('灯光')
+    const params = {
+      intensity: 1,
+      color: 0xffffff,
+      castShadow: false,
+      distance: 10,
+      penumbra: 1,
+      decay: 1
+    }
+    group
+      .add(params, 'intensity', 1, 20)
+      .name('聚光灯强度')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    group
+      .addColor(params, 'color')
+      .name('聚光灯颜色')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    group
+      .add(params, 'castShadow')
+      .name('聚光灯阴影')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    group
+      .add(params, 'distance', 0.1, 1000)
+      .name('聚光灯光照距离')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    group
+      .add(params, 'penumbra', 0, 1)
+      .name('聚光灯半影衰减')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    group
+      .add(params, 'decay', 0, 1)
+      .name('聚光灯光照衰减')
+      .onChange(() => {
+        this.spotLight(params)
+      })
+    // group.open()
   }
 
   // 网格名称处理
@@ -417,9 +477,6 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     const gui = this.gui
     const option = {
       viewReset: () => this.cameraViewReset(),
-      clearScene: () => {
-        this.clearModelGroup()
-      },
       rotation: 0,
       scale: 1,
       timeScale: 1,
@@ -427,7 +484,6 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     }
     const group = gui.addFolder('重置')
     group.add(option, 'viewReset').name('视角重置')
-    group.add(option, 'clearScene').name('清空场景')
     group.add(this.grid, 'visible').name('网格显示')
     group.add(this.controls, 'autoRotate').name('自动旋转')
     group.add(this.guiOpts, 'insetAnimate').name('入场动画')
@@ -584,6 +640,11 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     const s = this.guiOpts.scale
     const group = new THREE.Group()
     obj.traverse(el => {
+      if (el.isSpotLight || el.isPointLight) {
+        if (el.isSpotLight) {
+          group.add(el.target)
+        }
+      }
       materialReplace(group, this.guiOpts, el)
     })
 
@@ -714,11 +775,29 @@ export class ConvertThreeScene extends ThreeScene.Scene {
   // 透明
   opacitySkin() {
     const { opacitySkin, opacity } = this.guiOpts
-    console.log(opacitySkin, opacity)
+
     this.modelGroup?.traverse((el: any) => {
       if (DefaultConfig.transparentName.find(it => el.name.indexOf(it) > -1)) {
-        console.log(el)
         changeTransparent(el, opacitySkin ? opacity : 1)
+      }
+    })
+  }
+
+  // 聚光灯
+  spotLight(opts) {
+    this.modelGroup?.traverse((el: any) => {
+      if (el.isSpotLight) {
+        el.intensity = opts.intensity
+        el.castShadow = opts.castShadow
+        el.distance = opts.distance
+        el.penumbra = opts.penumbra
+        el.decay = opts.decay
+        el.color.set(opts.color)
+      }
+    })
+    this.helperGroup?.traverse((el: any) => {
+      if (el.type === 'SpotLightHelper') {
+        el.children[0].material.color.set(opts.color)
       }
     })
   }
