@@ -66,7 +66,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   historyCameraPosition: InstanceType<typeof THREE.Vector3>
 
   // 动画模型集合
-  animateModels: ThreeModelItem[]
+  animateModels: ThreeModelItem[] = []
+
+  // 视频元素集合
+  videoModels: ThreeModelItem[] = []
 
   // 移动系数
   moveFactor: number = 1
@@ -95,7 +98,6 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.currentSight = sightMap.full
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
-    this.animateModels = []
 
     this.bindEvent()
     this.addBuildingGroup()
@@ -455,7 +457,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 双开门(两扇门 往两边平移)
   dubleHorizontalDoor(object, scale = 400, isOpen?: boolean) {
     const { bind, axle = 'z' } = object.data
-    console.log(bind)
+
     return dubleHorizontal(this.scene, {
       value: bind,
       axle,
@@ -523,6 +525,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       // side: THREE.DoubleSide
     })
 
+    this.videoModels = []
     for (let i = 0; i < names.length; i++) {
       const dbObj = this.scene.getObjectByName(names[i]) as any
       if (!dbObj) continue
@@ -532,6 +535,23 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       dbObj.__cover_texture__ = videoCoverTexture.clone()
       dbObj.material = material.clone()
       dbObj.__video__ = videoDom2
+      this.videoModels.push(dbObj)
+    }
+  }
+
+  // 清理视频
+  clearVideo() {
+    const videos = this.videoModels
+    for (let i = 0; i < videos.length; i++) {
+      const obj = videos[i]
+      const { __video__, __cover_texture__, __video_texture__ } = obj
+      if (__video__) {
+        console.log(obj.__video__, __cover_texture__, __video_texture__)
+        __video__.pause()
+        __video__.remove()
+        __cover_texture__?.dispose()
+        __video_texture__?.dispose()
+      }
     }
   }
 
@@ -539,12 +559,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   videoPlay(object) {
     const vobj = this.scene.getObjectByName(object.data.bind) as any
     if (vobj && vobj.__video__) {
-      const videoDom = vobj.__video__
-      if (videoDom.paused) {
+      const __video__ = vobj.__video__
+      if (__video__.paused) {
         vobj.material.map = vobj.__video_texture__
-        videoDom?.play()
+        __video__?.play()
       } else {
-        videoDom?.pause()
+        __video__?.pause()
         vobj.material.map = vobj.__cover_texture__
       }
     }
@@ -918,6 +938,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   dispose() {
     destroyEvent()
     this.animateModels = []
+    this.clearVideo()
+    this.videoModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.character)
     this.disposeObj(this.dotGroup)

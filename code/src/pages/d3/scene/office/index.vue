@@ -288,7 +288,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 聚光灯
   else if (model.isSpotLight) {
-    scene.addLight(item, model, true)
+    scene.addLight(item, model, !true)
   } else {
     scene.addBuilding(model)
   }
