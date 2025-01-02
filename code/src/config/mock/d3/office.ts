@@ -219,11 +219,6 @@ const lights = [
       x: 17.7,
       y: 191,
       z: 55.7
-    },
-    to: {
-      x: 17.7,
-      y: 180,
-      z: 55.7
     }
   },
   {
@@ -233,11 +228,33 @@ const lights = [
       x: 14.1,
       y: 191,
       z: 55.7
-    },
-    to: {
-      x: 14.1,
-      y: 180,
-      z: 55.7
+    }
+  },
+  {
+    name: '前台聚光灯',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 22,
+      y: 191,
+      z: 61
+    }
+  },
+  {
+    name: '前台聚光灯',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 32,
+      y: 191,
+      z: 61
+    }
+  },
+  {
+    name: '前台聚光灯',
+    type: 'spot_light_floor_2',
+    position: {
+      x: 42,
+      y: 191,
+      z: 61
     }
   },
 
@@ -297,8 +314,82 @@ const lights = [
       y: 189,
       z: 58.5
     }
+  },
+  {
+    name: '主机照明灯',
+    type: 'spot_light_floor_1',
+    position: {
+      x: 30,
+      y: 190.7,
+      z: 52.5
+    },
+    to: {
+      x: 32.2,
+      y: 186.7,
+      z: 52.6
+    }
   }
 ]
+
+let x = -36
+// 区域A-通道
+for (let i = 0; i < 6; i++) {
+  lights.push(
+    {
+      name: '区域A',
+      type: 'spot_light_floor_2',
+      position: {
+        x,
+        y: 191,
+        z: 37
+      }
+    },
+    {
+      name: '区域A',
+      type: 'spot_light_floor_2',
+      position: {
+        x,
+        y: 191,
+        z: 45
+      }
+    }
+  )
+  x += 10
+}
+let z = -30
+// 区域B-人事
+for (let i = 0; i < 6; i++) {
+  lights.push(
+    {
+      name: '区域B',
+      type: 'spot_light_floor_2',
+      position: {
+        x: -50,
+        y: 191,
+        z
+      }
+    },
+    {
+      name: '区域B',
+      type: 'spot_light_floor_2',
+      position: {
+        x: -36,
+        y: 191,
+        z
+      }
+    },
+    {
+      name: '区域B',
+      type: 'spot_light_floor_2',
+      position: {
+        x: -26,
+        y: 191,
+        z
+      }
+    }
+  )
+  z += 10
+}
 JsonList.push(...lights)
 
 // 公司锚点高度
@@ -317,12 +408,32 @@ const lightSwitchs = [
     bind: '前台聚光灯'
   },
   {
+    name: '过道灯',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: 5.9,
+      y: anchorHeight,
+      z: 34.5
+    },
+    bind: '区域B'
+  },
+  {
+    name: '人事区域',
+    type: 'LIGHT_SWITCH',
+    position: {
+      x: -39.7,
+      y: anchorHeight,
+      z: 26.8
+    },
+    bind: '区域B'
+  },
+  {
     name: '主机照明灯',
     type: 'LIGHT_SWITCH',
     position: {
-      x: 26.7,
+      x: 25,
       y: anchorHeight,
-      z: 57
+      z: 53.8
     },
     bind: '主机照明灯'
   },

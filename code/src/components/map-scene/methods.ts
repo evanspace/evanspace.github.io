@@ -671,18 +671,21 @@ export class MapThreeScene extends ThreeScene.Scene {
     const { x, y, z } = centerPos
     // 设置相机对焦位置
     this.camera.lookAt(x, y, z)
+    const s = this.config.scale
     new TWEEN.Tween(this.camera.position)
       .to(
         {
           x: x,
-          y: 90 * this.config.scale,
-          z: z + 40 * this.config.scale
+          y: 90 * s,
+          z: z + 40 * s
         },
         1000
       )
       .easing(TWEEN.Easing.Quadratic.In)
       .start()
-      .onUpdate(() => {})
+      .onUpdate(pos => {
+        console.log(pos)
+      })
 
     // 控制器
     this.controls && (this.controls.target = new THREE.Vector3(x, y, z - 5 * this.config.scale))

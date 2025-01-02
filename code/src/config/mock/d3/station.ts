@@ -43,8 +43,8 @@ const getListByPos = (pos, type, name) => {
   return data
 }
 
-const buildingList = getListByPos(buildings, 'building', '楼宇')
-JsonList.push(...buildingList)
+// const buildingList = getListByPos(buildings, 'building', '楼宇')
+// JsonList.push(...buildingList)
 
 // 居民楼 residential
 const residentials = [
@@ -77,8 +77,8 @@ const residentials = [
   [2400, 767],
   [2400, 880]
 ]
-const residentialList = getListByPos(residentials, 'residential', '居民楼')
-JsonList.push(...residentialList)
+// const residentialList = getListByPos(residentials, 'residential', '居民楼')
+// JsonList.push(...residentialList)
 
 // 小型居民楼 small_residential
 const small_residentials = [
@@ -103,8 +103,8 @@ const small_residentials = [
   [560, 1253],
   [500, 1253]
 ]
-const small_residentialList = getListByPos(small_residentials, 'small_residential', '小型居民楼')
-JsonList.push(...small_residentialList)
+// const small_residentialList = getListByPos(small_residentials, 'small_residential', '小型居民楼')
+// JsonList.push(...small_residentialList)
 
 // 监测点
 const monitorCameras = [
@@ -303,7 +303,7 @@ for (let i = 0; i < list.length; i++) {
     }
   })
 }
-JsonList.push(...floors)
+// JsonList.push(...floors)
 
 export default [
   {

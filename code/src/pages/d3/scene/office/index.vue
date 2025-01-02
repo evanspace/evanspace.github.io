@@ -110,7 +110,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 35
+    version: 39
   }
 })
 
@@ -288,7 +288,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 聚光灯
   else if (model.isSpotLight) {
-    scene.addLight(item, model, !true)
+    scene.addLight(item, model, true)
   } else {
     scene.addBuilding(model)
   }

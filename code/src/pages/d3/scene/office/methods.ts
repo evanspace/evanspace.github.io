@@ -228,7 +228,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   addLight(item: ObjectItem, obj, hasHelper?: boolean) {
     if (this.lightGroup) {
       obj.name = item.name
-      const { to = { x: 0, y: 0, z: 0 } } = item
+      const pos = item.position || { x: 0, y: 0, z: 0 }
+      const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
       obj.target.position.set(to.x, to.y, to.z)
       // 开灯
       obj.visible = true

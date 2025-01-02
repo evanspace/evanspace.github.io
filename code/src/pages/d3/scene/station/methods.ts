@@ -592,8 +592,8 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = new THREE.Vector3(-171.5, -6.5, 125.2)
-      to = { x: -169.5, y: 34.9, z: 46.1 }
+      target = new THREE.Vector3(-182.4, 14.7, 67.7)
+      to = { x: -189.7, y: 18, z: 53.4 }
     }
     Utils.cameraLinkageControlsAnimate(
       this.controls,

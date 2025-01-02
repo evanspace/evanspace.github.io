@@ -67,7 +67,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'floor_low',
       name: '低层',
-      size: 26.7,
+      size: 10.7,
       url: '/低层.glb'
     },
     {
@@ -79,14 +79,14 @@ export const getPageOpts = animateBack => ({
     // {
     //   key: 'floor_heigh',
     //   name: '高层',
-    //   size: 11.3,
+    //   size: 8.3,
     //   url: '/高层.glb'
     // },
 
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 57.8,
+      size: 35.1,
       url: '/二十五楼.glb'
     },
 

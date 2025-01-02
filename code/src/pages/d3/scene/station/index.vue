@@ -109,7 +109,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } =
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 34
+      version: 39
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -466,7 +466,7 @@ const toCoolMachineRoom = () => {
     scene.toggleSight()
   }
 
-  const name = '机房'
+  const name = '机房-1'
   // 查找机房
   const room = scene.scene.getObjectByName(name) as any
 
@@ -487,6 +487,7 @@ const toCoolMachineRoom = () => {
   scene.toCoolMachineRoom(true)
   virtualization(scene.buildingGroup?.children || [], room, {
     wireframe: !false,
+    hidden: true,
     opacity: 0.1,
     filter: [
       '_基础_grp',
