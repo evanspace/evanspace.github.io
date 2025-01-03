@@ -32,12 +32,39 @@ const JsonList = [
 // 定位点
 const posList = [
   {
-    name: '一号机位',
+    name: '一楼大门',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: 20.2, y: 10.3, z: 218.5 },
-    target: { x: -1.57, y: -2.6, z: 173.4 },
-    bind: 'Tree-03-2158'
+    to: { x: -42.5, y: 7.4, z: 124.2 },
+    target: { x: -28.3, y: 5.8, z: 103.9 }
+  },
+  {
+    name: '公司前台',
+    type: 'ANCHOR_POS',
+    position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: 14.9, y: 187.6, z: 29 },
+    target: { x: 15.8, y: 186, z: 49.1 }
+  },
+  {
+    name: '办公区域',
+    type: 'ANCHOR_POS',
+    position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: -35.3, y: 188.4, z: 35.2 },
+    target: { x: 11.7, y: 184, z: 60.2 }
+  },
+  {
+    name: '大会议室',
+    type: 'ANCHOR_POS',
+    position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: -18, y: 190.9, z: 41 },
+    target: { x: -31, y: 187.6, z: 49.7 }
+  },
+  {
+    name: '领导办公',
+    type: 'ANCHOR_POS',
+    position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: 67.6, y: 188.9, z: 2.3 },
+    target: { x: 56.6, y: 185.5, z: -15.6 }
   }
 ]
 JsonList.push(...posList)
@@ -331,9 +358,10 @@ const lights = [
   }
 ]
 
-let x = -36
+let len = 1,
+  x = -36 + (6 - len) * 10
 // 区域A-通道
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < len; i++) {
   lights.push(
     {
       name: '区域A',
@@ -356,9 +384,9 @@ for (let i = 0; i < 6; i++) {
   )
   x += 10
 }
-let z = -30
+let z = -30 + (6 - len) * 10
 // 区域B-人事
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < len; i++) {
   lights.push(
     {
       name: '区域B',
@@ -415,7 +443,7 @@ const lightSwitchs = [
       y: anchorHeight,
       z: 34.5
     },
-    bind: '区域B'
+    bind: '区域A'
   },
   {
     name: '人事区域',

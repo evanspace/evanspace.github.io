@@ -12,6 +12,7 @@
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
     <div :class="$style.camera">
+      <div :class="$style.item" @click="() => scene?.toggleRoam()">全景漫游</div>
       <div
         :class="$style.item"
         v-for="item in cameraPositionList"
@@ -19,6 +20,9 @@
       >
         {{ item.name }}
       </div>
+    </div>
+
+    <div :class="[$style.camera, $style.right]">
       <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
       <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
@@ -110,7 +114,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 39
+    version: 40
   }
 })
 
@@ -120,12 +124,11 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   cruise: pageOpts.cruise,
   controls: {
     visible: !false,
-
     enableDamping: true,
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false,
-    // screenSpacePanning: false,
+    screenSpacePanning: false,
     maxDistance: 1500
   },
   camera: {},
@@ -406,6 +409,7 @@ onMounted(() => {
       'ground',
       ...liftMeshNames
     ],
+    roamPoints: pageOpts.roamPoints,
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         const data = object.data

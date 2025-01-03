@@ -18,6 +18,13 @@ const { createFence, fenceAnimate } = Hooks.useFence()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { checkCollide } = Hooks.useCollide()
 const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
+const {
+  createRoam,
+  executeRoam,
+  pause: roamPause,
+  play: roamPlay,
+  getStatus: getRoamStatus
+} = Hooks.useRoam()
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
 
@@ -403,6 +410,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
           message: `${liftName}移动中，请稍候，${duration / 1000}秒后到达!`,
           duration: duration
         })
+
         // 电梯移动
         new TWEEN.Tween(bpos)
           .to(
@@ -691,6 +699,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       return
     }
 
+    this.judgeAndStopRoam()
+
     if (this.isPerspectives()) {
       this.toggleSight()
     }
@@ -727,6 +737,35 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       this.fence = fence
       this.addObject(fence)
     }
+  }
+
+  // 判断漫游，并停止
+  judgeAndStopRoam() {
+    if (getRoamStatus()) {
+      if (this.controls) {
+        this.controls.maxDistance = 1500
+      }
+      roamPause()
+      return true
+    }
+    return false
+  }
+
+  // 漫游
+  toggleRoam() {
+    if (this.judgeAndStopRoam()) return
+    const points = this.extend.roamPoints || []
+    if (points.length == 0) return
+    if (!this.controls) return
+    this.controls.maxDistance = 20
+    createRoam({
+      points,
+      segment: 6,
+      tension: 0.2,
+      speed: 4,
+      close: false
+    })
+    roamPlay()
   }
 
   // 模型动画
@@ -799,6 +838,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         target.rotation.y -= angle
       }
     }
+
+    executeRoam(this.camera, this.controls)
   }
 
   // 移动
