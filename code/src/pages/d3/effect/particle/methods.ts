@@ -14,7 +14,7 @@ export class NewThreeScene extends ThreeScene.Scene {
 
   addModel() {
     const engine = new ParticleEngine()
-    engine.setValues(Examples.rain)
+    engine.setValues(Examples.fountain)
     engine.initialize()
     this.engine = engine
     console.log(engine)

@@ -1,48 +1,53 @@
 import * as THREE from 'three'
 
+// ParticleEngine
+// 类型
+export const TYPE = Object.freeze({ CUBE: 1, SPHERE: 2 })
+
 const particleVertexShader = [
-  'uniform vec3  customColor;',
-  'uniform float customOpacity;',
-  'uniform float customSize;',
-  'uniform float customAngle;',
-  'uniform float customVisible;', // float used as boolean (0 = false, 1 = true)
+  'uniform vec3  uColor;',
+  'uniform float uOpacity;',
+  'uniform float uSize;',
+  'uniform float uAngle;',
+  'uniform float uVisible;', // float used as boolean (0 = false, 1 = true)
+
+  // 'attribute vec3  uColor;',
+  // 'attribute float uOpacity;',
+  // 'attribute float uSize;',
+  // 'attribute float uAngle;',
+  // 'attribute float uVisible;',
+
   'varying vec4  vColor;',
   'varying float vAngle;',
-  'void main()',
-  '{',
-  'if ( customVisible > 0.5 )', // true
-  'vColor = vec4( customColor, customOpacity );', //     set color associated to vertex; use later in fragment shader.
-  'else', // false
-  'vColor = vec4(0.0, 0.0, 0.0, 0.0);', //     make particle invisible.
+  'void main() {',
+  '  if ( uVisible > 0.5 )', // true
+  '    vColor = vec4( uColor, uOpacity );', //     set color associated to vertex; use later in fragment shader.
+  '  else', // false
+  '    vColor = vec4(0.0, 0.0, 0.0, 0.0);', //     make particle invisible.
 
-  'vAngle = customAngle;',
+  '  vAngle = uAngle;',
 
-  'vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
-  'gl_PointSize = customSize * ( 300.0 / length( mvPosition.xyz ) );', // scale particles as objects in 3D space
-  'gl_Position = projectionMatrix * mvPosition;',
+  '  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
+  '  gl_PointSize = uSize * ( 300.0 / length( mvPosition.xyz ) );', // scale particles as objects in 3D space
+  '  gl_Position = projectionMatrix * mvPosition;',
   '}'
 ].join('\n')
 
 const particleFragmentShader = [
-  'uniform sampler2D texture;',
+  'uniform sampler2D uTx;',
   'varying vec4 vColor;',
   'varying float vAngle;',
-  'void main()',
-  '{',
-  'gl_FragColor = vColor;',
+  'void main() {',
+  '  gl_FragColor = vColor;',
 
-  'float c = cos(vAngle);',
-  'float s = sin(vAngle);',
-  'vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,',
-  'c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);', // rotate UV coordinates to rotate texture
-  'vec4 rotatedTexture = texture2D( texture,  rotatedUV );',
-  'gl_FragColor = gl_FragColor * rotatedTexture;', // sets an otherwise white particle texture to desired color
+  '  float c = cos(vAngle);',
+  '  float s = sin(vAngle);',
+  '  vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,',
+  '  c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);', // rotate UV coordinates to rotate texture
+  '  vec4 rotatedTexture = texture2D( uTx,  rotatedUV );',
+  '  gl_FragColor = gl_FragColor * rotatedTexture;', // sets an otherwise white particle texture to desired color
   '}'
 ].join('\n')
-
-// ParticleEngine
-// 类型
-export const TYPE = Object.freeze({ CUBE: 1, SPHERE: 2 })
 
 // 动画
 export class Tween {
@@ -93,11 +98,20 @@ export class ParticleSystem extends THREE.Object3D {
   constructor(geometry?, material?) {
     super()
 
-    this.geometry = geometry !== undefined ? geometry : new THREE.BufferGeometry()
+    this.geometry = geometry !== void 0 ? geometry : new THREE.BufferGeometry()
     this.material =
-      material !== undefined
+      material !== void 0
         ? material
         : new ParticleBasicMaterial({ color: Math.random() * 0xffffff })
+  }
+
+  clone(object) {
+    if (object === void 0) {
+      object = new ParticleSystem(this.geometry, this.material)
+    }
+    object.sortParticles = this.sortParticles
+    super.clone(object)
+    return object
   }
 }
 
@@ -129,15 +143,13 @@ export class Particle {
     this.position.add(this.velocity.clone().multiplyScalar(dt))
     this.velocity.add(this.acceleration.clone().multiplyScalar(dt))
 
-    // convert from degrees to radians: 0.01745329251 = Math.PI/180
+    // 度数转换弧度
     this.angle += this.angleVelocity * 0.01745329251 * dt
     this.angleVelocity += this.angleAcceleration * 0.01745329251 * dt
 
     this.age += dt
 
-    // if the tween for a given attribute is nonempty,
-    //  then use it to update the attribute's value
-
+    // 值不为空则更新属性值
     if (this.sizeTween.times.length > 0) this.size = this.sizeTween.lerp(this.age)
 
     if (this.colorTween.times.length > 0) {
@@ -216,23 +228,19 @@ export class ParticleEngine {
   particleTexture = null
   particleMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      texture: { type: 't', value: this.particleTexture },
-      customVisible: { type: 'f', value: [] },
-      customAngle: { type: 'f', value: [] },
-      customSize: { type: 'f', value: [] },
-      customColor: { type: 'c', value: [] },
-      customOpacity: { type: 'f', value: [] }
+      uTx: { value: this.particleTexture },
+      uVisible: { value: [] },
+      uAngle: { value: [] },
+      uSize: { value: [] },
+      uColor: { value: [] },
+      uOpacity: { value: [] }
     },
-    // attributes: {
-    //   customVisible: { type: 'f', value: [] },
-    //   customAngle: { type: 'f', value: [] },
-    //   customSize: { type: 'f', value: [] },
-    //   customColor: { type: 'c', value: [] },
-    //   customOpacity: { type: 'f', value: [] }
-    // },
+    // 定点着色器
     vertexShader: particleVertexShader,
+    // 片元着色器
     fragmentShader: particleFragmentShader,
-    transparent: true, // alphaTest: 0.5,  // if having transparency issues, try including: alphaTest: 0.5,
+    transparent: true,
+    alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5,
     blending: THREE.NormalBlending,
     depthTest: true
   })
@@ -262,6 +270,7 @@ export class ParticleEngine {
       var t = 6.2832 * Math.random()
       var r = Math.sqrt(1 - z * z)
       var vec3 = new THREE.Vector3(r * Math.cos(t), r * Math.sin(t), z)
+
       particle.position = new THREE.Vector3().addVectors(
         this.positionBase,
         vec3.multiplyScalar(this.positionRadius)
@@ -300,7 +309,7 @@ export class ParticleEngine {
 
   setValues(parameters) {
     console.log('%cconfig', 'color: red', parameters)
-    if (parameters === undefined) return
+    if (parameters === void 0) return
 
     // clear any previous tweens that might exist
     this.sizeTween = new Tween()
@@ -321,23 +330,17 @@ export class ParticleEngine {
     this.particleCount =
       this.particlesPerSecond * Math.min(this.particleDeathAge, this.emitterDeathAge)
 
+    console.log(this.particleTexture)
     this.particleGeometry = new THREE.BufferGeometry()
     this.particleMaterial = new THREE.ShaderMaterial({
       uniforms: {
-        texture: { type: 't', value: this.particleTexture },
-        customVisible: { type: 'f', value: [] },
-        customAngle: { type: 'f', value: [] },
-        customSize: { type: 'f', value: [] },
-        customColor: { type: 'c', value: [] },
-        customOpacity: { type: 'f', value: [] }
+        uTx: { value: this.particleTexture },
+        uVisible: { value: [] },
+        uAngle: { value: [] },
+        uSize: { value: [] },
+        uColor: { value: [] },
+        uOpacity: { value: [] }
       },
-      // attributes: {
-      //   customVisible: { type: 'f', value: [] },
-      //   customAngle: { type: 'f', value: [] },
-      //   customSize: { type: 'f', value: [] },
-      //   customColor: { type: 'c', value: [] },
-      //   customOpacity: { type: 'f', value: [] }
-      // },
       vertexShader: particleVertexShader,
       fragmentShader: particleFragmentShader,
       transparent: true,
@@ -348,68 +351,101 @@ export class ParticleEngine {
     // this.particleMaterial = new THREE.MeshBasicMaterial({
     //   color: 0xf00f00
     // })
-    this.particleMesh = new ParticleSystem()
+    // this.particleMesh = new ParticleSystem()
   }
 
   initialize() {
     // link particle data with geometry/material data
     const points: any[] = []
+    const uVisible = []
+    const uColor = []
+    const uOpacity = []
+    const uSize = []
+    const uAngle = []
+
     for (var i = 0; i < this.particleCount; i++) {
       // remove duplicate code somehow, here and in update function below.
       const particle = this.createParticle()
       this.particleArray[i] = particle
 
+      uVisible.push(particle.alive)
+      uColor.push(particle.color)
+      uOpacity.push(particle.opacity)
+      uSize.push(particle.size)
+      uAngle.push(particle.angle)
+
       // this.particleGeometry.vertices[i] = particle.position
       points.push(particle.position)
       const uniforms = this.particleMaterial.uniforms
       if (uniforms) {
-        uniforms.customVisible.value[i] = particle.alive
-        uniforms.customColor.value[i] = particle.color
-        uniforms.customOpacity.value[i] = particle.opacity
-        uniforms.customSize.value[i] = particle.size
-        uniforms.customAngle.value[i] = particle.angle
+        uniforms.uVisible.value[i] = particle.alive
+        uniforms.uColor.value[i] = particle.color
+        uniforms.uOpacity.value[i] = particle.opacity
+        uniforms.uSize.value[i] = particle.size
+        uniforms.uAngle.value[i] = particle.angle
       }
     }
     this.particleGeometry.setFromPoints(points)
+    this.particleGeometry.setAttribute(
+      'uVisible',
+      new THREE.BufferAttribute(new Float32Array(uVisible), 1)
+    )
+    this.particleGeometry.setAttribute(
+      'uColor',
+      new THREE.BufferAttribute(new Float32Array(uColor), 1)
+    )
+    this.particleGeometry.setAttribute(
+      'uOpacity',
+      new THREE.BufferAttribute(new Float32Array(uOpacity), 1)
+    )
+    this.particleGeometry.setAttribute(
+      'uSize',
+      new THREE.BufferAttribute(new Float32Array(uSize), 1)
+    )
+    this.particleGeometry.setAttribute(
+      'uAngle',
+      new THREE.BufferAttribute(new Float32Array(uAngle), 1)
+    )
 
-    // const count = points.length
-    // const normalAttribute = new THREE.BufferAttribute(new Float32Array(count * 3), 3)
-    // this.particleGeometry.setAttribute('normal', normalAttribute)
-    // for (let i = 0; i < count; i++) {
-    //   normalAttribute.setXYZ(i, 0, 0, 0)
-    // }
-
-    // const uvAttribute = new THREE.BufferAttribute(new Float32Array(count * 2), 2)
-    // this.particleGeometry.setAttribute('uv', uvAttribute)
-    // for (let i = 0; i < count; i++) {
-    //   uvAttribute.setXY(i, 0, 0)
-    // }
+    // 创建一个包含顶点索引的BufferAttribute
+    const indices = new THREE.BufferAttribute(new Float32Array(points.map((_, index) => index)), 1)
+    // 添加顶点属性
+    this.particleGeometry.setAttribute('index', indices)
 
     this.particleMaterial.blending = this.blendStyle
     if (this.blendStyle != THREE.NormalBlending) this.particleMaterial.depthTest = false
 
-    const material = new THREE.PointsMaterial({
-      size: 35,
-      sizeAttenuation: true,
-      map: this.particleTexture,
-      alphaTest: 0.5,
-      transparent: true,
-      color: 0xf00f00
-    })
-    material.color.setHSL(1.0, 0.3, 0.7, THREE.SRGBColorSpace)
+    // const material = new THREE.PointsMaterial({
+    //   size: 35,
+    //   sizeAttenuation: true,
+    //   map: this.particleTexture,
+    //   alphaTest: 0.5,
+    //   transparent: true,
+    //   color: 0xf00f00
+    // })
+    // material.color.setHSL(1.0, 0.3, 0.7, THREE.SRGBColorSpace)
 
-    material.needsUpdate = true
-    const particles = new THREE.Points(this.particleGeometry, material)
-    this.particleMesh = particles
+    // material.needsUpdate = true
+    // const particles = new THREE.Points(this.particleGeometry, material)
+    // this.particleMesh = particles
 
     // this.particleMesh = new ParticleSystem(this.particleGeometry, this.particleMaterial)
+    this.particleMesh = new THREE.Mesh(this.particleGeometry, this.particleMaterial)
+
     // this.particleMesh = new THREE.Points(
     //   this.particleGeometry,
-    //   new THREE.PointsMaterial({ size: 30, color: 0x252525 })
+    //   new THREE.PointsMaterial({
+    //     map: this.particleTexture,
+    //     size: 30,
+    //     alphaTest: 0.5,
+    //     transparent: true,
+    //     sizeAttenuation: true,
+    //     color: 0xf00f00
+    //   })
     // )
 
     // this.particleMesh.scale.setScalar(10)
-    // this.particleMesh.dynamic = true
+    this.particleMesh.dynamic = true
     this.particleMesh.sortParticles = true
   }
 
@@ -424,7 +460,6 @@ export class ParticleEngine {
         particle.update(dt)
 
         // 检查粒子是否过期
-        console.log(particle.age)
         if (particle.age > this.particleDeathAge) {
           particle.alive = 0.0
           recycleIndices.push(i)
@@ -432,11 +467,11 @@ export class ParticleEngine {
         // 更新着色器属性
         const uniforms = this.particleMaterial.uniforms
         if (uniforms) {
-          uniforms.customVisible.value[i] = particle.alive
-          uniforms.customColor.value[i] = particle.color
-          uniforms.customOpacity.value[i] = particle.opacity
-          uniforms.customSize.value[i] = particle.size
-          uniforms.customAngle.value[i] = particle.angle
+          uniforms.uVisible.value[i] = particle.alive
+          uniforms.uColor.value[i] = particle.color
+          uniforms.uOpacity.value[i] = particle.opacity
+          uniforms.uSize.value[i] = particle.size
+          uniforms.uAngle.value[i] = particle.angle
         }
       }
     }
@@ -446,7 +481,7 @@ export class ParticleEngine {
 
     // 没有粒子死亡 则激活
     if (this.emitterAge < this.particleDeathAge) {
-      // determine indices of particles to activate
+      // 粒子激活指数
       const startIndex = Math.round(this.particlesPerSecond * (this.emitterAge + 0))
       let endIndex = Math.round(this.particlesPerSecond * (this.emitterAge + dt))
       if (endIndex > this.particleCount) endIndex = this.particleCount
@@ -454,11 +489,13 @@ export class ParticleEngine {
       for (let i = startIndex; i < endIndex; i++) this.particleArray[i].alive = 1.0
     }
 
-    // if any particles have died while the emitter is still running, we imediately recycle them
     for (let j = 0; j < recycleIndices.length; j++) {
       const i = recycleIndices[j]
       const particle = this.createParticle()
-      particle.alive = 1.0 // activate right away
+      // 激活
+      particle.alive = 1.0
+      this.particleArray[i] = particle
+
       const position = this.particleGeometry.attributes.position
       const { x, y, z } = particle.position
       position.setXYZ(i, x, y, z)
