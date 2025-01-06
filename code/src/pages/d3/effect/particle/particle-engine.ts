@@ -236,7 +236,7 @@ export class ParticleEngine {
     blending: THREE.NormalBlending,
     depthTest: true
   })
-  particleMesh = new ParticleSystem()
+  particleMesh: any = new ParticleSystem()
 
   constructor() {
     this.particleCount =
@@ -388,25 +388,25 @@ export class ParticleEngine {
     this.particleMaterial.blending = this.blendStyle
     if (this.blendStyle != THREE.NormalBlending) this.particleMaterial.depthTest = false
 
-    // const material = new THREE.PointsMaterial({
-    //   size: 35,
-    //   sizeAttenuation: true,
-    //   map: this.particleTexture,
-    //   alphaTest: 0.5,
-    //   transparent: true,
-    //   color: 0xf00f00
-    // })
-    // // material.color.setHSL(1.0, 0.3, 0.7, THREE.SRGBColorSpace)
+    const material = new THREE.PointsMaterial({
+      size: 35,
+      sizeAttenuation: true,
+      map: this.particleTexture,
+      alphaTest: 0.5,
+      transparent: true,
+      color: 0xf00f00
+    })
+    material.color.setHSL(1.0, 0.3, 0.7, THREE.SRGBColorSpace)
 
-    // material.needsUpdate = true
-    // const particles = new THREE.Points(this.particleGeometry, material)
-    // this.particleMesh = particles
+    material.needsUpdate = true
+    const particles = new THREE.Points(this.particleGeometry, material)
+    this.particleMesh = particles
 
     // this.particleMesh = new ParticleSystem(this.particleGeometry, this.particleMaterial)
-    this.particleMesh = new THREE.Points(
-      this.particleGeometry,
-      new THREE.PointsMaterial({ size: 30, color: 0x252525 })
-    )
+    // this.particleMesh = new THREE.Points(
+    //   this.particleGeometry,
+    //   new THREE.PointsMaterial({ size: 30, color: 0x252525 })
+    // )
 
     // this.particleMesh.scale.setScalar(10)
     // this.particleMesh.dynamic = true
@@ -462,7 +462,7 @@ export class ParticleEngine {
       const position = this.particleGeometry.attributes.position
       const { x, y, z } = particle.position
       position.setXYZ(i, x, y, z)
-      console.log(x, y, z)
+      // console.log(x, y, z)
       position.needsUpdate = true
 
       // this.particleGeometry.vertices[i] = particle.position
