@@ -94,6 +94,7 @@ export default {
     shaderOver: '着色器过度',
     side: '边面',
     particle: '粒子',
+    rain: '雨',
 
     device: '设备',
     floor: '楼层',

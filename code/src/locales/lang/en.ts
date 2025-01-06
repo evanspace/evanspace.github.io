@@ -94,6 +94,7 @@ export default {
     shaderOver: 'shader over',
     side: 'side',
     particle: 'particle',
+    rain: 'rain',
 
     device: 'device',
     floor: 'floor',
