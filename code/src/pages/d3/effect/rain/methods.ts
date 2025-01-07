@@ -305,9 +305,12 @@ export class RainThreeScene extends ThreeScene.Scene {
     gui.add(this.collisionBox?.position, 'z', -50, 50)
     gui.add(this.collisionBox?.scale, 'x', 0.1, 4)
 
-    gui.add(this.rainParticles, 'count', 200, this.maxCount).onChange(e => {
-      this.rippleParticles.count = e
-    })
+    gui
+      .add(this.rainParticles, 'count', 200, this.maxCount)
+      .name('数量')
+      .onChange(e => {
+        this.rippleParticles.count = e
+      })
     gui.domElement.className += ' gui-wrap'
     this.container.parentNode?.appendChild(gui.domElement)
   }

@@ -14,8 +14,15 @@ const options: ConstructorParameters<typeof RainThreeScene>[0] = {
   grid: {
     // visible: true
   },
+  render: {
+    antialias: true,
+    logarithmicDepthBuffer: false
+  },
   axes: {
     visible: true
+  },
+  ambientLight: {
+    color: 0x111111
   },
   directionalLight: {
     position: [3, 17, 17]
