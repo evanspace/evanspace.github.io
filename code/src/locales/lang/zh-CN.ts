@@ -95,6 +95,7 @@ export default {
     side: '边面',
     particle: '粒子',
     rain: '雨',
+    smoke: '烟',
 
     device: '设备',
     floor: '楼层',

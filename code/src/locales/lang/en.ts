@@ -95,6 +95,7 @@ export default {
     side: 'side',
     particle: 'particle',
     rain: 'rain',
+    smoke: 'smoke',
 
     device: 'device',
     floor: 'floor',
