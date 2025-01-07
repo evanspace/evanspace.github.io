@@ -42,7 +42,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'machine_room',
       name: '机房',
-      size: 3.7,
+      size: 19.6,
       url: '/机房.glb'
     },
     {
