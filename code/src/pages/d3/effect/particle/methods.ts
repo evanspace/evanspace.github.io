@@ -14,17 +14,41 @@ export class NewThreeScene extends ThreeScene.Scene {
 
   addModel() {
     const engine = new ParticleEngine()
-    engine.setValues(Examples.fountain)
+    engine.setValues(Examples.rain)
     engine.initialize()
     this.engine = engine
     console.log(engine)
     this.addObject(engine.particleMesh)
 
     const box = new THREE.BoxGeometry(10, 10, 10)
+
+    let colors = new Array(8)
+      .fill(0)
+      .map(() => [
+        1.0,
+        0.0,
+        0.0, // 颜色1 (红色)
+
+        0.0,
+        1.0,
+        0.0, // 颜色2 (绿色)
+
+        0.0,
+        0.0,
+        1.0 // 颜色3 (蓝色)
+      ])
+      .flat()
+
+    // 创建顶点颜色属性
+    let cat = new THREE.BufferAttribute(new Float32Array(colors), 3)
+    box.setAttribute('color', cat)
     const boxMesh = new THREE.Mesh(
       box,
       new THREE.MeshBasicMaterial({
-        color: 0xf00f00
+        // color: 0xf00f00
+        vertexColors: true,
+        side: THREE.DoubleSide,
+        wireframe: false
       })
     )
     boxMesh.position.x = 50

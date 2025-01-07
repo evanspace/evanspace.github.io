@@ -17,10 +17,10 @@ const { backgroundLoad } = Hooks.useBackground()
 const containerRef = ref()
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {
   axes: {
-    visible: true
+    // visible: true
   },
   grid: {
-    visible: true
+    // visible: true
   }
 }
 let scene: InstanceType<typeof NewThreeScene>

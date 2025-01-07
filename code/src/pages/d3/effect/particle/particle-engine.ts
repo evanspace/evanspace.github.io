@@ -5,17 +5,17 @@ import * as THREE from 'three'
 export const TYPE = Object.freeze({ CUBE: 1, SPHERE: 2 })
 
 const particleVertexShader = [
-  'uniform vec3  uColor;',
-  'uniform float uOpacity;',
-  'uniform float uSize;',
-  'uniform float uAngle;',
-  'uniform float uVisible;', // float used as boolean (0 = false, 1 = true)
+  // 'uniform vec3  uColor;',
+  // 'uniform float uOpacity;',
+  // 'uniform float uSize;',
+  // 'uniform float uAngle;',
+  // 'uniform float uVisible;', // float used as boolean (0 = false, 1 = true)
 
-  // 'attribute vec3  uColor;',
-  // 'attribute float uOpacity;',
-  // 'attribute float uSize;',
-  // 'attribute float uAngle;',
-  // 'attribute float uVisible;',
+  'in vec3  uColor;',
+  'in float uOpacity;',
+  'in float uSize;',
+  'in float uAngle;',
+  'in float uVisible;',
 
   'varying vec4  vColor;',
   'varying float vAngle;',
@@ -29,6 +29,7 @@ const particleVertexShader = [
 
   '  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );',
   '  gl_PointSize = uSize * ( 300.0 / length( mvPosition.xyz ) );', // scale particles as objects in 3D space
+  // '  gl_PointSize = 2.5;', // scale particles as objects in 3D space
   '  gl_Position = projectionMatrix * mvPosition;',
   '}'
 ].join('\n')
@@ -330,7 +331,6 @@ export class ParticleEngine {
     this.particleCount =
       this.particlesPerSecond * Math.min(this.particleDeathAge, this.emitterDeathAge)
 
-    console.log(this.particleTexture)
     this.particleGeometry = new THREE.BufferGeometry()
     this.particleMaterial = new THREE.ShaderMaterial({
       uniforms: {
@@ -357,11 +357,11 @@ export class ParticleEngine {
   initialize() {
     // link particle data with geometry/material data
     const points: any[] = []
-    const uVisible = []
-    const uColor = []
-    const uOpacity = []
-    const uSize = []
-    const uAngle = []
+    const uVisible: number[] = []
+    const uColor: number[] = []
+    const uOpacity: number[] = []
+    const uSize: number[] = []
+    const uAngle: number[] = []
 
     for (var i = 0; i < this.particleCount; i++) {
       // remove duplicate code somehow, here and in update function below.
@@ -369,7 +369,8 @@ export class ParticleEngine {
       this.particleArray[i] = particle
 
       uVisible.push(particle.alive)
-      uColor.push(particle.color)
+      const c = particle.color
+      uColor.push(c.r, c.g, c.b)
       uOpacity.push(particle.opacity)
       uSize.push(particle.size)
       uAngle.push(particle.angle)
@@ -386,31 +387,20 @@ export class ParticleEngine {
       }
     }
     this.particleGeometry.setFromPoints(points)
-    this.particleGeometry.setAttribute(
-      'uVisible',
-      new THREE.BufferAttribute(new Float32Array(uVisible), 1)
-    )
-    this.particleGeometry.setAttribute(
-      'uColor',
-      new THREE.BufferAttribute(new Float32Array(uColor), 1)
-    )
-    this.particleGeometry.setAttribute(
-      'uOpacity',
-      new THREE.BufferAttribute(new Float32Array(uOpacity), 1)
-    )
-    this.particleGeometry.setAttribute(
-      'uSize',
-      new THREE.BufferAttribute(new Float32Array(uSize), 1)
-    )
-    this.particleGeometry.setAttribute(
-      'uAngle',
-      new THREE.BufferAttribute(new Float32Array(uAngle), 1)
-    )
+    this.particleGeometry.setAttribute('uVisible', new THREE.Float32BufferAttribute(uVisible, 1))
+
+    this.particleGeometry.setAttribute('uColor', new THREE.Float32BufferAttribute(uColor, 3))
+    this.particleGeometry.setAttribute('uOpacity', new THREE.Float32BufferAttribute(uOpacity, 1))
+    this.particleGeometry.setAttribute('uSize', new THREE.Float32BufferAttribute(uSize, 1))
+    this.particleGeometry.setAttribute('uAngle', new THREE.Float32BufferAttribute(uAngle, 1))
 
     // 创建一个包含顶点索引的BufferAttribute
-    const indices = new THREE.BufferAttribute(new Float32Array(points.map((_, index) => index)), 1)
+    // const indices = new THREE.Int16BufferAttribute(
+    //   points.map((_, index) => index),
+    //   1
+    // )
     // 添加顶点属性
-    this.particleGeometry.setAttribute('index', indices)
+    // this.particleGeometry.setAttribute('index', indices)
 
     this.particleMaterial.blending = this.blendStyle
     if (this.blendStyle != THREE.NormalBlending) this.particleMaterial.depthTest = false
@@ -453,6 +443,13 @@ export class ParticleEngine {
     const recycleIndices: number[] = []
 
     if (!this.particleArray.length) return
+
+    const uVisible = this.particleGeometry.attributes.uVisible
+    const uOpacity = this.particleGeometry.attributes.uOpacity
+    const uSize = this.particleGeometry.attributes.uSize
+    const uAngle = this.particleGeometry.attributes.uAngle
+    const uColor = this.particleGeometry.attributes.uColor
+
     // 更新粒子数据
     for (let i = 0; i < this.particleCount; i++) {
       const particle = this.particleArray[i]
@@ -464,6 +461,20 @@ export class ParticleEngine {
           particle.alive = 0.0
           recycleIndices.push(i)
         }
+
+        uVisible.setX(i, particle.alive)
+        uVisible.needsUpdate = true
+        uOpacity.setX(i, particle.opacity)
+        uOpacity.needsUpdate = true
+
+        uSize.setX(i, particle.size)
+        uSize.needsUpdate = true
+        uAngle.setX(i, particle.angle)
+        uAngle.needsUpdate = true
+        const c = particle.color
+        uColor.setXYZ(i, c.r, c.g, c.b)
+        uColor.needsUpdate = true
+
         // 更新着色器属性
         const uniforms = this.particleMaterial.uniforms
         if (uniforms) {
