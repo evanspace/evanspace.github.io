@@ -46,14 +46,6 @@ export class NewThreeScene extends ThreeScene.Scene {
 
     const opacityNode = textureNode.a.mul(life.oneMinus())
 
-    // 混合/颜色
-    const smokeColor = TSL.mix(
-      TSL.color(0x008000),
-      TSL.color(0x0000ff),
-      // TSL.color(0xf00f00),
-      TSL.positionLocal.y.mul(0.8).clamp()
-    )
-
     // 缩放倍数
     const s = 40
 
@@ -64,7 +56,6 @@ export class NewThreeScene extends ThreeScene.Scene {
       TSL.color(0xffffff),
       TSL.color(0xf00f00),
       // TSL.color(0x0000ff),
-      // smokeColor,
       life.mul(0.5).min(0.5)
     ).mul(fakeLightEffect)
 
