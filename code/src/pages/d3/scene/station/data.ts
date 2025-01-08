@@ -77,7 +77,7 @@ export const getPageOpts = animateBack => ({
       name: '定位',
       type: 'sprite',
       range: { x: 4, y: 4 },
-      mapUrl: '/pos.png'
+      mapUrl: '/dw.png'
     },
     {
       key: ANCHOR_TARGET,
