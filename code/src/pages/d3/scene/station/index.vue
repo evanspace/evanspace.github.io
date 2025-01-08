@@ -5,23 +5,19 @@
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
 
-      <div :class="$style.item" @click="() => toggleRoam()">全景漫游</div>
-      <div :class="$style.item" @click="() => toCoolMachineRoom()">制冷机房</div>
-      <div
-        :class="$style.item"
-        v-for="item in cameraPositionList"
-        @click="onCameraTransition(item)"
-      >
+      <div class="item" @click="() => toggleRoam()">全景漫游</div>
+      <div class="item" @click="() => toCoolMachineRoom()">制冷机房</div>
+      <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
         {{ item.name }}
       </div>
 
-      <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
-      <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
-      <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
-      <div :class="$style.item" @click="() => scene.changeCharacterAction()">人物动作</div>
-      <div :class="$style.item" @click="() => scene.characterAccelerate()">人物加速</div>
-      <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
-      <div :class="$style.item" @click="() => changeBackground(scene as any)">切换背景</div>
+      <div class="item" @click="() => scene?.toggleCruise()">定点巡航</div>
+      <div class="item" @click="() => scene?.controlReset()">视角重置</div>
+      <div class="item" @click="() => scene.toggleSight()">人物视角</div>
+      <div class="item" @click="() => scene.changeCharacterAction()">人物动作</div>
+      <div class="item" @click="() => scene.characterAccelerate()">人物加速</div>
+      <div class="item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
+      <div class="item" @click="() => changeBackground(scene as any)">切换背景</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>

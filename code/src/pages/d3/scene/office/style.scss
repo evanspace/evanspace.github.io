@@ -38,43 +38,6 @@
   }
 }
 
-.camera {
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  position: absolute;
-  pointer-events: none;
-  &.right {
-    left: auto;
-    right: 0;
-  }
-
-  $size: 60px;
-  .item {
-    color: #09c17e;
-    width: $size;
-    height: $size;
-    border: 1px solid #09c17e;
-    cursor: pointer;
-    padding: 0 10px;
-    display: flex;
-    font-size: 16px;
-    font-weight: bold;
-    align-items: center;
-    border-radius: 50%;
-    pointer-events: all;
-    justify-content: center;
-    backdrop-filter: saturate(50%) blur(2px);
-    background-color: rgba($color: #09c17e, $alpha: .1);
-    & + .item {
-      margin-top: 10px;
-    }
-    &:hover {
-      background-color: rgba($color: #09c17e, $alpha: .3);
-    }
-  }
-}
-
 
 :global {
   :local( .page ) {
