@@ -367,7 +367,7 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     if (!this.controls) return
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 20 : 800
+    this.controls.maxDistance = isCharacter ? 0 : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)

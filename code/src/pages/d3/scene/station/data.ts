@@ -119,7 +119,8 @@ export const getPageOpts = animateBack => ({
       key: LIGHT_SWITCH,
       name: '开关灯',
       type: 'sprite',
-      mapUrl: '/light.png'
+      mapUrl: '/light.png',
+      range: { x: 2, y: 2 }
     }
   ].map(item => {
     if (item.url && item.url.indexOf('oss') < 0) {
