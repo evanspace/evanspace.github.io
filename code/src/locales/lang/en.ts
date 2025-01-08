@@ -108,6 +108,7 @@ export default {
     simple: 'simple',
     model: 'model',
     buffer: 'buffer',
+    template: 'template',
     hollow: 'hollow',
 
     vue: 'vue',
