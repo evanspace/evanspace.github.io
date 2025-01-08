@@ -57,7 +57,7 @@ export class NewThreeScene extends ThreeScene.Scene {
 
     console.log(controls)
     this.controls = controls
-    this.addObject(controls.getObject())
+    this.addObject(controls.object)
   }
 
   initModel() {
@@ -401,7 +401,7 @@ export class NewThreeScene extends ThreeScene.Scene {
 
     if (controls && controls.isLocked === true) {
       const { raycaster, prevTime, velocity, operate, direction, objects } = this
-      const camera = controls.getObject()
+      const camera = controls.object
       // 复制相机坐标更新原点
       raycaster.ray.origin.copy(camera.position)
       raycaster.ray.origin.y -= 10
