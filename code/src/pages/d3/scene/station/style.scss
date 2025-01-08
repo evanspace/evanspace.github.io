@@ -63,47 +63,6 @@
 
 
 
-.camera {
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  position: absolute;
-  pointer-events: none;
-
-  &.right {
-    left: auto;
-    right: 10px;
-  }
-
-  $color: #27ffb0;
-  $size: 60px;
-  .item {
-    color: $color;
-    width: $size;
-    height: $size;
-    border: 1px solid #{ $color };
-    cursor: pointer;
-    padding: 0 10px;
-    display: flex;
-    font-size: 16px;
-    font-weight: bold;
-    align-items: center;
-    border-radius: 50%;
-    pointer-events: all;
-    justify-content: center;
-    backdrop-filter: saturate(50%) blur(2px);
-    background-color: rgba($color: $color, $alpha: .1);
-    & + .item {
-      margin-top: 10px;
-    }
-    &:hover {
-      background-color: rgba($color: $color, $alpha: .3);
-    }
-  }
-}
-
-
-
 :global {
   :local( .page ) {
     @include mixin.scene-operation;
@@ -113,5 +72,32 @@
 :global {
   :local( .container ) {
     @include mixin.dot-label;
+  }
+
+
+  $color: #27ffb0;
+
+  .scene-operation {
+
+    :local(.item) {
+      color: $color;
+      border: 1px solid #{ $color };
+      cursor: pointer;
+      margin: 5px;
+      padding: 10px 10px;
+      display: inline-flex;
+      font-size: 16px;
+      white-space: nowrap;
+      align-items: center;
+      border-radius: 20px;
+      pointer-events: all;
+      justify-content: center;
+      backdrop-filter: saturate(50%) blur(2px);
+      background-color: rgba($color: $color, $alpha: .1);
+
+      &:hover {
+        background-color: rgba($color: $color, $alpha: .3);
+      }
+    }
   }
 }

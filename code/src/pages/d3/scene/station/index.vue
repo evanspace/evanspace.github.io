@@ -4,14 +4,8 @@
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
-    </div>
 
-    <div :class="$style.container" ref="containerRef"></div>
-
-    <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
-
-    <div :class="$style.camera">
-      <div :class="$style.item" @click="() => scene?.toggleRoam()">全景漫游</div>
+      <div :class="$style.item" @click="() => toggleRoam()">全景漫游</div>
       <div :class="$style.item" @click="() => toCoolMachineRoom()">制冷机房</div>
       <div
         :class="$style.item"
@@ -20,9 +14,7 @@
       >
         {{ item.name }}
       </div>
-    </div>
 
-    <div :class="[$style.camera, $style.right]">
       <div :class="$style.item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div :class="$style.item" @click="() => scene?.controlReset()">视角重置</div>
       <div :class="$style.item" @click="() => scene.toggleSight()">人物视角</div>
@@ -31,6 +23,10 @@
       <div :class="$style.item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
       <div :class="$style.item" @click="() => changeBackground(scene as any)">切换背景</div>
     </div>
+
+    <div :class="$style.container" ref="containerRef"></div>
+
+    <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
     <!-- // 提示 -->
     <div
@@ -68,6 +64,7 @@ import {
   CRUISE_POINT_UP,
   CHARACTER,
   OPEN_DOOR,
+  LIGHT_SWITCH,
   getPageOpts,
   getTipOpts
 } from './data'
@@ -109,7 +106,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } =
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 42
+      version: 44
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -163,6 +160,7 @@ onMounted(() => {
         const data = object.data
         switch (data?.type) {
           case ANCHOR_POS: // 定位
+            closeMachinRoomEffect()
             scene.cameraTransition(object)
             break
           case ANCHOR_TARGET: // 锚点
@@ -171,6 +169,9 @@ onMounted(() => {
             break
           case OPEN_DOOR: // 开门-90° 旋转开门
             scene.openTheDoor(object)
+            break
+          case LIGHT_SWITCH: // 开关灯
+            scene.lightSwitch(object)
             break
         }
       }
@@ -260,6 +261,10 @@ const assemblyScenario = async () => {
   // @ts-ignore
   Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
+    setTimeout(() => {
+      // 关灯
+      scene.closeLightGroup()
+    }, 100)
   })
 }
 
@@ -329,6 +334,10 @@ const loopLoadObject = async (item: ObjectItem) => {
     model._isAnchor_ = true
 
     scene.addAnchor(model)
+  }
+  // 聚光灯
+  else if (model.isSpotLight) {
+    scene.addLight(item, model, true)
   }
   // 楼层
   else if (floorModelType.includes(type)) {
@@ -452,13 +461,28 @@ const createCharacter = () => {
 
 // 相机转场
 const onCameraTransition = item => {
+  const { room, isFocus } = scene.getMachineRoomStatus(machineRoomName)
+  if (isFocus) {
+    closeVirtualization(scene.buildingGroup?.children)
+  }
+  room.__isFocus__ = false
+
   scene.cameraTransition({
     position: item.position,
     data: item
   })
 }
 
+// 关闭机房聚焦效果
+const closeMachinRoomEffect = () => {
+  const { isFocus } = scene.getMachineRoomStatus(machineRoomName)
+  if (isFocus) {
+    closeVirtualization(scene.buildingGroup?.children)
+  }
+}
+
 // 制冷机房
+const machineRoomName = '机房'
 const toCoolMachineRoom = () => {
   if (scene.judgeCruise()) return
 
@@ -466,9 +490,7 @@ const toCoolMachineRoom = () => {
     scene.toggleSight()
   }
 
-  const name = '机房'
-  // 查找机房
-  const room = scene.scene.getObjectByName(name) as any
+  const { room, isFocus } = scene.getMachineRoomStatus(machineRoomName)
 
   if (!room) {
     ElMessage.warning({
@@ -477,7 +499,7 @@ const toCoolMachineRoom = () => {
     })
     return
   }
-  const isFocus = room.__isFocus__
+
   room.__isFocus__ = !isFocus
   if (isFocus) {
     closeVirtualization(scene.buildingGroup?.children)
@@ -509,6 +531,12 @@ const toCoolMachineRoom = () => {
     ]
     // filterMatch: ['BezierCurve']
   })
+}
+
+// 漫游
+const toggleRoam = () => {
+  closeMachinRoomEffect()
+  scene?.toggleRoam()
 }
 </script>
 

@@ -9,6 +9,7 @@ export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const FLOOR = 'floor_common' // 楼层
 export const OPEN_DOOR = 'OPEN_DOOR' // 开门
+export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 
 export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
 export const ROAM_POINT_UP = 100 // y 漫游轴向量
@@ -26,7 +27,7 @@ export const getPageOpts = animateBack => ({
   config: {},
 
   // 锚点类型
-  anchorType: [ANCHOR_POS, ANCHOR_TARGET, OPEN_DOOR],
+  anchorType: [ANCHOR_POS, ANCHOR_TARGET, OPEN_DOOR, LIGHT_SWITCH],
   // 动画模型类型
   animationModelType: [MAIN_SCENE],
   // 楼层类型
@@ -36,7 +37,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 49.8,
+      size: 50.4,
       url: '/深圳北站.glb'
     },
     {
@@ -104,6 +105,21 @@ export const getPageOpts = animateBack => ({
       name: '人物',
       size: 2.2,
       url: '/oss/model/park/RobotExpressive.glb'
+    },
+
+    {
+      key: 'waiting_room_spot_light',
+      type: 'spotlight',
+      name: '聚光灯',
+      intensity: 8,
+      color: 0xfff8d2,
+      distance: 40
+    },
+    {
+      key: LIGHT_SWITCH,
+      name: '开关灯',
+      type: 'sprite',
+      mapUrl: '/light.png'
     }
   ].map(item => {
     if (item.url && item.url.indexOf('oss') < 0) {

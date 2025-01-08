@@ -188,43 +188,42 @@ JsonList.push(...monitorCameras)
 // 定位点
 const posList = [
   {
-    name: '一号机位',
+    name: '东广场',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    // to: { x: 20.2, y: 10.3, z: 218.5 },
-    // target: { x: -1.57, y: -2.6, z: 173.4 },
-    to: { x: -402.7, y: 185.8, z: 368.2 },
-    target: { x: -43.6, y: -2.6, z: 68.6 },
-    bind: 'Tree-03-2158'
+    target: { x: 0, y: -2.6, z: 114.2 },
+    to: { x: 0, y: 154.4, z: 637.2 }
   },
   {
-    name: '二号机位',
+    name: '西广场',
     type: 'ANCHOR_POS',
     position: { x: 113.4, y: 43.6, z: 116.4 },
-    to: { x: 134, y: 56.7, z: 128.9 },
-    target: { x: 15.9, y: -2.6, z: 19.3 }
+    to: { x: 95.3, y: 57.4, z: -942.3 },
+    target: { x: -143.6, y: -2.6, z: -263.6 }
   },
   {
-    name: '三号机位',
+    name: '候车室',
     type: 'ANCHOR_POS',
-    position: { x: -317.9, y: 4, z: 295.6 },
-    to: { x: -364.9, y: 10.5, z: 311.4 },
-    target: { x: -290.8, y: -2.6, z: 274.7 }
+    // position: { x: 72.1, y: 4, z: -84 },
+    to: { x: 88.5, y: 18.2, z: -62.4 },
+    target: { x: 42.1, y: -2.6, z: -195.4 }
   },
 
   {
-    name: '右侧光伏',
+    name: '东辅楼',
     type: 'ANCHOR_POS',
-    position: { x: 203.6, y: 61.6, z: 24.5 },
+    // position: { x: 203.6, y: 61.6, z: 24.5 },
+    position: { x: 253.5, y: 58, z: 93.4 },
     to: { x: 150.7, y: 90, z: -24 },
     target: { x: 343, y: -2.6, z: 158.7 },
     bind: '_光伏大楼_2_grp'
   },
 
   {
-    name: '左侧光伏',
+    name: '西辅楼',
     type: 'ANCHOR_POS',
-    position: { x: -318, y: 70.9, z: 167.6 },
+    // position: { x: -318, y: 70.9, z: 167.6 },
+    position: { x: -254.4, y: 58, z: 100 },
     to: { x: -430.9, y: 162.7, z: 258.4 },
     target: { x: -188.3, y: -2.6, z: 64 },
     bind: '_光伏大楼_1_grp'
@@ -274,19 +273,19 @@ const floorMap = {
 }
 
 const list = [
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common',
-  'floor_common'
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common',
+  // 'floor_common'
 ]
 let y = 0.2
 for (let i = 0; i < list.length; i++) {
@@ -303,7 +302,59 @@ for (let i = 0; i < list.length; i++) {
     }
   })
 }
-// JsonList.push(...floors)
+JsonList.push(...floors)
+
+// 灯光
+const lights = [
+  {
+    name: '候车室灯',
+    type: 'waiting_room_spot_light',
+    position: {
+      x: 60,
+      y: 22,
+      z: -133.1
+    }
+  },
+  {
+    name: '候车室灯',
+    type: 'waiting_room_spot_light',
+    position: {
+      x: -49.5,
+      y: 22,
+      z: -305.5
+    }
+  },
+  {
+    name: '候车室灯',
+    type: 'waiting_room_spot_light',
+    position: {
+      x: 60,
+      y: 22,
+      z: -305.5
+    }
+  },
+  {
+    name: '候车室灯',
+    type: 'waiting_room_spot_light',
+    position: {
+      x: -49.5,
+      y: 22,
+      z: -133.1
+    }
+  }
+]
+JsonList.push(...lights)
+
+// 灯关-锚点
+const lightSwitchs = [
+  {
+    name: '候车室灯',
+    type: 'LIGHT_SWITCH',
+    position: { x: 76, y: 5, z: -112.2 },
+    bind: '候车室灯'
+  }
+]
+JsonList.push(...lightSwitchs)
 
 export default [
   {

@@ -7,6 +7,7 @@ import type { Config, ExtendOptions } from '.'
 import type { ObjectItem, XYZ } from 'three-scene/src/types/model'
 
 import DEFAULTCONFIG from './config'
+import { ThreeModelItem } from 'three-scene/src/types/model'
 
 const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
@@ -36,6 +37,9 @@ export class StationThreeScene extends ThreeScene.Scene {
   anchorGroup?: InstanceType<typeof THREE.Group>
   // 点位集合
   dotGroup?: InstanceType<typeof THREE.Group>
+  // 灯光组
+  lightGroup?: InstanceType<typeof THREE.Group>
+
   // 扩展参数
   extend: Partial<ExtendOptions>
   // CSS2D 渲染器
@@ -99,6 +103,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.addFloorGroup()
     this.addAnchorGroup()
     this.addDotGroup()
+    this.addLightGroup()
   }
 
   // 添加建筑组
@@ -217,6 +222,53 @@ export class StationThreeScene extends ThreeScene.Scene {
     if (this.floorGroup) {
       this.floorGroup.add(...obj)
     }
+  }
+
+  addLightGroup() {
+    const group = new THREE.Group()
+    group.name = '灯光组'
+    this.lightGroup = group
+    this.addObject(group)
+  }
+
+  clearLightGroup() {
+    if (this.lightGroup) {
+      this.disposeObj(this.lightGroup)
+    }
+    this.addLightGroup()
+  }
+
+  closeLightGroup(isCOpen: boolean = false) {
+    this.lightGroup?.children.forEach((el: any) => {
+      if (el.isSpotLight) {
+        el.visible = isCOpen
+      }
+    })
+  }
+
+  addLight(item: ObjectItem, obj, hasHelper?: boolean) {
+    if (this.lightGroup) {
+      obj.name = item.name
+      const pos = item.position || { x: 0, y: 0, z: 0 }
+      const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
+      obj.target.position.set(to.x, to.y, to.z)
+      // 开灯
+      obj.visible = true
+      this.lightGroup.add(obj)
+      this.lightGroup.add(obj.target)
+      if (hasHelper) {
+        const helper = new THREE.SpotLightHelper(obj, obj.color)
+        this.lightGroup.add(helper)
+      }
+    }
+  }
+
+  lightSwitch(object) {
+    const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
+    if (!light) return
+    light.forEach(el => {
+      el.visible = !el.visible
+    })
   }
 
   // 添加人物
@@ -581,6 +633,15 @@ export class StationThreeScene extends ThreeScene.Scene {
     floorAnimate(list, index, mark => this.getFlowMark(mark))
   }
 
+  // 获取机房
+  getMachineRoomStatus(name) {
+    const room = this.scene.getObjectByName(name) as ThreeModelItem
+    return {
+      isFocus: room?.__isFocus__,
+      room
+    }
+  }
+
   // 机房视角-其他虚化
   toCoolMachineRoom(isFocus) {
     if (!this.controls) return
@@ -843,6 +904,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.disposeObj(this.fence)
     this.disposeObj(this.mouseClickDiffusion)
     this.disposeObj(this.floorGroup)
+    this.disposeObj(this.lightGroup)
 
     this.clock = void 0
     // @ts-ignore
@@ -855,6 +917,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     // @ts-ignore
     this.mouseClickDiffusion = void 0
     this.floorGroup = void 0
+    this.lightGroup = void 0
     this.extend = {}
     super.dispose()
   }
