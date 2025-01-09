@@ -82,6 +82,8 @@ export default {
     csg: '几何构造集',
     example: '实例',
     controls: '控制器',
+    webgpu: 'webgpu',
+
     orbit: '轨道',
     fly: '飞行',
     pointerLock: '指针锁定',

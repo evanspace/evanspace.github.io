@@ -82,6 +82,8 @@ export default {
     csg: 'CSG',
     example: 'example',
     controls: 'controls',
+    webgpu: 'webgpu',
+
     orbit: 'orbit',
     fly: 'fly',
     pointerLock: 'pointer Lock',
