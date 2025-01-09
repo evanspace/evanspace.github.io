@@ -597,7 +597,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       .add(option, 'bgCode', skys)
       .name('背景')
       .onChange(e => {
-        backgroundLoad(this, e)
+        backgroundLoad(this, e, e == '227' ? 'jpg' : e === '228' ? 'png' : void 0)
       })
     group
       .add(
