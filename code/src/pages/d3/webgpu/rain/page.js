@@ -1,4 +1,4 @@
 export default {
   title: 'rain',
-  order: 70
+  order: 30
 }
