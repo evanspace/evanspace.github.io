@@ -31,7 +31,7 @@ export class SmokeScene extends ThreeScene.Scene {
   }
 
   createRender() {
-    return new THREE.WebGPURenderer(this.options.render)
+    return new THREE.WebGPURenderer(this.options.render) as any
   }
 
   addModel() {
