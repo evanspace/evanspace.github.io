@@ -8,7 +8,7 @@ import { Water } from 'three/examples/jsm/objects/Water'
 import { Sky } from 'three/examples/jsm/objects/Sky'
 
 import type { Config, ExtendOptions } from '.'
-import type { XYZ, ObjectItem } from 'three-scene/src/types/model'
+import type { XYZ, ObjectItem } from 'three-scene/types/model'
 
 import DEFAULTCONFIG from './config'
 

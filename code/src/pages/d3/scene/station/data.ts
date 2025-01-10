@@ -129,7 +129,7 @@ export const getPageOpts = animateBack => ({
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/station' + item.mapUrl
     }
-    return item as import('three-scene/src/types/model').ModelItem
+    return item as import('three-scene/types/model').ModelItem
   }),
 
   cruise: {

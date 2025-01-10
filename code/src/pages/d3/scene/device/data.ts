@@ -192,7 +192,7 @@ export const getPageOpts = (): {} & Omit<
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
-    return item as import('three-scene/src/types/model').ModelItem
+    return item as import('three-scene/types/model').ModelItem
   }),
   objects: [],
   dotShowStrict: true,

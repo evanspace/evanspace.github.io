@@ -71,7 +71,7 @@ import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './method
 import { useResize } from '@/hooks/scene-resize'
 import { Hooks, Utils } from 'three-scene/build/three-scene.module'
 
-import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {

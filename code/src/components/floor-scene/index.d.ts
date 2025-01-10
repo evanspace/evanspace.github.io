@@ -7,10 +7,10 @@ import type {
   Axes,
   Cruise,
   DirectionalLight
-} from 'three-scene/src/types/index'
-import type { XYZ, ModelItem, ObjectItem } from 'three-scene/src/types/model'
-import type { IndexDB } from 'three-scene/src/types/indexdb'
-import type { Colors, ColorObject } from 'three-scene/src/types/color'
+} from 'three-scene/types/options'
+import type { XYZ, ModelItem, ObjectItem } from 'three-scene/types/model'
+import type { IndexDB } from 'three-scene/types/indexdb'
+import type { Colors, ColorObject } from 'three-scene/types/color'
 
 export declare interface Config {
   // 场景相机位置
@@ -99,7 +99,7 @@ export declare interface Props {
   scale?: number
 
   // 颜色
-  colors?: import('three-scene/src/types/utils').DeepPartial<Colors>
+  colors?: import('three-scene/types/utils').DeepPartial<Colors>
 
   // 数据库
   indexDB?: Partial<IndexDB>

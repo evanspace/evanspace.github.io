@@ -288,7 +288,7 @@ export const getPageOpts = (): {} & Omit<
     if (item.mapUrl && item.mapUrl.indexOf('/oss') < 0) {
       item.mapUrl = '/oss/textures/floor' + item.mapUrl
     }
-    return item as import('three-scene/src/types/model').ModelItem
+    return item as import('three-scene/types/model').ModelItem
   }),
   objects: [],
   pipes: [],

@@ -74,7 +74,7 @@ import * as request from './request'
 import { useResize } from '@/hooks/scene-resize'
 import * as ThreeScene from 'three-scene/build/three-scene.module'
 
-import type { ObjectItem, ThreeModelItem } from 'three-scene/src/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
 const Utils = ThreeScene.Utils
 const Hooks = ThreeScene.Hooks

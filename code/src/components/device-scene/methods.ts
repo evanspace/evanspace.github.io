@@ -2,7 +2,7 @@ import * as THREE from 'three'
 
 import * as ThreeScene from 'three-scene'
 
-import type { XYZ, ObjectItem } from 'three-scene/src/types/model'
+import type { XYZ, ObjectItem } from 'three-scene/types/model'
 import type { Config, ExtendOptions } from '.'
 
 import DEFAULTCONFIG from './config'

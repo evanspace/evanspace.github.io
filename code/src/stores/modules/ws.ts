@@ -187,7 +187,7 @@ export const useWsStore = defineStore({
     },
 
     // 格式化数据
-    formatData(list: import('three-scene/src/types/model').ObjectItem[], callbak?: Function) {
+    formatData(list: import('three-scene/types/model').ObjectItem[], callbak?: Function) {
       return list.map((item, index) => {
         const obj = {
           id: index,

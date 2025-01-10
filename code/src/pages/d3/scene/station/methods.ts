@@ -4,10 +4,10 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import * as ThreeScene from 'three-scene'
 
 import type { Config, ExtendOptions } from '.'
-import type { ObjectItem, XYZ } from 'three-scene/src/types/model'
+import type { ObjectItem, XYZ } from 'three-scene/types/model'
 
 import DEFAULTCONFIG from './config'
-import { ThreeModelItem } from 'three-scene/src/types/model'
+import { ThreeModelItem } from 'three-scene/types/model'
 
 const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils

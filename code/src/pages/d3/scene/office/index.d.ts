@@ -1,5 +1,5 @@
-import type { XYZ } from 'three-scene/src/types/model'
-import type { Colors, ColorObject } from 'three-scene/src/types/color'
+import type { XYZ } from 'three-scene/types/model'
+import type { Colors, ColorObject } from 'three-scene/types/color'
 
 export declare interface Config {
   // 场景相机位置

@@ -2,7 +2,7 @@ const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 export const getPageOpts = (): {
   baseUrl: string
-  models: import('three-scene/src/types/model').ModelItem[]
+  models: import('three-scene/types/model').ModelItem[]
 } => ({
   baseUrl: base,
 

@@ -39,7 +39,7 @@ import { Utils, Hooks } from 'three-scene/build/three-scene.module'
 
 import DEFAULTCONFIG from './config.ts'
 
-import type { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/src/types/model'
+import type { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/types/model'
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   dracoUrl: '',

@@ -62,7 +62,7 @@ import tFloorScene from '@/components/floor-scene/index.vue'
 import { getPageOpts } from './data'
 import * as request from './request'
 
-import type { ObjectItem } from 'three-scene/src/types/model'
+import type { ObjectItem } from 'three-scene/types/model'
 
 import { useResize } from '@/hooks/scene-resize'
 
