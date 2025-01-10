@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 import CONFIG from './config'
 import COLOR from './color'

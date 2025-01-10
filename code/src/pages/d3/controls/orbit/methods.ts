@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
 export class NewThreeScene extends ThreeScene.Scene {

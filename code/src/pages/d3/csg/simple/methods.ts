@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { SUBTRACTION, INTERSECTION, ADDITION, Brush, Evaluator } from 'three-bvh-csg'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 const params = {
   operation: SUBTRACTION,

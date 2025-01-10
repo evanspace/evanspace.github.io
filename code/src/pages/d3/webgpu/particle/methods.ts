@@ -1,5 +1,5 @@
-import * as THREE from 'three/build/three.webgpu'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as THREE from 'three/webgpu'
+import * as ThreeScene from 'three-scene'
 
 import { ParticleEngine } from './particle-engine'
 import { Examples } from './examples'

@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 import type { XYZ, ObjectItem } from 'three-scene/src/types/model'
 import type { Config, ExtendOptions } from '.'

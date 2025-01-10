@@ -1,11 +1,12 @@
-import * as THREE from 'three/build/three.webgpu'
-import { TSL } from 'three/build/three.webgpu'
+import * as THREE from 'three/webgpu'
 
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils'
 
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 import { GUI } from 'dat.gui'
+
+const TSL = THREE.TSL
 
 const randUint = () => TSL.uint(Math.random() * 0xffffff)
 

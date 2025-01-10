@@ -1,6 +1,6 @@
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
-import * as THREE from 'three/build/three.webgpu'
+import * as THREE from 'three/webgpu'
 
 import { GUI } from 'dat.gui'
 

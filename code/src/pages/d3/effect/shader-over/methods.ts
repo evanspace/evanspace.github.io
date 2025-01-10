@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { gsap } from 'gsap'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 

@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { Water } from 'three/examples/jsm/objects/Water'
 
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 // const Hooks = ThreeScene.Hooks
 

@@ -36,7 +36,7 @@ import * as THREE from 'three'
 import { DeviceThreeScene } from './methods'
 
 import { colors } from './colors'
-import { Utils, Hooks } from 'three-scene/build/three-scene.module'
+import { Utils, Hooks } from 'three-scene'
 
 import DEFAULTCONFIG from './config'
 

@@ -9,7 +9,8 @@
     "types":[
       "node",
       "mockjs",
-      "element-plus"
+      "element-plus",
+      "three"
     ],
     "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
     "skipLibCheck": true,
@@ -51,8 +52,11 @@
     "src/**/*.tsx", 
     "src/**/*.vue",
     "src/env.d.ts",
-    "three-scene-types/**/*.d.ts",
     "./types/auto-imports.d.ts" // 和 AutoImport dts保持一致 引入即可
+  ],
+  // 包含类型声明的文件列表
+  "typeRoots": [
+    
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

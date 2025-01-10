@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
 
 const Utils = ThreeScene.Utils
@@ -112,7 +112,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
   }
 
   addControls() {
-    const camera = this.camera
+    const camera = this.camera as any
     const controls = new TransformControls(camera, this.renderer.domElement)
 
     // 监听相机变化
@@ -253,7 +253,8 @@ export class ConvertThreeScene extends ThreeScene.Scene {
         this.copyTextarea('坐标复制成功！')
       },
       target: () => {
-        const vs = this.controls?.target as InstanceType<typeof THREE.Vector3>
+        if (!this.controls) return
+        const vs = this.controls.target
         guiOpts.dotText = `{ x: ${vs.x}, y: ${vs.y}, z: ${vs.z} }`
         this.copyTextarea('中心点复制成功！')
       },

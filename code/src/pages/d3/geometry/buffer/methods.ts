@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 const createBufferGeometry = () => {
   // 三角形数量

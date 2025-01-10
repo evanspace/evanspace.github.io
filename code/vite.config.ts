@@ -149,10 +149,9 @@ export default ({ mode }) => {
         '@assets': resolve('src/common/assets'),
         '@axios': resolve('src/common/service/index.ts'),
         // 解决直接引入 vue-i8n 控制台警告问题
-        'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js',
+        'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
         // 解决控制台警告引入多个实例问题
-        three: resolve('node_modules/three'),
-        'three/webgpu': resolve('node_modules/three/build/three.webgpu')
+        // three: resolve('node_modules/three')
       }
     },
     css: {
