@@ -9,8 +9,7 @@
     "types":[
       "node",
       "mockjs",
-      "element-plus",
-      "three"
+      "element-plus"
     ],
     "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
     "skipLibCheck": true,
@@ -37,7 +36,9 @@
       "@common/*": [ "src/common/*" ],
       "@utils/*": [ "src/common/utils/*" ],
       "@assets/*": [ "src/common/assets/*" ],
-      "@axios": [ "src/common/service/index.ts" ]
+      "@axios": [ "src/common/service/index.ts" ],
+      // "three": [ "node_modules/three"],
+      "three/webgpu": [ "node_modules/three/build/three.webgpu"]
     },
 
     // 解决引入 js 报红问题

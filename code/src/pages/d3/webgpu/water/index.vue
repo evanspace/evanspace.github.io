@@ -5,16 +5,15 @@
 </template>
 
 <script lang="ts" setup>
-import { SkyScene } from './methods'
+import { WaterScene } from './methods'
 import { useResize } from '@/hooks/scene-resize'
 
 const containerRef = ref()
-const options: ConstructorParameters<typeof SkyScene>[0] = {
-  // 使用灯光 控制台会有警告
+const options: ConstructorParameters<typeof WaterScene>[0] = {
   directionalLight: {
+    position: [0.5, 3, 0.5],
     color: 0xffe499,
     intensity: 5,
-    position: [0.5, 3, 0.5],
     light2: false
   },
   ambientLight: {
@@ -25,6 +24,7 @@ const options: ConstructorParameters<typeof SkyScene>[0] = {
   },
   camera: {
     near: 0.25,
+    // 相机最远距离 影响水波纹效果
     far: 25,
     position: [3, 2, 4]
   },
@@ -34,11 +34,11 @@ const options: ConstructorParameters<typeof SkyScene>[0] = {
     maxPolarAngle: Math.PI * 0.9
   }
 }
-let scene: InstanceType<typeof SkyScene>
+let scene: InstanceType<typeof WaterScene>
 
 onMounted(() => {
   options.container = containerRef.value
-  scene = new SkyScene(options)
+  scene = new WaterScene(options)
   scene.run()
 
   useResize(scene).resize()

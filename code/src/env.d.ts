@@ -12,7 +12,6 @@ declare module '*.vue' {
 
 declare module 'path-browserify'
 declare module 'nprogress'
-declare module 'three/webgpu'
 
 // 环境变量 TypeScript 的智能提示
 declare interface ImportMetaEnv {
