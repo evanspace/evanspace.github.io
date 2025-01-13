@@ -36,7 +36,7 @@ export class NewThreeScene extends ThreeScene.Scene {
     })
 
     this.transformControls = controls
-    this.addObject(controls)
+    this.addObject(controls.getHelper())
   }
 
   addGui() {
