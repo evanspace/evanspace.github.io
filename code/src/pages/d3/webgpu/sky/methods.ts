@@ -13,8 +13,8 @@ const {
   pass,
   linearDepth,
   normalWorld,
-  triplanarTexture,
-  texture,
+  // triplanarTexture,
+  // texture,
   objectPosition,
   screenUV,
   viewportLinearDepth,
@@ -34,9 +34,6 @@ const iceDiffuse = textureLoader.load(`${base}/oss/textures/gpu/water.jpg`)
 iceDiffuse.wrapS = THREE.RepeatWrapping
 iceDiffuse.wrapT = THREE.RepeatWrapping
 iceDiffuse.colorSpace = THREE.NoColorSpace
-
-const iceColorNode = triplanarTexture(texture(iceDiffuse)).add(color(0x0066ff)).mul(0.8)
-const material = new THREE.MeshStandardNodeMaterial({ colorNode: iceColorNode })
 
 const adjustments = {
   mix: 0,
