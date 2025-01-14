@@ -25,6 +25,8 @@ const {
   getStatus: getRoamStatus
 } = Hooks.useRoam()
 const { floorAnimate } = Hooks.useFloor()
+const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
+const { checkCollide } = Hooks.useCollide()
 
 const sightMap = {
   full: 'FULL',
@@ -48,6 +50,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   mouseClickDiffusion: InstanceType<typeof THREE.Mesh>
   // 行走的人物
   character?: InstanceType<typeof THREE.Group> & {
+    __runing__?: boolean
     extra: {
       key: string
       mixer: any
@@ -304,6 +307,24 @@ export class StationThreeScene extends ThreeScene.Scene {
       runging
     }
     this.addObject(model)
+
+    const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
+
+    // 插入事件 播放/暂停 动作
+    insertEvent(
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.play()
+        }
+      },
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.stop()
+        }
+      }
+    )
   }
 
   // 人物动作
@@ -356,7 +377,8 @@ export class StationThreeScene extends ThreeScene.Scene {
   }
 
   // 视角切换（人物/全屏）
-  toggleSight() {
+  // 1-第一人称 3-第三人称
+  toggleSight(type?: number) {
     if (this.judgeCruise()) return
 
     const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
@@ -367,7 +389,7 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     if (!this.controls) return
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 0 : 800
+    this.controls.maxDistance = isCharacter ? (type == 3 ? 20 : 0) : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
@@ -437,22 +459,55 @@ export class StationThreeScene extends ThreeScene.Scene {
     obj.position.set(x, y, z)
     obj.visible = true
 
+    character.__runing__ = true
     return new Promise(resolve => {
       // 创建移动
       createMove(
         character,
         lookAt,
-        pos => {
+        (pos, stop) => {
           this.setControlTarget(pos)
+          if (this.checkCharacterCollide(pos, 2)) {
+            stop()
+            runging.stop()
+            character.__runing__ = false
+            obj.visible = false
+          }
         },
         pos => {
           this.setControlTarget(pos)
           runging.stop()
+          character.__runing__ = false
           obj.visible = false
           resolve(character)
         }
       )
     })
+  }
+
+  // 检测人物碰撞
+  checkCharacterCollide(pos, y = 0.3) {
+    if (!this.character) return
+    // 检测碰撞
+    const intersects = checkCollide(
+      this.character,
+      pos,
+      this.buildingGroup?.children || [],
+      true,
+      new THREE.Vector3(0, y, 0)
+    )
+    if (intersects.length) {
+      const intersect = intersects[0]
+
+      // 于目标距离
+      if (intersect.distance < 0.5) {
+        ElMessage.warning({
+          message: '撞到了！',
+          grouping: true
+        })
+        return true
+      }
+    }
   }
 
   // 获取动画目标点
@@ -690,7 +745,7 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     this.restoreAnchorMaterial()
 
-    let delta = this.clock?.getDelta()
+    let delta = this.clock?.getDelta() || 0
     // 模型动画
     if (this.animateModels.length) {
       this.animateModels.forEach(el => {
@@ -722,6 +777,58 @@ export class StationThreeScene extends ThreeScene.Scene {
     fenceAnimate()
 
     executeRoam(this.camera, this.controls)
+
+    // 人物视角
+    if (this.isPerspectives() && !this.character?.__runing__) {
+      // 移动速度
+      const steep = 10 * delta
+      // 旋转速度
+      const angle = Math.PI * 0.4 * delta
+      const target = this.character
+      if (!target) return
+
+      // 前进、后退
+      const isS = keyboardPressed('S')
+      if (keyboardPressed('W') || isS) {
+        // 向量
+        const dir = new THREE.Vector3()
+        // 视线方向
+        target?.getWorldDirection(dir)
+        // dis向量表示相机沿着相机视线方向平移的位移量
+        const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
+        // 初始位置+偏移向量
+        const newPos = target?.position.clone().add(dis) || new THREE.Vector3()
+        if (this.checkCharacterCollide(newPos)) {
+        } else {
+          target?.position.copy(newPos)
+          this.setControlTarget(target?.position)
+        }
+      }
+
+      // 左、右
+      if (keyboardPressed('A')) {
+        target.rotation.y += angle
+        this.keyboardToTotation()
+      } else if (keyboardPressed('D')) {
+        target.rotation.y -= angle
+        this.keyboardToTotation()
+      }
+    }
+  }
+
+  // 按键转向
+  keyboardToTotation() {
+    const target = this.character
+    // 向量
+    const dir = new THREE.Vector3()
+    // 目标视线方向坐标
+    target?.getWorldDirection(dir)
+    const mds = this.controls?.maxDistance || 1
+    const dis = dir.clone().multiplyScalar(-mds)
+    const newPos =
+      target?.position.clone().setY(this.camera.position.y).add(dis) || new THREE.Vector3()
+    this.camera.position.copy(newPos)
+    this.setControlTarget(target?.position)
   }
 
   // 双击
@@ -896,6 +1003,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   }
 
   dispose() {
+    destroyEvent()
     this.animateModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.character)

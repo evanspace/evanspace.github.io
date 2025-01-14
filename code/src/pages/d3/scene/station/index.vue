@@ -13,7 +13,8 @@
 
       <div class="item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="item" @click="() => scene?.controlReset()">视角重置</div>
-      <div class="item" @click="() => scene.toggleSight()">人物视角</div>
+      <div class="item" @click="() => toggleSight(1)">第一人称</div>
+      <div class="item" @click="() => toggleSight(3)">第三人称</div>
       <div class="item" @click="() => scene.changeCharacterAction()">人物动作</div>
       <div class="item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div class="item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
@@ -119,6 +120,9 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     // enablePan: false
     screenSpacePanning: false,
     maxDistance: 800
+  },
+  camera: {
+    near: 3
   },
   directionalLight: {
     intensity: 2.2
@@ -533,6 +537,12 @@ const toCoolMachineRoom = () => {
 const toggleRoam = () => {
   closeMachinRoomEffect()
   scene?.toggleRoam()
+}
+
+// 人物
+const toggleSight = (type: number) => {
+  closeMachinRoomEffect()
+  scene?.toggleSight(type)
 }
 </script>
 

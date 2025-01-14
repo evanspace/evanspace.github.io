@@ -415,6 +415,7 @@ export class NewThreeScene extends ThreeScene.Scene {
       velocity.z -= velocity.z * 10 * delta
 
       velocity.y -= 9.8 * 100 * delta
+      console.log(delta)
 
       const { moveForward, moveBackward, moveRight, moveLeft } = operate
       // 设置方向向量

@@ -632,7 +632,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const intersects = checkCollide(
       this.character,
       pos,
-      this.buildingGroup?.children,
+      this.buildingGroup?.children || [],
       true,
       new THREE.Vector3(0, y, 0)
     )
@@ -819,11 +819,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       if (keyboardPressed('W') || isS) {
         // 向量
         const dir = new THREE.Vector3()
-        // 获取相机的视线方向
+        // 获取的视线方向
         target?.getWorldDirection(dir)
-        // dis向量表示相机沿着相机视线方向平移30的位移量
+        // dis向量表示相机沿着相机视线方向平移的位移量
         const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
-        //相机初始位置+相机偏移向量
+        // 初始位置+偏移向量
         const newPos = target?.position.clone().add(dis) || new THREE.Vector3()
         if (this.checkCharacterCollide(newPos)) {
         } else {
