@@ -301,7 +301,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 视角切换（人物/全屏）
-  toggleSight() {
+  // 1-第一人称 3-第三人称
+  toggleSight(type?: number) {
     if (this.judgeCruise()) return
 
     const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
@@ -312,7 +313,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     if (!this.controls) return
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? 10 : 800
+    this.controls.maxDistance = isCharacter ? (type == 3 ? 10 : 0) : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
@@ -710,7 +711,6 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     if (!to) return
 
     if (!this.isCameraMove(to)) {
-      // @ts-ignore
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
 
@@ -810,7 +810,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     // 人物视角
     if (this.isPerspectives() && !this.character?.__runing__) {
       // 移动速度
-      const steep = 10 * delta
+      const steep = 5 * delta
       // 旋转速度
       const angle = Math.PI * 0.4 * delta
       const target = this.character
@@ -834,12 +834,29 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
       if (keyboardPressed('A')) {
         target.rotation.y += angle
+        this.keyboardToTotation()
       } else if (keyboardPressed('D')) {
         target.rotation.y -= angle
+        this.keyboardToTotation()
       }
     }
 
     executeRoam(this.camera, this.controls)
+  }
+
+  // 按键转向
+  keyboardToTotation() {
+    const target = this.character
+    // 向量
+    const dir = new THREE.Vector3()
+    // 目标视线方向坐标
+    target?.getWorldDirection(dir)
+    const mds = this.controls?.maxDistance || 1
+    const dis = dir.clone().multiplyScalar(-mds)
+    const newPos =
+      target?.position.clone().setY(this.camera.position.y).add(dis) || new THREE.Vector3()
+    this.camera.position.copy(newPos)
+    this.setControlTarget(target?.position)
   }
 
   // 移动

@@ -13,7 +13,8 @@
 
       <div class="item" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="item" @click="() => scene?.controlReset()">视角重置</div>
-      <div class="item" @click="() => scene.toggleSight()">人物视角</div>
+      <div class="item" @click="() => scene.toggleSight(1)">第一人称</div>
+      <div class="item" @click="() => scene.toggleSight(3)">第三人称</div>
       <div class="item" @click="() => scene.characterAccelerate()">人物加速</div>
       <div class="item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
     </div>
@@ -123,7 +124,9 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     screenSpacePanning: false,
     maxDistance: 1500
   },
-  camera: {},
+  camera: {
+    near: 3
+  },
   directionalLight: {},
   axes: {
     visible: true,
