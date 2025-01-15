@@ -555,7 +555,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.toggleSight()
     }
 
-    const { to, target = object.position, name } = object.data
+    const { to, target = object.position } = object.data
 
     if (!to) return
 
@@ -563,8 +563,6 @@ export class StationThreeScene extends ThreeScene.Scene {
       const dis = new THREE.Vector3(to.x, to.y, to.z).distanceTo(
         new THREE.Vector3(target.x, target.y, target.z)
       )
-      console.log(name, dis)
-      // this.controls.maxDistance = names.includes(name) ? 10 : 800
       this.controls.maxDistance = dis
       Utils.cameraLinkageControlsAnimate(
         this.controls,
