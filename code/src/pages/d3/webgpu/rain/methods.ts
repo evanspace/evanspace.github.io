@@ -59,34 +59,15 @@ export class RainThreeScene extends ThreeScene.Scene {
     this.addGui()
   }
 
-  initRenderer() {
-    const { width, height, bgColor, bgUrl, env } = this.options
-    const renderer = new THREE.WebGPURenderer(this.options.render) as any
+  render() {
+    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
+      this.scene,
+      this.camera
+    )
+  }
 
-    // 环境
-    if (env) {
-      this.setEnvironment(env)
-    }
-
-    // 背景
-    if (bgUrl) {
-      this.setBgTexture(bgUrl)
-    } else {
-      this.setBgColor(bgColor)
-    }
-
-    if (this.options.fog.visible) {
-      const { color, near, far } = this.options.fog
-      this.scene.fog = new THREE.Fog(color ?? this.scene.background, near, far)
-    }
-
-    // 设置渲染尺寸
-    renderer.setSize(width, height)
-    // 设置canvas的分辨率
-    renderer.setPixelRatio(window.devicePixelRatio)
-    // 画布插入容器
-    this.container.appendChild(renderer.domElement)
-    return renderer
+  createRender() {
+    return new THREE.WebGPURenderer(this.options.render) as any
   }
 
   // 碰撞相机
@@ -322,14 +303,14 @@ export class RainThreeScene extends ThreeScene.Scene {
 
     this.scene.overrideMaterial = this.material
     renderer.setRenderTarget(this.renderTarget)
-    renderer.render(this.scene, this.collisionCamera)
+    renderer.renderAsync(this.scene, this.collisionCamera)
 
     // 计算
-    renderer.compute(this.computeParticles)
+    renderer.computeAsync(this.computeParticles)
 
     // 结果
     this.scene.overrideMaterial = null
     renderer.setRenderTarget(null)
-    renderer.render(this.scene, this.camera)
+    this.render()
   }
 }
