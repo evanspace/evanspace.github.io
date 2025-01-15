@@ -166,23 +166,23 @@ const posList = [
   {
     name: '东广场',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
-    target: { x: 0, y: -2.6, z: 114.2 },
-    to: { x: 0, y: 154.4, z: 637.2 }
+    // position: { x: -1.15, y: 5.8, z: 186.36 },
+    to: { x: 0, y: 154.4, z: 637.2 },
+    target: { x: 0, y: 0, z: 114.2 }
   },
   {
     name: '西广场',
     type: 'ANCHOR_POS',
-    position: { x: 113.4, y: 43.6, z: 116.4 },
-    to: { x: 95.3, y: 57.4, z: -942.3 },
-    target: { x: -143.6, y: -2.6, z: -263.6 }
+    // position: { x: 113.4, y: 43.6, z: 116.4 },
+    to: { x: 74.7, y: 60.4, z: -833.8 },
+    target: { x: 6.4, y: 0, z: -449 }
   },
   {
     name: '候车室',
     type: 'ANCHOR_POS',
     // position: { x: 72.1, y: 4, z: -84 },
-    to: { x: 88.5, y: 18.2, z: -62.4 },
-    target: { x: 42.1, y: -2.6, z: -195.4 }
+    to: { x: 98.8, y: 15.9, z: -58.8 },
+    target: { x: 93.3, y: 15, z: -67.1 }
   },
 
   {
@@ -191,7 +191,7 @@ const posList = [
     // position: { x: 203.6, y: 61.6, z: 24.5 },
     position: { x: 253.5, y: 58, z: 93.4 },
     to: { x: 150.7, y: 90, z: -24 },
-    target: { x: 343, y: -2.6, z: 158.7 },
+    target: { x: 253.5, y: 50, z: 93.4 },
     bind: '_光伏大楼_2_grp'
   },
 
@@ -201,7 +201,7 @@ const posList = [
     // position: { x: -318, y: 70.9, z: 167.6 },
     position: { x: -254.4, y: 58, z: 100 },
     to: { x: -430.9, y: 162.7, z: 258.4 },
-    target: { x: -188.3, y: -2.6, z: 64 },
+    target: { x: -254.4, y: 50, z: 100 },
     bind: '_光伏大楼_1_grp'
   },
 
@@ -210,7 +210,7 @@ const posList = [
     type: 'ANCHOR_POS',
     position: { x: 207.4, y: 70.9, z: 603.2 },
     to: { x: 408.6, y: 146, z: 808 },
-    target: { x: 13.3, y: -2.6, z: 486.6 },
+    target: { x: 207.4, y: 60.9, z: 603.2 },
     bind: 'build_1'
   }
 ]

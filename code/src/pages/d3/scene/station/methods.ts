@@ -555,11 +555,17 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.toggleSight()
     }
 
-    const { to, target = object.position } = object.data
+    const { to, target = object.position, name } = object.data
 
     if (!to) return
 
-    if (!this.isCameraMove(to)) {
+    if (!this.isCameraMove(to) && this.controls) {
+      const dis = new THREE.Vector3(to.x, to.y, to.z).distanceTo(
+        new THREE.Vector3(target.x, target.y, target.z)
+      )
+      console.log(name, dis)
+      // this.controls.maxDistance = names.includes(name) ? 10 : 800
+      this.controls.maxDistance = dis
       Utils.cameraLinkageControlsAnimate(
         this.controls,
         this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
@@ -654,8 +660,10 @@ export class StationThreeScene extends ThreeScene.Scene {
     if (this.isPerspectives()) {
       this.toggleSight()
     }
-    super.controlReset()
     if (!this.controls) return
+    this.controls.maxDistance = 800
+    super.controlReset()
+
     this.historyTarget = new THREE.Vector3().copy(this.controls.target)
     this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
   }
