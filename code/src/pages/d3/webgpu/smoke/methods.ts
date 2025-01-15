@@ -5,6 +5,21 @@ import * as THREE from 'three/webgpu'
 import { GUI } from 'dat.gui'
 
 const TSL = THREE.TSL
+const {
+  mix,
+  mul,
+  oneMinus,
+  positionLocal,
+  smoothstep,
+  texture,
+  time,
+  rotateUV,
+  Fn,
+  uv,
+  vec2,
+  vec3,
+  vec4
+} = TSL
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const textureLoader = new THREE.TextureLoader()
@@ -21,8 +36,8 @@ export class SmokeScene extends ThreeScene.Scene {
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
-    const ground = this.createGround()
-    this.addObject(ground)
+    // const ground = this.createGround()
+    // this.addObject(ground)
 
     this.addModel()
 
@@ -30,11 +45,39 @@ export class SmokeScene extends ThreeScene.Scene {
     this.addGui()
   }
 
+  render() {
+    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
+      this.scene,
+      this.camera
+    )
+  }
+
+  createScene() {
+    return new THREE.Scene()
+  }
+
   createRender() {
-    return new THREE.WebGPURenderer(this.options.render) as any
+    return new THREE.WebGPURenderer() as any
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createPerspectiveCamera(fov: number, aspect: number, near: number, far: number) {
+    return new THREE.PerspectiveCamera(fov, aspect, near, far)
   }
 
   addModel() {
+    this.addSmoke()
+    this.addSmallSmoke()
+  }
+
+  addSmoke() {
     // 动画周期范围
     const lifeRange = TSL.range(0.1, 1)
     const offsetRange = TSL.range(new THREE.Vector3(-2, 3, -2), new THREE.Vector3(2, 5, 2))
@@ -118,17 +161,79 @@ export class SmokeScene extends ThreeScene.Scene {
     this.addObject(fireInstancedSprite)
   }
 
+  addSmallSmoke() {
+    // 网格
+    const smokeGeometry = new THREE.PlaneGeometry(1, 1, 16, 64)
+    // 位置
+    smokeGeometry.translate(0, 0.5, 0)
+    smokeGeometry.scale(15, 60, 15)
+
+    const noiseTexture = textureLoader.load(`${base}/oss/textures/gpu/128x128.png`)
+    noiseTexture.wrapS = THREE.RepeatWrapping
+    noiseTexture.wrapT = THREE.RepeatWrapping
+
+    const smokeMaterial = new THREE.MeshBasicNodeMaterial({
+      transparent: true,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    })
+
+    // 位置
+    smokeMaterial.positionNode = Fn(() => {
+      // 扭曲
+      const twistNoiseUv = vec2(0.6, uv().y.mul(0.3).sub(time.mul(speed)).mod(1)) // 扭曲位置、速度
+      const twist = texture(noiseTexture, twistNoiseUv).r.mul(5) // 扭曲数量
+      positionLocal.xz.assign(rotateUV(positionLocal.xz, twist, vec2(1))) // 扭曲偏差位置
+
+      // 气流
+      const windOffset = vec2(
+        texture(noiseTexture, vec2(0.25, time.mul(0.01)).mod(1)).r.sub(0.5), // 向右气流
+        texture(noiseTexture, vec2(0.75, time.mul(0.01)).mod(1)).r.sub(0) // 上下气流
+      ).mul(uv().y.pow(2).mul(80)) // 风力偏差
+      positionLocal.addAssign(windOffset)
+      return positionLocal
+    })()
+
+    // 颜色
+    smokeMaterial.colorNode = Fn(() => {
+      // 透明度
+      const alphaNoiseUv = uv()
+        .mul(vec2(0.8, 0.3))
+        .add(vec2(0, time.mul(0.03).negate()))
+      const alpha = mul(
+        // 图案
+        texture(noiseTexture, alphaNoiseUv).r.smoothstep(0.4, 1),
+
+        // 边缘褪色
+        smoothstep(0, 0.1, uv().x),
+        smoothstep(0, 0.1, oneMinus(uv().x)),
+        smoothstep(0, 0.1, uv().y),
+        smoothstep(0, 0.1, oneMinus(uv().y))
+      )
+
+      const finalColor = mix(vec3(0.6, 0.3, 0.2), vec3(1, 1, 1), alpha.pow(3))
+      return vec4(finalColor, alpha)
+    })()
+
+    const smoke = new THREE.Mesh(smokeGeometry, smokeMaterial)
+    smoke.position.x = -80
+    smoke.position.y = 30
+    this.addObject(smoke)
+  }
+
   addGui() {
     const gui = this.gui
 
     gui.add(speed, 'value', 0.01, 1, 0.01).name('烟雾速度')
 
-    gui
-      .add(this.fireInstancedSprite, 'count', 200, 2000)
-      .name('烟雾浓度')
-      .onChange(v => {
-        this.smokeInstancedSprite.count = v * 2
-      })
+    if (this.fireInstancedSprite) {
+      gui
+        .add(this.fireInstancedSprite, 'count', 200, 2000)
+        .name('烟雾浓度')
+        .onChange(v => {
+          this.smokeInstancedSprite.count = v * 2
+        })
+    }
     gui.domElement.className += ' gui-wrap'
     this.container.parentNode?.appendChild(gui.domElement)
   }

@@ -151,7 +151,7 @@ export default ({ mode }) => {
         // 解决直接引入 vue-i8n 控制台警告问题
         'vue-i18n': 'vue-i18n/dist/vue-i18n.cjs.js'
         // 解决控制台警告引入多个实例问题
-        // three: resolve('node_modules/three')
+        // three: resolve('/node_modules/three')
       }
     },
     css: {
@@ -176,9 +176,9 @@ export default ({ mode }) => {
       terserOptions: {
         // 打包时清除 console 和 debug 相关代码
         compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-          pure_funcs: ['console.log']
+          // drop_console: isProduction,
+          // drop_debugger: isProduction,
+          // pure_funcs: ['console.log']
         }
       },
 
