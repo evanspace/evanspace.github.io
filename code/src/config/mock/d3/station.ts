@@ -123,64 +123,40 @@ const monitorCameras = [
     name: '右侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
-    position: {
-      x: 263.7,
-      y: 56.3,
-      z: 110.3
-    }
+    position: { x: 263.7, y: 56.3, z: 110.3 }
   },
   {
     name: '右侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
-    position: {
-      x: 242.2,
-      y: 56.3,
-      z: 73.8
-    }
+    position: { x: 242.2, y: 56.3, z: 73.8 }
   },
 
   {
     name: '左侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
-    position: {
-      x: -259.5,
-      y: 56.6,
-      z: 111.1
-    }
+    position: { x: -259.5, y: 56.6, z: 111.1 }
   },
   {
     name: '左侧-光伏板',
     unit: 'kWh',
     type: 'DOT',
-    position: {
-      x: -248.7,
-      y: 56.3,
-      z: 72.3
-    }
+    position: { x: -248.7, y: 56.3, z: 72.3 }
   },
   {
     name: '楼层监测点',
     followMark: 'floor_common_0',
     unit: 'kWh',
     type: 'DOT',
-    position: {
-      x: 218.4,
-      y: 1,
-      z: 584.8
-    }
+    position: { x: 218.4, y: 1, z: 584.8 }
   },
 
   {
     name: '制冷主机监测点',
     unit: '%',
     type: 'DOT',
-    position: {
-      x: -163,
-      y: 12,
-      z: 91.2
-    }
+    position: { x: -163, y: 12, z: 91.2 }
   }
 ]
 JsonList.push(...monitorCameras)
@@ -295,11 +271,7 @@ for (let i = 0; i < list.length; i++) {
     type: list[i],
     mark: list[i] + '_' + i,
     group: 'build_1',
-    position: {
-      x: 218.4,
-      y: y,
-      z: 584.8
-    }
+    position: { x: 218.4, y: y, z: 584.8 }
   })
 }
 JsonList.push(...floors)
@@ -309,38 +281,22 @@ const lights = [
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: {
-      x: 60,
-      y: 22,
-      z: -133.1
-    }
+    position: { x: 60, y: 22, z: -133.1 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: {
-      x: -49.5,
-      y: 22,
-      z: -305.5
-    }
+    position: { x: -49.5, y: 22, z: -305.5 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: {
-      x: 60,
-      y: 22,
-      z: -305.5
-    }
+    position: { x: 60, y: 22, z: -305.5 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: {
-      x: -49.5,
-      y: 22,
-      z: -133.1
-    }
+    position: { x: -49.5, y: 22, z: -133.1 }
   }
 ]
 JsonList.push(...lights)
@@ -356,6 +312,9 @@ const lightSwitchs = [
 ]
 JsonList.push(...lightSwitchs)
 
+const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
+const ROAM_POINT_UP = 100 // y 漫游轴向量
+
 export default [
   {
     // 项目楼层数据
@@ -368,7 +327,23 @@ export default [
         Name: '车站展示',
         ConfigJson: {
           target: { x: 0, y: -2.6, z: 114.2 },
-          to: { x: 25.3, y: 154.4, z: 637.2 }
+          to: { x: 25.3, y: 154.4, z: 637.2 },
+          cruise: [
+            [102.5, CRUISE_POINT_UP, 9.9],
+            [102.5, CRUISE_POINT_UP, 291.9],
+            [76, CRUISE_POINT_UP, 291.9],
+            [76, CRUISE_POINT_UP, 129],
+            [-76, CRUISE_POINT_UP, 129],
+            [-76, CRUISE_POINT_UP, 291.9],
+            [-107.7, CRUISE_POINT_UP, 291.9],
+            [-107.7, CRUISE_POINT_UP, 9.9]
+          ],
+          roamPoints: [
+            [-286, ROAM_POINT_UP, 257],
+            [286, ROAM_POINT_UP, 257],
+            [286, ROAM_POINT_UP, -600],
+            [-286, ROAM_POINT_UP, -600]
+          ]
         }
       })
     }

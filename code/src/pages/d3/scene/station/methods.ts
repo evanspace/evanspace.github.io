@@ -660,6 +660,11 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
   }
 
+  // 设置漫游点位
+  setRoamPoint(points) {
+    this.extend.roamPoints = points
+  }
+
   // 场景漫游
   toggleRoam() {
     if (!this.controls) return

@@ -143,27 +143,13 @@ export const getPageOpts = animateBack => ({
     tension: 0,
     speed: 20,
     mapSpeed: 0.01,
-    points: [
-      [102.5, CRUISE_POINT_UP, 9.9],
-      [102.5, CRUISE_POINT_UP, 291.9],
-      [76, CRUISE_POINT_UP, 291.9],
-      [76, CRUISE_POINT_UP, 129],
-      [-76, CRUISE_POINT_UP, 129],
-      [-76, CRUISE_POINT_UP, 291.9],
-      [-107.7, CRUISE_POINT_UP, 291.9],
-      [-107.7, CRUISE_POINT_UP, 9.9]
-    ],
+    points: [],
     offset: 1.8,
     animateBack: animateBack
   },
 
   // 漫游坐标
-  roamPoints: [
-    [-286, ROAM_POINT_UP, 257],
-    [286, ROAM_POINT_UP, 257],
-    [286, ROAM_POINT_UP, -600],
-    [-286, ROAM_POINT_UP, -600]
-  ]
+  roamPoints: []
 })
 
 export const getTipOpts = () => ({

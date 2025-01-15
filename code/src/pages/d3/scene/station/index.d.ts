@@ -13,8 +13,12 @@ export declare interface Config {
 }
 
 export declare interface ExtendOptions {
+  // 地面网格名称
   groundMeshName: string[]
+  // 漫游坐标
   roamPoints: number[][]
+  // 双击模型名称
+  dblclickModelName: string[]
   onDblclick: (e) => void
   onClickLeft: (object?, intersct?) => void
   onClickGround: (object?, intersct?) => void

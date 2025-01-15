@@ -96,7 +96,7 @@ const pageOpts = reactive(
 const tipOpts = reactive(getTipOpts())
 
 const { changeBackground, backgroundLoad } = Hooks.useBackground()
-const { progress, loadModels, getModel, virtualization, closeVirtualization } =
+const { progress, loadModels, getModel, initModels, virtualization, closeVirtualization } =
   Hooks.useModelLoader({
     baseUrl: pageOpts.baseUrl,
     indexDB: {
@@ -151,6 +151,7 @@ onMounted(() => {
     ],
     roamPoints: pageOpts.roamPoints,
     onDblclick: object => {
+      console.log(object)
       scene.floorExpand(object)
     },
     onClickLeft: (object, _intersct) => {
@@ -222,7 +223,7 @@ const cameraPositionList = computed(() =>
 const load = () => {
   loadModels(pageOpts.models, () => {
     request.getConfig().then(async res => {
-      let json = {}
+      let json: any = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson
       } else if (typeof res.ConfigJson == 'string') {
@@ -231,6 +232,8 @@ const load = () => {
         } catch (er) {}
       }
       modelConfigList.value = res.JsonList
+      pageOpts.cruise.points = json.cruise || []
+      pageOpts.roamPoints = json.roamPoints || []
       Object.keys(json).forEach(key => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
@@ -251,8 +254,10 @@ const assemblyScenario = async () => {
   scene.clearBuilding()
 
   await nextTick()
-  await initDevices()
+  await initModels(modelConfigList.value, loopLoadObject)
 
+  // 漫游
+  scene.setRoamPoint(pageOpts.roamPoints)
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
@@ -265,26 +270,6 @@ const assemblyScenario = async () => {
       // 关灯
       scene.closeLightGroup()
     }, 100)
-  })
-}
-
-// 初始化设备列表
-const initDevices = () => {
-  let i = 0,
-    len = modelConfigList.value.length
-  return new Promise(resolve => {
-    if (len == 0) return resolve(null)
-    const _loop = async () => {
-      const item = modelConfigList.value[i]
-      await loopLoadObject(item)
-      i++
-      if (i < len) {
-        _loop()
-      } else {
-        resolve(i)
-      }
-    }
-    _loop()
   })
 }
 
