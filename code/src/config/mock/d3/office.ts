@@ -49,7 +49,7 @@ const posList = [
     name: '办公区域',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: -38.2, y: 188, z: 36.9 },
+    to: { x: -38, y: 188, z: 35.3 },
     target: { x: -35.4, y: 188, z: 36.4 }
   },
   {
