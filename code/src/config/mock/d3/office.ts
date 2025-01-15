@@ -35,36 +35,36 @@ const posList = [
     name: '一楼大门',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: -42.5, y: 7.4, z: 124.2 },
-    target: { x: -28.3, y: 5.8, z: 103.9 }
+    to: { x: -1.3, y: 6.2, z: 102.3 },
+    target: { x: -1.4, y: 5.8, z: 97.4 }
   },
   {
     name: '公司前台',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: 14.9, y: 187.6, z: 29 },
-    target: { x: 15.8, y: 186, z: 49.1 }
+    to: { x: 15.3, y: 188, z: 33.2 },
+    target: { x: 15.3, y: 188, z: 36.3 }
   },
   {
     name: '办公区域',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: -35.3, y: 188.4, z: 35.2 },
-    target: { x: 11.7, y: 184, z: 60.2 }
+    to: { x: -38.2, y: 188, z: 36.9 },
+    target: { x: -35.4, y: 188, z: 36.4 }
   },
   {
     name: '大会议室',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: -18, y: 190.9, z: 41 },
-    target: { x: -31, y: 187.6, z: 49.7 }
+    to: { x: -28.5, y: 188, z: 47 },
+    target: { x: -30.5, y: 188, z: 48.4 }
   },
   {
     name: '领导办公',
     type: 'ANCHOR_POS',
     position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: 67.6, y: 188.9, z: 2.3 },
-    target: { x: 56.6, y: 185.5, z: -15.6 }
+    to: { x: 69.4, y: 188, z: -0.4 },
+    target: { x: 65, y: 188, z: -2.7 }
   }
 ]
 JsonList.push(...posList)
@@ -74,17 +74,9 @@ const lifts = [
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
-    position: {
-      x: 4.3,
-      y: 3,
-      z: 19.1
-    },
+    position: { x: 4.3, y: 3, z: 19.1 },
     // 电梯到当前位置
-    to: {
-      x: 0,
-      y: 0.1,
-      z: 8.9
-    },
+    to: { x: 0, y: 0.1, z: 8.9 },
     // 目标
     target: '电梯-2',
     // 门
@@ -95,17 +87,9 @@ const lifts = [
   {
     name: '公司楼层等电梯',
     type: 'WAIT_LIFT',
-    position: {
-      x: 4.3,
-      y: 187,
-      z: 19.1
-    },
+    position: { x: 4.3, y: 187, z: 19.1 },
     // 电梯到当前位置
-    to: {
-      x: 0,
-      y: 184.7,
-      z: 8.9
-    },
+    to: { x: 0, y: 184.7, z: 8.9 },
     // 目标
     target: '电梯-2',
     bind: '_电梯外门_2_grp',
@@ -116,17 +100,9 @@ const lifts = [
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
-    position: {
-      x: 4.3,
-      y: 3,
-      z: 9.5
-    },
+    position: { x: 4.3, y: 3, z: 9.5 },
     // 电梯到当前位置
-    to: {
-      x: 0,
-      y: 0.1,
-      z: 8.9
-    },
+    to: { x: 0, y: 0.1, z: 8.9 },
     // 目标
     target: '电梯-1',
     // 门
@@ -137,17 +113,9 @@ const lifts = [
   {
     name: '公司楼层等电梯',
     type: 'WAIT_LIFT',
-    position: {
-      x: 4.3,
-      y: 187,
-      z: 9.5
-    },
+    position: { x: 4.3, y: 187, z: 9.5 },
     // 电梯到当前位置
-    to: {
-      x: 0,
-      y: 184.7,
-      z: 8.9
-    },
+    to: { x: 0, y: 184.7, z: 8.9 },
     // 目标
     target: '电梯-1',
     bind: '_电梯外门_1_grp',
@@ -242,144 +210,76 @@ const lights = [
   {
     name: '前台聚光灯',
     type: 'spot_light_floor_2',
-    position: {
-      x: 17.7,
-      y: 191,
-      z: 55.7
-    }
+    position: { x: 17.7, y: 191, z: 55.7 }
   },
   {
     name: '前台聚光灯',
     type: 'spot_light_floor_2',
-    position: {
-      x: 14.1,
-      y: 191,
-      z: 55.7
-    }
+    position: { x: 14.1, y: 191, z: 55.7 }
   },
   {
     name: '前台聚光灯',
     type: 'spot_light_floor_2',
-    position: {
-      x: 22,
-      y: 191,
-      z: 61
-    }
+    position: { x: 22, y: 191, z: 61 }
   },
   {
     name: '前台聚光灯',
     type: 'spot_light_floor_2',
-    position: {
-      x: 32,
-      y: 191,
-      z: 61
-    }
+    position: { x: 32, y: 191, z: 61 }
   },
   {
     name: '前台聚光灯',
     type: 'spot_light_floor_2',
-    position: {
-      x: 42,
-      y: 191,
-      z: 61
-    }
+    position: { x: 42, y: 191, z: 61 }
   },
 
   // 主机灯
   {
     name: '主机照明灯',
     type: 'spot_light_floor_1',
-    position: {
-      x: 23,
-      y: 190.7,
-      z: 54.6
-    },
-    to: {
-      x: 22.4,
-      y: 190.4,
-      z: 58
-    }
+    position: { x: 23, y: 190.7, z: 54.6 },
+    to: { x: 22.4, y: 190.4, z: 58 }
   },
   {
     name: '主机照明灯',
     type: 'spot_light_floor_1',
-    position: {
-      x: 25.1,
-      y: 190.7,
-      z: 54.6
-    },
-    to: {
-      x: 25.1,
-      y: 188.7,
-      z: 58.4
-    }
+    position: { x: 25.1, y: 190.7, z: 54.6 },
+    to: { x: 25.1, y: 188.7, z: 58.4 }
   },
   {
     name: '主机照明灯',
     type: 'spot_light_floor_1',
-    position: {
-      x: 27.8,
-      y: 190.7,
-      z: 54.6
-    },
-    to: {
-      x: 27.8,
-      y: 189.1,
-      z: 58.6
-    }
+    position: { x: 27.8, y: 190.7, z: 54.6 },
+    to: { x: 27.8, y: 189.1, z: 58.6 }
   },
   {
     name: '主机照明灯',
     type: 'spot_light_floor_1',
-    position: {
-      x: 30,
-      y: 190.7,
-      z: 54.6
-    },
-    to: {
-      x: 30.5,
-      y: 189,
-      z: 58.5
-    }
+    position: { x: 30, y: 190.7, z: 54.6 },
+    to: { x: 30.5, y: 189, z: 58.5 }
   },
   {
     name: '主机照明灯',
     type: 'spot_light_floor_1',
-    position: {
-      x: 30,
-      y: 190.7,
-      z: 52.5
-    },
-    to: {
-      x: 32.2,
-      y: 186.7,
-      z: 52.6
-    }
+    position: { x: 30, y: 190.7, z: 52.5 },
+    to: { x: 32.2, y: 186.7, z: 52.6 }
   }
 ]
 
 let len = 1,
-  x = -36 + (6 - len) * 10
+  x = -46 + (6 - len) * 10
 // 区域A-通道
 for (let i = 0; i < len; i++) {
   lights.push(
     {
       name: '区域A',
       type: 'spot_light_floor_2',
-      position: {
-        x,
-        y: 191,
-        z: 37
-      }
+      position: { x, y: 191, z: 37 }
     },
     {
       name: '区域A',
       type: 'spot_light_floor_2',
-      position: {
-        x,
-        y: 191,
-        z: 45
-      }
+      position: { x, y: 191, z: 45 }
     }
   )
   x += 10
@@ -391,29 +291,17 @@ for (let i = 0; i < len; i++) {
     {
       name: '区域B',
       type: 'spot_light_floor_2',
-      position: {
-        x: -50,
-        y: 191,
-        z
-      }
+      position: { x: -50, y: 191, z }
     },
     {
       name: '区域B',
       type: 'spot_light_floor_2',
-      position: {
-        x: -36,
-        y: 191,
-        z
-      }
+      position: { x: -36, y: 191, z }
     },
     {
       name: '区域B',
       type: 'spot_light_floor_2',
-      position: {
-        x: -26,
-        y: 191,
-        z
-      }
+      position: { x: -26, y: 191, z }
     }
   )
   z += 10
@@ -428,52 +316,32 @@ const lightSwitchs = [
   {
     name: '前台灯',
     type: 'LIGHT_SWITCH',
-    position: {
-      x: 14.7,
-      y: anchorHeight,
-      z: 56
-    },
+    position: { x: 14.7, y: anchorHeight, z: 56 },
     bind: '前台聚光灯'
   },
   {
     name: '过道灯',
     type: 'LIGHT_SWITCH',
-    position: {
-      x: 5.9,
-      y: anchorHeight,
-      z: 34.5
-    },
+    position: { x: 5.9, y: anchorHeight, z: 34.5 },
     bind: '区域A'
   },
   {
     name: '人事区域',
     type: 'LIGHT_SWITCH',
-    position: {
-      x: -39.7,
-      y: anchorHeight,
-      z: 26.8
-    },
+    position: { x: -39.7, y: anchorHeight, z: 26.8 },
     bind: '区域B'
   },
   {
     name: '主机照明灯',
     type: 'LIGHT_SWITCH',
-    position: {
-      x: 25,
-      y: anchorHeight,
-      z: 53.8
-    },
+    position: { x: 25, y: anchorHeight, z: 53.8 },
     bind: '主机照明灯'
   },
 
   {
     name: '灯光总开关',
     type: 'LIGHT_MAIN_SWITCH',
-    position: {
-      x: 12,
-      y: 188,
-      z: 49
-    }
+    position: { x: 12, y: 188, z: 49 }
   }
 ]
 JsonList.push(...lightSwitchs)

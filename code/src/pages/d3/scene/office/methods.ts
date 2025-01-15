@@ -710,7 +710,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     if (!to) return
 
-    if (!this.isCameraMove(to)) {
+    if (!this.isCameraMove(to) && this.controls) {
+      this.controls.maxDistance = 5
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
 
