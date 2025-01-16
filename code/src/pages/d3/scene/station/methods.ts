@@ -243,10 +243,10 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.addLightGroup()
   }
 
-  closeLightGroup(isCOpen: boolean = false) {
+  closeLightGroup(isOpen: boolean = false) {
     this.lightGroup?.children.forEach((el: any) => {
       if (el.isSpotLight) {
-        el.visible = isCOpen
+        el.visible = isOpen
       }
     })
   }
@@ -297,7 +297,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     // 空闲
     const key = 'Idle'
     const dance = actions[key]
-    // dance.play()
+    dance.play()
 
     // 步行
     const runging = actions['Walking']
