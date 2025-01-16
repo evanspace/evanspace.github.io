@@ -5,6 +5,7 @@ const devEnv = import.meta.env.VITE_MODE !== 'production'
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
+export const MACHINE_ROOM = 'MACHINE_ROOM' // 机房
 export const ROBOT = 'ROBOT' // 机器人
 export const CHARACTER = 'CHARACTER' // 人物
 export const FLOOR = 'floor_common' // 楼层
@@ -29,7 +30,7 @@ export const getPageOpts = animateBack => ({
   // 锚点类型
   anchorType: [ANCHOR_POS, ANCHOR_TARGET, OPEN_DOOR, LIGHT_SWITCH],
   // 动画模型类型
-  animationModelType: [MAIN_SCENE],
+  animationModelType: [MAIN_SCENE, MACHINE_ROOM],
   // 楼层类型
   floorModelType: [FLOOR],
 
@@ -41,9 +42,9 @@ export const getPageOpts = animateBack => ({
       url: '/深圳北站.glb'
     },
     {
-      key: 'machine_room',
+      key: MACHINE_ROOM,
       name: '机房',
-      size: 19.6,
+      size: 16.9,
       url: '/机房.glb'
     },
     {

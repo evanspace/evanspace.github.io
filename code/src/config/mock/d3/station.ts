@@ -8,7 +8,7 @@ const JsonList = [
   },
   {
     name: '机房',
-    type: 'machine_room'
+    type: 'MACHINE_ROOM'
     // position: { x: -156.6, y: 1, z: 103 }
   }
 ]
@@ -249,7 +249,7 @@ const floorMap = {
 }
 
 const list = [
-  // 'floor_common',
+  'floor_common'
   // 'floor_common',
   // 'floor_common',
   // 'floor_common',

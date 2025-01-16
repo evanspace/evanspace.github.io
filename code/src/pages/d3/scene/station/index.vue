@@ -55,6 +55,7 @@
 <script lang="ts" setup>
 import tLoading from '@/components/loading/index.vue'
 import {
+  MACHINE_ROOM,
   ANCHOR_POS,
   ANCHOR_TARGET,
   ROBOT,
@@ -103,7 +104,7 @@ const { progress, loadModels, getModel, initModels, virtualization, closeVirtual
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 44
+      version: 45
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -151,8 +152,19 @@ onMounted(() => {
     ],
     roamPoints: pageOpts.roamPoints,
     onDblclick: object => {
-      console.log(object)
-      scene.floorExpand(object)
+      if (object && object._isFloor_) {
+        scene.floorExpand(object)
+      } else {
+        const names = scene.extend.dblclickModelName || []
+        const name = object.name
+        if (names.includes(name)) {
+          // 查找点位信息
+          const item = cameraPositionList.value.find(it => it.bind === name)
+          if (item) {
+            onCameraTransition(item)
+          }
+        }
+      }
     },
     onClickLeft: (object, _intersct) => {
       dialog.select = []
@@ -232,6 +244,10 @@ const load = () => {
         } catch (er) {}
       }
       modelConfigList.value = res.JsonList
+
+      const names = cameraPositionList.value.filter(it => it.bind).map(it => it.bind || '')
+      scene?.setDblclickModelName(names)
+
       pageOpts.cruise.points = json.cruise || []
       pageOpts.roamPoints = json.roamPoints || []
       Object.keys(json).forEach(key => {
@@ -277,6 +293,9 @@ const assemblyScenario = async () => {
 const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
   const { type } = item
+  // 隐藏机位锚点
+  if (type === ANCHOR_POS) return
+
   const obj = getModel(type)
   if (!obj) {
     // 点位
@@ -306,7 +325,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 动画
   if (animationModelType.includes(type)) {
-    scene.addModelAnimate(model, obj.animations, true, 1)
+    scene.addModelAnimate(model, obj.animations, type !== MACHINE_ROOM, 1)
   }
 
   // 记录备用坐标(更随标记)
@@ -417,6 +436,26 @@ const updateObject = () => {
       return
     }
   })
+
+  // 机房
+  const room = scene.animateModels.find(it => it.data && it.data.type === MACHINE_ROOM)
+  if (room && room.__action__) {
+    Object.keys(room.__action__).forEach(key => {
+      const obj = room.__action__[key]
+      const isRun = Math.random() > 0.5
+      if (isRun) {
+        if (obj.isRunning()) {
+          obj.paused = true
+        } else {
+          obj.play()
+          obj.paused = false
+        }
+      } else {
+        obj.play()
+        obj.paused = true
+      }
+    })
+  }
 }
 
 // 创建机器人
@@ -437,10 +476,19 @@ const createCharacter = () => {
     }
   })
   const move = {
-    x: 0,
-    y: 27.5,
-    z: 122
+    x: -64.8,
+    y: 1.6,
+    z: 75.9
   }
+  move.x = -1.6
+  move.y = 27.5
+  move.z = 127.8
+
+  // 手臂问题，暂隐藏
+  const l = obj.getObjectByName('HandL')
+  const r = obj.getObjectByName('HandR')
+  l.visible = false
+  r.visible = false
   scene.addCharacter(obj, move)
 }
 
@@ -497,22 +545,22 @@ const toCoolMachineRoom = () => {
     hidden: true,
     opacity: 0.1,
     filter: [
-      '_基础_grp',
-      '平面109_1',
-      '地面001',
-      '地面012',
-      '地面002',
-      '平面601',
-      '平面613',
-      '平面642',
-      '平面643',
-      '平面241',
-      '平面243',
-      'Landscape001',
-      'Landscape002',
-      'Landscape003',
-      'Landscape008',
-      'Landscape009'
+      // '_基础_grp',
+      // '平面109_1',
+      // '地面001',
+      // '地面012',
+      // '地面002',
+      // '平面601',
+      // '平面613',
+      // '平面642',
+      // '平面643',
+      // '平面241',
+      // '平面243',
+      // 'Landscape001',
+      // 'Landscape002',
+      // 'Landscape003',
+      // 'Landscape008',
+      // 'Landscape009'
     ]
     // filterMatch: ['BezierCurve']
   })

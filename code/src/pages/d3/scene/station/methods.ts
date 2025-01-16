@@ -69,7 +69,9 @@ export class StationThreeScene extends ThreeScene.Scene {
 
   // 动画模型集合
   animateModels: (InstanceType<typeof THREE.Group> & {
+    data?: any
     __mixer__: any
+    __action__: any
   })[]
 
   // 移动系数
@@ -295,7 +297,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     // 空闲
     const key = 'Idle'
     const dance = actions[key]
-    dance.play()
+    // dance.play()
 
     // 步行
     const runging = actions['Walking']
@@ -719,15 +721,14 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = new THREE.Vector3(-182.4, 14.7, 67.7)
-      to = { x: -189.7, y: 18, z: 53.4 }
+      target = new THREE.Vector3(-50.4, 3, 74.2)
+      to = { x: -167.5, y: 2, z: 114 }
     }
-    Utils.cameraLinkageControlsAnimate(
-      this.controls,
-      this.camera as InstanceType<typeof THREE.PerspectiveCamera>,
-      to,
-      target
-    )
+
+    const dis = target.distanceTo(to)
+    this.controls.maxDistance = dis
+
+    Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 
   // 开门
@@ -842,21 +843,27 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.setControlTarget(target?.position)
   }
 
+  // 设置双击模型名称
+  setDblclickModelName(names: string[]) {
+    this.extend.dblclickModelName = names
+  }
+
   // 双击
   onDblclick(e: MouseEvent) {
     const dom = this.container
     const scale = this.options.scale
     raycasterUpdate(e as PointerEvent, dom, scale)
 
-    if (this.floorGroup) {
+    if (this.floorGroup && this.buildingGroup) {
       // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
       raycaster.setFromCamera(pointer, this.camera)
       // 检查射线和物体之间的交叉点（包含或不包含后代）
-      const objects = this.floorGroup.children
+      const objects = this.floorGroup.children.concat(this.buildingGroup.children)
       const interscts = raycaster.intersectObjects(objects)
+
       if (interscts.length) {
         const obj = interscts[0].object
-        const object = this.findParentGroup(obj)
+        const object = this.findParentGroup(obj, this.extend.dblclickModelName)
         if (!object) return
         if (typeof this.extend?.onDblclick === 'function') this.extend.onDblclick(object)
       }
@@ -972,15 +979,12 @@ export class StationThreeScene extends ThreeScene.Scene {
   }
 
   // 查找父级组合
-  findParentGroup(object) {
+  findParentGroup(object, filterNames: string[] = []) {
     const _find = obj => {
-      if (obj._isBuilding_) return obj
+      if (obj._isBuilding_ || filterNames.includes(obj.name)) return obj
       let parent = obj.parent
       if (!parent) {
         return
-      }
-      if (parent && parent._isBuilding_) {
-        return parent
       }
       return _find(parent)
     }
