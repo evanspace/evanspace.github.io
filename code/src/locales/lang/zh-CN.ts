@@ -107,6 +107,8 @@ export default {
     office: '写字楼',
 
     hemisphere: '半球',
+    spot: '聚光',
+
     simple: '简单',
     model: '模型',
     buffer: '缓冲器',

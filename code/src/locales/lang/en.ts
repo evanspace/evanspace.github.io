@@ -107,6 +107,8 @@ export default {
     office: 'office',
 
     hemisphere: 'hemisphere',
+    spot: 'spot',
+
     simple: 'simple',
     model: 'model',
     buffer: 'buffer',
