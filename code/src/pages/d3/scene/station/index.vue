@@ -104,7 +104,7 @@ const { progress, loadModels, getModel, initModels, virtualization, closeVirtual
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 45
+      version: 48
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -480,9 +480,9 @@ const createCharacter = () => {
     y: 1.6,
     z: 75.9
   }
-  move.x = -1.6
-  move.y = 27.5
-  move.z = 127.8
+  // move.x = -1.6
+  // move.y = 27.5
+  // move.z = 127.8
 
   // 手臂问题，暂隐藏
   const l = obj.getObjectByName('HandL')

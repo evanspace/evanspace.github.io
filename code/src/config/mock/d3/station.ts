@@ -181,8 +181,8 @@ const posList = [
     name: '候车室',
     type: 'ANCHOR_POS',
     // position: { x: 72.1, y: 4, z: -84 },
-    to: { x: 98.8, y: 15.9, z: -58.8 },
-    target: { x: 93.3, y: 15, z: -67.1 }
+    to: { x: 93.2, y: 31.3, z: -59.4 },
+    target: { x: 89.5, y: 30, z: -65.7 }
   },
 
   {
@@ -281,22 +281,22 @@ const lights = [
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: { x: 60, y: 22, z: -133.1 }
+    position: { x: 60, y: 37, z: -95.7 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: { x: -49.5, y: 22, z: -305.5 }
+    position: { x: -49.5, y: 37, z: -305.5 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: { x: 60, y: 22, z: -305.5 }
+    position: { x: 60, y: 37, z: -305.5 }
   },
   {
     name: '候车室灯',
     type: 'waiting_room_spot_light',
-    position: { x: -49.5, y: 22, z: -133.1 }
+    position: { x: -49.5, y: 37, z: -95.7 }
   }
 ]
 JsonList.push(...lights)
@@ -306,7 +306,7 @@ const lightSwitchs = [
   {
     name: '候车室灯',
     type: 'LIGHT_SWITCH',
-    position: { x: 76, y: 5, z: -112.2 },
+    position: { x: 80.8, y: 27, z: -95.7 },
     bind: '候车室灯'
   }
 ]
