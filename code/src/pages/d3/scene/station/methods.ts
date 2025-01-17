@@ -307,8 +307,10 @@ export class StationThreeScene extends ThreeScene.Scene {
   addWater(waterName) {
     const obj = this.scene.getObjectByName(waterName)
     if (!obj) return
+    console.log(obj)
     const water = createWater(obj)
     // water.rotation.x = -Math.PI / 2
+    // water.position.y += 50
     water.position.copy(obj.position)
     obj.position.y -= 0.2
     if (this.water) {
