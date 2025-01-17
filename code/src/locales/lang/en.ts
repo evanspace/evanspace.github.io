@@ -100,6 +100,8 @@ export default {
     smoke: 'smoke',
     sky: 'sky',
 
+    fog: 'fog',
+
     device: 'device',
     floor: 'floor',
     park: 'park',

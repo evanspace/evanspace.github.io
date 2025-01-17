@@ -100,6 +100,8 @@ export default {
     smoke: '烟',
     sky: '天空',
 
+    fog: '雾化',
+
     device: '设备',
     floor: '楼层',
     park: '园区',
