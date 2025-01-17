@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
+import { Water } from 'three/examples/jsm/objects/Water'
 import * as ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
 
@@ -47,6 +48,28 @@ const Message = new Proxy(
   }
 )
 
+const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+
+const createWater = (model?) => {
+  const waterGeometry = model ? model.geometry : new THREE.PlaneGeometry(200, 200)
+  const water = new Water(waterGeometry, {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader().load(
+      base + '/oss/textures/waternormals.jpg',
+      texture => {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+      }
+    ),
+    sunDirection: new THREE.Vector3(),
+    sunColor: 0xf00f00,
+    waterColor: 0x01688b,
+    distortionScale: 3.7
+  })
+  water.material.uniforms.size.value = 0.5
+  return water
+}
+
 export const guiOpts = reactive({
   dotText: ''
 })
@@ -92,6 +115,9 @@ export class ConvertThreeScene extends ThreeScene.Scene {
 
   // 定位球
   setPiece: InstanceType<typeof THREE.Mesh>
+
+  // 水面
+  water?: InstanceType<typeof Water>
 
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
@@ -367,9 +393,14 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     const params = {
       check: false,
       metalness: 0.5,
-      roughness: 0
+      roughness: 0,
+      water: () => {
+        this.addWater('水流')
+      }
     }
     const group = gui.addFolder('名称包含处理')
+    group.add(params, 'water').name('水面(水流)')
+
     group
       .add(params, 'check')
       .name('金属材质(金属)')
@@ -938,6 +969,23 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     }
   }
 
+  // 添加水面
+  addWater(waterName) {
+    const obj = this.scene.getObjectByName(waterName)
+    if (!obj) return
+    console.log(obj)
+    const water = createWater(obj)
+    // water.rotation.x = -Math.PI / 2
+    // water.position.y += 50
+    water.position.copy(obj.position)
+    obj.position.y -= 0.2
+    if (this.water) {
+      this.scene.remove(this.water)
+    }
+    this.water = water
+    this.addObject(this.water)
+  }
+
   // 移动
   onPointerMove(e: PointerEvent) {
     this.checkIntersectObjects(e)
@@ -1012,6 +1060,11 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       if (model.__mixer__) {
         model.__mixer__.update(delta)
       }
+    }
+
+    // 水面波动
+    if (this.water) {
+      this.water.material.uniforms['time'].value += 1 / 60
     }
   }
 }
