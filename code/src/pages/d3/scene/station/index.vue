@@ -104,7 +104,7 @@ const { progress, loadModels, getModel, initModels, virtualization, closeVirtual
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 48
+      version: 49
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -118,7 +118,7 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     enableDamping: true,
     dampingFactor: 0.48,
     maxPolarAngle: Math.PI * 0.48,
-    // enablePan: false
+    // enablePan: false,
     screenSpacePanning: false,
     maxDistance: 800
   },
@@ -144,7 +144,7 @@ onMounted(() => {
       '平面130',
       '楼梯',
       '机房地面',
-      '地面002',
+      '地面005',
       '立方体128',
       '立方体780_1',
       '11111',
@@ -323,6 +323,9 @@ const loopLoadObject = async (item: ObjectItem) => {
   model._isBuilding_ = true
   model.data = item
 
+  // 机房隐藏
+  // model.visible = type !== MACHINE_ROOM
+
   // 动画
   if (animationModelType.includes(type)) {
     scene.addModelAnimate(model, obj.animations, type !== MACHINE_ROOM, 1)
@@ -476,9 +479,9 @@ const createCharacter = () => {
     }
   })
   const move = {
-    x: -64.8,
-    y: 1.6,
-    z: 75.9
+    x: -65.8,
+    y: -34.8,
+    z: 22.3
   }
   // move.x = -1.6
   // move.y = 27.5

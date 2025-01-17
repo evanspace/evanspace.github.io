@@ -38,13 +38,13 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 65.8,
+      size: 63.3,
       url: '/深圳北站.glb'
     },
     {
       key: MACHINE_ROOM,
       name: '机房',
-      size: 16.9,
+      size: 15.2,
       url: '/机房.glb'
     },
     {

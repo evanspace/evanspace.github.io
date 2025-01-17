@@ -326,7 +326,7 @@ export default [
         ModelUrl: '/oss/model/floor/场景.glb',
         Name: '车站展示',
         ConfigJson: {
-          target: { x: 0, y: -2.6, z: 114.2 },
+          target: { x: 0, y: 1, z: 114.2 },
           to: { x: 25.3, y: 154.4, z: 637.2 },
           cruise: [
             [102.5, CRUISE_POINT_UP, 9.9],

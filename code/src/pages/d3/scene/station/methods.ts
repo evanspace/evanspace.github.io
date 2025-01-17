@@ -392,7 +392,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     if (!this.controls) return
     // 控制器操作限制切换
     this.controls.maxDistance = isCharacter ? (type == 3 ? 20 : 0) : 800
-    this.controls.screenSpacePanning = !isCharacter
+    // this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
     this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
@@ -721,8 +721,8 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = new THREE.Vector3(-50.4, 3, 74.2)
-      to = { x: -167.5, y: 2, z: 114 }
+      target = new THREE.Vector3(-78.4, -33, 29.2)
+      to = { x: -143.7, y: -25.8, z: 67 }
     }
 
     const dis = target.distanceTo(to)
@@ -795,7 +795,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       // 移动速度
       const steep = 10 * delta
       // 旋转速度
-      const angle = Math.PI * 0.4 * delta
+      const angle = Math.PI * 0.2 * delta
       const target = this.character
       if (!target) return
 
