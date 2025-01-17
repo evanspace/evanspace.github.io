@@ -104,7 +104,7 @@ const { progress, loadModels, getModel, initModels, virtualization, closeVirtual
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 49
+      version: 52
     }
   })
 const { options: dialog } = Hooks.useDialog()
@@ -254,6 +254,7 @@ const load = () => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
       await assemblyScenario()
+      scene?.addWater('水流')
       createRoblt()
       createCharacter()
     })
@@ -454,7 +455,6 @@ const updateObject = () => {
           obj.paused = false
         }
       } else {
-        obj.play()
         obj.paused = true
       }
     })

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { Water } from 'three/examples/jsm/objects/Water'
 
 import * as ThreeScene from 'three-scene'
 
@@ -32,6 +33,29 @@ const sightMap = {
   full: 'FULL',
   npc: 'NPC'
 }
+
+const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+
+const createWater = (model?) => {
+  const waterGeometry = model ? model.geometry : new THREE.PlaneGeometry(200, 200)
+  const water = new Water(waterGeometry, {
+    textureWidth: 512,
+    textureHeight: 512,
+    waterNormals: new THREE.TextureLoader().load(
+      base + '/oss/textures/waternormals.jpg',
+      texture => {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+      }
+    ),
+    sunDirection: new THREE.Vector3(),
+    sunColor: 0xf00f00,
+    waterColor: 0x01688b,
+    distortionScale: 3.7
+  })
+  water.material.uniforms.size.value = 0.5
+  return water
+}
+
 export class StationThreeScene extends ThreeScene.Scene {
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
@@ -79,6 +103,9 @@ export class StationThreeScene extends ThreeScene.Scene {
 
   // 围栏
   fence?: InstanceType<typeof THREE.Group>
+
+  // 水面
+  water?: InstanceType<typeof Water>
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
@@ -276,6 +303,21 @@ export class StationThreeScene extends ThreeScene.Scene {
     })
   }
 
+  // 添加水面
+  addWater(waterName) {
+    const obj = this.scene.getObjectByName(waterName)
+    if (!obj) return
+    const water = createWater(obj)
+    // water.rotation.x = -Math.PI / 2
+    water.position.copy(obj.position)
+    obj.position.y -= 0.2
+    if (this.water) {
+      this.scene.remove(this.water)
+    }
+    this.water = water
+    this.addObject(this.water)
+  }
+
   // 添加人物
   addCharacter(model, point) {
     const { x, y, z } = point
@@ -394,7 +436,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.controls.maxDistance = isCharacter ? (type == 3 ? 20 : 0) : 800
     // this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
-    this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
+    // this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
     if (!this.character) return
     const position = this.character.position
@@ -825,6 +867,11 @@ export class StationThreeScene extends ThreeScene.Scene {
         target.rotation.y -= angle
         this.keyboardToTotation()
       }
+    }
+
+    // 水面波动
+    if (this.water) {
+      this.water.material.uniforms['time'].value += 1 / 60
     }
   }
 

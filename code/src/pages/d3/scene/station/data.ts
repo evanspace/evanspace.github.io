@@ -38,33 +38,33 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 63.3,
+      size: 63.8,
       url: '/深圳北站.glb'
     },
     {
       key: MACHINE_ROOM,
       name: '机房',
-      size: 15.2,
+      size: 17.4,
       url: '/机房.glb'
     },
-    {
-      key: 'building',
-      name: '楼宇',
-      size: 0.3,
-      url: '/楼宇.glb'
-    },
-    {
-      key: 'residential',
-      name: '居民楼',
-      size: 0.08,
-      url: '/居民楼.glb'
-    },
-    {
-      key: 'small_residential',
-      name: '小型居民楼',
-      size: 0.08,
-      url: '/小型居民楼.glb'
-    },
+    // {
+    //   key: 'building',
+    //   name: '楼宇',
+    //   size: 0.3,
+    //   url: '/楼宇.glb'
+    // },
+    // {
+    //   key: 'residential',
+    //   name: '居民楼',
+    //   size: 0.08,
+    //   url: '/居民楼.glb'
+    // },
+    // {
+    //   key: 'small_residential',
+    //   name: '小型居民楼',
+    //   size: 0.08,
+    //   url: '/小型居民楼.glb'
+    // },
 
     {
       key: FLOOR,
