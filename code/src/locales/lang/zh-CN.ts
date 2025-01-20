@@ -102,6 +102,7 @@ export default {
 
     fog: '雾化',
     parallax: '视差',
+    slicing: '切片',
 
     device: '设备',
     floor: '楼层',

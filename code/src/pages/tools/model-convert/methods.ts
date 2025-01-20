@@ -639,7 +639,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       )
       .name('Hdr环境')
       .onChange(e => {
-        this.setEnvironment(`/oss/textures/hdr/${e}.hdr`)
+        this.loadEnvTexture(`/oss/textures/hdr/${e}.hdr`)
       })
 
     group.open()

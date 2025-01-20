@@ -102,6 +102,7 @@ export default {
 
     fog: 'fog',
     parallax: 'parallax',
+    slicing: 'slicing',
 
     device: 'device',
     floor: 'floor',
