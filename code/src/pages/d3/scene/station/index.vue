@@ -67,6 +67,7 @@ import {
   getTipOpts
 } from './data'
 import * as request from './request'
+import Emitter from './emitter'
 
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 
@@ -257,6 +258,7 @@ const load = () => {
       scene?.addWater('水流')
       createRoblt()
       createCharacter()
+      Emitter.emit('DEV:UPDATE')
     })
   })
 }
@@ -440,7 +442,10 @@ const updateObject = () => {
       return
     }
   })
+  Emitter.emit('DEV:UPDATE')
+}
 
+const deviceUpdate = () => {
   // 机房
   const room = scene.animateModels.find(it => it.data && it.data.type === MACHINE_ROOM)
   if (room && room.__action__) {
@@ -460,6 +465,7 @@ const updateObject = () => {
     })
   }
 }
+Emitter.on('DEV:UPDATE', deviceUpdate)
 
 // 创建机器人
 let robotObj: any
