@@ -316,7 +316,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.scene.remove(this.water)
     }
     this.water = water
-    this.addObject(this.water)
+    this.addBuilding(this.water)
   }
 
   // 添加人物

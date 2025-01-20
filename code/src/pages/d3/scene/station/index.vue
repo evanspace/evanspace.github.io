@@ -225,6 +225,9 @@ onMounted(() => {
 const initPage = () => {
   load()
   backgroundLoad(scene, pageOpts.skyCode as any)
+
+  // 事件监听
+  Emitter.on('DEV:UPDATE', deviceUpdate)
 }
 
 // 加载
@@ -465,7 +468,6 @@ const deviceUpdate = () => {
     })
   }
 }
-Emitter.on('DEV:UPDATE', deviceUpdate)
 
 // 创建机器人
 let robotObj: any
