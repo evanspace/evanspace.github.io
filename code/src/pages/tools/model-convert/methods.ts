@@ -986,6 +986,8 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     this.addObject(this.water)
   }
 
+  // 设置
+
   // 移动
   onPointerMove(e: PointerEvent) {
     this.checkIntersectObjects(e)
