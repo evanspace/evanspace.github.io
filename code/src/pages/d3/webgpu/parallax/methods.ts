@@ -19,6 +19,13 @@ export class ParallaxScene extends ThreeScene.Scene {
 
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
+
+    backgroundLoad(this.scene, '226')
+    // @ts-ignore
+    this.scene.environment = this.scene.background
+
+    this.gui = new GUI()
+    this.addGui()
   }
 
   async initModel() {
@@ -65,13 +72,6 @@ export class ParallaxScene extends ThreeScene.Scene {
     ground.rotateX(-Math.PI / 2)
     ground.scale.setScalar(40)
     this.addObject(ground)
-
-    backgroundLoad(this.scene, '226')
-    // @ts-ignore
-    this.scene.environment = this.scene.background
-
-    this.gui = new GUI()
-    this.addGui()
   }
 
   render() {
