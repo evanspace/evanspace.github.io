@@ -104,7 +104,7 @@ const { progress, loadModels, getModel, initModels, virtualization, closeVirtual
       cache: true,
       dbName: 'THREE__STATION__DB',
       tbName: 'TB',
-      version: 57
+      version: 58
     }
   })
 const { options: dialog } = Hooks.useDialog()

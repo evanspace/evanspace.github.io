@@ -977,7 +977,9 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     const water = createWater(obj)
     // water.rotation.x = -Math.PI / 2
     // water.position.y += 50
-    water.position.copy(obj.position)
+    // 获取世界坐标
+    const v = obj.getWorldPosition(new THREE.Vector3())
+    water.position.copy(v)
     obj.position.y -= 0.2
     if (this.water) {
       this.scene.remove(this.water)
