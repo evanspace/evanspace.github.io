@@ -26,7 +26,7 @@ declare interface ImportMetaEnv {
   readonly VITE_ROUTE_BASE: string
 
   /**
-   * 静态资源路径
+   * 静态资源前路径
    */
   readonly VITE_BEFORE_STATIC_PATH: string
   /**

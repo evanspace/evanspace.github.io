@@ -101,6 +101,7 @@ export default {
     sky: '天空',
 
     fog: '雾化',
+    parallax: '视差',
 
     device: '设备',
     floor: '楼层',

@@ -101,6 +101,7 @@ export default {
     sky: 'sky',
 
     fog: 'fog',
+    parallax: 'parallax',
 
     device: 'device',
     floor: 'floor',
