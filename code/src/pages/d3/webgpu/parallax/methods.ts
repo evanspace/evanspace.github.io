@@ -2,6 +2,8 @@ import * as THREE from 'three/webgpu'
 
 import * as ThreeScene from 'three-scene'
 
+import { GUI } from 'dat.gui'
+
 const { uniform, texture, parallaxUV, uv, blendOverlay } = THREE.TSL
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
@@ -13,6 +15,8 @@ const parallaScale = uniform(0.3)
 const { backgroundLoad } = ThreeScene.Hooks.useBackground()
 
 export class ParallaxScene extends ThreeScene.Scene {
+  gui: InstanceType<typeof GUI>
+
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
   }
@@ -65,6 +69,9 @@ export class ParallaxScene extends ThreeScene.Scene {
     backgroundLoad(this.scene, '226')
     // @ts-ignore
     this.scene.environment = this.scene.background
+
+    this.gui = new GUI()
+    this.addGui()
   }
 
   render() {
@@ -76,5 +83,15 @@ export class ParallaxScene extends ThreeScene.Scene {
 
   createRender() {
     return new THREE.WebGPURenderer(this.options.render) as any
+  }
+
+  addGui() {
+    const gui = this.gui
+
+    gui.add(this.controls, 'autoRotate').name('自动旋转')
+    gui.add(parallaScale, 'value', 0, 1).name('视差大小')
+
+    gui.domElement.className += ' gui-wrap'
+    this.container.parentNode?.appendChild(gui.domElement)
   }
 }
