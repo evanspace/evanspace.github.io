@@ -38,7 +38,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 63.3,
+      size: 65.1,
       url: '/深圳北站.glb'
     },
     {
