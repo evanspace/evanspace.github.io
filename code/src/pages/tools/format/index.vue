@@ -47,6 +47,36 @@
         </div>
       </div>
     </el-card>
+
+    <el-card>
+      <template #header>
+        <div :class="$style.title">JSON 序列化</div>
+
+        <el-checkbox v-model="jsonSerialize.empty">过滤空字符串</el-checkbox>
+      </template>
+      <div :class="$style.content">
+        <div :class="$style.item">
+          <div :class="$style.desc">转换内容：</div>
+          <el-input
+            type="textarea"
+            v-model="jsonSerialize.text"
+            placeholder="请输入..."
+            :rows="4"
+            @paste="onJsonSerialize"
+            @dblclick="onJsonSerialize"
+          ></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">结果：</div>
+          <el-input
+            type="textarea"
+            placeholder="转换结果"
+            v-model="jsonSerialize.result"
+            :rows="4"
+          ></el-input>
+        </div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -78,6 +108,34 @@ const onSpaceReplace = () => {
     spaceReplace.result = result
 
     copy(result)
+  }, 100)
+}
+
+// json 序列化
+const jsonSerialize = reactive({
+  empty: true,
+  text: '',
+  result: ''
+})
+const onJsonSerialize = () => {
+  setTimeout(() => {
+    let text = jsonSerialize.text
+    try {
+      text = JSON.parse(text)
+
+      const result = JSON.stringify(
+        text,
+        (_key, value) => {
+          if (jsonSerialize.empty && value === '') return
+          return value
+        },
+        2
+      )
+      jsonSerialize.result = result
+    } catch (er) {
+      console.log(er)
+      jsonSerialize.result = 'Json 字符串格式不正确！'
+    }
   }, 100)
 }
 </script>
