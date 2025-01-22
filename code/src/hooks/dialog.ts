@@ -8,13 +8,15 @@ export declare interface Options {
     left: string
     top: string
   }
+  content?: string
   type?: string | number
   extend?: any
   list?: ListItem[]
+  [key: string]: any
 }
 
 export const useDialog = (opts?: Options) => {
-  const options = reactive({
+  const options: Options = reactive({
     show: false,
     ...opts
   })

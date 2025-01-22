@@ -50,10 +50,19 @@
     >
       <div :class="$style.msg" v-html="tipOpts.msg"></div>
     </div>
+
+    <t-dialog
+      v-model="dialog.show"
+      :title="dialog.title"
+      v-model:content="dialog.content"
+      :err-message="dialog.errMessage"
+      @confirm="onConfirm"
+    ></t-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
+import tDialog from './edit-dialog.vue'
 import tLoading from '@/components/loading/index.vue'
 
 import {
@@ -157,7 +166,9 @@ const floorItems = computed(() => {
 // 大屏欢迎词弹窗
 const welcomKey = 'welcom.key'
 const { options: dialog } = useDialog({
-  title: getStorage(welcomKey) || ''
+  title: '编辑欢迎词',
+  content: getStorage(welcomKey) || '',
+  errMessage: '请输入欢迎词！'
 })
 
 // 楼层移动至
@@ -368,7 +379,7 @@ const load = () => {
       createRoblt()
       createCharacter()
       // 绘制画布纹理
-      Emitter.emit('SCREEN:WELCOM', dialog.title)
+      Emitter.emit('SCREEN:WELCOM', dialog.content)
       scene.addVideoMaterial(res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind))
       scene.addCanvasMaterial(res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind))
       scene.addAirWindMaterial(res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind))
@@ -416,6 +427,8 @@ const initPage = () => {
 }
 
 const onDialogInput = () => {
+  dialog.show = true
+  return
   ElMessageBox({
     title: '编辑欢迎词',
     message: () => {
@@ -453,6 +466,12 @@ const onDialogInput = () => {
       Emitter.emit('SCREEN:WELCOM', dialog.title)
     }
   })
+}
+
+const onConfirm = text => {
+  dialog.content = text
+  setStorage(welcomKey, dialog.content || '')
+  Emitter.emit('SCREEN:WELCOM', dialog.content)
 }
 
 const onClickLeft = object => {

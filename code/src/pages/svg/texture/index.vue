@@ -100,54 +100,8 @@ const opts = reactive({
 })
 
 const imgSrc = computed(() => opts.imgs[opts.imgIndex]?.src)
-
-const dialog = reactive({
-  show: true
-})
 </script>
-<style lang="scss">
-.is-message-box {
-  &:has(.screen-welcom-dialog) {
-    background-color: transparent;
-  }
-}
-.screen-welcom-dialog {
-  position: relative;
-  box-shadow: none;
-  background: transparent;
-  border-radius: 0;
-  &::after {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    content: '';
-    position: absolute;
-    backdrop-filter: blur(2px);
-  }
-  .el-message-box {
-    &__title {
-      color: #000;
-      font-size: 20px;
-      // font-family: 'Youshe';
-      // text-shadow: 0px 2px 3px #e4f3ef;
-      // -webkit-background-clip: text;
-      // -webkit-text-fill-color: transparent;
-    }
-    &__message {
-      width: 100%;
-      .el-textarea {
-        &__inner {
-          border: 1px solid;
-          background: linear-gradient(96deg, #817192 0%, #588aaf 100%);
-          border-image: linear-gradient(180deg, rgba(112, 132, 157, 1), rgba(168, 191, 222, 1)) 1 1;
-          border-radius: 0px 0px 0px 0px;
-        }
-      }
-    }
-  }
-}
-</style>
+<style lang="scss"></style>
 <style lang="scss" scoped>
 .wrap {
   margin: 5px;
