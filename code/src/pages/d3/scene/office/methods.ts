@@ -44,6 +44,8 @@ const createVideoDom = (src?: string) => {
 
 // 视频封面
 const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/office/cover.jpg')
+// 空调风纹理
+const windTexture = new THREE.TextureLoader().load(base + '/oss/textures/office/wind.png')
 
 export class OfficeThreeScene extends ThreeScene.Scene {
   // 建筑集合
@@ -77,6 +79,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 视频元素集合
   videoModels: ThreeModelItem[] = []
+  // 画布纹理集合
+  canvasTextures: any[] = []
 
   // 移动系数
   moveFactor: number = 1
@@ -223,10 +227,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 关闭所有灯光
-  closeLightGroup(isCOpen: boolean = false) {
+  closeLightGroup(isOpen: boolean = false) {
     this.lightGroup?.children.forEach((el: any) => {
       if (el.isSpotLight) {
-        el.visible = isCOpen
+        el.visible = isOpen
       }
     })
   }
@@ -247,6 +251,48 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         this.lightGroup.add(helper)
       }
     }
+  }
+
+  // 绘制 canva 材质
+  drawCanvas(text = '') {
+    if (!this.extend.canvas) return
+    const canvas = this.extend.canvas
+    const w = canvas.offsetWidth
+    const h = canvas.offsetHeight
+    canvas.width = w
+    canvas.height = h
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.clearRect(0, 0, w, h)
+    ctx.fillStyle = '#f00'
+
+    // 分割为两行
+    const rows = 2,
+      max = 12,
+      len = text.length
+    const rlen = len > max ? Math.ceil(len / rows) : max
+    let list: string[] = [],
+      index = 0
+    while (index < len) {
+      const end = index + rlen
+      list.push(text.substring(index, end))
+      index = end
+    }
+
+    ctx.font = '100 40px 微软雅黑'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    const tl = list.length
+    list.forEach((tx, index) => {
+      const i = index * tl + 1
+      ctx.fillText(tx, w / 2, (h / tl / 2) * i)
+    })
+
+    if (!this.canvasTextures.length) return
+    this.canvasTextures.forEach(map => {
+      map.needsUpdate = true
+    })
   }
 
   // 添加人物
@@ -304,6 +350,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 1-第一人称 3-第三人称
   toggleSight(type?: number) {
     if (this.judgeCruise()) return
+
+    // 漫游
+    this.judgeAndStopRoam()
 
     const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
     this.currentSight = sight
@@ -457,11 +506,17 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 开关灯
-  lightSwitch(object) {
+  lightSwitch(object, max?: number) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
-    light.forEach(el => {
-      el.visible = !el.visible
+    console.log('开灯数量:', max != void 0 && max >= 0 ? max : '全开')
+    light.forEach((el, index) => {
+      // max 存在则默认未点亮，其他关闭
+      let visible = max != void 0 && max >= 0 ? false : !el.visible
+      if (max != void 0 && max >= 0 && index < max) {
+        visible = true
+      }
+      el.visible = visible
     })
   }
 
@@ -550,6 +605,23 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     }
   }
 
+  // 画布纹理
+  addCanvasMaterial(names: string[]) {
+    if (!this.extend.canvas) return
+    const material = new THREE.MeshPhongMaterial({
+      map: new THREE.CanvasTexture(this.extend.canvas),
+      side: THREE.DoubleSide
+    })
+    this.canvasTextures = []
+    for (let i = 0; i < names.length; i++) {
+      const dbObj = this.scene.getObjectByName(names[i]) as any
+      if (!dbObj) continue
+      dbObj.material = material.clone()
+      dbObj.__cover_texture__ = material.map?.clone()
+      this.canvasTextures.push(dbObj.material.map)
+    }
+  }
+
   // 清理视频
   clearVideo() {
     const videos = this.videoModels
@@ -578,6 +650,39 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         vobj.material.map = vobj.__cover_texture__
       }
     }
+  }
+
+  // 添加空调风材质
+  addAirWindMaterial(names: string[]) {
+    windTexture.wrapS = THREE.RepeatWrapping
+    windTexture.repeat.x = 3
+    const material = new THREE.MeshPhongMaterial({
+      color: 0xc6deff,
+      map: windTexture,
+      // opacity: 0.9,
+      transparent: true,
+      side: THREE.DoubleSide
+    })
+
+    for (let i = 0; i < names.length; i++) {
+      const dobj = this.scene.getObjectByName(names[i]) as any
+      if (!dobj) return
+      dobj.traverse(el => {
+        if (el.isMesh) {
+          el.material = material
+        }
+      })
+      dobj.visible = false
+    }
+  }
+
+  // 空调开关
+  toggleAir(object) {
+    const dobj = this.scene.getObjectByName(object.data.bind) as any
+    console.log(dobj)
+    if (!dobj) return
+    dobj.__open__ = !dobj.__open__
+    dobj.visible = dobj.__open__
   }
 
   // 鼠标点击地面
@@ -711,6 +816,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     if (!to) return
 
     if (!this.isCameraMove(to) && this.controls) {
+      this.judgeAndStopRoam()
       this.controls.maxDistance = 5
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
@@ -738,6 +844,13 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       this.fence = fence
       this.addObject(fence)
     }
+  }
+
+  controlReset() {
+    this.judgeAndStopRoam()
+    if (!this.controls) return
+    this.controls.maxDistance = 1500
+    super.controlReset()
   }
 
   // 判断漫游，并停止
@@ -813,7 +926,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       // 移动速度
       const steep = 5 * delta
       // 旋转速度
-      const angle = Math.PI * 0.4 * delta
+      const angle = Math.PI * 0.2 * delta
       const target = this.character
       if (!target) return
       const isS = keyboardPressed('S')
@@ -843,6 +956,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     }
 
     executeRoam(this.camera, this.controls)
+
+    if (windTexture) {
+      windTexture.offset.x += 0.02
+    }
   }
 
   // 按键转向
@@ -1000,6 +1117,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.animateModels = []
     this.clearVideo()
     this.videoModels = []
+    this.canvasTextures = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.character)
     this.disposeObj(this.dotGroup)

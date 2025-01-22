@@ -15,6 +15,7 @@ export declare interface Config {
 export declare interface ExtendOptions {
   groundMeshName: string[]
   roamPoints: number[][]
+  canvas: HTMLCanvasElement
   onDblclick: (e) => void
   onClickLeft: (object?, intersct?) => void
   onClickGround: (object?, intersct?) => void

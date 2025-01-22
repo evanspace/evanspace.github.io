@@ -13,11 +13,13 @@ export const CHARACTER = 'CHARACTER' // 人物
 export const WAIT_LIFT = 'WAIT_LIFT' // 等电梯
 export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 export const LIGHT_MAIN_SWITCH = 'LIGHT_MAIN_SWITCH' // 灯总开关
+export const AIR_SWITCH = 'AIR_SWITCH' // 空调开关
 export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
 export const DUBLE_HORIZONTAL_SWITCH = 'DUBLE_HORIZONTAL_SWITCH' // 双开横推门
 export const DUBLE_ROTATE_SWITCH = 'DUBLE_ROTATE_SWITCH' // 双旋转开门
 export const ODD_ROTATE_SWITCH = 'ODD_ROTATE_SWITCH' // 单旋转开门
 export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
+export const SCREEN_EDIT = 'SCREEN_EDIT' // 编辑
 export const CURTAIN_SWITCH = 'CURTAIN_SWITCH' // 窗帘开关
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
@@ -50,8 +52,10 @@ export const getPageOpts = animateBack => ({
     WAIT_LIFT,
     LIGHT_SWITCH,
     LIGHT_MAIN_SWITCH,
+    AIR_SWITCH,
     GATE_SWITCH,
     VIDEO_SWITCH,
+    SCREEN_EDIT,
     DUBLE_HORIZONTAL_SWITCH,
     ODD_ROTATE_SWITCH,
     DUBLE_ROTATE_SWITCH,
@@ -88,7 +92,7 @@ export const getPageOpts = animateBack => ({
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 35.1,
+      size: 41,
       url: '/二十五楼.glb'
     },
 
@@ -143,6 +147,12 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/video.png'
     },
     {
+      key: SCREEN_EDIT,
+      name: '编辑',
+      type: 'sprite',
+      mapUrl: '/edit.png'
+    },
+    {
       key: CURTAIN_SWITCH,
       name: '窗帘',
       type: 'sprite',
@@ -189,6 +199,12 @@ export const getPageOpts = animateBack => ({
       name: '开关灯',
       type: 'sprite',
       mapUrl: '/light.png'
+    },
+    {
+      key: AIR_SWITCH,
+      name: '空调',
+      type: 'sprite',
+      mapUrl: '/air.png'
     }
   ].map(item => {
     if (item.url && item.url.indexOf('oss') < 0) {

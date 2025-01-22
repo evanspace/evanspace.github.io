@@ -3,23 +3,29 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
-      <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
+      <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene as any)">切换背景</div>
 
-      <div class="item" @click="() => scene?.toggleRoam()">全景漫游</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
       <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
         {{ item.name }}
       </div>
 
-      <div class="item" @click="() => scene?.toggleCruise()">定点巡航</div>
-      <div class="item" @click="() => scene?.controlReset()">视角重置</div>
-      <div class="item" @click="() => scene.toggleSight(1)">第一人称</div>
-      <div class="item" @click="() => scene.toggleSight(3)">第三人称</div>
-      <div class="item" @click="() => scene.characterAccelerate()">人物加速</div>
-      <div class="item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
+      <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:LCR', Math.floor(Math.random() * 5))">
+        大会议室灯
+      </div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:THREE')">第三人称</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:ADD')">人物加速</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:SUB')">人物减速</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
+
+    <canvas :class="$style['canvas-texture']" ref="canvasTextureRef"></canvas>
 
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
@@ -59,23 +65,30 @@ import {
   WAIT_LIFT,
   LIGHT_SWITCH,
   LIGHT_MAIN_SWITCH,
+  AIR_SWITCH,
   GATE_SWITCH,
   DUBLE_HORIZONTAL_SWITCH,
   DUBLE_ROTATE_SWITCH,
   ODD_ROTATE_SWITCH,
   CURTAIN_SWITCH,
   VIDEO_SWITCH,
+  SCREEN_EDIT,
   getPageOpts,
   getTipOpts,
   getFloorOpts
 } from './data'
+import Emitter from './emitter'
 import { OfficeThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
+import { onListen } from './listen'
 import * as request from './request'
 
 import { useResize } from '@/hooks/scene-resize'
+import { useDialog } from '@/hooks/dialog'
 import * as ThreeScene from 'three-scene/build/three-scene.module'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import { ElInput, ElMessageBox } from 'element-plus'
+import { getStorage, setStorage } from '@/common/utils/storage'
 
 const Utils = ThreeScene.Utils
 const Hooks = ThreeScene.Hooks
@@ -83,8 +96,8 @@ const Hooks = ThreeScene.Hooks
 const pageOpts = reactive(
   getPageOpts((pos, lookAt, cruiseCurve, t) => {
     if (!robotObj) return
-    // 前置视角前 0.015
-    t = t + 0.005
+    // 前置视角前 0.02
+    t = t + 0.02
     if (t > 1) t = t - 1
     pos = getOffsetPoint(cruiseCurve.getPointAt(t))
     const oft = 0.001
@@ -107,11 +120,12 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 40
+    version: 57
   }
 })
 
 const containerRef = ref()
+const canvasTextureRef = ref()
 const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   env: pageOpts.env,
   cruise: pageOpts.cruise,
@@ -138,6 +152,12 @@ let scene: InstanceType<typeof OfficeThreeScene>
 // 电梯到达楼层
 const floorItems = computed(() => {
   return floorOpts.list.find(it => it.target === floorOpts.targetName)?.items || []
+})
+
+// 大屏欢迎词弹窗
+const welcomKey = 'welcom.key'
+const { options: dialog } = useDialog({
+  title: getStorage(welcomKey) || ''
 })
 
 // 楼层移动至
@@ -245,6 +265,7 @@ const initDevices = () => {
 const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
   const { type } = item
+  if (type === ANCHOR_POS) return
   const obj = getModel(type)
   if (!obj) {
     // 点位
@@ -316,8 +337,7 @@ const assemblyScenario = async () => {
   Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
     scene.controlSave()
     setTimeout(() => {
-      // 关灯
-      scene.closeLightGroup()
+      Emitter.emit('LIGHT:CLOSE')
     }, 100)
   })
 }
@@ -328,6 +348,7 @@ const modelConfigList = ref<ObjectItem[]>([])
 const cameraPositionList = computed(() =>
   modelConfigList.value.filter(it => it.type === ANCHOR_POS)
 )
+
 const load = () => {
   loadModels(pageOpts.models, () => {
     request.getConfig().then(async res => {
@@ -346,7 +367,11 @@ const load = () => {
       await assemblyScenario()
       createRoblt()
       createCharacter()
+      // 绘制画布纹理
+      Emitter.emit('SCREEN:WELCOM', dialog.title)
       scene.addVideoMaterial(res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind))
+      scene.addCanvasMaterial(res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind))
+      scene.addAirWindMaterial(res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind))
     })
   })
 }
@@ -369,25 +394,116 @@ const createCharacter = () => {
     }
   })
   const move = {
-    x: -69.4,
-    y: 0,
-    z: 127.3
+    x: 18.6,
+    y: 184.6,
+    z: 37.6
   }
-  move.x = 33.7
-  move.z = 25.3
   obj.scale.setScalar(0.75)
+
+  // 手臂问题，暂隐藏
+  const l = obj.getObjectByName('HandL')
+  const r = obj.getObjectByName('HandR')
+  l.visible = false
+  r.visible = false
   scene.addCharacter(obj, move)
 }
 
 const initPage = () => {
   load()
   backgroundLoad(scene, pageOpts.skyCode as any)
+
+  onListen(scene)
+}
+
+const onDialogInput = () => {
+  ElMessageBox({
+    title: '大屏欢迎词',
+    message: () => {
+      return h(ElInput, {
+        type: 'textarea',
+        rows: 5,
+        style: {
+          width: '100%'
+        },
+        placeholder: '请输入欢迎词',
+        maxlength: 24,
+        showWordLimit: true,
+        modelValue: dialog.title,
+        'onUpdate:modelValue': v => {
+          dialog.title = v
+        }
+      })
+    },
+    customClass: 'screen-welcom-dialog',
+    beforeClose: (action, _instance, done) => {
+      if (action === 'confirm') {
+        if (!dialog.title) {
+          ElMessage.warning({
+            message: '请输入欢迎词！',
+            grouping: true
+          })
+          return
+        }
+      }
+      done()
+    }
+  }).then(action => {
+    if (action == 'confirm') {
+      setStorage(welcomKey, dialog.title || '')
+      Emitter.emit('SCREEN:WELCOM', dialog.title)
+    }
+  })
+}
+
+const onClickLeft = object => {
+  const data = object.data
+  switch (data?.type) {
+    case ANCHOR_POS: // 定位
+      scene.cameraTransition(object)
+      break
+    case WAIT_LIFT: // 等电梯
+      floorOpts.targetName = object.data.target
+      scene.waitLift(object)
+      break
+    case LIGHT_SWITCH: // 开关灯
+      Emitter.emit('LIGHT:AUTO', object)
+      break
+    case LIGHT_MAIN_SWITCH: // 灯总开关
+      object.__close__ = !object.__close__
+      Emitter.emit('LIGHT:CLOSE', !object.__close__)
+      break
+    case GATE_SWITCH: // 闸机
+      scene.openGate(object)
+      break
+    case DUBLE_HORIZONTAL_SWITCH: // 双开横推门
+      scene.dubleHorizontalDoor(object, 5.4)
+      break
+    case ODD_ROTATE_SWITCH: // 单旋转开门
+      scene.oddRotateDoor(object)
+      break
+    case DUBLE_ROTATE_SWITCH: // 双旋转开门
+      scene.dubleRotateDoor(object)
+      break
+    case CURTAIN_SWITCH: // 窗帘动画
+      scene.toggleCurtain(object)
+      break
+    case VIDEO_SWITCH: // 视频播放
+      scene.videoPlay(object)
+      break
+    case SCREEN_EDIT: // 大屏欢迎词编辑
+      onDialogInput()
+      break
+    case AIR_SWITCH: // 空调
+      scene.toggleAir(object)
+      break
+  }
 }
 
 onMounted(() => {
   options.container = containerRef.value
   const liftMeshNames = ['电梯地板002', '电梯地板']
   scene = new OfficeThreeScene(options, {
+    canvas: canvasTextureRef.value,
     groundMeshName: [
       '地面002',
       '立方体306',
@@ -407,42 +523,7 @@ onMounted(() => {
     roamPoints: pageOpts.roamPoints,
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
-        const data = object.data
-        switch (data?.type) {
-          case ANCHOR_POS: // 定位
-            scene.cameraTransition(object)
-            break
-          case WAIT_LIFT: // 等电梯
-            floorOpts.targetName = object.data.target
-            scene.waitLift(object)
-            break
-          case LIGHT_SWITCH: // 开关灯
-            scene.lightSwitch(object)
-            break
-          case LIGHT_MAIN_SWITCH: // 灯总开关
-            console.log(object)
-            object.__close__ = !object.__close__
-            scene.closeLightGroup(!object.__close__)
-            break
-          case GATE_SWITCH: // 闸机
-            scene.openGate(object)
-            break
-          case DUBLE_HORIZONTAL_SWITCH: // 双开横推门
-            scene.dubleHorizontalDoor(object, 5.4)
-            break
-          case ODD_ROTATE_SWITCH: // 单旋转开门
-            scene.oddRotateDoor(object)
-            break
-          case DUBLE_ROTATE_SWITCH: // 双旋转开门
-            scene.dubleRotateDoor(object)
-            break
-          case CURTAIN_SWITCH: // 窗帘动画
-            scene.toggleCurtain(object)
-            break
-          case VIDEO_SWITCH: // 窗帘动画
-            scene.videoPlay(object)
-            break
-        }
+        onClickLeft(object)
       }
     },
     onClickGround: (_object, intersct) => {

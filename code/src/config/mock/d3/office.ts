@@ -3,8 +3,7 @@ import { builder } from '../util'
 const JsonList = [
   {
     name: '场地',
-    type: 'MAIN_SCENE',
-    position: { x: 0, y: 0, z: 0 }
+    type: 'MAIN_SCENE'
   },
   {
     name: '窗帘',
@@ -34,35 +33,30 @@ const posList = [
   {
     name: '一楼大门',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: -1.3, y: 6.2, z: 102.3 },
     target: { x: -1.4, y: 5.8, z: 97.4 }
   },
   {
     name: '公司前台',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: 15.3, y: 188, z: 33.2 },
     target: { x: 15.3, y: 188, z: 36.3 }
   },
   {
     name: '办公区域',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: -38, y: 188, z: 35.3 },
     target: { x: -35.4, y: 188, z: 36.4 }
   },
   {
     name: '大会议室',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
-    to: { x: -28.5, y: 188, z: 47 },
-    target: { x: -30.5, y: 188, z: 48.4 }
+    to: { x: -28.8, y: 188, z: 52.7 },
+    target: { x: -33.7, y: 188, z: 53.4 }
   },
   {
     name: '领导办公',
     type: 'ANCHOR_POS',
-    position: { x: -1.15, y: 5.8, z: 186.36 },
     to: { x: 69.4, y: 188, z: -0.4 },
     target: { x: 65, y: 188, z: -2.7 }
   }
@@ -263,6 +257,28 @@ const lights = [
     type: 'spot_light_floor_1',
     position: { x: 30, y: 190.7, z: 52.5 },
     to: { x: 32.2, y: 186.7, z: 52.6 }
+  },
+
+  // 大会议室
+  {
+    name: '大会议室照明灯',
+    type: 'spot_light_floor_2',
+    position: { x: -32, y: 190.7, z: 58 }
+  },
+  {
+    name: '大会议室照明灯',
+    type: 'spot_light_floor_2',
+    position: { x: -42, y: 190.7, z: 58 }
+  },
+  {
+    name: '大会议室照明灯',
+    type: 'spot_light_floor_2',
+    position: { x: -32, y: 190.7, z: 50 }
+  },
+  {
+    name: '大会议室照明灯',
+    type: 'spot_light_floor_2',
+    position: { x: -42, y: 190.7, z: 50 }
   }
 ]
 
@@ -309,7 +325,7 @@ for (let i = 0; i < len; i++) {
 JsonList.push(...lights)
 
 // 公司锚点高度
-const anchorHeight = 186
+const anchorHeight = 188
 
 // 灯关-锚点
 const lightSwitchs = [
@@ -337,11 +353,24 @@ const lightSwitchs = [
     position: { x: 25, y: anchorHeight, z: 53.8 },
     bind: '主机照明灯'
   },
+  {
+    name: '大会议室照明灯',
+    type: 'LIGHT_SWITCH',
+    position: { x: -30, y: anchorHeight, z: 58.6 },
+    bind: '大会议室照明灯'
+  },
 
   {
     name: '灯光总开关',
     type: 'LIGHT_MAIN_SWITCH',
     position: { x: 12, y: 188, z: 49 }
+  },
+
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: 13.3, y: 188, z: 49 },
+    bind: '_空调风_grp'
   }
 ]
 JsonList.push(...lightSwitchs)
@@ -385,7 +414,7 @@ const companyDoors = [
   {
     name: '大会议室',
     type: 'DUBLE_ROTATE_SWITCH',
-    position: { x: -28, y: anchorHeight, z: 53.8 },
+    position: { x: -27.8, y: anchorHeight, z: 53.8 },
     bind: '_大会议室-门_grp',
     // 旋转轴
     axle: 'y'
@@ -481,8 +510,14 @@ JsonList.push(...companyDoors)
 const videos = [
   {
     name: '公司大屏',
+    type: 'SCREEN_EDIT',
+    position: { x: 28.3, y: 189.5, z: 35 },
+    bind: '公司大屏'
+  },
+  {
+    name: '公司大屏',
     type: 'VIDEO_SWITCH',
-    position: { x: 34.5, y: 189.2, z: 34 },
+    position: { x: 28.3, y: 188.2, z: 35 },
     bind: '公司大屏'
   },
   {
@@ -521,7 +556,7 @@ export default [
         JsonList,
         Name: '写字楼展示',
         ConfigJson: {
-          target: { x: 78.6, y: -1.4, z: 194.8 },
+          target: { x: 0, y: 0, z: 0 },
           to: { x: -799.2, y: 55, z: 376.3 }
         }
       })
