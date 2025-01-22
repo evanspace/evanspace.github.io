@@ -417,7 +417,7 @@ const initPage = () => {
 
 const onDialogInput = () => {
   ElMessageBox({
-    title: '大屏欢迎词',
+    title: '编辑欢迎词',
     message: () => {
       return h(ElInput, {
         type: 'textarea',
