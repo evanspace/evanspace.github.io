@@ -130,7 +130,8 @@ export default {
     tool: '工具',
     convert: '转换',
 
-    modelConvert: '@:route.model@:route.convert'
+    modelConvert: '@:route.model@:route.convert',
+    format: '格式化'
   },
 
   user: {

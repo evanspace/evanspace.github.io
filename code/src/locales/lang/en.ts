@@ -128,7 +128,10 @@ export default {
     echarts: 'echarts',
 
     tool: 'tool',
-    convert: 'convert'
+    convert: 'convert',
+
+    modelConvert: '@:route.model @:route.convert',
+    format: 'format'
   },
 
   user: {
