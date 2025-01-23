@@ -56,15 +56,15 @@ export class DragScene extends ThreeScene.Scene {
     const ctrl = new DragControls([], this.camera, this.renderer.domElement)
 
     // 拖拽开始
-    ctrl.addEventListener('dragstart', el => {
+    ctrl.addEventListener('dragstart', _el => {
       // 设置发光色
       // @ts-ignore
-      // el.object.material.emissive.set(0xaaaaaa)
+      // _el.object.material.emissive.set(0xaaaaaa)
     })
     // 拖拽结束
-    ctrl.addEventListener('dragend', el => {
+    ctrl.addEventListener('dragend', _el => {
       // @ts-ignore
-      // el.object.material.emissive.set(0x000000)
+      // _el.object.material.emissive.set(0x000000)
     })
 
     // 悬浮
