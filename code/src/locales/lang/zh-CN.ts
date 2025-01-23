@@ -131,7 +131,9 @@ export default {
     convert: '转换',
 
     modelConvert: '@:route.model@:route.convert',
-    format: '格式化'
+    format: '格式化',
+
+    lookat: '朝向'
   },
 
   user: {

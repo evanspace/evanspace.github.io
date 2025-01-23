@@ -80,29 +80,29 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('PERSON:SUB', () => scene?.characterAccelerate(-1))
 
   // 前台灯
-  Emitter.on('LIGHT:RECCEPTION', () => {
-    scene?.lightSwitch({ data: { bind: '前台聚光灯' } })
+  Emitter.on('LIGHT:RECCEPTION', (isOpen, max) => {
+    scene?.lightSwitch({ data: { bind: '前台聚光灯' } }, isOpen, max)
   })
   // 过道灯
-  Emitter.on('LIGHT:AILSE', () => {
-    scene?.lightSwitch({ data: { bind: '区域A' } })
+  Emitter.on('LIGHT:AILSE', (isOpen, max) => {
+    scene?.lightSwitch({ data: { bind: '区域A' } }, isOpen, max)
   })
   // 人事灯
-  Emitter.on('LIGHT:PM', () => {
-    scene?.lightSwitch({ data: { bind: '区域B' } })
+  Emitter.on('LIGHT:PM', (isOpen, max) => {
+    scene?.lightSwitch({ data: { bind: '区域B' } }, isOpen, max)
   })
   // 主机灯
-  Emitter.on('LIGHT:HOST', () => {
-    scene?.lightSwitch({ data: { bind: '主机照明灯' } })
+  Emitter.on('LIGHT:HOST', (isOpen, max) => {
+    scene?.lightSwitch({ data: { bind: '主机照明灯' } }, isOpen, max)
   })
   // 大会议室灯
-  Emitter.on('LIGHT:LCR', max => {
-    scene?.lightSwitch({ data: { bind: '大会议室照明灯' } }, max)
+  Emitter.on('LIGHT:LCR', (isOpen, max) => {
+    scene?.lightSwitch({ data: { bind: '大会议室照明灯' } }, isOpen, max)
   })
 
   // 关灯
   Emitter.on('LIGHT:CLOSE', (isOpen?) => scene?.closeLightGroup(isOpen))
-  Emitter.on('LIGHT:AUTO', object => scene?.lightSwitch(object))
+  Emitter.on('LIGHT:AUTO', (object, isOpen, max) => scene?.lightSwitch(object, isOpen, max))
 
   // 窗帘
   Emitter.on('CURTAIN:TOGGLE', () => {
@@ -138,8 +138,8 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   })
 
   // 空调
-  Emitter.on('AIR:MAIN', () => {
-    scene?.toggleAir({ data: { bind: '_空调风_grp' } })
+  Emitter.on('AIR:MAIN', isOpen => {
+    scene?.toggleAir({ data: { bind: '_空调风_grp' } }, isOpen)
   })
 
   // 场景坐标

@@ -15,8 +15,8 @@ export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
 export const LIGHT_MAIN_SWITCH = 'LIGHT_MAIN_SWITCH' // 灯总开关
 export const AIR_SWITCH = 'AIR_SWITCH' // 空调开关
 export const GATE_SWITCH = 'GATE_SWITCH' // 闸机门禁
-export const DUBLE_HORIZONTAL_SWITCH = 'DUBLE_HORIZONTAL_SWITCH' // 双开横推门
-export const DUBLE_ROTATE_SWITCH = 'DUBLE_ROTATE_SWITCH' // 双旋转开门
+export const DOUBLE_HORIZONTAL_SWITCH = 'DOUBLE_HORIZONTAL_SWITCH' // 双开横推门
+export const DOUBLE_ROTATE_SWITCH = 'DOUBLE_ROTATE_SWITCH' // 双旋转开门
 export const ODD_ROTATE_SWITCH = 'ODD_ROTATE_SWITCH' // 单旋转开门
 export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
 export const SCREEN_EDIT = 'SCREEN_EDIT' // 编辑
@@ -56,9 +56,9 @@ export const getPageOpts = animateBack => ({
     GATE_SWITCH,
     VIDEO_SWITCH,
     SCREEN_EDIT,
-    DUBLE_HORIZONTAL_SWITCH,
+    DOUBLE_HORIZONTAL_SWITCH,
     ODD_ROTATE_SWITCH,
-    DUBLE_ROTATE_SWITCH,
+    DOUBLE_ROTATE_SWITCH,
     CURTAIN_SWITCH
   ],
   animationModelType: [CONPANT_FLOOR, CURTAIN],
@@ -116,13 +116,13 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/lift.png'
     },
     {
-      key: DUBLE_HORIZONTAL_SWITCH,
+      key: DOUBLE_HORIZONTAL_SWITCH,
       name: '双横推开关门',
       type: 'sprite',
       mapUrl: '/lift.png'
     },
     {
-      key: DUBLE_ROTATE_SWITCH,
+      key: DOUBLE_ROTATE_SWITCH,
       name: '双旋转开关门',
       type: 'sprite',
       mapUrl: '/lift.png'

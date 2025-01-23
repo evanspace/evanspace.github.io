@@ -13,8 +13,15 @@
 
       <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
       <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
+      <div class="item" @click="() => Emitter.emit('AIR:MAIN', true)">空调开</div>
+      <div class="item" @click="() => Emitter.emit('AIR:MAIN', false)">空调关</div>
       <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:LCR', Math.floor(Math.random() * 5))">
+      <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', true)">前台灯开</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', false)">前台灯关</div>
+      <div
+        class="item"
+        @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
+      >
         大会议室灯
       </div>
       <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
@@ -76,8 +83,8 @@ import {
   LIGHT_MAIN_SWITCH,
   AIR_SWITCH,
   GATE_SWITCH,
-  DUBLE_HORIZONTAL_SWITCH,
-  DUBLE_ROTATE_SWITCH,
+  DOUBLE_HORIZONTAL_SWITCH,
+  DOUBLE_ROTATE_SWITCH,
   ODD_ROTATE_SWITCH,
   CURTAIN_SWITCH,
   VIDEO_SWITCH,
@@ -494,13 +501,13 @@ const onClickLeft = object => {
     case GATE_SWITCH: // 闸机
       scene.openGate(object)
       break
-    case DUBLE_HORIZONTAL_SWITCH: // 双开横推门
+    case DOUBLE_HORIZONTAL_SWITCH: // 双开横推门
       scene.dubleHorizontalDoor(object, 5.4)
       break
     case ODD_ROTATE_SWITCH: // 单旋转开门
       scene.oddRotateDoor(object)
       break
-    case DUBLE_ROTATE_SWITCH: // 双旋转开门
+    case DOUBLE_ROTATE_SWITCH: // 双旋转开门
       scene.dubleRotateDoor(object)
       break
     case CURTAIN_SWITCH: // 窗帘动画

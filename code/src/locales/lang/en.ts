@@ -131,7 +131,9 @@ export default {
     convert: 'convert',
 
     modelConvert: '@:route.model @:route.convert',
-    format: 'format'
+    format: 'format',
+
+    lookat: 'lookat'
   },
 
   user: {

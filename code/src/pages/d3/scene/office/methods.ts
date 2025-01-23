@@ -506,15 +506,15 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 开关灯
-  lightSwitch(object, max?: number) {
+  lightSwitch(object, isOpen?: boolean, max?: number) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
-    console.log('开灯数量:', max != void 0 && max >= 0 ? max : '全开')
+    console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
     light.forEach((el, index) => {
       // max 存在则默认未点亮，其他关闭
-      let visible = max != void 0 && max >= 0 ? false : !el.visible
+      let visible = max != void 0 && max >= 0 ? false : isOpen != void 0 ? isOpen : !el.visible
       if (max != void 0 && max >= 0 && index < max) {
-        visible = true
+        visible = isOpen != void 0 ? isOpen : true
       }
       el.visible = visible
     })
@@ -677,11 +677,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 空调开关
-  toggleAir(object) {
+  toggleAir(object, isOpen?) {
     const dobj = this.scene.getObjectByName(object.data.bind) as any
     console.log(dobj)
     if (!dobj) return
-    dobj.__open__ = !dobj.__open__
+    dobj.__open__ = isOpen != void 0 ? isOpen : !dobj.__open__
     dobj.visible = dobj.__open__
   }
 

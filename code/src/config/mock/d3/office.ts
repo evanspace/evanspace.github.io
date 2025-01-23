@@ -379,7 +379,7 @@ JsonList.push(...lightSwitchs)
 const companyDoors = [
   {
     name: '公司大门',
-    type: 'DUBLE_HORIZONTAL_SWITCH',
+    type: 'DOUBLE_HORIZONTAL_SWITCH',
     position: { x: 14.5, y: anchorHeight, z: 28.7 },
     bind: '_公司大门_grp',
     // 移动轴
@@ -387,7 +387,7 @@ const companyDoors = [
   },
   {
     name: '公司大门',
-    type: 'DUBLE_HORIZONTAL_SWITCH',
+    type: 'DOUBLE_HORIZONTAL_SWITCH',
     position: { x: 14.5, y: anchorHeight, z: 30 },
     bind: '_公司大门_grp',
     // 移动轴
@@ -396,7 +396,7 @@ const companyDoors = [
 
   {
     name: '小会议室',
-    type: 'DUBLE_HORIZONTAL_SWITCH',
+    type: 'DOUBLE_HORIZONTAL_SWITCH',
     position: { x: -10.2, y: anchorHeight, z: 29.5 },
     bind: '_小会议室-门_grp',
     // 移动轴
@@ -404,7 +404,7 @@ const companyDoors = [
   },
   {
     name: '小会议室',
-    type: 'DUBLE_HORIZONTAL_SWITCH',
+    type: 'DOUBLE_HORIZONTAL_SWITCH',
     position: { x: -10.2, y: anchorHeight, z: 30.5 },
     bind: '_小会议室-门_grp',
     // 移动轴
@@ -413,7 +413,7 @@ const companyDoors = [
 
   {
     name: '大会议室',
-    type: 'DUBLE_ROTATE_SWITCH',
+    type: 'DOUBLE_ROTATE_SWITCH',
     position: { x: -27.8, y: anchorHeight, z: 53.8 },
     bind: '_大会议室-门_grp',
     // 旋转轴
@@ -421,7 +421,7 @@ const companyDoors = [
   },
   {
     name: '大会议室',
-    type: 'DUBLE_ROTATE_SWITCH',
+    type: 'DOUBLE_ROTATE_SWITCH',
     position: { x: -29, y: anchorHeight, z: 53.8 },
     bind: '_大会议室-门_grp',
     // 旋转轴
@@ -491,14 +491,14 @@ const companyDoors = [
 
   {
     name: '老板办公室',
-    type: 'DUBLE_ROTATE_SWITCH',
+    type: 'DOUBLE_ROTATE_SWITCH',
     position: { x: 51, y: anchorHeight, z: 5.9 },
     bind: '_老板办公室-门_grp',
     autoClose: 0
   }
   // {
   //   name: '老板办公室',
-  //   type: 'DUBLE_ROTATE_SWITCH',
+  //   type: 'DOUBLE_ROTATE_SWITCH',
   //   position: { x: 51, y: anchorHeight, z: 4.8 },
   //   bind: '_老板办公室-门_grp',
   //   autoClose: 0
