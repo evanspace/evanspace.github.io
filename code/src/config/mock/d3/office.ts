@@ -18,7 +18,7 @@ const JsonList = [
   {
     name: '26-42',
     type: 'floor_heigh',
-    position: { x: 0, y: 0, z: 0 }
+    position: { x: 0, y: 0.3, z: 0 }
   },
 
   {
