@@ -89,7 +89,7 @@ export class DragScene extends ThreeScene.Scene {
             this.controls?.touches.ONE === THREE.TOUCH.PAN ? THREE.TOUCH.ROTATE : THREE.TOUCH.PAN
         }
       },
-      e => {
+      () => {
         this.enableSelection = false
       }
     )
