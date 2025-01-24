@@ -7,7 +7,7 @@ export const getPageOpts = () => ({
     {
       key: 'helmet',
       name: '头盔',
-      size: 0.5,
+      size: 3.4,
       url: '/oss/model/gpu/头盔.glb'
     }
   ],
