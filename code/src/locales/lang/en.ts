@@ -105,6 +105,9 @@ export default {
     parallax: 'parallax',
     slicing: 'slicing',
 
+    bloom: 'bloom',
+    selective: 'selective',
+
     device: 'device',
     floor: 'floor',
     park: 'park',

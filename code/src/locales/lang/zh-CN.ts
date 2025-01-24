@@ -105,6 +105,9 @@ export default {
     parallax: '视差',
     slicing: '切片',
 
+    bloom: '发光',
+    selective: '选择性',
+
     device: '设备',
     floor: '楼层',
     park: '园区',
