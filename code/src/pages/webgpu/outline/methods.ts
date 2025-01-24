@@ -25,7 +25,7 @@ export class OutlineScene extends ThreeScene.Scene {
   group = new THREE.Group()
 
   select: any[] = []
-  outlinePass: ReturnType<outline>
+  outlinePass: ReturnType<typeof outline>
   postProcessing: InstanceType<typeof THREE.PostProcessing>
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
