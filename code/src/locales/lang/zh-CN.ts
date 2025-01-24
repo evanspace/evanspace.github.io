@@ -107,6 +107,7 @@ export default {
 
     bloom: '发光',
     selective: '选择性',
+    emissive: '放射',
 
     device: '设备',
     floor: '楼层',

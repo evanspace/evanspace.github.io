@@ -107,6 +107,7 @@ export default {
 
     bloom: 'bloom',
     selective: 'selective',
+    emissive: 'emissive',
 
     device: 'device',
     floor: 'floor',
