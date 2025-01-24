@@ -37,7 +37,7 @@ export class EmissiveScene extends ThreeScene.Scene {
     this.addGui(bloomPass)
   }
 
-  setEnv(texture: DataTexture): void {
+  setEnv(texture: InstanceType<typeof THREE.DataTexture>) {
     this.scene.environment = texture
     this.scene.background = texture
   }
