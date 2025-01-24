@@ -1,4 +1,4 @@
 export default {
   title: 'slicing',
-  order: 80
+  order: 10
 }

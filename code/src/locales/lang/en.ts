@@ -82,6 +82,7 @@ export default {
     csg: 'CSG',
     example: 'example',
     controls: 'controls',
+    webgl: 'webgl',
     webgpu: 'webgpu',
 
     orbit: 'orbit',

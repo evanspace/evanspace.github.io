@@ -82,6 +82,7 @@ export default {
     csg: '几何构造集',
     example: '实例',
     controls: '控制器',
+    webgl: 'webgl',
     webgpu: 'webgpu',
 
     orbit: '轨道',

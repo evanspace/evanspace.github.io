@@ -1,5 +1,5 @@
 export default {
-  title: 'webgpu',
-  order: 70,
+  title: 'texture',
+  order: 30,
   noRedirect: true
 }

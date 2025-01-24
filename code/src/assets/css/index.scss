@@ -12,6 +12,13 @@
   overflow: hidden;
   position: relative;
 
+  .three-tip {
+    top: 10px;
+    left: 10px;
+    z-index: 3;
+    position: absolute;
+  }
+
   .gui-wrap {
     top: 0px; 
     right: 0px; 

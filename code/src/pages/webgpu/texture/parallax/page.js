@@ -1,4 +1,4 @@
 export default {
   title: 'parallax',
-  order: 70
+  order: 10
 }
