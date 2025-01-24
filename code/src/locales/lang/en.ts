@@ -118,6 +118,7 @@ export default {
 
     hemisphere: 'hemisphere',
     spot: 'spot',
+    rectarea: 'rectarea',
 
     simple: 'simple',
     model: 'model',
