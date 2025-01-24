@@ -108,6 +108,6 @@ export class SelectiveScene extends ThreeScene.Scene {
   }
 
   animate(): void {
-    this.postProcessing.render()
+    this.postProcessing.renderAsync()
   }
 }

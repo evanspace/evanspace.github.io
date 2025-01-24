@@ -173,6 +173,6 @@ export class OutlineScene extends ThreeScene.Scene {
   }
 
   animate() {
-    this.postProcessing.render()
+    this.postProcessing.renderAsync()
   }
 }
