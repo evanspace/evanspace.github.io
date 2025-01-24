@@ -18,7 +18,7 @@ const options: ConstructorParameters<typeof RectareaScene>[0] = {
     visible: false
   },
   camera: {
-    position: [0, 5, -15]
+    position: [0, 5, -35]
   }
 }
 let scene: InstanceType<typeof RectareaScene>
