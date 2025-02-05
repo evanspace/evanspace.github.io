@@ -77,6 +77,26 @@
         </div>
       </div>
     </el-card>
+
+    <el-card>
+      <template #header>
+        <div :class="$style.title">base 64 转换</div>
+        <el-checkbox v-model="base64.replace">去除前缀</el-checkbox>
+        <br />
+        <input type="file" @change="onBase64Change" />
+      </template>
+      <div :class="$style.content">
+        <div :class="$style.item">
+          <div :class="$style.desc">结果：</div>
+          <el-input
+            type="textarea"
+            placeholder="转换结果"
+            v-model="base64.result"
+            :rows="4"
+          ></el-input>
+        </div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -132,11 +152,32 @@ const onJsonSerialize = () => {
         2
       )
       jsonSerialize.result = result
+      copy(result)
     } catch (er) {
       console.log(er)
       jsonSerialize.result = 'Json 字符串格式不正确！'
     }
   }, 100)
+}
+
+// base64 转换
+const base64 = reactive({
+  result: '',
+  replace: false
+})
+const onBase64Change = e => {
+  const file = e.target.files[0]
+  console.log(file)
+
+  const reader = new FileReader()
+
+  reader.onload = e => {
+    let result = e.target?.result as string
+    if (base64.replace) result = result.split(',')[1]
+    base64.result = result
+    copy(result)
+  }
+  reader.readAsDataURL(file)
 }
 </script>
 
