@@ -9,7 +9,7 @@ export const getPageOpts = (): {} & Omit<
   devEnv,
   baseUrl: base,
   bgColor: '',
-  skyCode: '221',
+  skyCode: '101',
   render: {
     alpha: true,
     preserveDrawingBuffer: true

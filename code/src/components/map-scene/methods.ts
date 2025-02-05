@@ -483,6 +483,7 @@ export class MapThreeScene extends ThreeScene.Scene {
   // 柱状
   initMapBar(citys: any[], labelRender: Function) {
     if (!this.config.mapBar) return
+    console.log(this.mapGroup)
     // 清除柱状
     if (!this.mapGroup) return
     this.clearMapBar()

@@ -42,6 +42,7 @@ const containerRef = ref()
 // 加载完成
 const emits = defineEmits<{
   init: [scene: InstanceType<typeof MapThreeScene>]
+  'change-map': []
   click: [e: import('./index').Scatter]
 }>()
 
@@ -59,6 +60,7 @@ watch(
   json => {
     if (json) {
       scene?.initMap(transformGeoJSON(json))
+      emits('change-map')
     }
   }
 )

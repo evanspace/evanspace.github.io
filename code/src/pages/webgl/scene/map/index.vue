@@ -29,6 +29,7 @@
       :bar-label-render="barLabelRender"
       @init="onInit"
       @click="onMapClick"
+      @change-map="queryMap"
     >
       <template #dialog="{ data }">
         <div :class="$style['dialog-view']">
@@ -69,7 +70,7 @@ import { getPageOpts } from './data'
 import { numConverter } from '@/common/utils/reckon'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks } from 'three-scene/build/three-scene.module'
+import { Hooks } from 'three-scene'
 
 const { load } = Hooks.useFileLoader()
 
@@ -123,14 +124,12 @@ const barLabelRender = item => {
 const queryMap = () => {
   request.getMap().then(res => {
     pageOpts.flywire = res.lines
-    pageOpts.barList = res.citys
     pageOpts.scatters = res.projects
+    pageOpts.barList = res.citys
   })
 }
 
-onMounted(() => {
-  queryMap()
-})
+onMounted(() => {})
 </script>
 
 <style lang="scss" module>
