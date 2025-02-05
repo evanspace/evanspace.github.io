@@ -557,7 +557,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
   addEvnGui() {
     const gui = this.gui
     const option = {
-      bgCode: '221',
+      bgCode: '101',
       hdr: 'skidpan_2k',
       color1: 0xffffff,
       color2: 0xffffff
@@ -629,7 +629,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       .add(option, 'bgCode', skys)
       .name('背景')
       .onChange(e => {
-        backgroundLoad(this, e, e == '227' ? 'jpg' : e === '228' ? 'png' : void 0)
+        backgroundLoad(this, e, e === '601' ? 'png' : void 0)
       })
     group
       .add(

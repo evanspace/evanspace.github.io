@@ -17,8 +17,8 @@ export class NewThreeScene extends ThreeScene.Scene {
   }
 
   addModel() {
-    const ground = this.createGround()
-    this.addObject(ground)
+    // const ground = this.createGround()
+    // this.addObject(ground)
 
     const gap = 20
     // 球形几何体

@@ -8,7 +8,7 @@
 import { NewThreeScene } from './methods'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks } from 'three-scene/build/three-scene.module'
+import { Hooks } from 'three-scene'
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof NewThreeScene>[0] = {
@@ -21,7 +21,7 @@ let scene: InstanceType<typeof NewThreeScene>
 const { backgroundLoad } = Hooks.useBackground()
 
 const initPage = () => {
-  backgroundLoad(scene, '226')
+  backgroundLoad(scene, '501')
 }
 
 onMounted(() => {
