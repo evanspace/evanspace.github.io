@@ -20,7 +20,7 @@ export class ParallaxScene extends ThreeScene.Scene {
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
-    backgroundLoad(this.scene, '226')
+    backgroundLoad(this.scene, '501')
     // @ts-ignore
     this.scene.environment = this.scene.background
 

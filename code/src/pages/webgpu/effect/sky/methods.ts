@@ -139,15 +139,15 @@ export class SkyScene extends ThreeScene.Scene {
       .setMaxRange(16)
       // .setPath('/oss/img/sky/228/')
       // .loadCubemapAsync(['posX.png', 'posY.png', 'posZ.png', 'negX.png', 'negY.png', 'negZ.png'])
-      .loadCubemap(getBgGroup('228', 'png'))
-    cube1Texture = await new THREE.CubeTextureLoader().loadAsync(getBgGroup('225', 'jpeg'))
+      .loadCubemap(getBgGroup('601', 'png'))
+    cube1Texture = await new THREE.CubeTextureLoader().loadAsync(getBgGroup('104'))
     cube1Texture.generateMipmaps = true
     cube1Texture.minFilter = THREE.LinearMipmapLinearFilter
     this.cube1Texture = cube1Texture
 
     // .setPath('/oss/img/sky/221/')
     // .loadAsync(['posX.jpeg', 'posY.jpeg', 'posZ.jpeg', 'negX.jpeg', 'negY.jpeg', 'negZ.jpeg'])
-    const cube2Texture = await new THREE.CubeTextureLoader().loadAsync(getBgGroup('221', 'jpeg'))
+    const cube2Texture = await new THREE.CubeTextureLoader().loadAsync(getBgGroup('101'))
     cube2Texture.generateMipmaps = true
     cube2Texture.minFilter = THREE.LinearMipmapLinearFilter
     this.cube2Texture = cube2Texture
