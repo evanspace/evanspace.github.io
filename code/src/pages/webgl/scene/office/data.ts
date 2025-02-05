@@ -37,7 +37,7 @@ export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
   bgColor: '',
-  skyCode: '221',
+  skyCode: '101',
   env: '/oss/textures/hdr/6.hdr',
 
   config: {},

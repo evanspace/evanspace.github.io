@@ -3,9 +3,7 @@ import * as ThreeScene from 'three-scene'
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-import { useBackground } from '@/hooks/background'
-
-const { backgroundLoad } = useBackground()
+const { backgroundLoad } = ThreeScene.Hooks.useBackground()
 
 export class NewThreeScene extends ThreeScene.Scene {
   clock: InstanceType<typeof THREE.Clock>
@@ -75,7 +73,7 @@ export class NewThreeScene extends ThreeScene.Scene {
     boxMesh.castShadow = true
     this.addObject(boxMesh)
 
-    backgroundLoad(this.scene, '217')
+    backgroundLoad(this.scene, '102')
   }
 
   modelAnimate() {

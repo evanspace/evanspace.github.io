@@ -18,7 +18,7 @@ export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
   bgColor: '',
-  skyCode: '221',
+  skyCode: '104',
   env: '/oss/textures/hdr/6.hdr',
 
   // dot 点位类型值
