@@ -3,7 +3,7 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject(true)">随机更新</div>
-      <div class="btn" @click="() => scene.toggleSight()">人物视角切换</div>
+      <div class="btn" @click="() => scene?.toggleSight()">人物视角切换</div>
       <div class="btn" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
       <div class="btn" @click="() => changeBackground(scene as any)">切换背景</div>
@@ -71,7 +71,7 @@ import {
 } from './methods'
 import * as request from './request'
 
-import { Hooks, Utils } from 'three-scene/build/three-scene.module'
+import { Hooks, Utils } from 'three-scene'
 import { useResize } from '@/hooks/scene-resize'
 import { colors } from './colors'
 
@@ -120,7 +120,7 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   env: '/oss/textures/hdr/3.hdr',
   controls: {
     maxDistance: 1500,
-    maxPolarAngle: Math.PI * 0.45,
+    // maxPolarAngle: Math.PI * 0.45,
     screenSpacePanning: !false,
     enablePan: !false
   },
