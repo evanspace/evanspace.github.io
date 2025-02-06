@@ -655,7 +655,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 添加空调风材质
   addAirWindMaterial(names: string[]) {
     windTexture.wrapS = THREE.RepeatWrapping
-    windTexture.repeat.x = 3
+    windTexture.repeat.x = 1
     const material = new THREE.MeshPhongMaterial({
       color: 0xc6deff,
       map: windTexture,

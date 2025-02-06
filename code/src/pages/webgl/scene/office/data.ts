@@ -92,7 +92,7 @@ export const getPageOpts = animateBack => ({
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 41,
+      size: 44.9,
       url: '/二十五楼.glb'
     },
 
