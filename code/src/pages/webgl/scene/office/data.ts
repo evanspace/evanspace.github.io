@@ -61,19 +61,19 @@ export const getPageOpts = animateBack => ({
     DOUBLE_ROTATE_SWITCH,
     CURTAIN_SWITCH
   ],
-  animationModelType: [CONPANT_FLOOR, CURTAIN],
+  animationModelType: [MAIN_SCENE, CONPANT_FLOOR, CURTAIN],
 
   models: [
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 18.6,
+      size: 26.6,
       url: '/公司总部.glb'
     },
     {
       key: 'floor_low',
       name: '低层',
-      size: 10.7,
+      size: 6.1,
       url: '/低层.glb'
     },
     {
@@ -85,14 +85,14 @@ export const getPageOpts = animateBack => ({
     {
       key: 'floor_heigh',
       name: '高层',
-      size: 8.3,
+      size: 2.7,
       url: '/高层.glb'
     },
 
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 44.9,
+      size: 40.7,
       url: '/二十五楼.glb'
     },
 
@@ -259,7 +259,7 @@ export const getPageOpts = animateBack => ({
 })
 
 export const getFloorOpts = () => ({
-  active: 1,
+  active: 2,
   show: false,
   targetName: '',
   list: [
