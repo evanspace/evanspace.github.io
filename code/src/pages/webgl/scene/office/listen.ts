@@ -141,6 +141,9 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('AIR:MAIN', (isOpen?) => {
     scene?.toggleAir({ data: { bind: '_空调风_grp' } }, isOpen)
   })
+  Emitter.on('AIR:ODD', (object, isOpen?) => {
+    scene?.toggleAir(object, isOpen)
+  })
 
   // 场景坐标
   Emitter.on('SCENE:POS', () => scene?.getPosition())

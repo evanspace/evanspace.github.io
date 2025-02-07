@@ -138,7 +138,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 68
+    version: 71
   }
 })
 
@@ -150,7 +150,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   controls: {
     visible: !false,
     enableDamping: true,
-    dampingFactor: 0.48,
+    dampingFactor: 0.25,
     maxPolarAngle: Math.PI * 0.48,
     // enablePan: false,
     screenSpacePanning: false,
@@ -522,7 +522,7 @@ const onClickLeft = object => {
       onDialogInput()
       break
     case AIR_SWITCH: // 空调
-      Emitter.emit('AIR:MAIN')
+      Emitter.emit('AIR:ODD', object)
       break
   }
 }

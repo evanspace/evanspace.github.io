@@ -64,6 +64,8 @@ const eventNames = [
 
   // 空调
   'AIR:MAIN',
+  // 单个空调
+  'AIR:ODD',
 
   // 场景坐标
   'SCENE:POS'

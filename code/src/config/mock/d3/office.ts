@@ -372,6 +372,37 @@ const lightSwitchs = [
     position: { x: 13.3, y: 188, z: 49 },
     // bind: '平面545'
     bind: '_空调风_grp'
+  },
+
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: -41.1, y: 188, z: 31.8 },
+    bind: '陈总办公室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: -41.1, y: 188, z: 11.4 },
+    bind: '逄总办公室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: -41.1, y: 188, z: -9 },
+    bind: '财务室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: -46.1, y: 188, z: -14 },
+    bind: 'CFO办公室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: 56.8, y: 188, z: 1.8 },
+    bind: '_老板办公室_grp'
   }
 ]
 JsonList.push(...lightSwitchs)
