@@ -18,6 +18,8 @@
       <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
       <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', true)">前台灯开</div>
       <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', false)">前台灯关</div>
+      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', true)">窗帘开</div>
+      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', false)">窗帘关</div>
       <div
         class="item"
         @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
@@ -511,7 +513,7 @@ const onClickLeft = object => {
       scene.dubleRotateDoor(object)
       break
     case CURTAIN_SWITCH: // 窗帘动画
-      scene.toggleCurtain(object)
+      Emitter.emit('CURTAIN:TOGGLE')
       break
     case VIDEO_SWITCH: // 视频播放
       scene.videoPlay(object)
@@ -520,7 +522,7 @@ const onClickLeft = object => {
       onDialogInput()
       break
     case AIR_SWITCH: // 空调
-      scene.toggleAir(object)
+      Emitter.emit('AIR:MAIN')
       break
   }
 }

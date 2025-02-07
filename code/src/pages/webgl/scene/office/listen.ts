@@ -105,8 +105,8 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('LIGHT:AUTO', (object, isOpen, max) => scene?.lightSwitch(object, isOpen, max))
 
   // 窗帘
-  Emitter.on('CURTAIN:TOGGLE', () => {
-    scene?.toggleCurtain({ data: { bind: '_GROUP_013_grp' } })
+  Emitter.on('CURTAIN:TOGGLE', (isOpen?) => {
+    scene?.toggleCurtain({ data: { bind: '_GROUP_013_grp' } }, isOpen)
   })
 
   // 公司大门
@@ -138,7 +138,7 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   })
 
   // 空调
-  Emitter.on('AIR:MAIN', isOpen => {
+  Emitter.on('AIR:MAIN', (isOpen?) => {
     scene?.toggleAir({ data: { bind: '_空调风_grp' } }, isOpen)
   })
 

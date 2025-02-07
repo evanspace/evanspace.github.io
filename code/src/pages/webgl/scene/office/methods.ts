@@ -365,7 +365,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.controls.maxDistance = isCharacter ? (type == 3 ? 10 : 0) : 800
     this.controls.screenSpacePanning = !isCharacter
     this.controls.enablePan = !isCharacter
-    this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
+    // this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
     if (!this.character) return
     const position = this.character.position
@@ -564,12 +564,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 窗帘动画
-  toggleCurtain(object) {
+  toggleCurtain(object, isOpen?) {
     const dobj = this.animateModels.find(el => el.name === object.data?.bind)
     console.log(dobj)
     if (!dobj) return
 
-    dobj.__open__ = !dobj.__open__
+    dobj.__open__ = isOpen ?? !dobj.__open__
 
     const { __action__, __mixer__ } = dobj
     Object.keys(__action__).forEach(key => {
@@ -681,7 +681,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const dobj = this.scene.getObjectByName(object.data.bind) as any
     console.log(dobj)
     if (!dobj) return
-    dobj.__open__ = isOpen != void 0 ? isOpen : !dobj.__open__
+    dobj.__open__ = isOpen ?? !dobj.__open__
     dobj.visible = dobj.__open__
   }
 
@@ -850,6 +850,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.judgeAndStopRoam()
     if (!this.controls) return
     this.controls.maxDistance = 1500
+    this.controls.maxPolarAngle = Math.PI * 0.48
     super.controlReset()
   }
 
