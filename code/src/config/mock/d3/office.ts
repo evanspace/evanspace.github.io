@@ -401,6 +401,18 @@ const lightSwitchs = [
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
+    position: { x: -31.5, y: 188, z: 58.6 },
+    bind: '大会议室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
+    position: { x: 61.1, y: 188, z: 24.7 },
+    bind: '大洽谈室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
     position: { x: 56.8, y: 188, z: 1.8 },
     bind: '_老板办公室_grp'
   }
