@@ -66,6 +66,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   character?: InstanceType<typeof THREE.Group> & {
     __runing__?: boolean
   }
+  characterHeight = 3.5
 
   // 当前视角
   currentSight: string
@@ -371,7 +372,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const position = this.character.position
 
     // 向量
-    const up = new THREE.Vector3(0, 2.5, 0)
+    const up = new THREE.Vector3(0, this.characterHeight, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
@@ -416,7 +417,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, 2.5, 0)))
+    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.characterHeight, 0)))
     this.camera.lookAt(this.controls.target)
   }
 
