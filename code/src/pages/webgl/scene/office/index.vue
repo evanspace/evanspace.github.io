@@ -423,7 +423,7 @@ const createCharacter = () => {
     }
   })
   const move = {
-    x: 18.6,
+    x: 14.4,
     y: 184.6,
     z: 37.6
   }
