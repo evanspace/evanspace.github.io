@@ -177,7 +177,7 @@ const floorItems = computed(() => {
 const welcomKey = 'welcom.key'
 const { options: dialog } = useDialog({
   title: '编辑欢迎词',
-  content: getStorage(welcomKey) || '',
+  content: getStorage(welcomKey) || '中碳能源',
   errMessage: '请输入欢迎词！'
 })
 
