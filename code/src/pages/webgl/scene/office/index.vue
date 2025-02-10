@@ -161,6 +161,9 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     fov: 45
   },
   directionalLight: {},
+  ambientLight: {
+    intensity: 0.1
+  },
   axes: {
     visible: true,
     size: 1000

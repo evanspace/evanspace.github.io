@@ -206,6 +206,9 @@ export const getPageOpts = animateBack => ({
     if (item.mapUrl) {
       item.mapUrl = '/oss/textures/office' + item.mapUrl
     }
+    if (!item.range) {
+      item.range = { x: 0.8, y: 0.8 } as any
+    }
     return item as import('three-scene/types/model').ModelItem
   }),
 
