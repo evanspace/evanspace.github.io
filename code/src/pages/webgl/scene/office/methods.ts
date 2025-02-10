@@ -383,6 +383,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     if (!this.character) return
     const position = this.character.position
 
+    this.toggleCharacterView()
+
     // 向量
     const up = new THREE.Vector3(0, this.characterSightHeight, 0)
     /// 切换到人物视角，暂存控制参数
@@ -418,6 +420,15 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 清楚人物视角状态
   clearCharacterSight() {
     this.currentSight = sightMap.full
+    this.toggleCharacterView()
+  }
+
+  // 切换人物界面效果
+  toggleCharacterView() {
+    const dom = this.container.parentNode?.querySelector('.character-sight') as HTMLDivElement
+    if (!dom) return
+    const isCharacter = this.currentSight === sightMap.npc
+    dom.style.display = isCharacter ? 'block' : 'none'
   }
 
   // 人物加速

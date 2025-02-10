@@ -36,6 +36,8 @@
 
     <canvas :class="$style['canvas-texture']" ref="canvasTextureRef"></canvas>
 
+    <t-first-person />
+
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
     <!-- 楼层选择 -->
@@ -73,6 +75,7 @@
 <script lang="ts" setup>
 import tDialog from './edit-dialog.vue'
 import tLoading from '@/components/loading/index.vue'
+import tFirstPerson from './first-person.vue'
 
 import {
   ROBOT,
