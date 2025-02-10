@@ -797,7 +797,7 @@ export class ParkThreeScene extends ThreeScene.Scene {
 
     let s = e.timeStamp - this.pointer.tsp
     // 判断是否未点击
-    const isClick = s < DEFAULTCONFIG.rightClickBackDiffTime
+    const isClick = s < DEFAULTCONFIG.clickIntervalTime
     if (e.button == 2) {
       // console.log('你点了右键')
       if (isClick && typeof this.extend?.onClickRight === 'function') this.extend.onClickRight(e)

@@ -600,7 +600,7 @@ export class MapThreeScene extends ThreeScene.Scene {
     this.pointer.isClick = false
     let s = e.timeStamp - this.pointer.tsp
     // 判断是否未点击
-    const isClick = s < this.config.rightClickBackDiffTime
+    const isClick = s < this.config.clickIntervalTime
     if (e.button == 2) {
       // 右键
     } else if (e.button == 0) {

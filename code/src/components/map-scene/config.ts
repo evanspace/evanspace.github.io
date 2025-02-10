@@ -5,8 +5,8 @@ export default {
   scale: 40,
   // 波纹板半径
   plateRadius: 200,
-  // 右键间隔时间
-  rightClickBackDiffTime: 100,
+  // 判断点击间隔时间
+  clickIntervalTime: 100,
 
   // 区域 label
   areaLabel: false,

@@ -1,4 +1,13 @@
-import type { Fog, Render, Camera, Controls, Grid, Axes, Cruise, DirectionalLight } from '../../types/index'
+import type {
+  Fog,
+  Render,
+  Camera,
+  Controls,
+  Grid,
+  Axes,
+  Cruise,
+  DirectionalLight
+} from '../../types/index'
 
 export declare interface Color {
   // 主色（地图面）
@@ -54,8 +63,8 @@ export declare interface Config {
   scale: number
   // 波纹板半径
   plateRadius: number
-  // 右键间隔时间
-  rightClickBackDiffTime: number
+  // 判断点击间隔时间
+  clickIntervalTime: number
 
   // 区域 label
   areaLabel: boolean

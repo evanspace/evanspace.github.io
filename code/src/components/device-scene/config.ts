@@ -66,8 +66,8 @@ export default {
 
   // 模型类型
   keys: KEYS,
-  // 右键点击返回时间差
-  rightClickBackDiffTime: 300,
+  // 判断点击间隔时间
+  clickIntervalTime: 300,
 
   meshKey: {
     body: '__BODY_',
