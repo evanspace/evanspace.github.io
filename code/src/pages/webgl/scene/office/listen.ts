@@ -99,6 +99,10 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('LIGHT:LCR', (isOpen, max) => {
     scene?.lightSwitch({ data: { bind: '大会议室照明灯' } }, isOpen, max)
   })
+  // 吊顶面光灯
+  Emitter.on('LIGHT:SCPL', isOpen => {
+    scene?.lightSwitch({ data: { bind: '吊顶面光灯' } }, isOpen)
+  })
 
   // 关灯
   Emitter.on('LIGHT:CLOSE', (isOpen?) => scene?.closeLightGroup(isOpen))

@@ -201,31 +201,31 @@ JsonList.push(...tages)
 
 // 灯光
 const lights = [
-  {
-    name: '前台聚光灯',
-    type: 'spot_light_floor_2',
-    position: { x: 17.7, y: 191, z: 55.7 }
-  },
-  {
-    name: '前台聚光灯',
-    type: 'spot_light_floor_2',
-    position: { x: 14.1, y: 191, z: 55.7 }
-  },
-  {
-    name: '前台聚光灯',
-    type: 'spot_light_floor_2',
-    position: { x: 22, y: 191, z: 61 }
-  },
-  {
-    name: '前台聚光灯',
-    type: 'spot_light_floor_2',
-    position: { x: 32, y: 191, z: 61 }
-  },
-  {
-    name: '前台聚光灯',
-    type: 'spot_light_floor_2',
-    position: { x: 42, y: 191, z: 61 }
-  },
+  // {
+  //   name: '前台聚光灯',
+  //   type: 'spot_light_floor_2',
+  //   position: { x: 17.7, y: 191, z: 55.7 }
+  // },
+  // {
+  //   name: '前台聚光灯',
+  //   type: 'spot_light_floor_2',
+  //   position: { x: 14.1, y: 191, z: 55.7 }
+  // },
+  // {
+  //   name: '前台聚光灯',
+  //   type: 'spot_light_floor_2',
+  //   position: { x: 22, y: 191, z: 61 }
+  // },
+  // {
+  //   name: '前台聚光灯',
+  //   type: 'spot_light_floor_2',
+  //   position: { x: 32, y: 191, z: 61 }
+  // },
+  // {
+  //   name: '前台聚光灯',
+  //   type: 'spot_light_floor_2',
+  //   position: { x: 42, y: 191, z: 61 }
+  // },
 
   // 主机灯
   {
@@ -279,10 +279,17 @@ const lights = [
     name: '大会议室照明灯',
     type: 'spot_light_floor_2',
     position: { x: -42, y: 190.7, z: 50 }
+  },
+
+  {
+    name: '吊顶面光灯',
+    type: 'RectAreaLight_1',
+    position: { x: 7.7, y: 192.9, z: -2.1 },
+    rotation: { x: -90, y: 0, z: 0 }
   }
 ]
 
-let len = 1,
+let len = 0,
   x = -46 + (6 - len) * 10
 // 区域A-通道
 for (let i = 0; i < len; i++) {
@@ -329,24 +336,24 @@ const anchorHeight = 188
 
 // 灯关-锚点
 const lightSwitchs = [
-  {
-    name: '前台灯',
-    type: 'LIGHT_SWITCH',
-    position: { x: 14.7, y: anchorHeight, z: 56 },
-    bind: '前台聚光灯'
-  },
-  {
-    name: '过道灯',
-    type: 'LIGHT_SWITCH',
-    position: { x: 5.9, y: anchorHeight, z: 34.5 },
-    bind: '区域A'
-  },
-  {
-    name: '人事区域',
-    type: 'LIGHT_SWITCH',
-    position: { x: -39.7, y: anchorHeight, z: 26.8 },
-    bind: '区域B'
-  },
+  // {
+  //   name: '前台灯',
+  //   type: 'LIGHT_SWITCH',
+  //   position: { x: 14.7, y: anchorHeight, z: 56 },
+  //   bind: '前台聚光灯'
+  // },
+  // {
+  //   name: '过道灯',
+  //   type: 'LIGHT_SWITCH',
+  //   position: { x: 5.9, y: anchorHeight, z: 34.5 },
+  //   bind: '区域A'
+  // },
+  // {
+  //   name: '人事区域',
+  //   type: 'LIGHT_SWITCH',
+  //   position: { x: -39.7, y: anchorHeight, z: 26.8 },
+  //   bind: '区域B'
+  // },
   {
     name: '主机照明灯',
     type: 'LIGHT_SWITCH',
@@ -361,10 +368,17 @@ const lightSwitchs = [
   },
 
   {
-    name: '灯光总开关',
-    type: 'LIGHT_MAIN_SWITCH',
-    position: { x: 12, y: 188, z: 49 }
+    name: '吊顶面光灯开关',
+    type: 'LIGHT_SWITCH',
+    // position: { x: 14.7, y: 188, z: 49 },
+    position: { x: 12, y: 188, z: 49 },
+    bind: '吊顶面光灯'
   },
+  // {
+  //   name: '灯光总开关',
+  //   type: 'LIGHT_MAIN_SWITCH',
+  //   position: { x: 12, y: 188, z: 49 }
+  // },
 
   {
     name: '空调开关',

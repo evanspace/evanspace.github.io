@@ -181,6 +181,17 @@ export const getPageOpts = animateBack => ({
       color: 0x00e0ff,
       distance: 10
     },
+
+    {
+      key: 'RectAreaLight_1',
+      type: 'planelight',
+      name: '面光灯',
+      intensity: 1,
+      color: 0xffffff,
+      width: 110,
+      height: 110
+    },
+
     {
       key: LIGHT_SWITCH,
       name: '开关灯',

@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
+import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
 
 import * as ThreeScene from 'three-scene'
 
@@ -233,7 +234,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 关闭所有灯光
   closeLightGroup(isOpen: boolean = false) {
     this.lightGroup?.children.forEach((el: any) => {
-      if (el.isSpotLight) {
+      if (el.isSpotLight || el.isRectAreaLight) {
         el.visible = isOpen
       }
     })
@@ -245,14 +246,21 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       obj.name = item.name
       const pos = item.position || { x: 0, y: 0, z: 0 }
       const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
-      obj.target.position.set(to.x, to.y, to.z)
+      if (!obj.isRectAreaLight) {
+        obj.target.position.set(to.x, to.y, to.z)
+      }
       // 开灯
       obj.visible = true
       this.lightGroup.add(obj)
       this.lightGroup.add(obj.target)
       if (hasHelper) {
-        const helper = new THREE.SpotLightHelper(obj, obj.color)
-        this.lightGroup.add(helper)
+        if (obj.isRectAreaLight) {
+          const rectLightHelper = new RectAreaLightHelper(obj)
+          this.lightGroup.add(rectLightHelper)
+        } else {
+          const helper = new THREE.SpotLightHelper(obj, obj.color)
+          this.lightGroup.add(helper)
+        }
       }
     }
   }

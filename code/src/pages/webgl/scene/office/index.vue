@@ -16,8 +16,8 @@
       <div class="item" @click="() => Emitter.emit('AIR:MAIN', true)">空调开</div>
       <div class="item" @click="() => Emitter.emit('AIR:MAIN', false)">空调关</div>
       <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', true)">前台灯开</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:RECCEPTION', false)">前台灯关</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:SCPL', true)">吊顶灯开</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:SCPL', false)">吊顶灯关</div>
       <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', true)">窗帘开</div>
       <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', false)">窗帘关</div>
       <div
@@ -332,8 +332,8 @@ const loopLoadObject = async (item: ObjectItem) => {
     scene.addAnchor(model)
   }
 
-  // 聚光灯
-  else if (model.isSpotLight) {
+  // 聚光灯 / 面光灯
+  else if (model.isSpotLight || model.isRectAreaLight) {
     scene.addLight(item, model, true)
   } else {
     scene.addBuilding(model)

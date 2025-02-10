@@ -37,6 +37,8 @@ const eventNames = [
   'LIGHT:HOST',
   // 大会议室
   'LIGHT:LCR',
+  // 吊顶面光灯
+  'LIGHT:SCPL',
 
   // 关灯
   'LIGHT:CLOSE',
