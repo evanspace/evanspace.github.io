@@ -37,7 +37,7 @@ const items = [
 }
 
 .tip {
-  top: 50px;
+  top: 11.5%;
   width: 100%;
   display: flex;
   position: absolute;

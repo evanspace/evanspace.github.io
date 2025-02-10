@@ -842,6 +842,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     if (!this.isCameraMove(to) && this.controls) {
       this.judgeAndStopRoam()
+      this.controls.enablePan = true
       this.controls.maxDistance = 5
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
@@ -875,6 +876,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.judgeAndStopRoam()
     this.clearCharacterSight()
     if (!this.controls) return
+    this.controls.enablePan = true
     this.controls.maxDistance = 1500
     this.controls.maxPolarAngle = Math.PI * 0.48
     super.controlReset()
