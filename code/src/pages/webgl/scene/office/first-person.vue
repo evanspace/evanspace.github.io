@@ -29,7 +29,7 @@ const items = [
   left: 0;
   width: 100%;
   height: 100%;
-  // display: none;
+  display: none;
   position: absolute;
   transition: all 0.5s;
   background: radial-gradient(transparent 75%, var(--bg-color));
