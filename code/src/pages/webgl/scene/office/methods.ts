@@ -338,6 +338,14 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         if (keys.includes(e.keyCode)) {
           runging.play()
         }
+        if (this.isCharacterSight()) {
+          if (keyboardPressed('X')) {
+            this.characterAccelerate(1)
+          }
+          if (keyboardPressed('Z')) {
+            this.characterAccelerate(-1)
+          }
+        }
       },
       e => {
         if (model.__runing__) return
@@ -377,7 +385,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
-        message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向！',
+        message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向，X 加速，Z 减速!',
         duration: 15 * 1000
       })
       this.historyTarget = this.controls.target.clone()
@@ -934,10 +942,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     // 人物视角
     if (this.isCharacterSight() && !this.character?.__runing__) {
+      const factor = 1 + this.moveFactor / 5
       // 移动速度
-      const steep = 5 * delta
+      const steep = 5 * delta * factor
       // 旋转速度
-      const angle = Math.PI * 0.2 * delta
+      const angle = Math.PI * 0.2 * delta * factor
       const target = this.character
       if (!target) return
       const isS = keyboardPressed('S')
