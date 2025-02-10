@@ -66,7 +66,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   character?: InstanceType<typeof THREE.Group> & {
     __runing__?: boolean
   }
-  characterHeight = 3.5
+  characterSightHeight = DEFAULTCONFIG.characterSightHeight
 
   // 当前视角
   currentSight: string
@@ -84,7 +84,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   canvasTextures: any[] = []
 
   // 移动系数
-  moveFactor: number = 1
+  moveFactor = DEFAULTCONFIG.moveFactor
+
+  // 碰撞间距
+  collisionSpace = DEFAULTCONFIG.collisionSpace
 
   // 围栏
   fence?: InstanceType<typeof THREE.Group>
@@ -381,7 +384,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const position = this.character.position
 
     // 向量
-    const up = new THREE.Vector3(0, this.characterHeight, 0)
+    const up = new THREE.Vector3(0, this.characterSightHeight, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
@@ -431,7 +434,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.characterHeight, 0)))
+    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.characterSightHeight, 0)))
     this.camera.lookAt(this.controls.target)
   }
 
@@ -761,7 +764,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const intersect = intersects[0]
 
       // 于目标距离
-      if (intersect.distance < 0.3) {
+      if (intersect.distance < this.collisionSpace) {
         ElMessage.warning({
           message: '撞到了！',
           grouping: true
