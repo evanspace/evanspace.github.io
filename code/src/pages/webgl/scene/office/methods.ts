@@ -893,13 +893,14 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const points = this.extend.roamPoints || []
     if (points.length == 0) return
     if (!this.controls) return
-    this.controls.maxDistance = 20
+    this.controls.maxDistance = 5
     createRoam({
       points,
       segment: 6,
-      tension: 0.2,
-      speed: 4,
-      close: false
+      tension: 0,
+      speed: 2,
+      close: false,
+      factor: 1
     })
     roamPlay()
   }
