@@ -138,7 +138,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 71
+    version: 72
   }
 })
 
@@ -157,7 +157,8 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     maxDistance: 1500
   },
   camera: {
-    near: 3
+    near: 3,
+    fov: 45
   },
   directionalLight: {},
   axes: {
@@ -347,6 +348,9 @@ const assemblyScenario = async () => {
   await nextTick()
   await initDevices()
 
+  // 漫游
+  scene.setRoamPoint(pageOpts.roamPoints)
+
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
@@ -372,7 +376,7 @@ const cameraPositionList = computed(() =>
 const load = () => {
   loadModels(pageOpts.models, () => {
     request.getConfig().then(async res => {
-      let json = {}
+      let json: any = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson
       } else if (typeof res.ConfigJson == 'string') {
@@ -384,6 +388,8 @@ const load = () => {
       Object.keys(json).forEach(key => {
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
+      pageOpts.cruise.points = json.cruise || []
+      pageOpts.roamPoints = json.roamPoints || []
       await assemblyScenario()
       createRoblt()
       createCharacter()

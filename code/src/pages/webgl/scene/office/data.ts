@@ -26,13 +26,6 @@ export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
 
 export const ROAM_POINT_UP = 186 // y 漫游轴向量
 
-const cruisePoints: number[][] = [
-  [-120, CRUISE_POINT_UP, 101],
-  [139, CRUISE_POINT_UP, 101],
-  [139, CRUISE_POINT_UP, -122],
-  [-120, CRUISE_POINT_UP, -122]
-]
-
 export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
@@ -227,35 +220,14 @@ export const getPageOpts = animateBack => ({
     tension: 0.01,
     speed: 10,
     mapSpeed: 0.1,
-    points: cruisePoints,
+    points: [],
     close: true,
     offset: 5.2,
     animateBack: animateBack
   },
 
   // 漫游坐标
-  roamPoints: [
-    [1.7, -1.4, 51.3],
-    [80.5, 72.6, 75],
-    [87, 160, -72.4],
-    [13.2, 186, -72.4],
-    [13.2, 186, -61.3],
-    [52, 186, -28.2],
-    [52, 186, 42.7],
-    [-36.4, 186, 40],
-    [-38.2, 186, -26.8]
-
-    // [-28.3, 5.8, 103.9],
-    // [15.8, 186, 49.1],
-    // [11.7, 184, 60.2],
-    // [-31, 187.6, 49.7],
-    // [56.6, 185.5, -15.6]
-
-    // [-286, ROAM_POINT_UP, 257],
-    // [286, ROAM_POINT_UP, 257],
-    // [286, ROAM_POINT_UP, -600],
-    // [-286, ROAM_POINT_UP, -600]
-  ]
+  roamPoints: []
 })
 
 export const getFloorOpts = () => ({

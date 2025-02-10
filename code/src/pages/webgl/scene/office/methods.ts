@@ -285,6 +285,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     const tl = list.length
+
     list.forEach((tx, index) => {
       const i = index * tl + 1
       ctx.fillText(tx, w / 2, (h / tl / 2) * i)
@@ -399,8 +400,13 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 是否人物视角
-  isPerspectives() {
+  isCharacterSight() {
     return this.currentSight == sightMap.npc
+  }
+
+  // 清楚人物视角状态
+  clearCharacterSight() {
+    this.currentSight = sightMap.full
   }
 
   // 人物加速
@@ -806,11 +812,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       return
     }
 
-    this.judgeAndStopRoam()
-
-    if (this.isPerspectives()) {
-      this.toggleSight()
-    }
+    this.clearCharacterSight()
 
     const { to, target = object.position } = object.data
 
@@ -849,6 +851,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   controlReset() {
     this.judgeAndStopRoam()
+    this.clearCharacterSight()
     if (!this.controls) return
     this.controls.maxDistance = 1500
     this.controls.maxPolarAngle = Math.PI * 0.48
@@ -867,8 +870,14 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     return false
   }
 
+  // 设置漫游点位
+  setRoamPoint(points) {
+    this.extend.roamPoints = points
+  }
+
   // 漫游
   toggleRoam() {
+    this.clearCharacterSight()
     if (this.judgeAndStopRoam()) return
     const points = this.extend.roamPoints || []
     if (points.length == 0) return
@@ -924,7 +933,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     fenceAnimate()
 
     // 人物视角
-    if (this.isPerspectives() && !this.character?.__runing__) {
+    if (this.isCharacterSight() && !this.character?.__runing__) {
       // 移动速度
       const steep = 5 * delta
       // 旋转速度
