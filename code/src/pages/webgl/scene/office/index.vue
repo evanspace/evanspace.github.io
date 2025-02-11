@@ -4,7 +4,6 @@
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
-      <div class="btn" @click="() => changeBackground(scene as any)">切换背景</div>
 
       <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
       <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
@@ -134,7 +133,6 @@ const pageOpts = reactive(
 )
 const floorOpts = reactive(getFloorOpts())
 const tipOpts = reactive(getTipOpts())
-const { changeBackground, backgroundLoad } = Hooks.useBackground()
 const { progress, loadModels, getModel } = Hooks.useModelLoader({
   baseUrl: pageOpts.baseUrl,
   indexDB: {
@@ -163,7 +161,10 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     near: 3,
     fov: 45
   },
-  directionalLight: {},
+  directionalLight: {
+    intensity: 2,
+    light2: false
+  },
   ambientLight: {
     intensity: 0.1
   },
@@ -442,7 +443,6 @@ const createCharacter = () => {
 
 const initPage = () => {
   load()
-  backgroundLoad(scene, pageOpts.skyCode as any)
 
   onListen(scene)
 }

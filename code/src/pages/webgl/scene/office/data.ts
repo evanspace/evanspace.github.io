@@ -29,9 +29,7 @@ export const ROAM_POINT_UP = 186 // y 漫游轴向量
 export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
-  bgColor: '',
-  skyCode: '101',
-  env: '/oss/textures/hdr/6.hdr',
+  env: '/oss/textures/hdr/101.hdr',
 
   config: {},
 

@@ -93,6 +93,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 围栏
   fence?: InstanceType<typeof THREE.Group>
 
+  // 环境光
+  ambientLight = new THREE.AmbientLight()
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -121,6 +124,20 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.addDotGroup()
     this.addLightGroup()
   }
+
+  setEnv(texture) {
+    this.scene.environment = texture
+    this.scene.background = texture
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    const amb = new THREE.AmbientLight(color, intensity)
+    this.ambientLight = amb
+    console.log(this.ambientLight)
+    return amb
+  }
+
+  // 环境光打开
 
   // 添加建筑组
   addBuildingGroup() {
@@ -248,11 +265,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
       if (!obj.isRectAreaLight) {
         obj.target.position.set(to.x, to.y, to.z)
+        this.lightGroup.add(obj.target)
       }
       // 开灯
       obj.visible = true
       this.lightGroup.add(obj)
-      this.lightGroup.add(obj.target)
       if (hasHelper) {
         if (obj.isRectAreaLight) {
           const rectLightHelper = new RectAreaLightHelper(obj)
