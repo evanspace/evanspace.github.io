@@ -32,6 +32,7 @@ export default {
     preserve3d: '3D',
     transform: 'transform',
     olympicRings: 'olympic rings',
+    barrage: 'barrage',
 
     map: 'map',
     imgMap: 'img map',

@@ -32,6 +32,7 @@ export default {
     preserve3d: '3D',
     transform: '变换',
     olympicRings: '奥运五环',
+    barrage: '弹幕',
 
     map: '地图',
     imgMap: '图片地图',
