@@ -120,6 +120,7 @@ export default {
     hemisphere: '半球',
     spot: '聚光',
     rectarea: '矩形区域',
+    shadow: '阴影',
 
     simple: '简单',
     model: '模型',
