@@ -12,10 +12,17 @@ export declare interface Config {
   load: Function
 }
 
+interface Sky {
+  day: string
+  evening: string
+  night: string
+}
+
 export declare interface ExtendOptions {
   groundMeshName: string[]
   roamPoints: number[][]
   canvas: HTMLCanvasElement
+  sky: Sky
   onDblclick: (e) => void
   onClickLeft: (object?, intersct?) => void
   onClickGround: (object?, intersct?) => void

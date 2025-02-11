@@ -99,9 +99,9 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('LIGHT:LCR', (isOpen, max) => {
     scene?.lightSwitch({ data: { bind: '大会议室照明灯' } }, isOpen, max)
   })
-  // 吊顶面光灯
-  Emitter.on('LIGHT:SCPL', isOpen => {
-    scene?.lightSwitch({ data: { bind: '吊顶面光灯' } }, isOpen)
+  // 公司主灯光组
+  Emitter.on('LIGHT:CLG', isOpen => {
+    scene?.lightSwitch({ data: { bind: '公司主灯光组' } }, isOpen)
   })
 
   // 关灯
@@ -151,4 +151,11 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
 
   // 场景坐标
   Emitter.on('SCENE:POS', () => scene?.getPosition())
+
+  // 白天
+  Emitter.on('SKY:DAY', () => scene?.toByday())
+  // 傍晚
+  Emitter.on('SKY:EVENING', () => scene?.toEvening())
+  // 夜晚
+  Emitter.on('SKY:NIGHT', () => scene?.toNight())
 }

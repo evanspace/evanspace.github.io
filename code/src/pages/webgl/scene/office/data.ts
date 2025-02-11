@@ -30,6 +30,11 @@ export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
   env: '/oss/textures/hdr/101.hdr',
+  sky: {
+    day: '/oss/textures/hdr/101.hdr',
+    evening: '/oss/textures/hdr/201.hdr',
+    night: '/oss/textures/hdr/301.hdr'
+  },
 
   config: {},
 
@@ -168,27 +173,48 @@ export const getPageOpts = animateBack => ({
       type: 'spotlight',
       name: '聚光灯',
       intensity: 8,
-      color: 0x62d2a2,
+      color: 0xffffed,
       distance: 20
     },
     {
       key: 'spot_light_floor_2',
       type: 'spotlight',
       name: '聚光灯',
-      intensity: 8,
-      color: 0x00e0ff,
+      intensity: 2,
+      color: 0xffffed,
       distance: 10
     },
 
     {
-      key: 'RectAreaLight_1',
+      key: 'spot_light_floor_3',
+      type: 'spotlight',
+      name: '屏幕聚光灯',
+      intensity: 2,
+      color: 0xffffed,
+      distance: 15,
+      penumbra: 0.5,
+      castShadow: false,
+      angle: Math.PI * 0.36
+    },
+
+    {
+      key: 'rect_area_light_1',
       type: 'planelight',
       name: '面光灯',
-      intensity: 1,
+      intensity: 1.5,
       color: 0xffffff,
-      width: 110,
-      height: 110
+      width: 134,
+      height: 134
     },
+    // {
+    //   key: 'rect_area_light_2',
+    //   type: 'planelight',
+    //   name: '面光灯',
+    //   intensity: 1,
+    //   color: 0xffffff,
+    //   width: 110,
+    //   height: 10
+    // },
 
     {
       key: LIGHT_SWITCH,

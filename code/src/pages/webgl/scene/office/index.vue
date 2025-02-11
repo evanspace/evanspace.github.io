@@ -15,10 +15,14 @@
       <div class="item" @click="() => Emitter.emit('AIR:MAIN', true)">空调开</div>
       <div class="item" @click="() => Emitter.emit('AIR:MAIN', false)">空调关</div>
       <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:SCPL', true)">吊顶灯开</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:SCPL', false)">吊顶灯关</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:CLG', true)">灯组开</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:CLG', false)">灯组关</div>
       <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', true)">窗帘开</div>
       <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', false)">窗帘关</div>
+
+      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
+      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
+      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
       <div
         class="item"
         @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
@@ -162,11 +166,11 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     fov: 45
   },
   directionalLight: {
-    intensity: 2,
+    intensity: 4,
     light2: false
   },
   ambientLight: {
-    intensity: 0.1
+    intensity: 0.01
   },
   axes: {
     visible: true,
@@ -335,7 +339,7 @@ const loopLoadObject = async (item: ObjectItem) => {
 
   // 聚光灯 / 面光灯
   else if (model.isSpotLight || model.isRectAreaLight) {
-    scene.addLight(item, model, true)
+    scene.addLight(item, model, false)
   } else {
     scene.addBuilding(model)
   }
@@ -344,32 +348,35 @@ const loopLoadObject = async (item: ObjectItem) => {
 }
 
 // 组装
-const assemblyScenario = async () => {
-  // 加载进度 100
-  progress.percentage = 100
-  progress.show = false
+const assemblyScenario = () => {
+  return new Promise(async resolve => {
+    // 加载进度 100
+    progress.percentage = 100
+    progress.show = false
 
-  // 清除
-  scene.clearBuilding()
+    // 清除
+    scene.clearBuilding()
 
-  await nextTick()
-  await initDevices()
+    await nextTick()
+    await initDevices()
 
-  // 漫游
-  scene.setRoamPoint(pageOpts.roamPoints)
+    // 漫游
+    scene.setRoamPoint(pageOpts.roamPoints)
 
-  // 巡航
-  scene.setCruisePoint(pageOpts.cruise.points)
+    // 巡航
+    scene.setCruisePoint(pageOpts.cruise.points)
 
-  const to = scene.getValidTargetPosition(pageOpts.config || {})
+    const to = scene.getValidTargetPosition(pageOpts.config || {})
 
-  // 入场动画
-  // @ts-ignore
-  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
-    scene.controlSave()
-    setTimeout(() => {
-      Emitter.emit('LIGHT:CLOSE')
-    }, 100)
+    // 入场动画
+    // @ts-ignore
+    Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+      scene.controlSave()
+      setTimeout(() => {
+        Emitter.emit('LIGHT:CLOSE')
+        resolve(1)
+      }, 1000 * 3)
+    })
   })
 }
 
@@ -561,6 +568,7 @@ onMounted(() => {
       ...liftMeshNames
     ],
     roamPoints: pageOpts.roamPoints,
+    sky: pageOpts.sky,
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         onClickLeft(object)

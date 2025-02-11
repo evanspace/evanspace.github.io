@@ -37,8 +37,8 @@ const eventNames = [
   'LIGHT:HOST',
   // 大会议室
   'LIGHT:LCR',
-  // 吊顶面光灯
-  'LIGHT:SCPL',
+  // 公司主灯光组
+  'LIGHT:CLG',
 
   // 关灯
   'LIGHT:CLOSE',
@@ -70,7 +70,14 @@ const eventNames = [
   'AIR:ODD',
 
   // 场景坐标
-  'SCENE:POS'
+  'SCENE:POS',
+
+  // 白天
+  'SKY:DAY',
+  // 傍晚
+  'SKY:EVENING',
+  // 夜晚
+  'SKY:NIGHT'
 ] as const
 type EventNames = (typeof eventNames)[number]
 

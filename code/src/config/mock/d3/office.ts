@@ -282,11 +282,35 @@ const lights = [
   },
 
   {
-    name: '吊顶面光灯',
-    type: 'RectAreaLight_1',
+    name: '公司主灯光组',
+    type: 'rect_area_light_1',
     position: { x: 7.7, y: 192.9, z: -2.1 },
     rotation: { x: -90, y: 0, z: 0 }
   }
+  // {
+  //   name: '公司主灯光组',
+  //   type: 'rect_area_light_2',
+  //   position: { x: 3, y: 187, z: 63.1 },
+  //   rotation: { x: 0, y: 180, z: 0 }
+  // },
+  // {
+  //   name: '公司主灯光组',
+  //   type: 'rect_area_light_2',
+  //   position: { x: 3, y: 187, z: -66.9 },
+  //   rotation: { x: 0, y: 0, z: 0 }
+  // },
+  // {
+  //   name: '公司主灯光组',
+  //   type: 'rect_area_light_2',
+  //   position: { x: 70.9, y: 187, z: -1.7 },
+  //   rotation: { x: 0, y: -90, z: 0 }
+  // },
+  // {
+  //   name: '公司主灯光组',
+  //   type: 'rect_area_light_2',
+  //   position: { x: -55.5, y: 187, z: -1.7 },
+  //   rotation: { x: 0, y: 90, z: 0 }
+  // }
 ]
 
 let len = 0,
@@ -368,11 +392,11 @@ const lightSwitchs = [
   },
 
   {
-    name: '吊顶面光灯开关',
+    name: '灯光总开关',
     type: 'LIGHT_SWITCH',
     // position: { x: 14.7, y: 188, z: 49 },
     position: { x: 12, y: 188, z: 49 },
-    bind: '吊顶面光灯'
+    bind: '公司主灯光组'
   },
   // {
   //   name: '灯光总开关',
@@ -572,6 +596,7 @@ const videos = [
     position: { x: 28.3, y: 189.5, z: 35 },
     bind: '公司大屏'
   },
+
   {
     name: '公司大屏',
     type: 'VIDEO_SWITCH',
@@ -579,16 +604,36 @@ const videos = [
     bind: '公司大屏'
   },
   {
+    name: '公司大屏-照明灯',
+    type: 'spot_light_floor_3',
+    position: { x: 34.8, y: 189.2, z: 37 },
+    to: { x: 34.5, y: 189.5, z: 33.4 }
+  },
+
+  {
     name: '小会议室大屏',
     type: 'VIDEO_SWITCH',
     position: { x: -10.2, y: 189.2, z: 8.5 },
     bind: '小会议室大屏'
   },
   {
+    name: '小会议室大屏-照明灯',
+    type: 'spot_light_floor_3',
+    position: { x: -9.6, y: 192, z: 10 },
+    to: { x: -9.6, y: 189.5, z: 7.9 }
+  },
+
+  {
     name: '大会议电视屏幕',
     type: 'VIDEO_SWITCH',
     position: { x: -48, y: 187.4, z: 52.5 },
     bind: '大会议电视屏幕'
+  },
+  {
+    name: '大会议电视屏幕-照明灯',
+    type: 'spot_light_floor_3',
+    position: { x: -45, y: 192, z: 52.5 },
+    to: { x: -48.4, y: 191, z: 52.5 }
   }
 ]
 JsonList.push(...videos)

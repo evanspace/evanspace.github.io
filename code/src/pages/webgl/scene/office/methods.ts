@@ -95,6 +95,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 环境光
   ambientLight = new THREE.AmbientLight()
+  // 平行光
+  directionalLight = new THREE.DirectionalLight()
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
@@ -118,6 +120,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.historyTarget = new THREE.Vector3()
     this.historyCameraPosition = new THREE.Vector3()
 
+    this.findLight()
     this.bindEvent()
     this.addBuildingGroup()
     this.addAnchorGroup()
@@ -130,14 +133,39 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.scene.background = texture
   }
 
-  createAmbientLight(color: string | number, intensity: number) {
-    const amb = new THREE.AmbientLight(color, intensity)
+  findLight() {
+    const amb = this.scene.getObjectByProperty('isAmbientLight', true) as THREE.AmbientLight
     this.ambientLight = amb
-    console.log(this.ambientLight)
-    return amb
+    const dire = this.scene.getObjectByProperty(
+      'isDirectionalLight',
+      true
+    ) as THREE.DirectionalLight
+    this.directionalLight = dire
   }
 
-  // 环境光打开
+  // 白天
+  toByday() {
+    this.ambientLight.intensity = this.options.ambientLight.intensity
+    this.directionalLight.intensity = this.options.directionalLight.intensity
+    const hdr = this.extend.sky?.day as string
+    this.loadEnvTexture(hdr)
+  }
+
+  // 傍晚
+  toEvening() {
+    this.ambientLight.intensity = 0.01
+    this.directionalLight.intensity = 0.5
+    const hdr = this.extend.sky?.evening as string
+    this.loadEnvTexture(hdr)
+  }
+
+  // 夜晚
+  toNight() {
+    this.ambientLight.intensity = 0.01
+    this.directionalLight.intensity = 0
+    const hdr = this.extend.sky?.night as string
+    this.loadEnvTexture(hdr)
+  }
 
   // 添加建筑组
   addBuildingGroup() {
@@ -642,13 +670,21 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   addVideoMaterial(names: string[]) {
     const material = new THREE.MeshPhongMaterial({
       map: videoCoverTexture
-      // side: THREE.DoubleSide
+      // side: THREE.DoubleSide,
     })
 
     this.videoModels = []
     for (let i = 0; i < names.length; i++) {
-      const dbObj = this.scene.getObjectByName(names[i]) as any
+      const name = names[i]
+      const dbObj = this.buildingGroup?.getObjectByName(name) as any
       if (!dbObj) continue
+
+      // 灯光
+      const light = this.lightGroup?.getObjectByName(name + '-照明灯')
+      if (light) {
+        light.visible = true
+      }
+
       const videoDom2 = createVideoDom()
       const videoTexture2 = new THREE.VideoTexture(videoDom2)
       dbObj.__video_texture__ = videoTexture2
