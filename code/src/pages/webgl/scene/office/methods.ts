@@ -172,7 +172,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.directionalLight.intensity = 0.5
     const hdr = this.extend.sky?.evening as string
     this.loadEnvTexture(hdr)
-    this.fleetingGroup && (this.fleetingGroup.visible = true)
+    this.fleetingGroup && (this.fleetingGroup.visible = false)
   }
 
   // 夜晚
