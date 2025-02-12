@@ -8,6 +8,7 @@ import DEFAULTCONFIG from './config'
 
 import type { ExtendOptions } from '.'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import { copy } from '@/common/utils/document'
 
 const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
@@ -1195,6 +1196,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const intersct = interscts[0]
       const object = intersct.object
       console.log(intersct)
+      const { x, z } = intersct.point
+      copy(`[ ${x}, 1.5, ${z} ],
+        `)
 
       // 是否点击地面
       const isClickGround =

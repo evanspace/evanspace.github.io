@@ -562,7 +562,7 @@ const onClickLeft = object => {
       Emitter.emit('AIR:ODD', object)
       break
     case MODE_SWITCH: // 模式
-      console.log(object.data)
+      console.log(toRaw(object.data))
       break
   }
 }
