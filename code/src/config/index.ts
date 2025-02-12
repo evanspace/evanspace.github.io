@@ -54,7 +54,9 @@ const Api = {
     floor: '/d3/floor',
     park: '/d3/park',
     station: '/d3/station',
-    office: '/d3/office'
+
+    office: '/d3/office',
+    office_mode: '/d3/office/mode'
   },
 
   area: {

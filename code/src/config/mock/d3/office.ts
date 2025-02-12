@@ -351,7 +351,7 @@ for (let i = 0; i < len; i++) {
 JsonList.push(...lights)
 
 // 公司锚点高度
-const anchorHeight = 188
+const anchorHeight = 187.6
 
 // 灯关-锚点
 const lightSwitchs = [
@@ -390,7 +390,7 @@ const lightSwitchs = [
     name: '灯光总开关',
     type: 'LIGHT_SWITCH',
     // position: { x: 14.7, y: 188, z: 49 },
-    position: { x: 12, y: 188, z: 49 },
+    position: { x: 12.7, y: anchorHeight, z: 49 },
     bind: '公司主灯光组'
   }
   // {
@@ -406,50 +406,50 @@ const airSwitch = [
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: 13.3, y: 188, z: 49 },
+    position: { x: 13.3, y: anchorHeight, z: 49 },
     bind: '_空调风_grp'
   },
 
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: -41.1, y: 188, z: 31.8 },
+    position: { x: -41.1, y: anchorHeight, z: 31.8 },
     bind: '陈总办公室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: -41.1, y: 188, z: 11.4 },
+    position: { x: -41.1, y: anchorHeight, z: 11.4 },
     bind: '逄总办公室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: -41.1, y: 188, z: -9 },
+    position: { x: -41.1, y: anchorHeight, z: -9 },
     bind: '财务室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: -46.1, y: 188, z: -14 },
+    position: { x: -46.1, y: anchorHeight, z: -14 },
     bind: 'CFO办公室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: -31.5, y: 188, z: 58.6 },
+    position: { x: -31.5, y: anchorHeight, z: 58.6 },
     bind: '大会议室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: 61.1, y: 188, z: 24.7 },
+    position: { x: 61.1, y: anchorHeight, z: 24.7 },
     bind: '大洽谈室'
   },
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
-    position: { x: 56.8, y: 188, z: 1.8 },
+    position: { x: 56.8, y: anchorHeight, z: 1.8 },
     bind: '_老板办公室_grp'
   }
 ]
@@ -591,14 +591,14 @@ const videos = [
   {
     name: '公司大屏',
     type: 'SCREEN_EDIT',
-    position: { x: 28.3, y: 189.5, z: 35 },
+    position: { x: 28.3, y: 189.1, z: 34.5 },
     bind: '公司大屏'
   },
 
   {
     name: '公司大屏',
     type: 'VIDEO_SWITCH',
-    position: { x: 28.3, y: 188.2, z: 35 },
+    position: { x: 28.3, y: 188.4, z: 34.5 },
     bind: '公司大屏'
   },
   {
@@ -641,7 +641,7 @@ const curtains = [
   {
     name: '窗帘开关',
     type: 'CURTAIN_SWITCH',
-    position: { x: 10.7, y: 188, z: 49 },
+    position: { x: 12.1, y: anchorHeight, z: 49 },
     bind: '_GROUP_013_grp'
   }
 ]
@@ -649,7 +649,7 @@ JsonList.push(...curtains)
 
 export default [
   {
-    // 项目楼层数据
+    // 办公室数据
     url: '/d3/office',
     method: 'get',
     response: () =>
@@ -690,5 +690,68 @@ export default [
           ]
         }
       })
+  },
+
+  {
+    // 模式
+    url: '/d3/office/mode',
+    method: 'get',
+    response: () =>
+      builder([
+        {
+          id: 1,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '自动工作模式',
+          isActive: 1,
+          isAuto: 0
+        },
+        {
+          id: 7,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '访客来访',
+          isActive: 0,
+          isAuto: 0
+        },
+        {
+          id: 8,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '会议模式',
+          isActive: 0,
+          isAuto: 0
+        },
+        {
+          id: 9,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '自动开温控模式',
+          isActive: 0,
+          isAuto: 0
+        },
+        {
+          id: 10,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '自动开温控+灯模式',
+          isActive: 0,
+          isAuto: 0
+        },
+        {
+          id: 43,
+          children: [],
+          projectId: 75507,
+          groupCode: 'G1',
+          name: '测试自动',
+          isActive: 0,
+          isAuto: 0
+        }
+      ])
   }
 ]

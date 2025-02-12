@@ -94,6 +94,7 @@ import {
   CURTAIN_SWITCH,
   VIDEO_SWITCH,
   SCREEN_EDIT,
+  MODE_SWITCH,
   getPageOpts,
   getTipOpts,
   getFloorOpts
@@ -386,30 +387,50 @@ const cameraPositionList = computed(() =>
 
 const load = () => {
   loadModels(pageOpts.models, () => {
-    request.getConfig().then(async res => {
-      let json: any = {}
-      if (res.ConfigJson instanceof Object) {
-        json = res.ConfigJson
-      } else if (typeof res.ConfigJson == 'string') {
-        try {
-          json = JSON.parse(res.ConfigJson)
-        } catch (er) {}
-      }
-      modelConfigList.value = res.JsonList
-      Object.keys(json).forEach(key => {
-        pageOpts.config && (pageOpts.config[key] = json[key])
+    request
+      .getConfig()
+      .then(res => {
+        return request.getModes().then(list => {
+          list.forEach((item, index) => {
+            res.JsonList.push({
+              ...item,
+              type: MODE_SWITCH,
+              position: { x: 19 - index * 0.6, y: 186.8, z: 49 }
+            })
+          })
+          return res
+        })
       })
-      pageOpts.cruise.points = json.cruise || []
-      pageOpts.roamPoints = json.roamPoints || []
-      await assemblyScenario()
-      createRoblt()
-      createCharacter()
-      // 绘制画布纹理
-      Emitter.emit('SCREEN:WELCOM', dialog.content)
-      scene.addVideoMaterial(res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind))
-      scene.addCanvasMaterial(res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind))
-      scene.addAirWindMaterial(res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind))
-    })
+      .then(async res => {
+        let json: any = {}
+        if (res.ConfigJson instanceof Object) {
+          json = res.ConfigJson
+        } else if (typeof res.ConfigJson == 'string') {
+          try {
+            json = JSON.parse(res.ConfigJson)
+          } catch (er) {}
+        }
+        modelConfigList.value = res.JsonList
+        Object.keys(json).forEach(key => {
+          pageOpts.config && (pageOpts.config[key] = json[key])
+        })
+        pageOpts.cruise.points = json.cruise || []
+        pageOpts.roamPoints = json.roamPoints || []
+        await assemblyScenario()
+        createRoblt()
+        createCharacter()
+        // 绘制画布纹理
+        Emitter.emit('SCREEN:WELCOM', dialog.content)
+        scene.addVideoMaterial(
+          res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind)
+        )
+        scene.addCanvasMaterial(
+          res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind)
+        )
+        scene.addAirWindMaterial(
+          res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind)
+        )
+      })
   })
 }
 
@@ -539,6 +560,9 @@ const onClickLeft = object => {
       break
     case AIR_SWITCH: // 空调
       Emitter.emit('AIR:ODD', object)
+      break
+    case MODE_SWITCH: // 模式
+      console.log(object.data)
       break
   }
 }

@@ -21,6 +21,7 @@ export const ODD_ROTATE_SWITCH = 'ODD_ROTATE_SWITCH' // 单旋转开门
 export const VIDEO_SWITCH = 'VIDEO_SWITCH' // 视频
 export const SCREEN_EDIT = 'SCREEN_EDIT' // 编辑
 export const CURTAIN_SWITCH = 'CURTAIN_SWITCH' // 窗帘开关
+export const MODE_SWITCH = 'MODE_SWITCH' // 模式开关
 
 export const CRUISE_POINT_UP = 0.1 // y 巡航轴向量
 
@@ -55,7 +56,8 @@ export const getPageOpts = animateBack => ({
     DOUBLE_HORIZONTAL_SWITCH,
     ODD_ROTATE_SWITCH,
     DOUBLE_ROTATE_SWITCH,
-    CURTAIN_SWITCH
+    CURTAIN_SWITCH,
+    MODE_SWITCH
   ],
   animationModelType: [MAIN_SCENE, CONPANT_FLOOR, CURTAIN],
 
@@ -233,6 +235,12 @@ export const getPageOpts = animateBack => ({
       name: '空调',
       type: 'sprite',
       mapUrl: '/air.png'
+    },
+    {
+      key: MODE_SWITCH,
+      name: '模式',
+      type: 'sprite',
+      mapUrl: '/mode.png'
     }
   ].map(item => {
     if (item.url && item.url.indexOf('oss') < 0) {
@@ -242,7 +250,7 @@ export const getPageOpts = animateBack => ({
       item.mapUrl = '/oss/textures/office' + item.mapUrl
     }
     if (!item.range) {
-      item.range = { x: 0.8, y: 0.8 } as any
+      item.range = { x: 0.5, y: 0.5 } as any
     }
     return item as import('three-scene/types/model').ModelItem
   }),
