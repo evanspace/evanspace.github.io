@@ -39,6 +39,8 @@ const eventNames = [
   'LIGHT:LCR',
   // 公司主灯光组
   'LIGHT:CLG',
+  // 一楼灯光组
+  'LIGHT:FIRSTFLOOR',
 
   // 关灯
   'LIGHT:CLOSE',

@@ -12,17 +12,14 @@
 
       <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
       <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
-      <div class="item" @click="() => Emitter.emit('AIR:MAIN', true)">空调开</div>
-      <div class="item" @click="() => Emitter.emit('AIR:MAIN', false)">空调关</div>
-      <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:CLG', true)">灯组开</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:CLG', false)">灯组关</div>
-      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', true)">窗帘开</div>
-      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE', false)">窗帘关</div>
 
-      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
-      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
-      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
+      <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
+
+      <div class="item" @click="() => Emitter.emit('LIGHT:CLG')">灯组开关</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:FIRSTFLOOR')">一楼开关</div>
+
+      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE')">窗帘开关</div>
+
       <div
         class="item"
         @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
@@ -150,7 +147,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
 const containerRef = ref()
 const canvasTextureRef = ref()
 const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
-  env: pageOpts.env,
+  // env: pageOpts.env,
   cruise: pageOpts.cruise,
   controls: {
     visible: !false,

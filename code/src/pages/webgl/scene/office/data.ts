@@ -201,20 +201,20 @@ export const getPageOpts = animateBack => ({
       key: 'rect_area_light_1',
       type: 'planelight',
       name: '面光灯',
-      intensity: 1.5,
+      intensity: 1.2,
       color: 0xffffff,
       width: 134,
       height: 134
     },
-    // {
-    //   key: 'rect_area_light_2',
-    //   type: 'planelight',
-    //   name: '面光灯',
-    //   intensity: 1,
-    //   color: 0xffffff,
-    //   width: 110,
-    //   height: 10
-    // },
+    {
+      key: 'rect_area_light_2',
+      type: 'planelight',
+      name: '面光灯',
+      intensity: 0.8,
+      color: 0xffffff,
+      width: 134,
+      height: 134
+    },
 
     {
       key: LIGHT_SWITCH,

@@ -26,6 +26,7 @@ const {
   play: roamPlay,
   getStatus: getRoamStatus
 } = Hooks.useRoam()
+const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
 
@@ -98,6 +99,13 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 平行光
   directionalLight = new THREE.DirectionalLight()
 
+  // 当前风格（白天/傍晚/夜间）
+  style = -1
+  styleTimes = DEFAULTCONFIG.styleTimes
+
+  // 流光
+  fleetingGroup?: InstanceType<typeof THREE.Group>
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -126,6 +134,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.addAnchorGroup()
     this.addDotGroup()
     this.addLightGroup()
+
+    // 流光
+    this.addFleeting()
   }
 
   setEnv(texture) {
@@ -145,26 +156,50 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 白天
   toByday() {
+    this.style = 1
     this.ambientLight.intensity = this.options.ambientLight.intensity
     this.directionalLight.intensity = this.options.directionalLight.intensity
     const hdr = this.extend.sky?.day as string
     this.loadEnvTexture(hdr)
+    this.fleetingGroup && (this.fleetingGroup.visible = false)
   }
 
   // 傍晚
   toEvening() {
+    this.style = 2
     this.ambientLight.intensity = 0.01
     this.directionalLight.intensity = 0.5
     const hdr = this.extend.sky?.evening as string
     this.loadEnvTexture(hdr)
+    this.fleetingGroup && (this.fleetingGroup.visible = true)
   }
 
   // 夜晚
   toNight() {
+    this.style = 3
     this.ambientLight.intensity = 0.01
     this.directionalLight.intensity = 0
     const hdr = this.extend.sky?.night as string
     this.loadEnvTexture(hdr)
+    this.fleetingGroup && (this.fleetingGroup.visible = true)
+  }
+
+  // 自动切换场景风格
+  autoChangeStyle() {
+    const times = this.styleTimes
+    const hour = new Date().getHours()
+    const index = times.findIndex((ar, i) =>
+      i == times.length - 1 ? hour >= ar[0] || hour < ar[1] : hour >= ar[0] && hour < ar[1]
+    )
+    if (this.style != index + 1) {
+      if (index == 0) {
+        this.toByday()
+      } else if (index == 1) {
+        this.toEvening()
+      } else if (index == 2) {
+        this.toNight()
+      }
+    }
   }
 
   // 添加建筑组
@@ -308,6 +343,31 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         }
       }
     }
+  }
+
+  // 添加流光
+  addFleeting() {
+    const group = new THREE.Group()
+    const list = DEFAULTCONFIG.fleetings
+    for (let i = 0; i < list.length; i++) {
+      const points = list[i]
+      const line = createFleeting({
+        // textureUrl: this.options.baseUrl + '/oss/textures/office/arc.png',
+        points,
+        color: 0x0053ff,
+        // color: '#' + (Math.random() + '000000').substring(2, 8),
+        intensity: 10,
+        tubularSegments: 1000,
+        radius: 0.6,
+        repeat: {
+          x: 2,
+          y: 4
+        }
+      })
+      group.add(line)
+    }
+    this.fleetingGroup = group
+    this.addObject(group)
   }
 
   // 绘制 canva 材质
@@ -1016,6 +1076,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       updateDiffusion()
     }
 
+    // 围栏动画
     fenceAnimate()
 
     // 人物视角
@@ -1053,11 +1114,19 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       }
     }
 
+    // 执行漫游
     executeRoam(this.camera, this.controls)
 
+    // 空调风材质
     if (windTexture) {
       windTexture.offset.x += 0.02
     }
+
+    // 自动切换风格
+    this.autoChangeStyle()
+
+    // 流光动画
+    fleetingAnimate()
   }
 
   // 按键转向
@@ -1223,6 +1292,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.disposeObj(this.fence)
     this.disposeObj(this.lightGroup)
     this.disposeObj(this.mouseClickDiffusion)
+    this.disposeObj(this.fleetingGroup)
 
     this.clock = void 0
     // @ts-ignore
@@ -1235,6 +1305,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.fence = void 0
     // @ts-ignore
     this.mouseClickDiffusion = void 0
+    this.fleetingGroup = void 0
     this.extend = {}
     super.dispose()
   }

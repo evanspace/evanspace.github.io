@@ -284,33 +284,28 @@ const lights = [
   {
     name: '公司主灯光组',
     type: 'rect_area_light_1',
-    position: { x: 7.7, y: 192.9, z: -2.1 },
+    position: { x: 7.7, y: 192, z: -2.1 },
     rotation: { x: -90, y: 0, z: 0 }
+  },
+  {
+    name: '公司主灯光组',
+    type: 'rect_area_light_2',
+    position: { x: 7.7, y: 192, z: -2.1 },
+    rotation: { x: -270, y: 0, z: 0 }
+  },
+
+  {
+    name: '一楼灯光组',
+    type: 'rect_area_light_1',
+    position: { x: 7.7, y: 7.5, z: -2.1 },
+    rotation: { x: -90, y: 0, z: 0 }
+  },
+  {
+    name: '一楼灯光组',
+    type: 'rect_area_light_2',
+    position: { x: 7.7, y: 7.5, z: -2.1 },
+    rotation: { x: -270, y: 0, z: 0 }
   }
-  // {
-  //   name: '公司主灯光组',
-  //   type: 'rect_area_light_2',
-  //   position: { x: 3, y: 187, z: 63.1 },
-  //   rotation: { x: 0, y: 180, z: 0 }
-  // },
-  // {
-  //   name: '公司主灯光组',
-  //   type: 'rect_area_light_2',
-  //   position: { x: 3, y: 187, z: -66.9 },
-  //   rotation: { x: 0, y: 0, z: 0 }
-  // },
-  // {
-  //   name: '公司主灯光组',
-  //   type: 'rect_area_light_2',
-  //   position: { x: 70.9, y: 187, z: -1.7 },
-  //   rotation: { x: 0, y: -90, z: 0 }
-  // },
-  // {
-  //   name: '公司主灯光组',
-  //   type: 'rect_area_light_2',
-  //   position: { x: -55.5, y: 187, z: -1.7 },
-  //   rotation: { x: 0, y: 90, z: 0 }
-  // }
 ]
 
 let len = 0,
@@ -397,18 +392,21 @@ const lightSwitchs = [
     // position: { x: 14.7, y: 188, z: 49 },
     position: { x: 12, y: 188, z: 49 },
     bind: '公司主灯光组'
-  },
+  }
   // {
   //   name: '灯光总开关',
   //   type: 'LIGHT_MAIN_SWITCH',
   //   position: { x: 12, y: 188, z: 49 }
   // },
+]
+JsonList.push(...lightSwitchs)
 
+// 空调-锚点
+const airSwitch = [
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
     position: { x: 13.3, y: 188, z: 49 },
-    // bind: '平面545'
     bind: '_空调风_grp'
   },
 
@@ -455,7 +453,7 @@ const lightSwitchs = [
     bind: '_老板办公室_grp'
   }
 ]
-JsonList.push(...lightSwitchs)
+JsonList.push(...airSwitch)
 
 // 公司门
 const companyDoors = [
