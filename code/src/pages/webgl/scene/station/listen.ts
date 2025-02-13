@@ -13,7 +13,7 @@ export const onListen = (scene: InstanceType<typeof StationThreeScene>) => {
   // 第三人称
   Emitter.on('CAMERA:THREE', () => scene?.toggleSight(3))
   // 机房
-  Emitter.on('CAMERA:MACHINEROOM', isFocus => scene?.toCoolMachineRoom())
+  Emitter.on('CAMERA:MACHINEROOM', () => scene?.toCoolMachineRoom())
 
   // 人物加速
   Emitter.on('PERSON:ADD', () => scene?.characterAccelerate())
