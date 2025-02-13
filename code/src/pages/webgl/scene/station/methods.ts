@@ -28,6 +28,7 @@ const {
 const { floorAnimate } = Hooks.useFloor()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { checkCollide } = Hooks.useCollide()
+const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 
 const sightMap = {
   full: 'FULL',
@@ -442,6 +443,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   // 视角切换（人物/全屏）
   // 1-第一人称 3-第三人称
   toggleSight(type?: number) {
+    this.clearCoolMachineRoomFocus()
     if (this.judgeCruise()) return
 
     const sight = this.currentSight == sightMap.full ? sightMap.npc : sightMap.full
@@ -623,6 +625,7 @@ export class StationThreeScene extends ThreeScene.Scene {
 
   // 相机转场
   cameraTransition(object) {
+    this.clearCoolMachineRoomFocus()
     if (this.judgeCruise()) return
 
     if (this.mouseClickDiffusion.visible) {
@@ -752,6 +755,8 @@ export class StationThreeScene extends ThreeScene.Scene {
 
   // 场景漫游
   toggleRoam() {
+    this.clearCoolMachineRoomFocus()
+
     if (!this.controls) return
     // 漫游中则暂停
     if (getRoamStatus()) {
@@ -788,7 +793,38 @@ export class StationThreeScene extends ThreeScene.Scene {
   }
 
   // 机房视角-其他虚化
-  toCoolMachineRoom(isFocus) {
+  toCoolMachineRoom() {
+    if (this.judgeCruise()) return
+    this.clearCharacterSight()
+
+    const { room, isFocus } = this.getMachineRoomStatus(DEFAULTCONFIG.machineRoomName)
+
+    if (!room) {
+      ElMessage.warning({
+        message: '未找到机房模块！',
+        grouping: true
+      })
+      return
+    }
+
+    room.__isFocus__ = !isFocus
+
+    if (isFocus) {
+      closeVirtualization(this.buildingGroup?.children)
+      this.toggleCoolMachineRoomFocus(false)
+      return
+    }
+    this.toggleCoolMachineRoomFocus(true)
+    virtualization(this.buildingGroup?.children || [], room, {
+      wireframe: !false,
+      hidden: true,
+      opacity: 0.1,
+      filter: []
+    })
+  }
+
+  // 机房聚焦
+  toggleCoolMachineRoomFocus(isFocus) {
     if (!this.controls) return
     let target = this.historyTarget
     let to = this.historyCameraPosition as XYZ
@@ -806,6 +842,15 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.controls.maxDistance = dis
 
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+  }
+
+  // 清除机房聚焦效果
+  clearCoolMachineRoomFocus() {
+    const { room, isFocus } = this.getMachineRoomStatus(DEFAULTCONFIG.machineRoomName)
+    if (isFocus) {
+      closeVirtualization(this.buildingGroup?.children)
+    }
+    room.__isFocus__ = false
   }
 
   // 开门

@@ -3,22 +3,22 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
-      <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
+      <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
 
-      <div class="item" @click="() => toggleRoam()">全景漫游</div>
-      <div class="item" @click="() => toCoolMachineRoom()">制冷机房</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:MACHINEROOM')">制冷机房</div>
       <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
         {{ item.name }}
       </div>
 
-      <div class="item" @click="() => scene?.toggleCruise()">定点巡航</div>
-      <div class="item" @click="() => scene?.controlReset()">视角重置</div>
-      <div class="item" @click="() => toggleSight(1)">第一人称</div>
-      <div class="item" @click="() => toggleSight(3)">第三人称</div>
-      <div class="item" @click="() => scene.changeCharacterAction()">人物动作</div>
-      <div class="item" @click="() => scene.characterAccelerate()">人物加速</div>
-      <div class="item" @click="() => scene.characterAccelerate(-1)">人物减速</div>
-      <div class="item" @click="() => changeBackground(scene as any)">切换背景</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:THREE')">第三人称</div>
+
+      <div class="item" @click="() => Emitter.emit('PERSON:ACTION')">人物动作</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:ADD')">人物加速</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:SUB')">人物减速</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
@@ -73,6 +73,7 @@ import * as request from './request'
 import Emitter from './emitter'
 
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
+import { onListen } from './listen'
 
 import { useResize } from '@/hooks/scene-resize'
 import { Hooks, Utils } from 'three-scene'
@@ -100,17 +101,16 @@ const pageOpts = reactive(
 )
 const tipOpts = reactive(getTipOpts())
 
-const { changeBackground, backgroundLoad } = Hooks.useBackground()
-const { progress, loadModels, getModel, initModels, virtualization, closeVirtualization } =
-  Hooks.useModelLoader({
-    baseUrl: pageOpts.baseUrl,
-    indexDB: {
-      cache: true,
-      dbName: 'THREE__STATION__DB',
-      tbName: 'TB',
-      version: 59
-    }
-  })
+const { backgroundLoad } = Hooks.useBackground()
+const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
+  baseUrl: pageOpts.baseUrl,
+  indexDB: {
+    cache: true,
+    dbName: 'THREE__STATION__DB',
+    tbName: 'TB',
+    version: 59
+  }
+})
 const { options: dialog } = Hooks.useDialog()
 
 const containerRef = ref()
@@ -178,7 +178,6 @@ onMounted(() => {
         const data = object.data
         switch (data?.type) {
           case ANCHOR_POS: // 定位
-            closeMachinRoomEffect()
             scene.cameraTransition(object)
             break
           case ANCHOR_TARGET: // 锚点
@@ -230,6 +229,7 @@ const initPage = () => {
   load()
   backgroundLoad(scene, pageOpts.skyCode as any)
 
+  onListen(scene)
   // 事件监听
   Emitter.on('DEV:UPDATE', deviceUpdate)
 }
@@ -512,88 +512,10 @@ const createCharacter = () => {
 
 // 相机转场
 const onCameraTransition = item => {
-  const { room, isFocus } = scene.getMachineRoomStatus(machineRoomName)
-  if (isFocus) {
-    closeVirtualization(scene.buildingGroup?.children)
-  }
-  room.__isFocus__ = false
-
   scene.cameraTransition({
     position: item.position,
     data: item
   })
-}
-
-// 关闭机房聚焦效果
-const closeMachinRoomEffect = () => {
-  const { isFocus } = scene.getMachineRoomStatus(machineRoomName)
-  if (isFocus) {
-    closeVirtualization(scene.buildingGroup?.children)
-  }
-}
-
-// 制冷机房
-const machineRoomName = '机房'
-const toCoolMachineRoom = () => {
-  if (scene.judgeCruise()) return
-
-  if (scene.isPerspectives()) {
-    scene.toggleSight()
-  }
-
-  const { room, isFocus } = scene.getMachineRoomStatus(machineRoomName)
-
-  if (!room) {
-    ElMessage.warning({
-      message: '未找到机房模块！',
-      grouping: true
-    })
-    return
-  }
-
-  room.__isFocus__ = !isFocus
-  if (isFocus) {
-    closeVirtualization(scene.buildingGroup?.children)
-    scene.toCoolMachineRoom(false)
-    return
-  }
-  scene.toCoolMachineRoom(true)
-  virtualization(scene.buildingGroup?.children || [], room, {
-    wireframe: !false,
-    hidden: true,
-    opacity: 0.1,
-    filter: [
-      // '_基础_grp',
-      // '平面109_1',
-      // '地面001',
-      // '地面012',
-      // '地面002',
-      // '平面601',
-      // '平面613',
-      // '平面642',
-      // '平面643',
-      // '平面241',
-      // '平面243',
-      // 'Landscape001',
-      // 'Landscape002',
-      // 'Landscape003',
-      // 'Landscape008',
-      // 'Landscape009'
-    ]
-    // filterMatch: ['BezierCurve']
-  })
-}
-
-// 漫游
-const toggleRoam = () => {
-  closeMachinRoomEffect()
-  scene?.toggleRoam()
-}
-
-// 人物
-const toggleSight = (type: number) => {
-  closeMachinRoomEffect()
-  scene?.toggleSight(type)
 }
 </script>
 

@@ -10,5 +10,8 @@ export default {
   collisionSpace: 1,
 
   // 默认移动速度
-  moveFactor: 1
+  moveFactor: 1,
+
+  // 机房名称
+  machineRoomName: '机房'
 }

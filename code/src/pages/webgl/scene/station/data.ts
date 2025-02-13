@@ -112,8 +112,11 @@ export const getPageOpts = animateBack => ({
       key: 'waiting_room_spot_light',
       type: 'spotlight',
       name: '聚光灯',
-      intensity: 8,
+      intensity: 2,
       color: 0xfff8d2,
+      penumbra: 0.5,
+      castShadow: false,
+      angle: Math.PI * 0.4,
       distance: 40
     },
     {
