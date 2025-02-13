@@ -175,22 +175,7 @@ onMounted(() => {
       dialog.select = []
       dialog.show = false
       if (object && object.data) {
-        const data = object.data
-        switch (data?.type) {
-          case ANCHOR_POS: // 定位
-            scene.cameraTransition(object)
-            break
-          case ANCHOR_TARGET: // 锚点
-            dialog.select = [object]
-            dialogShowData()
-            break
-          case OPEN_DOOR: // 开门-90° 旋转开门
-            scene.openTheDoor(object)
-            break
-          case LIGHT_SWITCH: // 开关灯
-            scene.lightSwitch(object)
-            break
-        }
+        onClickLeft(object)
       }
     },
     onClickGround: (_object, intersct) => {
@@ -224,6 +209,25 @@ onMounted(() => {
   useResize(scene).resize()
   initPage()
 })
+
+const onClickLeft = object => {
+  const data = object.data
+  switch (data?.type) {
+    case ANCHOR_POS: // 定位
+      scene.cameraTransition(object)
+      break
+    case ANCHOR_TARGET: // 锚点
+      dialog.select = [object]
+      dialogShowData()
+      break
+    case OPEN_DOOR: // 开门-90° 旋转开门
+      scene.openTheDoor(object)
+      break
+    case LIGHT_SWITCH: // 开关灯
+      scene.lightSwitch(object)
+      break
+  }
+}
 
 const initPage = () => {
   load()

@@ -156,7 +156,7 @@ const monitorCameras = [
     name: '制冷主机监测点',
     unit: '%',
     type: 'DOT',
-    position: { x: -163, y: 12, z: 91.2 }
+    position: { x: -114.9, y: -28.3, z: 45.2 }
   }
 ]
 JsonList.push(...monitorCameras)
