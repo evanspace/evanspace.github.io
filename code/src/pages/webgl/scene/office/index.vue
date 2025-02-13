@@ -19,6 +19,11 @@
       <div class="item" @click="() => Emitter.emit('LIGHT:FIRSTFLOOR')">一楼开关</div>
 
       <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE')">窗帘开关</div>
+      <div class="item" @click="() => Emitter.emit('EFFECT:FLEETING')">流光开关</div>
+
+      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
+      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
+      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
 
       <div
         class="item"

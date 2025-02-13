@@ -107,6 +107,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 流光
   fleetingGroup?: InstanceType<typeof THREE.Group>
 
+  // 路灯
+  streetLampGroup?: InstanceType<typeof THREE.Group>
+
+  // 居民灯
+  residentLightGroup?: InstanceType<typeof THREE.Group>
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -138,6 +144,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     // 流光
     this.addFleeting()
+    // 路灯
+    this.addStreetLamp()
+    // 居民灯
+    this.addResidentLight()
   }
 
   setEnv(texture) {
@@ -156,33 +166,39 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 白天
-  toByday() {
-    this.style = 1
+  toByday(style = 1) {
+    this.style = style
     this.ambientLight.intensity = this.options.ambientLight.intensity
     this.directionalLight.intensity = this.options.directionalLight.intensity
+    this.fleetingGroup && (this.fleetingGroup.visible = false)
+    this.streetLampGroup && (this.streetLampGroup.visible = false)
+    this.residentLightGroup && (this.residentLightGroup.visible = false)
     const hdr = this.extend.sky?.day as string
     this.loadEnvTexture(hdr)
-    this.fleetingGroup && (this.fleetingGroup.visible = false)
   }
 
   // 傍晚
-  toEvening() {
-    this.style = 2
+  toEvening(style = 2) {
+    this.style = style
     this.ambientLight.intensity = 0.01
     this.directionalLight.intensity = 0.5
+    this.fleetingGroup && (this.fleetingGroup.visible = false)
+    this.streetLampGroup && (this.streetLampGroup.visible = false)
+    this.residentLightGroup && (this.residentLightGroup.visible = false)
     const hdr = this.extend.sky?.evening as string
     this.loadEnvTexture(hdr)
-    this.fleetingGroup && (this.fleetingGroup.visible = false)
   }
 
   // 夜晚
-  toNight() {
-    this.style = 3
+  toNight(style = 3) {
+    this.style = style
     this.ambientLight.intensity = 0.01
     this.directionalLight.intensity = 0
+    this.fleetingGroup && (this.fleetingGroup.visible = true)
+    this.streetLampGroup && (this.streetLampGroup.visible = true)
+    this.residentLightGroup && (this.residentLightGroup.visible = true)
     const hdr = this.extend.sky?.night as string
     this.loadEnvTexture(hdr)
-    this.fleetingGroup && (this.fleetingGroup.visible = true)
   }
 
   // 自动切换场景风格
@@ -355,8 +371,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const line = createFleeting({
         // textureUrl: this.options.baseUrl + '/oss/textures/office/arc.png',
         points,
-        color: 0x0053ff,
-        // color: '#' + (Math.random() + '000000').substring(2, 8),
+        // color: 0x0053ff,
+        color: '#' + (Math.random() + '000000').substring(2, 8),
         intensity: 10,
         tubularSegments: 1000,
         radius: 0.6,
@@ -367,8 +383,57 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       })
       group.add(line)
     }
+    group.name = '流光组'
     this.fleetingGroup = group
     this.addObject(group)
+  }
+
+  // 流光状态切换
+  toggleFleeting(isOpen?: boolean) {
+    this.fleetingGroup && (this.fleetingGroup.visible = isOpen ?? !this.fleetingGroup.visible)
+  }
+
+  // 添加路灯
+  addStreetLamp() {
+    const group = new THREE.Group()
+    const list = DEFAULTCONFIG.streetLamps
+    const spotLight = new THREE.SpotLight(0xffffff, 10, 100, Math.PI * 0.6, 0.6, 0.4)
+    for (let i = 0; i < list.length; i++) {
+      const light = spotLight.clone()
+      const [x, y, z] = list[i]
+      light.position.set(x, y, z)
+      light.target.position.set(x, y - 1, z)
+      light.add(spotLight.target)
+      group.add(light)
+      // 辅助不加，灯光不圆
+      const helper = new THREE.SpotLightHelper(light)
+      helper.visible = false
+      group.add(helper)
+    }
+    group.name = '路灯组'
+    group.visible = false
+    this.addObject(group)
+    this.streetLampGroup = group
+  }
+
+  // 添加居民灯
+  addResidentLight() {
+    const group = new THREE.Group()
+    const list = DEFAULTCONFIG.residentLights
+    const pointLight = new THREE.PointLight(0xffffff, 10, 100, 0.4)
+    for (let i = 0; i < list.length; i++) {
+      const light = pointLight.clone()
+      const [x, y, z] = list[i]
+      light.position.set(x, y, z)
+      group.add(light)
+      // const helper = new THREE.PointLightHelper(light)
+      // group.add(helper)
+    }
+    group.name = '居民灯'
+    group.visible = false
+    this.addObject(group)
+    console.log(group)
+    this.residentLightGroup = group
   }
 
   // 绘制 canva 材质
@@ -505,7 +570,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     if (isCharacter) {
       ElMessage.success({
         message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向，X 加速，Z 减速!',
-        duration: 15 * 1000
+        grouping: true
       })
       this.historyTarget = this.controls.target.clone()
       this.historyCameraPosition = this.camera.position.clone()
@@ -1127,7 +1192,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.autoChangeStyle()
 
     // 流光动画
-    fleetingAnimate()
+    if (this.fleetingGroup?.visible) {
+      fleetingAnimate()
+    }
   }
 
   // 按键转向
@@ -1297,6 +1364,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.disposeObj(this.lightGroup)
     this.disposeObj(this.mouseClickDiffusion)
     this.disposeObj(this.fleetingGroup)
+    this.disposeObj(this.streetLampGroup)
+    this.disposeObj(this.residentLightGroup)
 
     this.clock = void 0
     // @ts-ignore
@@ -1310,6 +1379,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     // @ts-ignore
     this.mouseClickDiffusion = void 0
     this.fleetingGroup = void 0
+    this.streetLampGroup = void 0
+    this.residentLightGroup = void 0
     this.extend = {}
     super.dispose()
   }

@@ -79,7 +79,10 @@ const eventNames = [
   // 傍晚
   'SKY:EVENING',
   // 夜晚
-  'SKY:NIGHT'
+  'SKY:NIGHT',
+
+  // 流光
+  'EFFECT:FLEETING'
 ] as const
 type EventNames = (typeof eventNames)[number]
 

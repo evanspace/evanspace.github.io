@@ -157,9 +157,12 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('SCENE:POS', () => scene?.getPosition())
 
   // 白天
-  Emitter.on('SKY:DAY', () => scene?.toByday())
+  Emitter.on('SKY:DAY', () => scene?.toByday(scene.style))
   // 傍晚
-  Emitter.on('SKY:EVENING', () => scene?.toEvening())
+  Emitter.on('SKY:EVENING', () => scene?.toEvening(scene.style))
   // 夜晚
-  Emitter.on('SKY:NIGHT', () => scene?.toNight())
+  Emitter.on('SKY:NIGHT', () => scene?.toNight(scene.style))
+
+  // 流光
+  Emitter.on('EFFECT:FLEETING', (isOpen?) => scene?.toggleFleeting(isOpen))
 }
