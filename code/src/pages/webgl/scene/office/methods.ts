@@ -596,7 +596,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     return this.currentSight == sightMap.npc
   }
 
-  // 清楚人物视角状态
+  // 清除人物视角状态
   clearCharacterSight() {
     this.currentSight = sightMap.full
     this.toggleCharacterView()
@@ -772,31 +772,32 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 窗帘动画
-  toggleCurtain(object, isOpen?) {
+  toggleCurtain(object, isClose?) {
     const dobj = this.animateModels.find(el => el.name === object.data?.bind)
     console.log(dobj)
     if (!dobj) return
 
-    dobj.__open__ = isOpen ?? !dobj.__open__
+    dobj.__close__ = isClose ?? !dobj.__close__
 
     const { __action__, __mixer__ } = dobj
     Object.keys(__action__).forEach(key => {
-      if (dobj.__open__) {
+      if (dobj.__close__) {
         __action__[key].loop = THREE.LoopOnce
         __action__[key].clampWhenFinished = true
         __action__[key].play()
       }
     })
-    if (!dobj.__open__) {
+    if (!dobj.__close__) {
       __mixer__.stopAllAction()
     }
+    return dobj.__close__
   }
 
   // 视频材质
   addVideoMaterial(names: string[]) {
     const material = new THREE.MeshPhongMaterial({
       map: videoCoverTexture
-      // side: THREE.DoubleSide,
+      // side: THREE.DoubleSide
     })
 
     this.videoModels = []
@@ -1167,6 +1168,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         if (this.checkCharacterCollide(newPos)) {
         } else {
           target?.position.copy(newPos)
+          if (isS) {
+            // 定位后一步
+            const ds = dir.clone().multiplyScalar(-steep * 2)
+            this.camera.position.copy(this.camera.position.clone().add(ds))
+          }
           this.setControlTarget(target?.position)
         }
       }

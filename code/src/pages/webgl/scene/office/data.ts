@@ -117,19 +117,22 @@ export const getPageOpts = animateBack => ({
       key: DOUBLE_HORIZONTAL_SWITCH,
       name: '双横推开关门',
       type: 'sprite',
-      mapUrl: '/lift.png'
+      mapUrl: '/lift.png',
+      range: { x: 0.3, y: 0.3 }
     },
     {
       key: DOUBLE_ROTATE_SWITCH,
       name: '双旋转开关门',
       type: 'sprite',
-      mapUrl: '/lift.png'
+      mapUrl: '/lift.png',
+      range: { x: 0.3, y: 0.3 }
     },
     {
       key: ODD_ROTATE_SWITCH,
       name: '单旋转开关门',
       type: 'sprite',
-      mapUrl: '/lift.png'
+      mapUrl: '/lift.png',
+      range: { x: 0.3, y: 0.3 }
     },
     {
       key: GATE_SWITCH,
@@ -191,12 +194,34 @@ export const getPageOpts = animateBack => ({
       key: 'spot_light_floor_3',
       type: 'spotlight',
       name: '屏幕聚光灯',
-      intensity: 2,
+      intensity: 1,
       color: 0xffffed,
       distance: 15,
       penumbra: 0.5,
       castShadow: false,
       angle: Math.PI * 0.36
+    },
+    {
+      key: 'spot_light_floor_4',
+      type: 'spotlight',
+      name: '屏幕聚光灯',
+      intensity: 2,
+      color: 0xffffed,
+      distance: 12,
+      penumbra: 0.5,
+      castShadow: false,
+      angle: Math.PI * 0.4
+    },
+    {
+      key: 'spot_light_floor_5',
+      type: 'spotlight',
+      name: '屏幕聚光灯',
+      intensity: 2,
+      color: 0xffffed,
+      distance: 8,
+      penumbra: 0.5,
+      castShadow: false,
+      angle: Math.PI * 0.23
     },
 
     {

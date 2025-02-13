@@ -460,7 +460,7 @@ const companyDoors = [
   {
     name: '公司大门',
     type: 'DOUBLE_HORIZONTAL_SWITCH',
-    position: { x: 14.5, y: anchorHeight, z: 28.7 },
+    position: { x: 14.14, y: anchorHeight, z: 28.9 },
     bind: '_公司大门_grp',
     // 移动轴
     axle: 'x'
@@ -468,7 +468,7 @@ const companyDoors = [
   {
     name: '公司大门',
     type: 'DOUBLE_HORIZONTAL_SWITCH',
-    position: { x: 14.5, y: anchorHeight, z: 30 },
+    position: { x: 14.83, y: anchorHeight, z: 29.7 },
     bind: '_公司大门_grp',
     // 移动轴
     axle: 'x'
@@ -477,7 +477,7 @@ const companyDoors = [
   {
     name: '小会议室',
     type: 'DOUBLE_HORIZONTAL_SWITCH',
-    position: { x: -10.2, y: anchorHeight, z: 29.5 },
+    position: { x: -9.78, y: anchorHeight, z: 30.4 },
     bind: '_小会议室-门_grp',
     // 移动轴
     axle: 'x'
@@ -485,7 +485,7 @@ const companyDoors = [
   {
     name: '小会议室',
     type: 'DOUBLE_HORIZONTAL_SWITCH',
-    position: { x: -10.2, y: anchorHeight, z: 30.5 },
+    position: { x: -10.14, y: anchorHeight, z: 29.6 },
     bind: '_小会议室-门_grp',
     // 移动轴
     axle: 'x'
@@ -494,20 +494,11 @@ const companyDoors = [
   {
     name: '大会议室',
     type: 'DOUBLE_ROTATE_SWITCH',
-    position: { x: -27.8, y: anchorHeight, z: 53.8 },
+    position: { x: -28, y: anchorHeight, z: 54.6 },
     bind: '_大会议室-门_grp',
     // 旋转轴
-    axle: 'y'
-  },
-  {
-    name: '大会议室',
-    type: 'DOUBLE_ROTATE_SWITCH',
-    position: { x: -29, y: anchorHeight, z: 53.8 },
-    bind: '_大会议室-门_grp',
-    // 旋转轴
-    axle: 'y'
-    // 内部
-    // internal: 1
+    axle: 'y',
+    autoClose: 0
   },
 
   {
@@ -576,13 +567,6 @@ const companyDoors = [
     bind: '_老板办公室-门_grp',
     autoClose: 0
   }
-  // {
-  //   name: '老板办公室',
-  //   type: 'DOUBLE_ROTATE_SWITCH',
-  //   position: { x: 51, y: anchorHeight, z: 4.8 },
-  //   bind: '_老板办公室-门_grp',
-  //   autoClose: 0
-  // }
 ]
 JsonList.push(...companyDoors)
 
@@ -611,14 +595,14 @@ const videos = [
   {
     name: '小会议室大屏',
     type: 'VIDEO_SWITCH',
-    position: { x: -10.2, y: 189.2, z: 8.5 },
+    position: { x: -10.2, y: 188.6, z: 8.5 },
     bind: '小会议室大屏'
   },
   {
     name: '小会议室大屏-照明灯',
-    type: 'spot_light_floor_3',
-    position: { x: -9.6, y: 192, z: 10 },
-    to: { x: -9.6, y: 189.5, z: 7.9 }
+    type: 'spot_light_floor_4',
+    position: { x: -9.6, y: 187.8, z: 10 },
+    to: { x: -9.6, y: 188.6, z: 7.9 }
   },
 
   {
@@ -629,9 +613,9 @@ const videos = [
   },
   {
     name: '大会议电视屏幕-照明灯',
-    type: 'spot_light_floor_3',
-    position: { x: -45, y: 192, z: 52.5 },
-    to: { x: -48.4, y: 191, z: 52.5 }
+    type: 'spot_light_floor_5',
+    position: { x: -45, y: 186.8, z: 52.2 },
+    to: { x: -48.4, y: 187.6, z: 52.5 }
   }
 ]
 JsonList.push(...videos)

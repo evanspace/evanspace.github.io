@@ -113,8 +113,9 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
   Emitter.on('LIGHT:AUTO', (object, isOpen, max) => scene?.lightSwitch(object, isOpen, max))
 
   // 窗帘
-  Emitter.on('CURTAIN:TOGGLE', (isOpen?) => {
-    scene?.toggleCurtain({ data: { bind: '_GROUP_013_grp' } }, isOpen)
+  Emitter.on('CURTAIN:TOGGLE', (isClose?) => {
+    const status = scene?.toggleCurtain({ data: { bind: '_GROUP_013_grp' } }, isClose)
+    console.log('窗帘关闭状态', status)
   })
 
   // 公司大门

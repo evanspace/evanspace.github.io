@@ -856,6 +856,11 @@ export class StationThreeScene extends ThreeScene.Scene {
         if (this.checkCharacterCollide(newPos)) {
         } else {
           target?.position.copy(newPos)
+          if (isS) {
+            // 定位后一步
+            const ds = dir.clone().multiplyScalar(-steep * 2)
+            this.camera.position.copy(this.camera.position.clone().add(ds))
+          }
           this.setControlTarget(target?.position)
         }
       }
