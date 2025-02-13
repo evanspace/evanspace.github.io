@@ -230,8 +230,6 @@ const initPage = () => {
   backgroundLoad(scene, pageOpts.skyCode as any)
 
   onListen(scene)
-  // 事件监听
-  Emitter.on('DEV:UPDATE', deviceUpdate)
 }
 
 // 加载
@@ -265,7 +263,7 @@ const load = () => {
       scene?.addWater('水流')
       createRoblt()
       createCharacter()
-      Emitter.emit('DEV:UPDATE')
+      deviceUpdate()
     })
   })
 }
@@ -449,7 +447,8 @@ const updateObject = () => {
       return
     }
   })
-  Emitter.emit('DEV:UPDATE')
+
+  deviceUpdate()
 }
 
 const deviceUpdate = () => {
