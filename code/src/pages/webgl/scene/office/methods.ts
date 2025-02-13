@@ -634,6 +634,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const liftName = object.data.target
     // 电梯轿厢
     const box = this.scene.getObjectByName(liftName) as any
+    if (!box) {
+      ElMessage.error({
+        message: `【${liftName}】模块未找到！`,
+        grouping: true
+      })
+    }
     console.log(box, liftName)
 
     // 当前绑定坐标
