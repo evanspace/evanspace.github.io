@@ -81,6 +81,8 @@ export class StationThreeScene extends ThreeScene.Scene {
       actions: any[]
     }
   }
+  characterSightHeight = DEFAULTCONFIG.characterSightHeight
+
   // 楼层集合（分层）
   floorGroup?: InstanceType<typeof THREE.Group>
 
@@ -99,7 +101,10 @@ export class StationThreeScene extends ThreeScene.Scene {
   })[]
 
   // 移动系数
-  moveFactor: number = 1
+  moveFactor = DEFAULTCONFIG.moveFactor
+
+  // 碰撞间距
+  collisionSpace = DEFAULTCONFIG.collisionSpace
 
   // 围栏
   fence?: InstanceType<typeof THREE.Group>
@@ -256,6 +261,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     }
   }
 
+  // 添加灯组
   addLightGroup() {
     const group = new THREE.Group()
     group.name = '灯光组'
@@ -263,6 +269,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.addObject(group)
   }
 
+  // 清除灯组
   clearLightGroup() {
     if (this.lightGroup) {
       this.disposeObj(this.lightGroup)
@@ -270,6 +277,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.addLightGroup()
   }
 
+  // 关闭灯组
   closeLightGroup(isOpen: boolean = false) {
     this.lightGroup?.children.forEach((el: any) => {
       if (el.isSpotLight) {
@@ -278,6 +286,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     })
   }
 
+  // 添加灯
   addLight(item: ObjectItem, obj, hasHelper?: boolean) {
     if (this.lightGroup) {
       obj.name = item.name
@@ -295,6 +304,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     }
   }
 
+  // 灯光开关
   lightSwitch(object) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
@@ -361,6 +371,14 @@ export class StationThreeScene extends ThreeScene.Scene {
         if (model.__runing__) return
         if (keys.includes(e.keyCode)) {
           runging.play()
+        }
+        if (this.isCharacterSight()) {
+          if (keyboardPressed('X')) {
+            this.characterAccelerate(1)
+          }
+          if (keyboardPressed('Z')) {
+            this.characterAccelerate(-1)
+          }
         }
       },
       e => {
@@ -441,11 +459,17 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     if (!this.character) return
     const position = this.character.position
+    this.toggleCharacterView()
 
     // 向量
-    const up = new THREE.Vector3(0, 2, 0)
+    const up = new THREE.Vector3(0, this.characterSightHeight, 0)
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
+      ElMessage.success({
+        message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向，X 加速，Z 减速!',
+        grouping: true
+      })
+
       this.historyTarget = this.controls.target.clone()
       this.historyCameraPosition = this.camera.position.clone()
       const pos = position.clone().add(up)
@@ -461,8 +485,22 @@ export class StationThreeScene extends ThreeScene.Scene {
   }
 
   // 是否人物视角
-  isPerspectives() {
+  isCharacterSight() {
     return this.currentSight == sightMap.npc
+  }
+
+  // 清除人物视角状态
+  clearCharacterSight() {
+    this.currentSight = sightMap.full
+    this.toggleCharacterView()
+  }
+
+  // 切换人物界面效果
+  toggleCharacterView() {
+    const dom = this.container.parentNode?.querySelector('.character-sight') as HTMLDivElement
+    if (!dom) return
+    const isCharacter = this.currentSight === sightMap.npc
+    dom.style.display = isCharacter ? 'block' : 'none'
   }
 
   // 人物加速
@@ -479,9 +517,8 @@ export class StationThreeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    const height = 3
     const { x, y, z } = point
-    this.controls.target.set(x, y + height, z)
+    this.controls.target.set(x, y + this.characterSightHeight, z)
     this.camera.lookAt(this.controls.target)
   }
 
@@ -545,7 +582,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       const intersect = intersects[0]
 
       // 于目标距离
-      if (intersect.distance < 0.5) {
+      if (intersect.distance < this.collisionSpace) {
         ElMessage.warning({
           message: '撞到了！',
           grouping: true
@@ -596,9 +633,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       return
     }
 
-    if (this.isPerspectives()) {
-      this.toggleSight()
-    }
+    this.clearCharacterSight()
 
     const { to, target = object.position } = object.data
 
@@ -647,7 +682,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     return new Promise((resolve, reject) => {
       if (this.judgeCruise(true)) return reject(false)
 
-      if (this.isPerspectives()) {
+      if (this.isCharacterSight()) {
         return reject(false)
       }
 
@@ -665,6 +700,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     })
   }
 
+  // 切换巡航
   toggleCruise(close?: boolean) {
     if (getRoamStatus()) {
       ElMessage.warning({
@@ -700,9 +736,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   // 控制重置视角
   controlReset() {
     if (this.judgeCruise()) return
-    if (this.isPerspectives()) {
-      this.toggleSight()
-    }
+    this.clearCharacterSight()
     if (!this.controls) return
     this.controls.maxDistance = 800
     super.controlReset()
@@ -834,7 +868,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     executeRoam(this.camera, this.controls)
 
     // 人物视角
-    if (this.isPerspectives() && !this.character?.__runing__) {
+    if (this.isCharacterSight() && !this.character?.__runing__) {
       // 移动速度
       const steep = 10 * delta
       // 旋转速度

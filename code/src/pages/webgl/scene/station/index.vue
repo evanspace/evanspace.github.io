@@ -23,6 +23,8 @@
 
     <div :class="$style.container" ref="containerRef"></div>
 
+    <t-first-person />
+
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
 
     <!-- // 提示 -->
@@ -54,6 +56,7 @@
 
 <script lang="ts" setup>
 import tLoading from '@/components/loading/index.vue'
+import tFirstPerson from './first-person.vue'
 import {
   MACHINE_ROOM,
   ANCHOR_POS,
@@ -124,7 +127,8 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     maxDistance: 800
   },
   camera: {
-    near: 3
+    near: 3,
+    fov: 45
   },
   directionalLight: {
     intensity: 2.2
@@ -500,6 +504,9 @@ const createCharacter = () => {
   const r = obj.getObjectByName('HandR')
   l.visible = false
   r.visible = false
+
+  obj.scale.setScalar(2)
+
   scene.addCharacter(obj, move)
 }
 

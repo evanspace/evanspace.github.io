@@ -4,7 +4,7 @@ export default {
   clickIntervalTime: 300,
 
   // 人物视线高度
-  characterSightHeight: 3.5,
+  characterSightHeight: 8,
 
   // 碰撞间距
   collisionSpace: 1,
