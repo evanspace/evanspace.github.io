@@ -694,7 +694,7 @@ export default [
 
   {
     // 模式
-    url: '/d3/office/mode',
+    url: '/d3/office_mode',
     method: 'get',
     response: () =>
       builder([

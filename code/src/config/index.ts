@@ -56,7 +56,7 @@ const Api = {
     station: '/d3/station',
 
     office: '/d3/office',
-    office_mode: '/d3/office/mode'
+    office_mode: '/d3/office_mode'
   },
 
   area: {
