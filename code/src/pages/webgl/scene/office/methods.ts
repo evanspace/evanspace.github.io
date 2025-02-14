@@ -884,7 +884,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       map: windTexture,
       // opacity: 0.9,
       transparent: true,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
+      emissive: 0x76b6ff, // 自发光颜色
+      emissiveIntensity: 1 // 自发光强度，范围从0到无穷大
     })
 
     for (let i = 0; i < names.length; i++) {
