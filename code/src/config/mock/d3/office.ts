@@ -28,6 +28,15 @@ const JsonList = [
   }
 ]
 
+// 监测点
+const dotList = [
+  // {
+  //   name: '监测点',
+  //   type: 'DOT'
+  // }
+]
+JsonList.push(...dotList)
+
 // 定位点
 const posList = [
   {

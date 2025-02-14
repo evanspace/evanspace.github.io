@@ -1,0 +1,26 @@
+
+@use '@/assets/css/mixin.scss';
+
+.page {
+  
+}
+
+:global {
+  :local( .page ) {
+    @include mixin.scene-operation;
+  }
+
+  .screen-welcom-dialog {
+    .el-message-box {
+      &__message {
+        width: 100%;
+      }
+    }
+  }
+}
+
+:global {
+  :local( .page ) {
+    @include mixin.dot-label;
+  }
+}
