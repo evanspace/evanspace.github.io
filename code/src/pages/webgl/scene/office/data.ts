@@ -65,7 +65,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 14,
+      size: 13.4,
       url: '/公司总部.glb'
     },
     {
@@ -176,7 +176,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'spot_light_floor_1',
       type: 'spotlight',
-      name: '聚光灯',
+      name: '主机聚光灯',
       intensity: 8,
       color: 0xffffed,
       distance: 20
@@ -184,9 +184,10 @@ export const getPageOpts = animateBack => ({
     {
       key: 'spot_light_floor_2',
       type: 'spotlight',
-      name: '聚光灯',
+      name: '会议室聚光灯',
       intensity: 2,
       color: 0xffffed,
+      castShadow: false,
       distance: 10
     },
 
