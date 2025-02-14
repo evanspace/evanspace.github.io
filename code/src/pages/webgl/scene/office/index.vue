@@ -111,7 +111,7 @@ import * as request from './request'
 
 import { useResize } from '@/hooks/scene-resize'
 import { useDialog } from '@/hooks/dialog'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 import { ElInput, ElMessageBox } from 'element-plus'
