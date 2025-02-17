@@ -4,29 +4,56 @@
     <div class="scene-operation">
       <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
 
-      <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
-
-      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
-      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
-      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
-
-      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE')">窗帘开关</div>
-      <div class="item" @click="() => Emitter.emit('EFFECT:FLEETING')">流光开关</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
 
       <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
         {{ item.name }}
       </div>
+
+      <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
+
+      <div class="item" @click="() => Emitter.emit('LIGHT:CLG')">灯组开关</div>
+      <div class="item" @click="() => Emitter.emit('LIGHT:FIRSTFLOOR')">一楼灯开关</div>
+      <div
+        class="item"
+        @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
+      >
+        大会议室灯
+      </div>
+
+      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE')">窗帘开关</div>
+      <div class="item" @click="() => Emitter.emit('EFFECT:FLEETING')">流光开关</div>
+
+      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
+      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
+      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
     </div>
 
     <div class="h-100" ref="containerRef"></div>
 
     <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+
+    <t-tip-msg v-model="tipOpts.show" :style="tipOpts.style" :msg="tipOpts.msg"></t-tip-msg>
+
+    <canvas :class="$style['canvas-texture']" ref="canvasTextureRef"></canvas>
+
+    <t-edit-dialog
+      v-model="dialog.show"
+      :title="dialog.title"
+      v-model:content="dialog.content"
+      :err-message="dialog.errMessage"
+      @confirm="onEditDialogConfirm"
+    ></t-edit-dialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import tLoading from '@/components/loading/index.vue'
-import { getPageOpts } from './data'
+import tTipMsg from './tip-msg.vue'
+import tEditDialog from './edit-dialog.vue'
+
+import { getPageOpts, getTipOpts } from './data'
 import KEYS from './keys'
 import Emitter from './emitter'
 
@@ -38,18 +65,34 @@ import { onListen } from './listen'
 import DEFAULTCONFIG from './config'
 import * as request from './request'
 import { ObjectItem } from 'three-scene/types/model'
+import { useDialog } from '@/hooks/dialog'
+import { getStorage, setStorage } from '@/common/utils/storage'
 
 const { Hooks, Utils } = MS
 
+// 界面配置
 const pageOpts = reactive(getPageOpts())
+// 提示框
+const tipOpts = reactive(getTipOpts())
+
+// 大屏欢迎词弹窗
+const welcomKey = 'welcom.key'
+const { options: dialog } = useDialog({
+  title: '编辑欢迎词',
+  content: getStorage(welcomKey) || '中碳能源',
+  errMessage: '请输入欢迎词！'
+})
 
 const { progress, loadModels, initModels, getModel } = Hooks.useModelLoader({
   baseUrl: DEFAULTCONFIG.baseUrl,
   indexDB: DEFAULTCONFIG.indexDB
 })
 
+const canvasTextureRef = ref()
 const containerRef = ref()
 const options: ConstructorParameters<typeof OfficeScene>[0] = {
+  cruise: pageOpts.cruise,
+  baseUrl: DEFAULTCONFIG.baseUrl,
   controls: {
     visible: !false,
     enableDamping: true,
@@ -100,7 +143,7 @@ const loadSceneModel = () => {
   initModels(modelConfigList.value, (item: ObjectItem) => {
     if (!item) return Promise.resolve()
     const { type } = item
-    if (type === KEYS.S_ANCHOR_POS) return Promise.resolve()
+    if (type === KEYS.M_ANCHOR_POS) return Promise.resolve()
     const obj = getModel(type)
     if (!obj) {
       // 点位
@@ -130,7 +173,7 @@ const loadSceneModel = () => {
 
     // 动画
     if (animationModelType.includes(type)) {
-      scene.addModelAnimate(model, obj.animations, type !== KEYS.S_CURTAIN, 1)
+      scene.addModelAnimate(model, obj.animations, type !== KEYS.M_CURTAIN, 1)
     }
 
     // 锚点
@@ -141,7 +184,7 @@ const loadSceneModel = () => {
 
     // 聚光灯 / 面光灯
     else if (model.isSpotLight || model.isRectAreaLight) {
-      // scene.addLight(item, model, !false)
+      scene.addLight(item, model, false)
     } else {
       scene.addBuilding(model)
     }
@@ -160,12 +203,21 @@ const assemblyScenario = () => {
     await nextTick()
     await loadSceneModel()
 
+    // 漫游
+    scene.setRoamPoint(pageOpts.roamPoints)
+    // 巡航
+    scene.setCruisePoint(pageOpts.cruise?.points || [])
+
     const to = scene.getValidTargetPosition(pageOpts.config || {})
 
     // 入场动画
     // @ts-ignore
     Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
       scene.controlSave()
+      setTimeout(() => {
+        Emitter.emit('LIGHT:CLOSE')
+        resolve(1)
+      }, 1000 * 3)
     })
   })
 }
@@ -177,7 +229,7 @@ const getPageOptions = () => {
       list.forEach((item, index) => {
         res.JsonList.push({
           ...item,
-          type: KEYS.S_MODE_SWITCH,
+          type: KEYS.M_MODE_SWITCH,
           position: { x: 19 - index * 0.6, y: 186.8, z: 49 }
         })
       })
@@ -189,13 +241,13 @@ const getPageOptions = () => {
 const modelConfigList = ref<ObjectItem[]>([])
 // 定位点位列表
 const cameraPositionList = computed(() =>
-  modelConfigList.value.filter(it => it.type === KEYS.S_ANCHOR_POS)
+  modelConfigList.value.filter(it => it.type === KEYS.M_ANCHOR_POS)
 )
 
 // 加载
 const load = () => {
   loadModels(pageOpts.models, () => {
-    getPageOptions().then(async res => {
+    getPageOptions().then(res => {
       let json: any = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson
@@ -210,7 +262,22 @@ const load = () => {
       })
       pageOpts.cruise.points = json.cruise || []
       pageOpts.roamPoints = json.roamPoints || []
-      await assemblyScenario()
+
+      setTimeout(() => {
+        //  组装场景
+        assemblyScenario().then(() => {
+          // 绘制画布纹理
+          Emitter.emit('SCREEN:WELCOM', dialog.content)
+          // 添加视频材质
+          scene.addVideoMaterial(
+            res.JsonList.filter(it => it.type === KEYS.M_VIDEO_SWITCH).map(it => it.bind)
+          )
+          // 添加画布纹理
+          scene.addCanvasMaterial(
+            res.JsonList.filter(it => it.type === KEYS.M_SCREEN_EDIT).map(it => it.bind)
+          )
+        })
+      }, 100)
     })
   })
 }
@@ -221,9 +288,85 @@ const initPage = () => {
   onListen(scene)
 }
 
+// 编辑弹窗确认
+const onEditDialogConfirm = text => {
+  dialog.content = text
+  setStorage(welcomKey, dialog.content || '')
+  Emitter.emit('SCREEN:WELCOM', dialog.content)
+}
+
+const onClickLeft = object => {
+  const data = object.data
+  switch (data?.type) {
+    case KEYS.M_ANCHOR_POS: // 定位
+      scene.cameraTransition(object)
+      break
+    case KEYS.M_WAIT_LIFT: // 等电梯
+      // floorOpts.targetName = object.data.target
+      // scene.waitLift(object)
+      break
+    case KEYS.M_LIGHT_SWITCH: // 开关灯
+      Emitter.emit('LIGHT:AUTO', object)
+      break
+    case KEYS.M_LIGHT_MAIN_SWITCH: // 灯总开关
+      object.__close__ = !object.__close__
+      Emitter.emit('LIGHT:CLOSE', !object.__close__)
+      break
+    case KEYS.M_GATE_SWITCH: // 闸机
+      scene.openGate(object)
+      break
+    case KEYS.M_DOUBLE_HORIZONTAL_SWITCH: // 双开横推门
+      scene.dubleHorizontalDoor(object, 5.4)
+      break
+    case KEYS.M_ODD_ROTATE_SWITCH: // 单旋转开门
+      scene.oddRotateDoor(object)
+      break
+    case KEYS.M_DOUBLE_ROTATE_SWITCH: // 双旋转开门
+      scene.dubleRotateDoor(object)
+      break
+    case KEYS.M_CURTAIN_SWITCH: // 窗帘动画
+      Emitter.emit('CURTAIN:TOGGLE')
+      break
+    case KEYS.M_VIDEO_SWITCH: // 视频播放
+      scene.videoPlay(object)
+      break
+    case KEYS.M_SCREEN_EDIT: // 大屏欢迎词编辑
+      dialog.show = true
+      break
+    case KEYS.M_AIR_SWITCH: // 空调
+      // Emitter.emit('AIR:ODD', object)
+      break
+    case KEYS.M_MODE_SWITCH: // 模式
+      console.log(toRaw(object.data))
+      break
+  }
+}
+
 onMounted(() => {
   options.container = containerRef.value
-  scene = new OfficeScene(options, {}).run()
+  scene = new OfficeScene(options, {
+    canvas: canvasTextureRef.value,
+    onHoverAnchor: (object, style) => {
+      const isShow = !!object && object.object._isAnchor_
+      tipOpts.show = isShow
+      if (isShow) {
+        tipOpts.style.top = style.top
+        tipOpts.style.left = style.left
+        const data = object.object.data
+        tipOpts.msg = `
+          <p>${data.name}</p>
+          <p>类型：${data.type}</p>
+          <p>绑定：${data.bind || '无'}</p>
+        `
+      }
+    },
+
+    onClickLeft: (object, _intersct) => {
+      if (object && object.data) {
+        onClickLeft(object)
+      }
+    }
+  }).run()
 
   useResize(scene).resize()
 

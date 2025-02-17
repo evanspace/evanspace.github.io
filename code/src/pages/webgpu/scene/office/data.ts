@@ -1,5 +1,11 @@
 import KEYS from './keys'
 
+import models from './models'
+
+/**
+ * 获取页面配置
+ * @returns
+ */
 export const getPageOpts = (): {
   /**
    * 锚点类型
@@ -26,134 +32,84 @@ export const getPageOpts = (): {
    */
   models: import('three-scene/types/model').ModelItem[]
 } => ({
-  anchorType: [],
-  animationModelType: [KEYS.S_MAIN_SCENE],
+  anchorType: [
+    KEYS.M_ANCHOR_POS,
+    KEYS.M_ANCHOR_TARGET,
+    KEYS.M_WAIT_LIFT,
+    KEYS.M_LIGHT_SWITCH,
+    KEYS.M_LIGHT_MAIN_SWITCH,
+    KEYS.M_AIR_SWITCH,
+    KEYS.M_GATE_SWITCH,
+    KEYS.M_VIDEO_SWITCH,
+    KEYS.M_SCREEN_EDIT,
+    KEYS.M_DOUBLE_HORIZONTAL_SWITCH,
+    KEYS.M_ODD_ROTATE_SWITCH,
+    KEYS.M_DOUBLE_ROTATE_SWITCH,
+    KEYS.M_CURTAIN_SWITCH,
+    KEYS.M_MODE_SWITCH
+  ],
+  animationModelType: [KEYS.M_MAIN_SCENE, KEYS.M_CONPANT_FLOOR, KEYS.M_CURTAIN],
 
   config: {},
-  cruise: {},
+  cruise: {
+    color: 0x1fe4ec,
+    visible: true,
+    auto: true,
+    alway: true,
+    mapUrl: '/oss/textures/cruise/line2.png', // 1-18
+    repeat: [0.2, 1],
+    width: 2,
+    segment: 100,
+    tension: 0.01,
+    speed: 10,
+    mapSpeed: 0.01,
+    points: [],
+    close: true,
+    offset: 5.2,
+    bloom: true
+  },
   roamPoints: [],
 
-  models: [
-    {
-      key: KEYS.S_MAIN_SCENE,
-      name: '场景',
-      size: 13.6,
-      url: '/公司总部.glb'
-    },
-    {
-      key: KEYS.S_CONPANT_FLOOR,
-      name: '公司',
-      size: 16.6,
-      url: '/二十五楼.glb'
-    },
+  models
+})
 
-    {
-      key: 'floor_low',
-      name: '低层',
-      size: 6.1,
-      url: '/低层.glb'
-    },
-    {
-      key: KEYS.S_CURTAIN,
-      name: '窗帘',
-      size: 0.2,
-      url: '/窗帘.glb'
-    },
-    {
-      key: 'floor_heigh',
-      name: '高层',
-      size: 2.7,
-      url: '/高层.glb'
-    },
+/**
+ * 获取提示配置
+ * @returns
+ */
+export const getTipOpts = () => ({
+  show: false,
+  style: {
+    left: 0,
+    top: 0
+  },
+  msg: ''
+})
 
+/**
+ * 电梯楼层配置
+ * @returns
+ */
+export const getFloorOpts = () => ({
+  active: 2,
+  show: false,
+  targetName: '',
+  list: [
     {
-      key: KEYS.S_ANCHOR_POS,
-      name: '定位',
-      type: 'sprite',
-      range: { x: 4, y: 4 },
-      mapUrl: '/pos.png'
-    },
-
-    {
-      key: 'spot_light_floor_1',
-      type: 'GPUspotlight',
-      name: '主机聚光灯',
-      intensity: 8,
-      color: 0xffffed,
-      distance: 20
-    },
-    {
-      key: 'spot_light_floor_2',
-      type: 'GPUspotlight',
-      name: '会议室聚光灯',
-      intensity: 2,
-      color: 0xffffed,
-      castShadow: false,
-      distance: 10
-    },
-
-    {
-      key: 'spot_light_floor_3',
-      type: 'GPUspotlight',
-      name: '屏幕聚光灯',
-      intensity: 1,
-      color: 0xffffed,
-      distance: 15,
-      penumbra: 0.5,
-      castShadow: false,
-      angle: Math.PI * 0.36
+      target: '电梯-2',
+      items: [
+        // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+        { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-2_grp' },
+        { name: '公司', key: 2, y: 184.7, bind: '_电梯外门_2_grp' }
+      ]
     },
     {
-      key: 'spot_light_floor_4',
-      type: 'GPUspotlight',
-      name: '屏幕聚光灯',
-      intensity: 2,
-      color: 0xffffed,
-      distance: 12,
-      penumbra: 0.5,
-      castShadow: false,
-      angle: Math.PI * 0.4
-    },
-    {
-      key: 'spot_light_floor_5',
-      type: 'GPUspotlight',
-      name: '屏幕聚光灯',
-      intensity: 2,
-      color: 0xffffed,
-      distance: 8,
-      penumbra: 0.5,
-      castShadow: false,
-      angle: Math.PI * 0.23
-    },
-
-    {
-      key: 'rect_area_light_1',
-      type: 'GPUplanelight',
-      name: '面光灯',
-      intensity: 1.2,
-      color: 0xffffff,
-      width: 134,
-      height: 134
-    },
-    {
-      key: 'rect_area_light_2',
-      type: 'GPUplanelight',
-      name: '面光灯',
-      intensity: 0.8,
-      color: 0xffffff,
-      width: 134,
-      height: 134
+      target: '电梯-1',
+      items: [
+        // key 值需要与 配置的等电梯点位 bing 字段尾数相同
+        { name: '一楼', key: 1, y: 0.1, bind: '_一楼电梯门-1_grp' },
+        { name: '公司', key: 2, y: 184.7, bind: '_电梯外门_1_grp' }
+      ]
     }
-  ].map(item => {
-    if (item.url && item.url.indexOf('oss') < 0) {
-      item.url = '/oss/model/office' + item.url
-    }
-    if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/office' + item.mapUrl
-    }
-    if (!item.range) {
-      item.range = { x: 0.5, y: 0.5 } as any
-    }
-    return item as import('three-scene/types/model').ModelItem
-  })
+  ]
 })

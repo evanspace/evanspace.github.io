@@ -11,34 +11,58 @@ const Utils = ThreeScene.Utils
 
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
+const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
 
-const { pass, mrt, output, float, uniform } = THREE.TSL
+const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
 export { Hooks, Utils }
 
 /**
  * 场景合成器
- * @param scenePass 场景合成 pass
+ * @param scene 场景
+ * @param camera 相机
  * @param renderer 渲染器
+ * @param isEnv 是否环境发光
  * @returns 合成渲染器
  */
-export const createPostProcessing = (scenePass, renderer) => {
-  scenePass.setMRT(
-    mrt({
-      output,
-      bloomIntensity: float(0)
-    })
-  )
+export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) => {
+  // 场景合成
+  const scenePass = pass(scene, camera)
+  if (isEnv) {
+    scenePass.setMRT(
+      mrt({
+        output,
+        emissive
+      })
+    )
+  } else {
+    scenePass.setMRT(
+      mrt({
+        output,
+        bloomIntensity: float(0.01)
+      })
+    )
+  }
 
   const outputPass = scenePass.getTextureNode()
-  const bloomIntensityPass = scenePass.getTextureNode('bloomIntensity')
+  let bloomPass
+  if (isEnv) {
+    const emissivePass = scenePass.getTextureNode('emissive')
+    bloomPass = bloom(emissivePass, 2.5, 0.5)
+  } else {
+    const bloomIntensityPass = scenePass.getTextureNode('bloomIntensity')
+    bloomPass = bloom(outputPass.mul(bloomIntensityPass))
+  }
 
-  const bloomPass = bloom(outputPass.mul(bloomIntensityPass))
   // 色调映射
   renderer.toneMapping = THREE.NeutralToneMapping
   const postProcessing = new THREE.PostProcessing(renderer)
-  postProcessing.outputColorTransform = false
-  postProcessing.outputNode = outputPass.add(bloomPass).renderOutput()
+  if (isEnv) {
+    postProcessing.outputNode = outputPass.add(bloomPass)
+  } else {
+    postProcessing.outputColorTransform = false
+    postProcessing.outputNode = outputPass.add(bloomPass).renderOutput()
+  }
   return postProcessing
 }
 
@@ -150,7 +174,7 @@ export const createLightGroup = (item: ObjectItem, obj, hasHelper?: boolean) => 
     group.add(obj.target)
   }
   // 开灯
-  obj.visible = true
+  obj.visible = !true
   group.add(obj)
   if (hasHelper) {
     if (obj.isRectAreaLight) {
@@ -176,27 +200,18 @@ export const createFleetingGroup = (pointList: number[][][] = [], color, bloomIn
   for (let i = 0; i < pointList.length; i++) {
     const points = pointList[i]
     const line = createFleeting({
+      color,
       points,
       tubularSegments: 1000,
       radius: 0.6,
       repeat: {
         x: 2,
         y: 4
-      }
+      },
+      bloom: true,
+      bloomIntensity
     })
-    const mesh = new THREE.Mesh(
-      line.geometry,
-      new THREE.MeshBasicNodeMaterial({
-        color,
-        // @ts-ignore
-        map: line.material.map,
-        transparent: true,
-        mrtNode: mrt({
-          bloomIntensity
-        })
-      })
-    )
-    group.add(mesh)
+    group.add(line)
   }
   group.name = '流光组'
   return group
@@ -206,6 +221,32 @@ export const createFleetingGroup = (pointList: number[][][] = [], color, bloomIn
  * 流光组动画
  */
 export const fleetingGroupAnimate = fleetingAnimate
+
+/**
+ * 创建路灯组
+ * @param list 路灯坐标组
+ * @param color 颜色
+ * @returns
+ */
+export const createStreetLampGroup = (list, color: number | string = 0xffffff) => {
+  const group = new THREE.Group()
+  const spotLight = new THREE.SpotLight(0xffffff, 10, 100, Math.PI * 0.6, 0.6, 0.4)
+  for (let i = 0; i < list.length; i++) {
+    const light = spotLight.clone()
+    const [x, y, z] = list[i]
+    light.position.set(x, y, z)
+    light.target.position.set(x, y - 1, z)
+    light.add(spotLight.target)
+    group.add(light)
+    // 辅助不加，灯光不圆
+    const helper = new THREE.SpotLightHelper(light)
+    helper.visible = false
+    group.add(helper)
+  }
+  group.name = '路灯组'
+  group.visible = false
+  return group
+}
 
 /**
  * 创建模型动画
@@ -254,5 +295,211 @@ export const toggleCurtainAnimate = (model, isClose?: boolean) => {
   })
   if (!model.__close__) {
     __mixer__.stopAllAction()
+  }
+}
+
+/**
+ * 获取相交对象
+ * @param e 鼠标事件
+ * @param container 容器
+ * @param scale 缩放
+ * @param camera 相机
+ * @param objects 模型对接列表
+ * @param deepCheck 深度检查
+ * @returns
+ */
+export const getIntersectObjects = (
+  e: PointerEvent,
+  container,
+  scale,
+  camera,
+  objects,
+  deepCheck
+) => {
+  raycasterUpdate(e, container, scale)
+  // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
+  raycaster.setFromCamera(pointer, camera)
+  let interscts = raycaster.intersectObjects(objects, deepCheck /* 是否检查所有后代 */)
+  return interscts
+}
+
+/**
+ * 悬浮锚点（类似 css 鼠标悬浮效果）
+ * @param interscts 交叉对象列表
+ * @param callback 回调
+ * @param container 容器
+ * @param group 锚点组
+ * @returns
+ */
+export const hoverAnchor = (interscts, callback, container, anchorGroup) => {
+  if (typeof callback === 'function') callback(interscts[0], style)
+
+  if (interscts.length) {
+    const intersct = interscts[0]
+    const object = intersct.object
+    container.style.cursor = object._isAnchor_ ? 'pointer' : 'auto'
+    if (!object._isAnchor_) {
+      anchorGroup?.children.forEach((el: any) => {
+        el.__change_color__ = false
+      })
+      return
+    }
+
+    const mat = object.material
+    if (object.__mat_color__ === void 0) {
+      object.__mat_color__ = mat.color
+    }
+    mat.color = new THREE.Color(0xff0ff0)
+    anchorGroup?.children.forEach((el: any) => {
+      el.__change_color__ = el.uuid === object.uuid
+    })
+  } else {
+    container.style.cursor = 'auto'
+    anchorGroup?.children.forEach((el: any) => {
+      el.__change_color__ = false
+    })
+  }
+}
+
+/**
+ * 恢复锚点材质
+ * @param anchorGroup 锚点组
+ */
+export const restoreAnchorMaterial = anchorGroup => {
+  anchorGroup?.children.forEach((el: any) => {
+    if (!el.__change_color__ && el.__mat_color__) {
+      el.material.color = el.__mat_color__
+    }
+  })
+}
+
+/**
+ * 查找父级为建筑
+ * @param object 场景对象
+ * @returns
+ */
+export const findParentIsBuilding = object => {
+  const _find = obj => {
+    if (obj._isBuilding_) return obj
+    let parent = obj.parent
+    if (!parent) {
+      return
+    }
+    if (parent && parent._isBuilding_) {
+      return parent
+    }
+    return _find(parent)
+  }
+  return _find(object)
+}
+
+/**
+ * 绘制大屏画布
+ * @param canvas 画布
+ * @param text 文本
+ * @returns
+ */
+export const drawBdCanvas = (canvas, text = '') => {
+  const w = canvas.offsetWidth
+  const h = canvas.offsetHeight
+  canvas.width = w
+  canvas.height = h
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+  ctx.clearRect(0, 0, w, h)
+  ctx.fillStyle = '#f00'
+
+  // 分割为两行
+  const rows = 2,
+    max = 12,
+    len = text.length
+  const rlen = len > max ? Math.ceil(len / rows) : max
+  let list: string[] = [],
+    index = 0
+  while (index < len) {
+    const end = index + rlen
+    list.push(text.substring(index, end))
+    index = end
+  }
+
+  ctx.font = '100 40px 微软雅黑'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  const tl = list.length
+
+  list.forEach((tx, index) => {
+    const i = index * tl + 1
+    ctx.fillText(tx, w / 2, (h / tl / 2) * i)
+  })
+}
+
+// 创建视频元素
+export const createVideoDom = (src?: string) => {
+  const dom = document.createElement('video')
+  dom.src = DEFAULTCONFIG.baseUrl + (src || '/oss/textures/park/sintel.mp4')
+  dom.loop = true
+  // videoDom.autoplay = true
+  return dom
+}
+
+// 视频封面
+export const videoCoverTexture = new THREE.TextureLoader().load(
+  DEFAULTCONFIG.baseUrl + '/oss/textures/office/cover.jpg'
+)
+// 空调风纹理
+export const windTexture = new THREE.TextureLoader().load(
+  DEFAULTCONFIG.baseUrl + '/oss/textures/office/wind.png'
+)
+
+/**
+ * 添加视频材质
+ * @param dbObj 模型对象
+ * @returns
+ */
+export const addVideoMaterial = dbObj => {
+  const videoDom2 = createVideoDom()
+  const videoTexture2 = new THREE.VideoTexture(videoDom2)
+  dbObj.__video_texture__ = videoTexture2
+  dbObj.__cover_texture__ = videoCoverTexture.clone()
+  dbObj.material = new THREE.MeshPhongMaterial({
+    map: videoCoverTexture
+  })
+  dbObj.__video__ = videoDom2
+  return dbObj
+}
+
+/**
+ * 视频操作播放
+ * @param vobj 视频材质对象
+ * @param isPlay 是否播放
+ */
+export const videoMaterilPlay = (vobj, isPlay?: boolean) => {
+  if (vobj && vobj.__video__) {
+    const __video__ = vobj.__video__
+    if ((isPlay != void 0 && !isPlay) || __video__.paused) {
+      vobj.material.map = vobj.__video_texture__
+      __video__?.play()
+    } else {
+      __video__?.pause()
+      vobj.material.map = vobj.__cover_texture__
+    }
+  }
+}
+
+/**
+ * 清理视频
+ * @param videos 视频列表
+ */
+export const clearVideo = videos => {
+  for (let i = 0; i < videos.length; i++) {
+    const obj = videos[i]
+    const { __video__, __cover_texture__, __video_texture__ } = obj
+    if (__video__) {
+      __video__.pause()
+      __video__.remove()
+      __cover_texture__?.dispose()
+      __video_texture__?.dispose()
+    }
   }
 }

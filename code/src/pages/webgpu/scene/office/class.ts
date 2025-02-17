@@ -4,9 +4,18 @@ import * as ThreeScene from 'three-scene'
 import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
+import { ThreeModelItem } from 'three-scene/types/model'
 
-const { Utils } = MS
-const { pass } = THREE.TSL
+const { Utils, Hooks } = MS
+
+const {
+  createRoam,
+  executeRoam,
+  pause: roamPause,
+  play: roamPlay,
+  getStatus: getRoamStatus
+} = Hooks.useRoam()
+const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 
 export class OfficeScene extends ThreeScene.Scene {
   // 扩展参数
@@ -49,6 +58,11 @@ export class OfficeScene extends ThreeScene.Scene {
   // 居民灯
   residentLightGroup?: InstanceType<typeof THREE.Group>
 
+  // 画布纹理集合
+  canvasTextures: InstanceType<typeof THREE.Texture>[] = []
+  // 视频元素集合
+  videoModels: ThreeModelItem[] = []
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -60,20 +74,31 @@ export class OfficeScene extends ThreeScene.Scene {
     this.createClock()
 
     // 场景合成
-    const scenePass = pass(this.scene, this.camera)
-    this.postProcessing = MS.createPostProcessing(scenePass, this.renderer)
+    this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
 
+    // 建筑
     this.addBuildingGroup()
+
+    // 锚点
     this.addAnchorGroup()
 
+    // CSS2D 渲染器
     this.css2DRender = MS.createCSS2DRender(this.options, this.container)
     this.addDotGroup()
+    // 灯光
     this.addLightGroup()
 
     // 流光
     this.addFleeting()
+    // 路灯
+    this.addStreetLamp()
 
+    // 查找灯光
     this.findLight()
+
+    // 绑定事件
+    this.bindEvent()
+    console.log(this)
   }
 
   // 设置环境贴图
@@ -84,7 +109,8 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 渲染器
   createRender() {
-    return new THREE.WebGPURenderer() as any
+    const render = new THREE.WebGPURenderer() as any
+    return render
   }
 
   // 渲染
@@ -102,25 +128,29 @@ export class OfficeScene extends ThreeScene.Scene {
     // 场景风格
     this.autoChangeStyle()
 
+    // 锚点动画
+    this.anchorAnimateUpdate(delta)
+
     // 流光动画
     if (this.fleetingGroup?.visible) {
-      MS.fleetingGroupAnimate(0.2)
+      MS.fleetingGroupAnimate(1)
     }
 
     // 模型动画
-    if (this.animateModels.length) {
-      this.animateModels.forEach((el: any) => {
-        if (el.__mixer__) {
-          el.__mixer__.update(delta)
-        }
-      })
-    }
+    this.modelAnimateUpdate(delta)
+
+    // 执行漫游
+    executeRoam(this.camera, this.controls)
+    // 恢复锚点组 hover 效果
+    MS.restoreAnchorMaterial(this.anchorGroup)
   }
 
   // 查找灯光
   findLight() {
+    // 环境光
     const amb = this.scene.getObjectByProperty('isAmbientLight', true) as THREE.AmbientLight
     this.ambientLight = amb
+    // 平行光
     const dire = this.scene.getObjectByProperty(
       'isDirectionalLight',
       true
@@ -132,7 +162,6 @@ export class OfficeScene extends ThreeScene.Scene {
   toByday(style = 1) {
     this.style = style
     const { ambientLight, directionalLight } = this.options
-    console.log(ambientLight)
     this.setStyleOptions(ambientLight.intensity, directionalLight.intensity, this.sky.day)
   }
 
@@ -145,7 +174,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 夜晚
   toNight(style = 3) {
     this.style = style
-    this.setStyleOptions(0.01, 0, this.sky.night, true)
+    this.setStyleOptions(0.01, 0.3, this.sky.night, true)
   }
 
   // 设置 sky 参数 (环境光强度，平行光强度，hdr，可见)
@@ -157,8 +186,10 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
 
     this.loadEnvTexture(hdr, _texture => {
-      this.postProcessing.needsUpdate = true
-      console.log(this.postProcessing)
+      // this.postProcessing.needsUpdate = true
+      // console.log(this.scene.environment)
+      // this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
+      // console.log(this.postProcessing)
     })
   }
 
@@ -211,6 +242,14 @@ export class OfficeScene extends ThreeScene.Scene {
     // 创建精灵动画
     Utils.createSpriteAnimate(obj, [x, y, z], 0.2, 8)
   }
+  // 锚点动画
+  anchorAnimateUpdate(delta) {
+    this.anchorGroup?.children.forEach((el: any) => {
+      if (el.__mixer__) {
+        el.__mixer__.update(delta)
+      }
+    })
+  }
 
   // 添加点位组
   addDotGroup() {
@@ -241,6 +280,29 @@ export class OfficeScene extends ThreeScene.Scene {
     const group = MS.createLightGroup(item, obj, hasHelper)
     this.lightGroup.add(group)
   }
+  // 开关灯
+  lightSwitch(object, isOpen?: boolean, max?: number) {
+    const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
+    console.log(light)
+    if (!light) return
+    console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
+    light.forEach((el, index) => {
+      // max 存在则默认未点亮，其他关闭
+      let visible = max != void 0 && max >= 0 ? false : isOpen != void 0 ? isOpen : !el.visible
+      if (max != void 0 && max >= 0 && index < max) {
+        visible = isOpen != void 0 ? isOpen : true
+      }
+      el.visible = visible
+    })
+  }
+  // 关闭所有灯光
+  closeLightGroup(isOpen: boolean = false) {
+    this.lightGroup?.traverse((el: any) => {
+      if (el.isSpotLight || el.isRectAreaLight) {
+        el.visible = isOpen
+      }
+    })
+  }
 
   // 流光
   addFleeting() {
@@ -252,12 +314,108 @@ export class OfficeScene extends ThreeScene.Scene {
     this.fleetingGroup && (this.fleetingGroup.visible = isOpen ?? !this.fleetingGroup.visible)
   }
 
+  // 添加路灯
+  addStreetLamp() {
+    this.streetLampGroup = MS.createStreetLampGroup(DEFAULTCONFIG.streetLamps)
+    this.addObject(this.streetLampGroup)
+  }
+
   // 窗帘动画
   toggleCurtain(object, isClose?) {
     const dobj = this.animateModels.find(el => el.name === object.data?.bind)
     if (!dobj) return
     MS.toggleCurtainAnimate(dobj, isClose)
     return dobj.__close__
+  }
+
+  // 双开门(两扇门 往两边平移)
+  dubleHorizontalDoor(object, scale = 400, isOpen?: boolean) {
+    const { bind, axle = 'z' } = object.data
+    return dubleHorizontal(this.scene, {
+      value: bind,
+      axle,
+      scale,
+      isOpen
+    })
+  }
+  // 双旋转开门
+  dubleRotateDoor(object) {
+    const { bind, axle = 'y', left = '右', right = '左', internal, autoClose = true } = object.data
+    return dubleRotate(this.scene, {
+      value: bind,
+      axle,
+      autoClose,
+      angle: Math.PI * (internal ? -0.5 : 0.5),
+      leftMatch: left,
+      rightMatch: right
+    })
+  }
+  // 单旋转开门
+  oddRotateDoor(object) {
+    const { bind, axle = 'y', internal, autoClose = false } = object.data
+    return oddRotate(this.scene, {
+      value: bind,
+      axle,
+      angle: Math.PI * (internal ? -0.5 : 0.5),
+      autoClose
+    })
+  }
+  // 闸机
+  openGate(object) {
+    return this.dubleRotateDoor(object)
+  }
+
+  // 视频材质
+  addVideoMaterial(names: string[]) {
+    this.videoModels = []
+    for (let i = 0; i < names.length; i++) {
+      const name = names[i]
+      const dbObj = this.buildingGroup?.getObjectByName(name) as any
+      if (!dbObj) continue
+      // 灯光
+      const light = this.lightGroup?.getObjectByName(name + '-照明灯')
+      if (light) {
+        light.visible = true
+      }
+      MS.addVideoMaterial(dbObj)
+      this.videoModels.push(dbObj)
+    }
+  }
+  // 清理视频
+  clearVideo() {
+    MS.clearVideo(this.videoModels)
+  }
+  // 视频播放
+  videoPlay(object) {
+    const vobj = this.scene.getObjectByName(object.data.bind) as any
+    MS.videoMaterilPlay(vobj)
+  }
+  // 绘制 canva 材质
+  drawCanvas(text = '') {
+    if (!this.extend.canvas) return
+    MS.drawBdCanvas(this.extend.canvas, text)
+
+    if (!this.canvasTextures.length) return
+    this.canvasTextures.forEach(map => {
+      map.needsUpdate = true
+    })
+  }
+  // 画布纹理
+  addCanvasMaterial(names: string[]) {
+    if (!this.extend.canvas) return
+    const material = new THREE.MeshPhongMaterial({
+      map: new THREE.CanvasTexture(this.extend.canvas),
+      side: THREE.DoubleSide
+    })
+
+    this.canvasTextures = []
+    for (let i = 0; i < names.length; i++) {
+      const dbObj = this.scene.getObjectByName(names[i]) as any
+      if (!dbObj) continue
+      dbObj.material = material.clone()
+      dbObj.__cover_texture__ = material.map?.clone()
+      this.canvasTextures.push(dbObj.material.map)
+    }
   }
 
   // 相机移动聚焦点
@@ -285,7 +443,7 @@ export class OfficeScene extends ThreeScene.Scene {
     if (!to) return
 
     if (!this.isCameraMove(to) && this.controls) {
-      // this.judgeAndStopRoam()
+      this.judgeAndStopRoam()
       this.controls.enablePan = true
       this.controls.maxDistance = 5
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
@@ -297,9 +455,20 @@ export class OfficeScene extends ThreeScene.Scene {
     MS.createModelAnimate(model, animations, play, timeScale)
     this.animateModels.push(model)
   }
+  // 模型动画
+  modelAnimateUpdate(delta) {
+    if (this.animateModels.length) {
+      this.animateModels.forEach((el: any) => {
+        if (el.__mixer__) {
+          el.__mixer__.update(delta)
+        }
+      })
+    }
+  }
 
+  // 控制器重置
   controlReset() {
-    // this.judgeAndStopRoam()
+    this.judgeAndStopRoam()
     // this.clearCharacterSight()
     if (!this.controls) return
     this.controls.enablePan = true
@@ -308,9 +477,107 @@ export class OfficeScene extends ThreeScene.Scene {
     super.controlReset()
   }
 
-  // 销毁
+  // 漫游
+  toggleRoam() {
+    // this.clearCharacterSight()
+    if (this.judgeAndStopRoam()) return
+    const points = this.extend.roamPoints || []
+    if (points.length == 0) return
+    if (!this.controls) return
+    this.controls.maxDistance = 5
+    createRoam({
+      points,
+      segment: 6,
+      tension: 0,
+      speed: 2,
+      close: false,
+      factor: 1
+    })
+    roamPlay()
+  }
+  // 设置漫游点位
+  setRoamPoint(points) {
+    this.extend.roamPoints = points
+  }
+  // 判断漫游，并停止
+  judgeAndStopRoam() {
+    if (getRoamStatus()) {
+      if (this.controls) {
+        this.controls.maxDistance = 1500
+      }
+      roamPause()
+      return true
+    }
+    return false
+  }
+
+  // 定点巡航
+  toggleCruise(close?: boolean) {
+    super.toggleCruise(close)
+    // 场景合成
+    this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
+  }
+
+  // 鼠标移动
+  onPointerMove(e: PointerEvent) {
+    this.checkIntersectObjects(e)
+  }
+  // 鼠标弹起
+  onPointerUp(e: PointerEvent) {
+    super.onPointerUp(e)
+    let s = e.timeStamp - this.pointer.tsp
+    // 判断是否未点击
+    const isClick = s < DEFAULTCONFIG.clickIntervalTime
+    if (e.button == 2) {
+      if (isClick && typeof this.extend?.onClickRight === 'function') this.extend.onClickRight(e)
+    } else if (e.button == 0) {
+      isClick && this.checkIntersectObjects(e)
+    }
+  }
+  // 检查相交对象
+  checkIntersectObjects(e: PointerEvent) {
+    let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+    // 锚点或者地面
+    const objects =
+      this.buildingGroup?.children
+        .filter((it: any) => it.visible)
+        .concat(this.anchorGroup?.children || []) || []
+
+    // 检查相交对象
+    const interscts = MS.getIntersectObjects(
+      e,
+      this.container,
+      this.options.scale,
+      this.camera,
+      objects,
+      true
+    )
+
+    // 处理锚点类型-精灵材质
+    MS.hoverAnchor(interscts, this.extend.onHoverAnchor, this.container, this.anchorGroup)
+    if (!isClick) return
+
+    if (interscts.length) {
+      const intersct = interscts[0]
+      const object = intersct.object
+      console.log(intersct)
+
+      // 点击建筑
+      const obj = MS.findParentIsBuilding(object)
+
+      if (!obj) return
+      // 左键
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft(obj, intersct)
+    } else {
+      if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
+    }
+  }
+
+  // 销毁场景
   dispose() {
     this.animateModels = []
+    this.canvasTextures = []
+    this.videoModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.dotGroup)
     this.disposeObj(this.anchorGroup)
@@ -318,6 +585,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.disposeObj(this.fleetingGroup)
     this.disposeObj(this.streetLampGroup)
     this.disposeObj(this.residentLightGroup)
+    this.clearVideo()
 
     this.clock = void 0
     this.css2DRender = void 0
@@ -329,7 +597,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.streetLampGroup = void 0
     this.residentLightGroup = void 0
     this.extend = {}
+
     super.dispose()
-    console.log(this.scene)
   }
 }
