@@ -7,10 +7,11 @@ export const getPageOpts = () => ({
   baseUrl: base,
   bgColor: '',
   skyCode: '221',
-  env: '/oss/textures/hdr/6.hdr'
+  // env: '/oss/textures/hdr/6.hdr'
+  env: '/oss/textures/exr/piz_compressed.exr'
 })
 
 export const getUploadOpts = () => ({
-  accept: ['fbx', 'glb', 'gltf'],
+  accept: ['fbx', 'glb', 'gltf', 'ldr', 'mpd'],
   fileName: ''
 })

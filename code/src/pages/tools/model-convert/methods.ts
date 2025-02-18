@@ -137,6 +137,11 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     this.bindEvent()
   }
 
+  // setEnv(texture) {
+  //   this.scene.background = texture
+  //   this.scene.environment = texture
+  // }
+
   addControls() {
     const camera = this.camera as any
     const controls = new TransformControls(camera, this.renderer.domElement)

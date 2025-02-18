@@ -48,7 +48,7 @@ const onFileChange = e => {
   const type = filename.split('.').pop().toLowerCase()
   if (!uploadOpts.accept.includes(type)) {
     return ElMessage.error({
-      message: `文件格式不正确,转换格式支持${uploadOpts.accept.join('、')}！`,
+      message: `文件格式不正确,转换格式支持 ${uploadOpts.accept.join('、')}！`,
       grouping: true
     })
   }
