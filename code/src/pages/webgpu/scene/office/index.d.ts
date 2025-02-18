@@ -23,7 +23,6 @@ export interface Config {
 }
 
 export interface ExtendOptions {
-  groundMeshName: string[]
   roamPoints: number[][]
   canvas: HTMLCanvasElement
   onDblclick: (e) => void

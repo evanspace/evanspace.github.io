@@ -26,7 +26,37 @@ export default {
   clickIntervalTime: 300,
 
   // 人物视线高度
-  characterSightHeight: 3.5,
+  personSightHeight: 3.5,
+  // 人物视角元素 class
+  personSightClass: 'person-sight',
+  // 人物视角键盘控制
+  personKeys: [
+    { code: 'W', desc: '前进' },
+    { code: 'S', desc: '后退' },
+    { code: 'A', desc: '向左转向' },
+    { code: 'D', desc: '向右转向' },
+    { code: 'X', desc: '加速' },
+    { code: 'Z', desc: '减速' }
+  ],
+
+  // 电梯地面网格名称
+  liftGroundMeshName: ['电梯地板002', '电梯地板'],
+  // 模型地面网格名称
+  groundMeshName: [
+    '地面002',
+    '立方体306',
+    '平面118',
+    '立方体475',
+    '立方体514',
+    '立方体552',
+    '地面020',
+    '地面',
+    '平面391',
+
+    '立方体474',
+    '立方体1617',
+    'ground'
+  ],
 
   // 碰撞间距
   collisionSpace: 1,

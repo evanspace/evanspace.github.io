@@ -6,6 +6,7 @@ import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
 import { ThreeModelItem } from 'three-scene/types/model'
 
+import { useDiffusion } from './diffusion'
 const { Utils, Hooks } = MS
 
 const {
@@ -16,6 +17,18 @@ const {
   getStatus: getRoamStatus
 } = Hooks.useRoam()
 const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
+const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
+const { createDiffusion, updateDiffusion } = useDiffusion()
+
+// 视角映射
+const SIGHT_MAP = {
+  SCREEN: 'SCREEN', // 屏幕
+  PERSON_FIRST: 'PERSON_FIRST', // 人物·第一人称
+  PERSON_THREE: 'PERSON_THREE' // 人物·第三人称
+}
+
+// 地面网格名称
+const GROUND_MESH_NAMES = DEFAULTCONFIG.groundMeshName.concat(DEFAULTCONFIG.liftGroundMeshName)
 
 export class OfficeScene extends ThreeScene.Scene {
   // 扩展参数
@@ -63,6 +76,30 @@ export class OfficeScene extends ThreeScene.Scene {
   // 视频元素集合
   videoModels: ThreeModelItem[] = []
 
+  // 行走的人物
+  person?: InstanceType<typeof THREE.Group> & {
+    __runing__?: boolean
+    extra: {
+      mixer: InstanceType<typeof THREE.AnimationMixer>
+      actions: Record<string, InstanceType<typeof THREE.AnimationAction>>
+      runging: InstanceType<typeof THREE.AnimationAction>
+    }
+  }
+  // 人物视线高度
+  personSightHeight = DEFAULTCONFIG.personSightHeight
+  // 移动系数
+  moveFactor = DEFAULTCONFIG.moveFactor
+
+  // 当前视角
+  currentSight = SIGHT_MAP.SCREEN
+  // 历史中心点（视角切换）
+  historyTarget: InstanceType<typeof THREE.Vector3>
+  // 历史相机坐标（视角切换）
+  historyCameraPosition: InstanceType<typeof THREE.Vector3>
+
+  // 扩散波效果
+  diffusion: InstanceType<typeof THREE.Mesh> = new THREE.Mesh()
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -98,6 +135,9 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 绑定事件
     this.bindEvent()
+
+    // 扩散波
+    this.addDiffusion()
     console.log(this)
   }
 
@@ -116,6 +156,14 @@ export class OfficeScene extends ThreeScene.Scene {
   // 渲染
   render() {
     this.postProcessing.renderAsync()
+  }
+
+  run() {
+    this.renderer.setAnimationLoop(() => {
+      this.animate()
+      this.modelAnimate()
+    })
+    return this
   }
 
   // 模型动画
@@ -143,6 +191,12 @@ export class OfficeScene extends ThreeScene.Scene {
     executeRoam(this.camera, this.controls)
     // 恢复锚点组 hover 效果
     MS.restoreAnchorMaterial(this.anchorGroup)
+
+    // 人物动画
+    this.persionAnimate(delta)
+
+    // 扩散波
+    this.diffusionAnimate()
   }
 
   // 查找灯光
@@ -184,6 +238,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.fleetingGroup && (this.fleetingGroup.visible = visible)
     this.streetLampGroup && (this.streetLampGroup.visible = visible)
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
+    this.toggleCruiseBloom(visible)
 
     this.loadEnvTexture(hdr, _texture => {
       // this.postProcessing.needsUpdate = true
@@ -418,6 +473,210 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
 
+  ///////////////////////////
+  /////////// 人物 ///////////
+  ///////////////////////////
+  // 添加人物
+  addPerson(model) {
+    this.person = model
+    const { mixer, actions } = MS.getModelAction(model)
+    // 舞蹈
+    const dance = actions['Dance']
+    dance.play()
+    // 步行
+    const runging = actions['Walking']
+    model.extra = {
+      mixer,
+      actions,
+      runging
+    }
+    this.addObject(model)
+    this.addPersonEvent()
+  }
+  // 人物事件
+  addPersonEvent() {
+    const model = this.person
+    const runging = model.extra.runging
+    const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
+
+    // 插入事件 播放/暂停 动作
+    insertEvent(
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.play()
+        }
+        if (this.isPersonSight()) {
+          if (keyboardPressed('X')) {
+            this.personSpeed(1)
+          }
+          if (keyboardPressed('Z')) {
+            this.personSpeed(-1)
+          }
+        }
+      },
+      e => {
+        if (model.__runing__) return
+        if (keys.includes(e.keyCode)) {
+          runging.stop()
+        }
+      }
+    )
+  }
+  // 人物动画
+  persionAnimate(delta) {
+    if (this.person) {
+      const mixer = this.person.extra.mixer
+      mixer.update(delta)
+    }
+  }
+  // 人物视角
+  togglePersonSight(type?: number) {
+    // 巡航中不可操作
+    if (this.judgeCruise()) return
+    // 判断漫游并停止
+    this.judgeAndStopRoam()
+
+    // 当前视角
+    const sight = this.isPersonSight()
+      ? SIGHT_MAP.SCREEN
+      : type == 1
+      ? SIGHT_MAP.PERSON_FIRST
+      : SIGHT_MAP.PERSON_THREE
+    this.currentSight = sight
+
+    console.log(sight)
+
+    // 控制器限制切换
+    this.controlsLimitSet()
+    // 人物视角界面效果
+    this.togglePersonView()
+    this.cameraChangeByPerson()
+  }
+  // 控制器限制设置
+  controlsLimitSet() {
+    if (!this.controls) return
+    const sight = this.currentSight
+    const isPersonFirst = sight === SIGHT_MAP.PERSON_FIRST
+    const isPerson = isPersonFirst || sight === SIGHT_MAP.PERSON_THREE
+
+    // 控制器操作限制切换
+    this.controls.maxDistance = isPerson ? (isPersonFirst ? 0 : 10) : 800
+    this.controls.screenSpacePanning = !isPerson
+    this.controls.enablePan = !isPerson
+  }
+  // 人物视角
+  isPersonSight() {
+    return (
+      this.currentSight === SIGHT_MAP.PERSON_FIRST || this.currentSight === SIGHT_MAP.PERSON_THREE
+    )
+  }
+  // 切换人物界面效果
+  togglePersonView() {
+    const dom = this.container.parentNode?.querySelector(
+      '.' + DEFAULTCONFIG.personSightClass
+    ) as HTMLDivElement
+    if (!dom) return
+    const isCharacter = this.isPersonSight()
+    dom.style.display = isCharacter ? 'block' : 'none'
+  }
+  // 清除人物视角状态
+  clearCharacterSight() {
+    this.currentSight = SIGHT_MAP.SCREEN
+    this.togglePersonView()
+  }
+  // 机位切换
+  cameraChangeByPerson() {
+    if (!this.person || !this.controls) return
+    // 人物视角
+    const isPerson = this.isPersonSight()
+    const position = this.person.position
+    // 向量
+    const up = new THREE.Vector3(0, this.personSightHeight, 0)
+    /// 切换到人物视角，暂存控制参数
+    if (isPerson) {
+      ElMessage.success({
+        message: `鼠标点击地面移动，或键盘按键 ${DEFAULTCONFIG.personKeys
+          .map(it => `${it.code} ${it.desc}`)
+          .join('、')}，来控制人物！`,
+        grouping: true
+      })
+      this.historyTarget = this.controls.target.clone()
+      this.historyCameraPosition = this.camera.position.clone()
+      const pos = position.clone().add(up)
+
+      this.camera.lookAt(pos)
+      // 相机高度距离人物大于 8
+      if (Math.abs(this.camera.position.y - pos.y) > 8) {
+        this.camera.position.y = pos.y
+      }
+    } else {
+      this.camera.position.copy(this.historyCameraPosition)
+      this.camera.lookAt(position)
+    }
+
+    const vect = isPerson ? position : this.historyTarget
+    const pos = vect.clone().add(up)
+    this.controls.target.copy(pos)
+  }
+  // 人物加速
+  personSpeed(speed = 1) {
+    this.moveFactor += speed
+    if (this.moveFactor >= 10) this.moveFactor = 10
+    else if (this.moveFactor <= 1) this.moveFactor = 1
+    ElMessage.success({
+      message: '人物速度：' + this.moveFactor,
+      grouping: true
+    })
+  }
+  // 人物移动
+  personMove(intersct) {
+    // 巡航中不可操作
+    if (this.judgeCruise()) return Promise.reject()
+    // 非人物视角
+    if (!this.isPersonSight()) return Promise.reject()
+
+    const personModel = this.person
+    if (!personModel) return Promise.reject()
+    // 电梯网格
+    const liftMeshName = DEFAULTCONFIG.liftGroundMeshName
+
+    const lookAt = intersct.point
+    const obj = this.diffusion
+
+    const { runging } = personModel.extra
+    runging.play()
+
+    obj.position.copy(lookAt)
+    obj.visible = true
+
+    return new Promise(resolve => {
+      return resolve(1)
+    })
+  }
+
+  ///////////////////////////
+  ////////// 扩散波 //////////
+  ///////////////////////////
+  // 添加扩散波
+  addDiffusion() {
+    const mesh = createDiffusion(4)
+    mesh.rotation.x = -Math.PI * 0.5
+    mesh.position.y = 0.5
+    mesh.visible = false
+    this.addObject(mesh)
+    this.diffusion = mesh
+  }
+  // 扩散波动画
+  diffusionAnimate() {
+    if (this.diffusion.visible) {
+      updateDiffusion()
+    }
+  }
+
+  ///////////////////////////
+  /////////// 相机 ///////////
+  ///////////////////////////
   // 相机移动聚焦点
   cameraLookatMoveTo(pos) {
     if (!this.controls) return
@@ -426,7 +685,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 相机转场
   cameraTransition(object) {
-    // if (this.judgeCruise()) return
+    if (this.judgeCruise()) return
 
     // if (this.mouseClickDiffusion.visible) {
     //   ElMessage.warning({
@@ -436,13 +695,14 @@ export class OfficeScene extends ThreeScene.Scene {
     //   return
     // }
 
-    // this.clearCharacterSight()
+    this.clearCharacterSight()
 
     const { to, target = object.position } = object.data
 
     if (!to) return
 
     if (!this.isCameraMove(to) && this.controls) {
+      // 判断漫游并停止
       this.judgeAndStopRoam()
       this.controls.enablePan = true
       this.controls.maxDistance = 5
@@ -517,6 +777,17 @@ export class OfficeScene extends ThreeScene.Scene {
     // 场景合成
     this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
   }
+  // 判断巡航
+  judgeCruise() {
+    if (this.options.cruise.runing) {
+      ElMessage.warning({
+        message: '请退出巡航！',
+        grouping: true
+      })
+      return true
+    }
+    return false
+  }
 
   // 鼠标移动
   onPointerMove(e: PointerEvent) {
@@ -562,8 +833,15 @@ export class OfficeScene extends ThreeScene.Scene {
       const object = intersct.object
       console.log(intersct)
 
-      // 点击建筑
+      // 建筑
       const obj = MS.findParentIsBuilding(object)
+      // 点击地面
+      const isClickGround =
+        typeof object.name == 'string' && GROUND_MESH_NAMES.some(t => object.name.indexOf(t) > -1)
+      if (isClickGround) {
+        if (typeof this.extend?.onClickGround === 'function')
+          this.extend.onClickGround(obj, intersct)
+      }
 
       if (!obj) return
       // 左键
@@ -598,6 +876,8 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup = void 0
     this.extend = {}
 
+    this.renderer.dispose()
+    destroyEvent()
     super.dispose()
   }
 }

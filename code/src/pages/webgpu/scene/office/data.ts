@@ -54,19 +54,19 @@ export const getPageOpts = (): {
   cruise: {
     color: 0x1fe4ec,
     visible: true,
-    auto: true,
-    alway: true,
+    auto: false,
+    // alway: true,
     mapUrl: '/oss/textures/cruise/line2.png', // 1-18
     repeat: [0.2, 1],
     width: 2,
     segment: 100,
     tension: 0.01,
-    speed: 10,
-    mapSpeed: 0.01,
+    speed: 20,
+    mapSpeed: 0.02,
     points: [],
     close: true,
     offset: 5.2,
-    bloom: true
+    bloomIntensity: 0.5
   },
   roamPoints: [],
 

@@ -117,7 +117,7 @@ export default [
     key: 'rect_area_light_2',
     type: 'GPUplanelight',
     name: '面光灯',
-    intensity: 0.8,
+    intensity: 0.5,
     color: 0xffffff,
     width: 134,
     height: 134

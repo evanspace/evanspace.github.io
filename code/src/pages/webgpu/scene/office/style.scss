@@ -17,6 +17,12 @@
   pointer-events: none;
 }
 
+.floor-select {
+  top: 10px;
+  left: 100px;
+  position: absolute;
+}
+
 :global {
   :local( .page ) {
     @include mixin.scene-operation;

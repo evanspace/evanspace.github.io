@@ -503,3 +503,25 @@ export const clearVideo = videos => {
     }
   }
 }
+
+/**
+ * 获取模型动作
+ * @param model 模型
+ * @returns
+ */
+export const getModelAction = model => {
+  // 动画
+  const animations = model.animations
+  const mixer = new THREE.AnimationMixer(model)
+  const actions = {}
+
+  for (let i = 0; i < animations.length; i++) {
+    const clip = animations[i]
+    const action = mixer.clipAction(clip)
+    actions[clip.name] = action
+  }
+  return {
+    mixer,
+    actions
+  }
+}

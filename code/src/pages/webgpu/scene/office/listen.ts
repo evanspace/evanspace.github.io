@@ -9,9 +9,9 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   // 重置视角
   Emitter.on('CAMERA:RESET', () => scene?.controlReset())
   // 第一人称
-  Emitter.on('CAMERA:FIRST', () => scene?.toggleSight(1))
+  Emitter.on('CAMERA:FIRST', () => scene?.togglePersonSight(1))
   // 第三人称
-  Emitter.on('CAMERA:THREE', () => scene?.toggleSight(3))
+  Emitter.on('CAMERA:THREE', () => scene?.togglePersonSight(3))
 
   // 大门
   Emitter.on('CAMERA:GATE', () => {
@@ -75,9 +75,9 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   })
 
   // 人物加速
-  Emitter.on('PERSON:ADD', () => scene?.characterAccelerate())
+  Emitter.on('PERSON:ADD', () => scene?.personSpeed())
   // 减速
-  Emitter.on('PERSON:SUB', () => scene?.characterAccelerate(-1))
+  Emitter.on('PERSON:SUB', () => scene?.personSpeed(-1))
 
   // 前台灯
   Emitter.on('LIGHT:RECCEPTION', (isOpen, max) => {

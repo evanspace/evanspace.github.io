@@ -28,6 +28,13 @@
       <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
       <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
       <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
+
+      <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
+
+      <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
+      <div class="item" @click="() => Emitter.emit('CAMERA:THREE')">第三人称</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:ADD')">人物加速</div>
+      <div class="item" @click="() => Emitter.emit('PERSON:SUB')">人物减速</div>
     </div>
 
     <div class="h-100" ref="containerRef"></div>
@@ -36,7 +43,20 @@
 
     <t-tip-msg v-model="tipOpts.show" :style="tipOpts.style" :msg="tipOpts.msg"></t-tip-msg>
 
+    <t-first-person />
+
     <canvas :class="$style['canvas-texture']" ref="canvasTextureRef"></canvas>
+
+    <!-- 楼层选择 -->
+    <div :class="$style['floor-select']" v-show="floorOpts.show">
+      <el-button
+        v-for="item in floorItems"
+        type="primary"
+        :disabled="floorOpts.active === item.key"
+        @click="onFloorMoveTo(item)"
+        >{{ item.name }}</el-button
+      >
+    </div>
 
     <t-edit-dialog
       v-model="dialog.show"
@@ -52,8 +72,9 @@
 import tLoading from '@/components/loading/index.vue'
 import tTipMsg from './tip-msg.vue'
 import tEditDialog from './edit-dialog.vue'
+import tFirstPerson from './first-person.vue'
 
-import { getPageOpts, getTipOpts } from './data'
+import { getPageOpts, getTipOpts, getFloorOpts } from './data'
 import KEYS from './keys'
 import Emitter from './emitter'
 
@@ -74,6 +95,8 @@ const { Hooks, Utils } = MS
 const pageOpts = reactive(getPageOpts())
 // 提示框
 const tipOpts = reactive(getTipOpts())
+// 电梯楼层配置
+const floorOpts = reactive(getFloorOpts())
 
 // 大屏欢迎词弹窗
 const welcomKey = 'welcom.key'
@@ -118,6 +141,11 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   }
 }
 let scene: InstanceType<typeof OfficeScene>
+
+// 电梯到达楼层
+const floorItems = computed(() => {
+  return floorOpts.list.find(it => it.target === floorOpts.targetName)?.items || []
+})
 
 // 相机转场
 const onCameraTransition = item => {
@@ -214,10 +242,12 @@ const assemblyScenario = () => {
     // @ts-ignore
     Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
       scene.controlSave()
-      setTimeout(() => {
+      nextTick(() => {
         Emitter.emit('LIGHT:CLOSE')
         resolve(1)
-      }, 1000 * 3)
+      })
+      // setTimeout(() => {
+      // }, 1000 * 3)
     })
   })
 }
@@ -266,6 +296,8 @@ const load = () => {
       setTimeout(() => {
         //  组装场景
         assemblyScenario().then(() => {
+          // 创建人物
+          createPerson()
           // 绘制画布纹理
           Emitter.emit('SCREEN:WELCOM', dialog.content)
           // 添加视频材质
@@ -282,6 +314,51 @@ const load = () => {
   })
 }
 
+// 创建人物
+const createPerson = () => {
+  const model = getModel(KEYS.M_PERSON)
+  model.traverse(el => {
+    if (el.isMesh) {
+      el.castShadow = true
+    }
+  })
+  const { x, y, z } = {
+    x: 14.4,
+    y: 184.6,
+    z: 37.6
+  }
+  model.position.set(x, y, z)
+  model.scale.setScalar(0.75)
+
+  // 手臂问题，暂隐藏
+  const l = model.getObjectByName('HandL')
+  const r = model.getObjectByName('HandR')
+  l.visible = false
+  r.visible = false
+  scene.addPerson(model)
+}
+
+// 楼层移动至
+const onFloorMoveTo = item => {
+  floorOpts.active = item.key
+  const liftName = item.bind
+  console.log(item)
+
+  scene?.waitLift(
+    {
+      data: {
+        bind: liftName,
+        to: {
+          y: item.y
+        },
+        target: floorOpts.targetName
+      }
+    },
+    true
+  )
+}
+
+// 初始化界面
 const initPage = () => {
   load()
 
@@ -346,6 +423,7 @@ onMounted(() => {
   options.container = containerRef.value
   scene = new OfficeScene(options, {
     canvas: canvasTextureRef.value,
+    // 悬浮提示
     onHoverAnchor: (object, style) => {
       const isShow = !!object && object.object._isAnchor_
       tipOpts.show = isShow
@@ -361,10 +439,22 @@ onMounted(() => {
       }
     },
 
+    // 点击左键
     onClickLeft: (object, _intersct) => {
       if (object && object.data) {
         onClickLeft(object)
       }
+    },
+
+    // 点击地面
+    onClickGround: (_object, intersct) => {
+      console.log(intersct)
+      scene
+        .personMove(intersct)
+        .then(_obj => {
+          floorOpts.show = DEFAULTCONFIG.liftGroundMeshName.includes(intersct.object.name)
+        })
+        .catch(() => {})
     }
   }).run()
 
