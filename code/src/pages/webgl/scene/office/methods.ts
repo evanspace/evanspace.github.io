@@ -1075,9 +1075,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     model.__isFocus__ = !model.__isFocus__
 
     if (!model.__isFocus__) {
-      closeVirtualization(this.buildingGroup?.children, {
-        filter: ['_空调风_grp']
-      })
+      this.closeVirtualization()
       this.toggleCompanyFocus(false)
       return
     }
@@ -1087,6 +1085,15 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       hidden: true,
       opacity: 0.1,
       filter: ['电梯-1']
+    })
+  }
+  // 关闭虚化
+  closeVirtualization() {
+    const name = DEFAULTCONFIG.companyModelName
+    const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
+    model.__isFocus__ = false
+    closeVirtualization(this.buildingGroup?.children, {
+      filter: ['_空调风_grp']
     })
   }
 
@@ -1127,9 +1134,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     }
   }
 
+  // 控制重置
   controlReset() {
     this.judgeAndStopRoam()
     this.clearCharacterSight()
+    this.closeVirtualization()
     if (!this.controls) return
     this.controls.enablePan = true
     this.controls.maxDistance = 1500
