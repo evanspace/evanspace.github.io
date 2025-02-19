@@ -28,6 +28,7 @@ const {
   getStatus: getRoamStatus
 } = Hooks.useRoam()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
+const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
 
@@ -148,6 +149,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.addStreetLamp()
     // 居民灯
     this.addResidentLight()
+
+    console.log(this)
   }
 
   setEnv(texture) {
@@ -432,7 +435,6 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     group.name = '居民灯'
     group.visible = false
     this.addObject(group)
-    console.log(group)
     this.residentLightGroup = group
   }
 
@@ -1052,6 +1054,59 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.addFence(obj)
   }
 
+  // 公司鸟瞰图
+  toggleBridCompany() {
+    const name = DEFAULTCONFIG.companyModelName
+    const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
+    console.log(model)
+    if (!model) {
+      ElMessage.warning({
+        message: `未找到【${name}】模块！`,
+        grouping: true
+      })
+      return
+    }
+
+    // 设置聚焦
+    model.__isFocus__ = !model.__isFocus__
+
+    if (!model.__isFocus__) {
+      closeVirtualization(this.buildingGroup?.children, {
+        filter: ['_空调风_grp']
+      })
+      this.toggleCompanyFocus(false)
+      return
+    }
+    this.toggleCompanyFocus(true)
+    virtualization(this.buildingGroup?.children || [], model, {
+      wireframe: !false,
+      hidden: true,
+      opacity: 0.1,
+      filter: ['电梯-1']
+    })
+  }
+
+  // 公司聚焦
+  toggleCompanyFocus(isFocus) {
+    if (!this.controls) return
+    let target = this.historyTarget
+    let to = this.historyCameraPosition as XYZ
+
+    // 聚焦移动 暂存场景参数
+    if (isFocus) {
+      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
+      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
+
+      target = new THREE.Vector3(0, 185, 0)
+      to = { x: 0, y: 340, z: 0 }
+    }
+
+    const dis = target.distanceTo(to)
+    this.controls.maxDistance = dis
+
+    Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+  }
+
   // 添加围栏
   addFence(model?) {
     // 先删除
@@ -1258,7 +1313,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     // 锚点或者地面
     const objects =
       this.buildingGroup?.children
-        .filter((it: any) => it.visible && (isClick || it.__ground__))
+        .filter((it: any) => isClick && it.visible)
+        .map(it => {
+          it.children = it.children.filter(t => t.visible)
+          return it
+        })
         .concat(this.anchorGroup?.children || []) || []
 
     // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线

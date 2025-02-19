@@ -42,5 +42,8 @@ export default {
   residentLights: [
     [-13, 169.8, 447.2],
     [668, 114.9, 481.9]
-  ]
+  ],
+
+  // 公司模型名称
+  companyModelName: '二十五楼'
 }

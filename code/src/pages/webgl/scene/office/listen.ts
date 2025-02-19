@@ -166,4 +166,7 @@ export const onListen = (scene: InstanceType<typeof OfficeThreeScene>) => {
 
   // 流光
   Emitter.on('EFFECT:FLEETING', (isOpen?) => scene?.toggleFleeting(isOpen))
+
+  // 公司鸟瞰图
+  Emitter.on('BIRD:COMPANY', () => scene?.toggleBridCompany())
 }
