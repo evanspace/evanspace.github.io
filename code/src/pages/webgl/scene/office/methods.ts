@@ -1056,6 +1056,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 公司鸟瞰图
   toggleBridCompany() {
+    if (this.judgeCruise()) return
+    this.clearCharacterSight()
+    this.judgeAndStopRoam()
+
     const name = DEFAULTCONFIG.companyModelName
     const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
     console.log(model)
