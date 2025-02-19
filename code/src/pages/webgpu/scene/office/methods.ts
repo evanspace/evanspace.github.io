@@ -1,5 +1,6 @@
 import * as THREE from 'three/webgpu'
 import * as ThreeScene from 'three-scene'
+import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
 
@@ -13,7 +14,7 @@ const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
 
-const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
+const { pass, mrt, output, emissive, float } = THREE.TSL
 
 export { Hooks, Utils }
 
@@ -230,7 +231,7 @@ export const fleetingGroupAnimate = fleetingAnimate
  */
 export const createStreetLampGroup = (list, color: number | string = 0xffffff) => {
   const group = new THREE.Group()
-  const spotLight = new THREE.SpotLight(0xffffff, 10, 100, Math.PI * 0.6, 0.6, 0.4)
+  const spotLight = new THREE.SpotLight(color, 10, 100, Math.PI * 0.6, 0.6, 0.4)
   for (let i = 0; i < list.length; i++) {
     const light = spotLight.clone()
     const [x, y, z] = list[i]
@@ -524,4 +525,14 @@ export const getModelAction = model => {
     mixer,
     actions
   }
+}
+
+export const liftMove = (liftName, from, to) => {
+  const duration = 1000 * 5
+  ElMessage.success({
+    message: `【${liftName}】移动中，请稍候，${duration / 1000}秒后到达!`,
+    duration: duration
+  })
+
+  return new TWEEN.Tween(from).to(to, duration).delay(0).start()
 }

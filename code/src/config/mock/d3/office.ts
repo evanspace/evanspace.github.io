@@ -74,6 +74,7 @@ JsonList.push(...posList)
 
 // 电梯
 const lifts = [
+  // 下-右
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
@@ -90,6 +91,21 @@ const lifts = [
   {
     name: '公司楼层等电梯',
     type: 'WAIT_LIFT',
+    position: { x: 2, y: 3, z: 23 },
+    // 电梯到当前位置
+    to: { x: 0, y: 0.1, z: 8.9 },
+    // 目标
+    target: '电梯-2',
+    // 门
+    bind: '_一楼电梯门-2_grp',
+    left: '左006',
+    right: '右006'
+  },
+
+  // 上-右
+  {
+    name: '公司楼层等电梯',
+    type: 'WAIT_LIFT',
     position: { x: 4.3, y: 187, z: 19.1 },
     // 电梯到当前位置
     to: { x: 0, y: 184.7, z: 8.9 },
@@ -99,7 +115,20 @@ const lifts = [
     left: '左005',
     right: '右005'
   },
+  {
+    name: '公司楼层等电梯',
+    type: 'WAIT_LIFT',
+    position: { x: 2, y: 187, z: 23 },
+    // 电梯到当前位置
+    to: { x: 0, y: 184.7, z: 8.9 },
+    // 目标
+    target: '电梯-2',
+    bind: '_电梯外门_2_grp',
+    left: '左005',
+    right: '右005'
+  },
 
+  // 下-左
   {
     name: '-楼等电梯',
     type: 'WAIT_LIFT',
@@ -114,9 +143,36 @@ const lifts = [
     right: '右001'
   },
   {
+    name: '-楼等电梯',
+    type: 'WAIT_LIFT',
+    position: { x: 2, y: 3, z: 14.4 },
+    // 电梯到当前位置
+    to: { x: 0, y: 0.1, z: 8.9 },
+    // 目标
+    target: '电梯-1',
+    // 门
+    bind: '_一楼电梯门-1_grp',
+    left: '左001',
+    right: '右001'
+  },
+
+  // 上-左
+  {
     name: '公司楼层等电梯',
     type: 'WAIT_LIFT',
     position: { x: 4.3, y: 187, z: 9.5 },
+    // 电梯到当前位置
+    to: { x: 0, y: 184.7, z: 8.9 },
+    // 目标
+    target: '电梯-1',
+    bind: '_电梯外门_1_grp',
+    left: '左004',
+    right: '右004'
+  },
+  {
+    name: '公司楼层等电梯',
+    type: 'WAIT_LIFT',
+    position: { x: 2, y: 187, z: 14.4 },
     // 电梯到当前位置
     to: { x: 0, y: 184.7, z: 8.9 },
     // 目标

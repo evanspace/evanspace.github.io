@@ -346,18 +346,14 @@ const onFloorMoveTo = item => {
   const liftName = item.bind
   console.log(item)
 
-  scene?.waitLift(
-    {
-      data: {
-        bind: liftName,
-        to: {
-          y: item.y
-        },
-        target: floorOpts.targetName
-      }
-    },
-    true
-  )
+  const opts = {
+    data: {
+      bind: liftName,
+      to: { y: item.y },
+      target: floorOpts.targetName
+    }
+  }
+  scene?.waitLift(opts, true)
 }
 
 // 初始化界面
@@ -381,8 +377,8 @@ const onClickLeft = object => {
       scene.cameraTransition(object)
       break
     case KEYS.M_WAIT_LIFT: // 等电梯
-      // floorOpts.targetName = object.data.target
-      // scene.waitLift(object)
+      floorOpts.targetName = object.data.target
+      scene.waitLift(object)
       break
     case KEYS.M_LIGHT_SWITCH: // 开关灯
       Emitter.emit('LIGHT:AUTO', object)
@@ -413,7 +409,7 @@ const onClickLeft = object => {
       dialog.show = true
       break
     case KEYS.M_AIR_SWITCH: // 空调
-      // Emitter.emit('AIR:ODD', object)
+      Emitter.emit('AIR:ODD', object)
       break
     case KEYS.M_MODE_SWITCH: // 模式
       console.log(toRaw(object.data))
@@ -450,7 +446,6 @@ onMounted(() => {
 
     // 点击地面
     onClickGround: (_object, intersct) => {
-      console.log(intersct)
       scene
         .personMove(intersct)
         .then(_obj => {

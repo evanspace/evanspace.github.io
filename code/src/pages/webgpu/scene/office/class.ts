@@ -4,7 +4,7 @@ import * as ThreeScene from 'three-scene'
 import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
-import { ThreeModelItem } from 'three-scene/types/model'
+import { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/types/model'
 
 const { Utils, Hooks } = MS
 
@@ -19,6 +19,7 @@ const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 const { checkCollide } = Hooks.useCollide()
+const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(
   [
     '1.png',
@@ -402,6 +403,10 @@ export class OfficeScene extends ThreeScene.Scene {
     return dobj.__close__
   }
 
+  ///////////////////////////
+  /////////// 开门 ///////////
+  ///////////////////////////
+
   // 双开门(两扇门 往两边平移)
   dubleHorizontalDoor(object, scale = 400, isOpen?: boolean) {
     const { bind, axle = 'z' } = object.data
@@ -439,6 +444,77 @@ export class OfficeScene extends ThreeScene.Scene {
     return this.dubleRotateDoor(object)
   }
 
+  ///////////////////////////
+  /////////// 电梯 ///////////
+  ///////////////////////////
+  // 等电梯
+  waitLift(object, personIsFllow?: boolean) {
+    // 电梯组
+    const liftName = object.data.target
+    // 电梯轿厢
+    const box = this.scene.getObjectByName(liftName) as any
+    if (!box) {
+      ElMessage.error({
+        message: `【${liftName}】模块未找到！`,
+        grouping: true
+      })
+    }
+    // 当前绑定坐标
+    const cpos = object.data?.to
+    if (!box || !cpos) return
+    // y 轴对比
+    const bpos = box.position
+    // 判断间距
+    if (Math.abs(cpos.y - bpos.y) > 0.2) {
+      // 电梯关门
+      const bindLift = box.__bind_lift__
+      if (bindLift !== void 0) {
+        const opt = {
+          data: { bind: bindLift }
+        }
+        // 绑定过则关闭电梯门-上一次打开，防止不在同一层的外门未关闭
+        this.dubleHorizontalDoor(opt, 2.3, false)
+      }
+      const opt = {
+        data: { bind: liftName }
+      }
+      // 关电梯门
+      this.dubleHorizontalDoor(opt, 2.3, false).then(() => {
+        // 电梯移动
+        MS.liftMove(liftName, bpos, { y: cpos.y })
+          .onUpdate(pos => {
+            // 人物跟随
+            if (personIsFllow) {
+              if (!this.person) return
+              this.person.position.y = pos.y
+              this.camera.position.y = pos.y
+              this.setControlTarget(this.person.position)
+            }
+          })
+          .onComplete(() => {
+            // 当前移动到哪一层，后续滑动时需要关闭之前到达的层
+            box.__bind_lift__ = object.data.bind
+            // 电梯开门
+            this.openDoorByLift(object, liftName)
+          })
+      })
+    } else {
+      this.openDoorByLift(object, liftName)
+    }
+  }
+  // 电梯开门
+  openDoorByLift(object, liftName) {
+    // 电梯门打开
+    this.dubleHorizontalDoor(object, 2.3)
+    const opt = {
+      data: { bind: liftName }
+    }
+    this.dubleHorizontalDoor(opt, 2.3)
+  }
+
+  ///////////////////////////
+  /////////// 大屏 ///////////
+  ///////////////////////////
   // 视频材质
   addVideoMaterial(names: string[]) {
     this.videoModels = []
@@ -544,12 +620,72 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 人物动画
   persionAnimate(delta) {
-    if (this.person) {
-      const mixer = this.person.extra.mixer
+    const personModel = this.person
+    if (personModel) {
+      const mixer = personModel.extra.mixer
       mixer.update(delta)
       // 人物移动
       moveAnimate(0.2 * this.moveFactor)
+
+      // 人物视角
+      if (this.isPersonSight() && !personModel.__runing__) {
+        const factor = 1 + this.moveFactor / 5
+        // 移动速度
+        const steep = 5 * delta * factor
+        // 旋转速度
+        const angle = Math.PI * 0.2 * delta * factor
+        // 前进后退
+        this.keyboardToMove(steep)
+
+        // 转向
+        if (keyboardPressed('A')) {
+          personModel.rotation.y += angle
+          this.keyboardToTotation()
+        } else if (keyboardPressed('D')) {
+          personModel.rotation.y -= angle
+          this.keyboardToTotation()
+        }
+      }
     }
+  }
+  // 按键前进
+  keyboardToMove(steep) {
+    const personModel = this.person
+    // 前进后退
+    const isS = keyboardPressed('S')
+    if (keyboardPressed('W') || isS) {
+      // 向量
+      const dir = new THREE.Vector3()
+      // 获取的视线方向
+      personModel?.getWorldDirection(dir)
+      // dis向量表示相机沿着相机视线方向平移的位移量
+      const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
+      // 初始位置+偏移向量
+      const newPos = personModel?.position.clone().add(dis) || new THREE.Vector3()
+      if (!this.checkCharacterCollide(newPos)) {
+        personModel?.position.copy(newPos)
+        if (isS) {
+          // 定位后一步
+          const ds = dir.clone().multiplyScalar(-steep * 2)
+          this.camera.position.copy(this.camera.position.clone().add(ds))
+        }
+        this.setControlTarget(personModel?.position)
+      }
+    }
+  }
+  // 按键转向
+  keyboardToTotation() {
+    const personModel = this.person
+    // 向量
+    const dir = new THREE.Vector3()
+    // 目标视线方向坐标
+    personModel?.getWorldDirection(dir)
+    const mds = this.controls?.maxDistance || 1
+    const dis = dir.clone().multiplyScalar(-mds)
+    const newPos =
+      personModel?.position.clone().setY(this.camera.position.y).add(dis) || new THREE.Vector3()
+    this.camera.position.copy(newPos)
+    this.setControlTarget(personModel?.position)
   }
   // 人物视角
   togglePersonSight(type?: number) {
@@ -668,7 +804,7 @@ export class OfficeScene extends ThreeScene.Scene {
     const { runging } = personModel.extra
     runging.play()
 
-    obj.position.copy(lookAt.clone().add(new THREE.Vector3(0, 0.1, 0)))
+    obj.position.copy(lookAt.clone().add(new THREE.Vector3(0, 0.05, 0)))
     obj.visible = true
 
     return new Promise(resolve => {
@@ -740,6 +876,71 @@ export class OfficeScene extends ThreeScene.Scene {
     if (this.diffusion.visible) {
       updateDiffusion(2)
     }
+  }
+
+  ///////////////////////////
+  /////////// 鸟瞰 ///////////
+  ///////////////////////////
+  // 公司鸟瞰图
+  toggleBridCompany() {
+    if (this.judgeCruise()) return
+    this.clearCharacterSight()
+    this.judgeAndStopRoam()
+
+    const name = DEFAULTCONFIG.companyModelName
+    const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
+    console.log(model)
+    if (!model) {
+      ElMessage.warning({
+        message: `未找到【${name}】模块！`,
+        grouping: true
+      })
+      return
+    }
+
+    // 设置聚焦
+    model.__isFocus__ = !model.__isFocus__
+
+    if (!model.__isFocus__) {
+      this.closeVirtualization()
+      this.toggleCompanyFocus(false)
+      return
+    }
+    this.toggleCompanyFocus(true)
+    virtualization(this.buildingGroup?.children || [], model, {
+      wireframe: !false,
+      hidden: true,
+      opacity: 0.1,
+      filter: ['电梯-1']
+    })
+  }
+  // 关闭虚化
+  closeVirtualization() {
+    const name = DEFAULTCONFIG.companyModelName
+    const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
+    model.__isFocus__ = false
+    closeVirtualization(this.buildingGroup?.children, {
+      filter: ['_空调风_grp']
+    })
+  }
+  // 公司聚焦
+  toggleCompanyFocus(isFocus) {
+    if (!this.controls) return
+    let target = this.historyTarget
+    let to = this.historyCameraPosition as XYZ
+
+    // 聚焦移动 暂存场景参数
+    if (isFocus) {
+      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
+      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
+
+      target = new THREE.Vector3(0, 185, 0)
+      to = { x: 0, y: 340, z: 0 }
+    }
+
+    const dis = target.distanceTo(to)
+    this.controls.maxDistance = dis
+    Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 
   ///////////////////////////
