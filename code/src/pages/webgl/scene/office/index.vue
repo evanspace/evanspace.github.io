@@ -36,7 +36,7 @@
       <div class="item" @click="() => Emitter.emit('PERSON:ADD')">人物加速</div>
       <div class="item" @click="() => Emitter.emit('PERSON:SUB')">人物减速</div>
 
-      <div class="item" @click="() => Emitter.emit('BIRD:COMPANY')">鸟瞰图</div>
+      <div class="item" @click="() => Emitter.emit('BIRD:COMPANY')">鸟瞰</div>
     </div>
 
     <div :class="$style.container" ref="containerRef"></div>
