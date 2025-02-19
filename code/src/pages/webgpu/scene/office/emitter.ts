@@ -82,7 +82,10 @@ const eventNames = [
   'SKY:NIGHT',
 
   // 流光
-  'EFFECT:FLEETING'
+  'EFFECT:FLEETING',
+
+  // 鸟瞰视角-公司
+  'BIRD:COMPANY'
 ] as const
 type EventNames = (typeof eventNames)[number]
 

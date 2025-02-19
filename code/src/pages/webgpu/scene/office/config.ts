@@ -58,6 +58,9 @@ export default {
     'ground'
   ],
 
+  // 公司模型名称
+  companyModelName: '二十五楼',
+
   // 碰撞间距
   collisionSpace: 1,
 

@@ -6,7 +6,6 @@ import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
 import { ThreeModelItem } from 'three-scene/types/model'
 
-import { useDiffusion } from './diffusion'
 const { Utils, Hooks } = MS
 
 const {
@@ -18,7 +17,24 @@ const {
 } = Hooks.useRoam()
 const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
-const { createDiffusion, updateDiffusion } = useDiffusion()
+const { createMove, moveAnimate } = Hooks.useMoveAnimate()
+const { checkCollide } = Hooks.useCollide()
+const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(
+  [
+    '1.png',
+    '2.png',
+    '3.png',
+    '4.png',
+    '5.png',
+    '6.png',
+    '7.png',
+    '8.png',
+    '9.png',
+    '10.png',
+    '11.png',
+    '12.png'
+  ].map(it => `${DEFAULTCONFIG.baseUrl}/oss/textures/diffusion/${it}`)
+)
 
 // 视角映射
 const SIGHT_MAP = {
@@ -99,6 +115,9 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 扩散波效果
   diffusion: InstanceType<typeof THREE.Mesh> = new THREE.Mesh()
+
+  // 碰撞间距
+  collisionSpace = DEFAULTCONFIG.collisionSpace
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
@@ -528,6 +547,8 @@ export class OfficeScene extends ThreeScene.Scene {
     if (this.person) {
       const mixer = this.person.extra.mixer
       mixer.update(delta)
+      // 人物移动
+      moveAnimate(0.2 * this.moveFactor)
     }
   }
   // 人物视角
@@ -647,12 +668,59 @@ export class OfficeScene extends ThreeScene.Scene {
     const { runging } = personModel.extra
     runging.play()
 
-    obj.position.copy(lookAt)
+    obj.position.copy(lookAt.clone().add(new THREE.Vector3(0, 0.1, 0)))
     obj.visible = true
 
     return new Promise(resolve => {
-      return resolve(1)
+      // 创建移动
+      createMove(
+        personModel,
+        lookAt,
+        (pos, stop) => {
+          this.setControlTarget(pos)
+          if (
+            this.checkCharacterCollide(pos, liftMeshName.includes(intersct.object.name) ? 2 : 0.3)
+          ) {
+            stop()
+            runging.stop()
+            personModel.__runing__ = false
+            obj.visible = false
+          }
+        },
+        pos => {
+          this.setControlTarget(pos)
+          runging.stop()
+          personModel.__runing__ = false
+          obj.visible = false
+          resolve(personModel)
+        }
+      )
     })
+  }
+
+  // 检测人物碰撞
+  checkCharacterCollide(pos, y = 0.3) {
+    if (!this.person) return
+    // 检测碰撞
+    const intersects = checkCollide(
+      this.person,
+      pos,
+      this.buildingGroup?.children || [],
+      true,
+      new THREE.Vector3(0, y, 0)
+    )
+    if (intersects.length) {
+      const intersect = intersects[0]
+
+      // 于目标距离
+      if (intersect.distance < this.collisionSpace) {
+        ElMessage.warning({
+          message: '撞到了！',
+          grouping: true
+        })
+        return true
+      }
+    }
   }
 
   ///////////////////////////
@@ -660,7 +728,7 @@ export class OfficeScene extends ThreeScene.Scene {
   ///////////////////////////
   // 添加扩散波
   addDiffusion() {
-    const mesh = createDiffusion(4)
+    const mesh = createDiffusion(2)
     mesh.rotation.x = -Math.PI * 0.5
     mesh.position.y = 0.5
     mesh.visible = false
@@ -670,7 +738,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 扩散波动画
   diffusionAnimate() {
     if (this.diffusion.visible) {
-      updateDiffusion()
+      updateDiffusion(2)
     }
   }
 
@@ -735,6 +803,12 @@ export class OfficeScene extends ThreeScene.Scene {
     this.controls.maxDistance = 1500
     this.controls.maxPolarAngle = Math.PI * 0.48
     super.controlReset()
+  }
+  // 设置控制中心点
+  setControlTarget(point) {
+    if (!this.controls) return
+    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.personSightHeight, 0)))
+    this.camera.lookAt(this.controls.target)
   }
 
   // 漫游
@@ -812,6 +886,10 @@ export class OfficeScene extends ThreeScene.Scene {
     const objects =
       this.buildingGroup?.children
         .filter((it: any) => it.visible)
+        .map(it => {
+          it.children = it.children.filter(t => t.visible)
+          return it
+        })
         .concat(this.anchorGroup?.children || []) || []
 
     // 检查相交对象
@@ -821,7 +899,8 @@ export class OfficeScene extends ThreeScene.Scene {
       this.options.scale,
       this.camera,
       objects,
-      true
+      // 计算后代，悬浮不计算，否则耗性能
+      isClick
     )
 
     // 处理锚点类型-精灵材质
