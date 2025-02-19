@@ -1133,6 +1133,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 销毁场景
   dispose() {
+    this.clearVideo()
     this.animateModels = []
     this.canvasTextures = []
     this.videoModels = []
@@ -1143,7 +1144,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.disposeObj(this.fleetingGroup)
     this.disposeObj(this.streetLampGroup)
     this.disposeObj(this.residentLightGroup)
-    this.clearVideo()
 
     this.clock = void 0
     this.css2DRender = void 0
