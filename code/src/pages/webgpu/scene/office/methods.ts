@@ -545,10 +545,15 @@ export const liftMove = (liftName, from, to) => {
   return new TWEEN.Tween(from).to(to, duration).delay(0).start()
 }
 
-export const createAirGroup = (scene: THREE.Scene, _names: string[]) => {
+/**
+ * 创建空调风组
+ * @param scene 场景
+ * @param _names
+ * @returns
+ */
+export const createAirGroup = (scene: THREE.Scene, speed: ReturnType<typeof uniform>) => {
   // 空调风列表
   const data = DEFAULTCONFIG.airWinds
-  const speed = uniform(0.2)
   const group = new THREE.Group()
   for (let i = 0; i < data.length; i++) {
     const { name, list } = data[i]
@@ -568,9 +573,9 @@ export const createAirGroup = (scene: THREE.Scene, _names: string[]) => {
         height,
         speed,
         color: 0x76b6ff,
-        twistNums: 2,
-        twistRange: 0,
-        offset: 0,
+        twistNums: Math.floor(Math.random() * 4 + 1),
+        twistRange: Math.random() * 1,
+        offset: Math.random() * 1,
         segment: 2
       })
 
@@ -584,8 +589,5 @@ export const createAirGroup = (scene: THREE.Scene, _names: string[]) => {
     group.add(subGroup)
   }
 
-  return {
-    group,
-    speed
-  }
+  return group
 }

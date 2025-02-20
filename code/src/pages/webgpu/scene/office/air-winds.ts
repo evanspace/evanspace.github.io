@@ -35,25 +35,25 @@ export default [
       },
       {
         width: 5,
-        height: 20,
+        height: 21,
         position: { x: 41.58, y: 192.6, z: 36.86 },
         rotation: { x: 0, y: 0, z: -15 }
       },
       {
         width: 5,
-        height: 20,
+        height: 22,
         position: { x: 44.82, y: 192.6, z: 36.04 },
         rotation: { x: 0, y: 0, z: -15 }
       },
       {
         width: 5,
-        height: 20,
+        height: 23,
         position: { x: 49.28, y: 192.6, z: 34.92 },
         rotation: { x: 0, y: 0, z: -15 }
       },
       {
         width: 5,
-        height: 20,
+        height: 23,
         position: { x: 53.33, y: 192.6, z: 33.9 },
         rotation: { x: 0, y: 0, z: -15 }
       },
@@ -234,7 +234,7 @@ export default [
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 20 },
+        position: { x: -38.41, y: 192.6, z: -20 },
         rotation: { x: 0, y: 0, z: 90 }
       }
     ]
@@ -256,13 +256,13 @@ export default [
       },
       {
         width: 5,
-        height: 18,
+        height: 16,
         position: { x: -36.5, y: 192.6, z: 46.67 },
         rotation: { x: 0, y: 0, z: 5 }
       },
       {
         width: 5,
-        height: 18,
+        height: 16,
         position: { x: -31.5, y: 192.6, z: 46.7 },
         rotation: { x: 0, y: 0, z: 5 }
       }

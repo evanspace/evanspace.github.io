@@ -122,7 +122,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 空调组
   airGroup?: InstanceType<typeof THREE.Group>
-  airSpeed = THREE.TSL.uniform(0.2)
+  airSpeed = THREE.TSL.uniform(0.1)
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
@@ -955,10 +955,9 @@ export class OfficeScene extends ThreeScene.Scene {
   ///////////////////////////
   /////////// 空调 ///////////
   ///////////////////////////
-  addAirWindMaterial(names: string[]) {
-    const { group, speed } = MS.createAirGroup(this.scene, names)
+  addAirWindMaterial(_names: string[]) {
+    const group = MS.createAirGroup(this.scene, this.airSpeed)
 
-    this.airSpeed = speed
     this.airGroup = group
     this.addObject(group)
   }
