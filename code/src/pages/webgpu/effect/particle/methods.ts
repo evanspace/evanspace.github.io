@@ -21,14 +21,11 @@ export class NewThreeScene extends ThreeScene.Scene {
   }
 
   render() {
-    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
-      this.scene,
-      this.camera
-    )
+    this.renderer.renderAsync(this.scene, this.camera)
   }
 
   createRender() {
-    return new THREE.WebGPURenderer(this.options.render) as any
+    return new THREE.WebGPURenderer(this.options.render)
   }
 
   addModel() {

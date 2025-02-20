@@ -67,18 +67,15 @@ export class SlicingScene extends ThreeScene.Scene {
   }
 
   render() {
-    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
-      this.scene,
-      this.camera
-    )
+    this.renderer.renderAsync(this.scene, this.camera)
   }
 
   createRender() {
-    return new THREE.WebGPURenderer() as any
+    return new THREE.WebGPURenderer()
   }
 
   // 设置环境
-  setEnv(texture: InstanceType<THREE.DataTexture>) {
+  setEnv(texture: InstanceType<typeof THREE.DataTexture>) {
     texture.mapping = THREE.EquirectangularReflectionMapping
     this.scene.environment = texture
     this.scene.background = this.scene.environment
@@ -109,7 +106,9 @@ export class SlicingScene extends ThreeScene.Scene {
     gui.add(sliceArc, 'value', 0, Math.PI * 2, 0.001).name('角度')
 
     gui
+      // @ts-ignore
       .addColor({ color: sliceColor.value.getHex() }, 'color')
+      // @ts-ignore
       .onChange(value => sliceColor.value.set(value))
 
     gui.domElement.className += ' gui-wrap'

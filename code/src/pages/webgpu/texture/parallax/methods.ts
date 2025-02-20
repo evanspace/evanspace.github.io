@@ -62,10 +62,10 @@ export class ParallaxScene extends ThreeScene.Scene {
 
     const material = new THREE.MeshStandardNodeMaterial({
       colorNode: iceNode.mul(5), // 颜色强度增加到
-      roughnessNode: texture(roughnessTexture),
       normalMap: normalTexture,
       metalness: 0
     })
+    material.roughnessNode = texture(roughnessTexture)
 
     const geometry = new THREE.BoxGeometry(10, 10, 10)
     const ground = new THREE.Mesh(geometry, material)

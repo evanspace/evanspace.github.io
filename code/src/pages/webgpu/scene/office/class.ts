@@ -110,9 +110,9 @@ export class OfficeScene extends ThreeScene.Scene {
   // 当前视角
   currentSight = SIGHT_MAP.SCREEN
   // 历史中心点（视角切换）
-  historyTarget: InstanceType<typeof THREE.Vector3>
+  historyTarget: InstanceType<typeof THREE.Vector3> = new THREE.Vector3()
   // 历史相机坐标（视角切换）
-  historyCameraPosition: InstanceType<typeof THREE.Vector3>
+  historyCameraPosition: InstanceType<typeof THREE.Vector3> = new THREE.Vector3()
 
   // 扩散波效果
   diffusion: InstanceType<typeof THREE.Mesh> = new THREE.Mesh()
@@ -337,6 +337,7 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 添加点位
   addDot(item: ObjectItem, clickBack) {
+    if (!this.dotGroup) return new THREE.Mesh()
     const label = MS.createDotCSS2DDom(item, clickBack)
     this.dotGroup.add(label)
     return label
@@ -590,14 +591,15 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 人物事件
   addPersonEvent() {
-    const model = this.person
-    const runging = model.extra.runging
+    const personModel = this.person
+    if (!personModel) return
+    const runging = personModel.extra.runging
     const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
 
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
-        if (model.__runing__) return
+        if (personModel.__runing__) return
         if (keys.includes(e.keyCode)) {
           runging.play()
         }
@@ -611,7 +613,7 @@ export class OfficeScene extends ThreeScene.Scene {
         }
       },
       e => {
-        if (model.__runing__) return
+        if (personModel.__runing__) return
         if (keys.includes(e.keyCode)) {
           runging.stop()
         }

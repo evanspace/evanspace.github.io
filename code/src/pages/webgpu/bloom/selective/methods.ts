@@ -44,7 +44,7 @@ export class SelectiveScene extends ThreeScene.Scene {
   }
 
   createRender() {
-    return new THREE.WebGPURenderer() as any
+    return new THREE.WebGPURenderer()
   }
 
   addModel() {
@@ -60,10 +60,10 @@ export class SelectiveScene extends ThreeScene.Scene {
       const bloomIntensity = Math.random() > 0.5 ? 1 : 0
 
       const material = new THREE.MeshBasicNodeMaterial({
-        color: color,
-        mrtNode: mrt({
-          bloomIntensity: uniform(bloomIntensity)
-        })
+        color: color
+      })
+      material.mrtNode = mrt({
+        bloomIntensity: uniform(bloomIntensity)
       })
 
       const sphere = new THREE.Mesh(geometry, material)

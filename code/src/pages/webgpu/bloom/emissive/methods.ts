@@ -43,7 +43,7 @@ export class EmissiveScene extends ThreeScene.Scene {
   }
 
   createRender() {
-    return new THREE.WebGPURenderer() as any
+    return new THREE.WebGPURenderer()
   }
 
   addGui(bloomPass) {

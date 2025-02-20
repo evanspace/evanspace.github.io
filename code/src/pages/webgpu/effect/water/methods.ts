@@ -36,7 +36,7 @@ const material = new THREE.MeshStandardNodeMaterial({ colorNode: iceColorNode })
 
 export class WaterScene extends ThreeScene.Scene {
   postProcessing?: any
-  group: InstanceType<typeof THREE.Group>
+  group?: InstanceType<typeof THREE.Group>
   cylinder?: InstanceType<typeof THREE.Mesh>
   gui: InstanceType<typeof GUI>
 
@@ -153,9 +153,10 @@ export class WaterScene extends ThreeScene.Scene {
 
     // 水面反光效果
     const waterPosY = positionWorld.y.sub(water.position.y)
-    let transition = waterPosY.add(0.1).saturate().oneMinus()
+    let transition: any = waterPosY.add(0.1).saturate().oneMinus()
     transition = waterPosY.lessThan(0).select(transition, normalWorld.y.mix(transition, 0)).toVar()
-    const colorNode = transition.mix(material.colorNode, material.colorNode.add(waterLayer0))
+    // @ts-ignore
+    const colorNode = transition.mix(material.colorNode, material.colorNode?.add(waterLayer0))
     cylinder.material.colorNode = colorNode
     this.cylinder = cylinder
   }
@@ -211,15 +212,15 @@ export class WaterScene extends ThreeScene.Scene {
     const delta = this.clock?.getDelta() as number
     // this.controls?.update()
 
-    for (const object of this.group.children) {
-      object.position.y = Math.sin(this.clock?.elapsedTime + object.id) * 0.3
+    for (const object of this.group?.children || []) {
+      object.position.y = Math.sin((this.clock?.elapsedTime ?? 0) + object.id) * 0.3
       object.rotation.y += delta * 0.3
     }
   }
 
   dispose() {
     this.disposeObj(this.group)
-    this.group = null
+    this.group = void 0
     super.dispose()
   }
 }

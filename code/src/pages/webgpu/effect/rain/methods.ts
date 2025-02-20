@@ -49,7 +49,7 @@ export class RainThreeScene extends ThreeScene.Scene {
     this.rippleTimeBuffer = this.createBuffer()
 
     const computeInit = this.initCompute()
-    const computeUpdate = this.computeUpdate() as any
+    const computeUpdate = this.computeUpdate()
     this.computeParticles = computeUpdate().compute(this.maxCount)
     this.addModel()
     // @ts-ignore
@@ -60,14 +60,11 @@ export class RainThreeScene extends ThreeScene.Scene {
   }
 
   render() {
-    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
-      this.scene,
-      this.camera
-    )
+    this.renderer.renderAsync(this.scene, this.camera)
   }
 
   createRender() {
-    return new THREE.WebGPURenderer(this.options.render) as any
+    return new THREE.WebGPURenderer(this.options.render)
   }
 
   // 碰撞相机
