@@ -220,13 +220,18 @@ export class SmokeScene extends ThreeScene.Scene {
     smoke.position.y = 30
     this.addObject(smoke)
 
+    const width = 100,
+      height = 50
     const sm = createStripSmoke({
-      width: 50,
-      height: 200
-      // speed: uniform(0.2),
+      // const sm = this.createSmoke({
+      width,
+      height,
+      twistNums: 1,
+      twistRange: 0.1,
       // color: 0xf00f00,
-      // twistNums: 4,
-      // twistRange: 10
+      offset: 0.1,
+      segment: 10
+      // speed: uniform(0.2),
       // power: uniform(2)
     })
     sm.position.set(-100, 0, 200)
@@ -235,10 +240,10 @@ export class SmokeScene extends ThreeScene.Scene {
     // sm.geometry = new THREE.PlaneGeometry(200, 200, 64, 64)
 
     const ts = new THREE.Mesh(
-      new THREE.PlaneGeometry(50, 200),
+      new THREE.PlaneGeometry(width, height),
       new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true })
     )
-    ts.position.copy(sm.position.clone().add(new THREE.Vector3(0, 100, 0)))
+    ts.position.copy(sm.position.clone().add(new THREE.Vector3(0, height / 2, 0)))
     this.addObject(ts)
   }
 
@@ -246,6 +251,7 @@ export class SmokeScene extends ThreeScene.Scene {
     opts: {
       width?: number
       height?: number
+      segment?: number
       // 速度（风速、扭曲）
       speed?: number | ReturnType<typeof uniform>
       // 颜色
@@ -273,16 +279,16 @@ export class SmokeScene extends ThreeScene.Scene {
       color = 0xffffff,
       alphaPow = 3,
       twistNums = 5,
-      twistRange = 5,
+      twistRange = 0,
       RLSpeed = 0.1,
       TDSpeed = 0.1,
       offset = 50,
+      segment = 10,
       power = 0.03
     } = opts
-    const mp = 10
-    const geometry = new THREE.PlaneGeometry(1, 1, width * mp, height * mp)
+    const geometry = new THREE.PlaneGeometry(1, 1, width * segment, height * segment)
     geometry.scale(width, height, 1)
-    geometry.rotateY(Math.PI * 0.75)
+    geometry.rotateY(((Math.PI * 0.5) / 3) * twistNums)
     geometry.translate(0, height / 2, 0)
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
