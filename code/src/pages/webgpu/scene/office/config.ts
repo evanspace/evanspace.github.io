@@ -1,4 +1,5 @@
 import fleetings from './fleetings'
+import airWinds from './air-winds'
 
 const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
 
@@ -95,5 +96,8 @@ export default {
   residentLights: [
     [-13, 169.8, 447.2],
     [668, 114.9, 481.9]
-  ]
+  ],
+
+  // 空调风
+  airWinds
 }

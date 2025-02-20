@@ -120,6 +120,10 @@ export class OfficeScene extends ThreeScene.Scene {
   // 碰撞间距
   collisionSpace = DEFAULTCONFIG.collisionSpace
 
+  // 空调组
+  airGroup?: InstanceType<typeof THREE.Group>
+  airSpeed = THREE.TSL.uniform(0.2)
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -129,6 +133,8 @@ export class OfficeScene extends ThreeScene.Scene {
     this.extend = extend
 
     this.createClock()
+
+    console.log(this.scene)
 
     // 场景合成
     this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
@@ -169,7 +175,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 渲染器
   createRender() {
-    const render = new THREE.WebGPURenderer() as any
+    const render = new THREE.WebGPURenderer()
     return render
   }
 
@@ -941,8 +947,47 @@ export class OfficeScene extends ThreeScene.Scene {
     }
 
     const dis = target.distanceTo(to)
+    this.controls.enablePan = isFocus
     this.controls.maxDistance = dis
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+  }
+
+  ///////////////////////////
+  /////////// 空调 ///////////
+  ///////////////////////////
+  addAirWindMaterial(names: string[]) {
+    const { group, speed } = MS.createAirGroup(this.scene, names)
+
+    this.airSpeed = speed
+    this.airGroup = group
+    this.addObject(group)
+  }
+  // 空调开关
+  toggleAir(object, isOpen?) {
+    if (!this.airGroup) return
+    const bind = object.data.bind
+    // 存在则单控
+    if (bind) {
+      const dobj = this.airGroup.getObjectByName(object.data.bind) as any
+      if (!dobj) return
+      dobj.__open__ = isOpen ?? !dobj.__open__
+      dobj.visible = dobj.__open__
+    } else {
+      // 全控
+      this.airGroup?.children.forEach(el => {
+        this.toggleAir({ data: { bind: el.name } }, isOpen)
+      })
+    }
+  }
+  // 空调风速
+  changeAirWindSpeed(speed = 0.1) {
+    this.airSpeed.value += speed
+    if (this.airSpeed.value < 0.1) {
+      this.airSpeed.value = 0.1
+    }
+    if (this.airSpeed.value > 1) {
+      this.airSpeed.value = 1
+    }
   }
 
   ///////////////////////////

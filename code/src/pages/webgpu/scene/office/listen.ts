@@ -147,12 +147,16 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   })
 
   // 空调
-  // Emitter.on('AIR:MAIN', (isOpen?) => {
-  //   scene?.toggleAir({ data: { bind: '_空调风_grp' } }, isOpen)
-  // })
-  // Emitter.on('AIR:ODD', (object, isOpen?) => {
-  //   scene?.toggleAir(object, isOpen)
-  // })
+  Emitter.on('AIR:MAIN', (isOpen?) => {
+    scene?.toggleAir({ data: { bind: '' } }, isOpen)
+  })
+  Emitter.on('AIR:ODD', (object, isOpen?) => {
+    scene?.toggleAir(object, isOpen)
+  })
+
+  // 空调风速+
+  Emitter.on('AIR:WINDADD', () => scene.changeAirWindSpeed(0.1))
+  Emitter.on('AIR:WINDSUB', () => scene.changeAirWindSpeed(-0.1))
 
   // 场景坐标
   Emitter.on('SCENE:POS', () => scene?.getPosition())

@@ -70,6 +70,10 @@ const eventNames = [
   'AIR:MAIN',
   // 单个空调
   'AIR:ODD',
+  // 风速+
+  'AIR:WINDADD',
+  // 风速-
+  'AIR:WINDSUB',
 
   // 场景坐标
   'SCENE:POS',

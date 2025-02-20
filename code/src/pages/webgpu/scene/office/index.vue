@@ -30,6 +30,8 @@
       <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
 
       <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
+      <div class="item" @click="() => Emitter.emit('AIR:WINDADD')">空调风速+</div>
+      <div class="item" @click="() => Emitter.emit('AIR:WINDSUB')">空调风速-</div>
 
       <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
       <div class="item" @click="() => Emitter.emit('CAMERA:THREE')">第三人称</div>
@@ -309,6 +311,10 @@ const load = () => {
           // 添加画布纹理
           scene.addCanvasMaterial(
             res.JsonList.filter(it => it.type === KEYS.M_SCREEN_EDIT).map(it => it.bind)
+          )
+          // 添加空调材质
+          scene.addAirWindMaterial(
+            res.JsonList.filter(it => it.type === KEYS.M_AIR_SWITCH).map(it => it.bind)
           )
         })
       }, 100)

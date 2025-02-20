@@ -514,6 +514,12 @@ const airSwitch = [
   {
     name: '空调开关',
     type: 'AIR_SWITCH',
+    position: { x: 61.1, y: anchorHeight, z: 23.8 },
+    bind: '程总办公室'
+  },
+  {
+    name: '空调开关',
+    type: 'AIR_SWITCH',
     position: { x: 56.8, y: anchorHeight, z: 1.8 },
     bind: '_老板办公室_grp'
   }

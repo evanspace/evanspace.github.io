@@ -13,8 +13,9 @@ const Utils = ThreeScene.Utils
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
+const { createStripSmoke } = Hooks.useSmoke()
 
-const { pass, mrt, output, emissive, float } = THREE.TSL
+const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
 export { Hooks, Utils }
 
@@ -527,6 +528,13 @@ export const getModelAction = model => {
   }
 }
 
+/**
+ * 电梯移动
+ * @param liftName 电梯组名称
+ * @param from 动画初始坐标
+ * @param to 动画最终坐标
+ * @returns
+ */
 export const liftMove = (liftName, from, to) => {
   const duration = 1000 * 5
   ElMessage.success({
@@ -535,4 +543,49 @@ export const liftMove = (liftName, from, to) => {
   })
 
   return new TWEEN.Tween(from).to(to, duration).delay(0).start()
+}
+
+export const createAirGroup = (scene: THREE.Scene, _names: string[]) => {
+  // 空调风列表
+  const data = DEFAULTCONFIG.airWinds
+  const speed = uniform(0.2)
+  const group = new THREE.Group()
+  for (let i = 0; i < data.length; i++) {
+    const { name, list } = data[i]
+    // 查找训在的对象清理
+    const obj = scene.getObjectByName(name)
+    if (obj) {
+      obj.clear()
+    }
+
+    const subGroup = new THREE.Group()
+    subGroup.name = name
+    for (let j = 0; j < list.length; j++) {
+      const { width, height, position: pos, rotation } = list[j]
+      const { x = 0, y = 0, z = 0 } = rotation
+      const mesh = createStripSmoke({
+        width,
+        height,
+        speed,
+        color: 0x76b6ff,
+        twistNums: 2,
+        twistRange: 0,
+        offset: 0,
+        segment: 2
+      })
+
+      // 角度、位置
+      const sp = Math.PI / 180
+      mesh.rotation.set(sp * x + Math.PI * 0.5, sp * y, sp * z)
+      mesh.position.set(pos.x, pos.y, pos.z)
+      subGroup.add(mesh)
+    }
+    subGroup.visible = false
+    group.add(subGroup)
+  }
+
+  return {
+    group,
+    speed
+  }
 }
