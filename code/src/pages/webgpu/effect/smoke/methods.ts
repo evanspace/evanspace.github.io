@@ -229,7 +229,7 @@ export class SmokeScene extends ThreeScene.Scene {
       // twistRange: 10
       // power: uniform(2)
     })
-    sm.position.set(-100, 100, 200)
+    sm.position.set(-100, 0, 200)
     this.addObject(sm)
     console.log(sm)
     // sm.geometry = new THREE.PlaneGeometry(200, 200, 64, 64)
@@ -238,7 +238,7 @@ export class SmokeScene extends ThreeScene.Scene {
       new THREE.PlaneGeometry(50, 200),
       new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true })
     )
-    ts.position.copy(sm.position)
+    ts.position.copy(sm.position.clone().add(new THREE.Vector3(0, 100, 0)))
     this.addObject(ts)
   }
 
@@ -269,7 +269,7 @@ export class SmokeScene extends ThreeScene.Scene {
     const {
       width = 10,
       height = 10,
-      speed = 0.5,
+      speed = 0.2,
       color = 0xffffff,
       alphaPow = 3,
       twistNums = 5,
@@ -282,8 +282,8 @@ export class SmokeScene extends ThreeScene.Scene {
     const mp = 10
     const geometry = new THREE.PlaneGeometry(1, 1, width * mp, height * mp)
     geometry.scale(width, height, 1)
-    geometry.rotateY(Math.PI * 0.6)
-    geometry.translate(0, 0, width / 2)
+    geometry.rotateY(Math.PI * 0.75)
+    geometry.translate(0, height / 2, 0)
     const material = new THREE.MeshBasicNodeMaterial({
       transparent: true,
       side: THREE.DoubleSide,
