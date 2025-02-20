@@ -4,6 +4,8 @@ import * as THREE from 'three/webgpu'
 
 import { GUI } from 'dat.gui'
 
+const { createStripSmoke } = ThreeScene.Hooks.useSmoke()
+
 const TSL = THREE.TSL
 const {
   mix,
@@ -18,14 +20,15 @@ const {
   uv,
   vec2,
   vec3,
-  vec4
+  vec4,
+  uniform
 } = TSL
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 const textureLoader = new THREE.TextureLoader()
 
 // 速度
-const speed = TSL.uniform(0.2)
+const speed = uniform(0.2)
 
 export class SmokeScene extends ThreeScene.Scene {
   gui: InstanceType<typeof GUI>
@@ -219,6 +222,122 @@ export class SmokeScene extends ThreeScene.Scene {
     smoke.position.x = -80
     smoke.position.y = 30
     this.addObject(smoke)
+
+    const sm = createStripSmoke({
+      width: 50,
+      height: 200
+      // speed: uniform(0.2),
+      // color: 0xf00f00,
+      // twistNums: 4,
+      // twistRange: 10
+      // power: uniform(2)
+    })
+    sm.position.set(-100, 100, 200)
+    this.addObject(sm)
+    console.log(sm)
+    // sm.geometry = new THREE.PlaneGeometry(200, 200, 64, 64)
+
+    const ts = new THREE.Mesh(
+      new THREE.PlaneGeometry(50, 200),
+      new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true })
+    )
+    ts.position.copy(sm.position)
+    this.addObject(ts)
+  }
+
+  createSmoke(
+    opts: {
+      width?: number
+      height?: number
+      // 速度（风速、扭曲）
+      speed?: number | ReturnType<typeof uniform>
+      // 颜色
+      color?: number | string
+      // 颜色饱和
+      alphaPow?: number
+      // 扭曲次数
+      twistNums?: number
+      // 扭曲范围
+      twistRange?: number
+      // 左右风速
+      RLSpeed?: number
+      // 上下风速
+      TDSpeed?: number
+      // 锋利偏差
+      offset?: number
+      // 风力
+      power?: number | ReturnType<typeof uniform>
+    } = {}
+  ) {
+    const {
+      width = 10,
+      height = 10,
+      speed = 0.5,
+      color = 0xffffff,
+      alphaPow = 3,
+      twistNums = 5,
+      twistRange = 5,
+      RLSpeed = 0.1,
+      TDSpeed = 0.1,
+      offset = 50,
+      power = 0.03
+    } = opts
+    const mp = 10
+    const geometry = new THREE.PlaneGeometry(1, 1, width * mp, height * mp)
+    geometry.scale(width, height, 1)
+    geometry.rotateY(Math.PI * 0.6)
+    geometry.translate(0, 0, width / 2)
+    const material = new THREE.MeshBasicNodeMaterial({
+      transparent: true,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    })
+
+    const noiseTexture = textureLoader.load(`${base}/oss/textures/gpu/128x128.png`)
+    noiseTexture.wrapS = THREE.RepeatWrapping
+    noiseTexture.wrapT = THREE.RepeatWrapping
+
+    // 位置
+    material.positionNode = Fn(() => {
+      // 扭曲
+      const twistNoiseUv = vec2(0.8, uv().y.mul(0.3).sub(time.mul(speed))) // 扭曲位置、速度
+      const twist = texture(noiseTexture, twistNoiseUv).r.mul(twistNums) // 扭曲数量
+      positionLocal.xz.assign(rotateUV(positionLocal.xz, twist, vec2(twistRange))) // 扭曲偏差位置
+
+      // 气流
+      const windOffset = vec2(
+        texture(noiseTexture, vec2(0.25, time.mul(RLSpeed)).mod(1)).r.sub(0.5), // 向右气流
+        texture(noiseTexture, vec2(0.75, time.mul(TDSpeed)).mod(1)).r.sub(0) // 上下气流
+      ).mul(uv().y.pow(1).mul(offset)) // 风力偏差
+      positionLocal.addAssign(windOffset)
+      return positionLocal
+    })()
+
+    // 颜色
+    material.colorNode = Fn(() => {
+      // 透明度
+      const alphaNoiseUv = uv()
+        // 范围
+        .mul(vec2(0.8, 0.3))
+        .add(vec2(0, time.mul(power).negate()))
+      const alpha = mul(
+        // 图案
+        texture(noiseTexture, alphaNoiseUv).r.smoothstep(0.4, 1),
+
+        // 边缘褪色
+        smoothstep(0, 0.1, uv().x),
+        smoothstep(0, 0.1, oneMinus(uv().x)),
+        smoothstep(0, 0.1, uv().y),
+        smoothstep(0, 0.1, oneMinus(uv().y))
+      )
+
+      const c = new THREE.Color(color)
+      const finalColor = mix(vec3(c.r, c.g, c.b), vec3(1, 1, 1), alpha.pow(alphaPow))
+      return vec4(finalColor, alpha)
+    })()
+
+    const mesh = new THREE.Mesh(geometry, material)
+    return mesh
   }
 
   addGui() {
