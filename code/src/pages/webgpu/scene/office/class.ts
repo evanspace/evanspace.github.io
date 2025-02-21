@@ -179,6 +179,14 @@ export class OfficeScene extends ThreeScene.Scene {
     return render
   }
 
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
   // 渲染
   render() {
     this.postProcessing.renderAsync()
@@ -264,7 +272,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.fleetingGroup && (this.fleetingGroup.visible = visible)
     this.streetLampGroup && (this.streetLampGroup.visible = visible)
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
-    this.toggleCruiseBloom(visible)
+    this.toggleCruiseBloom(visible, THREE)
 
     this.loadEnvTexture(hdr, _texture => {
       // this.postProcessing.needsUpdate = true

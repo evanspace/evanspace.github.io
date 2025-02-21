@@ -11,13 +11,13 @@ const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
 
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
-const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
+const { createFleeting, fleetingAnimate } = Hooks.useFleeting(THREE)
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
-const { createStripSmoke } = Hooks.useSmoke()
+const { createStripSmoke } = Hooks.useSmoke(THREE)
 
 const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
-export { Hooks, Utils }
+export { Hooks, Utils, THREE }
 
 /**
  * 场景合成器

@@ -93,7 +93,7 @@ import { ObjectItem } from 'three-scene/types/model'
 import { useDialog } from '@/hooks/dialog'
 import { getStorage, setStorage } from '@/common/utils/storage'
 
-const { Hooks, Utils } = MS
+const { Hooks, Utils, THREE } = MS
 
 // 界面配置
 const pageOpts = reactive(getPageOpts())
@@ -110,10 +110,13 @@ const { options: dialog } = useDialog({
   errMessage: '请输入欢迎词！'
 })
 
-const { progress, loadModels, initModels, getModel } = Hooks.useModelLoader({
-  baseUrl: DEFAULTCONFIG.baseUrl,
-  indexDB: DEFAULTCONFIG.indexDB
-})
+const { progress, loadModels, initModels, getModel } = Hooks.useModelLoader(
+  {
+    baseUrl: DEFAULTCONFIG.baseUrl,
+    indexDB: DEFAULTCONFIG.indexDB
+  },
+  THREE
+)
 
 const canvasTextureRef = ref()
 const containerRef = ref()

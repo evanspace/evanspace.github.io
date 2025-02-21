@@ -50,7 +50,7 @@ export default [
   // 灯光
   {
     key: 'spot_light_floor_1',
-    type: 'GPUspotlight',
+    type: 'spotlight',
     name: '主机聚光灯',
     intensity: 4,
     color: 0xffffed,
@@ -60,7 +60,7 @@ export default [
   },
   {
     key: 'spot_light_floor_2',
-    type: 'GPUspotlight',
+    type: 'spotlight',
     name: '会议室聚光灯',
     intensity: 2,
     color: 0xffffed,
@@ -72,7 +72,7 @@ export default [
 
   {
     key: 'spot_light_floor_3',
-    type: 'GPUspotlight',
+    type: 'spotlight',
     name: '屏幕聚光灯',
     intensity: 1,
     color: 0xffffed,
@@ -83,7 +83,7 @@ export default [
   },
   {
     key: 'spot_light_floor_4',
-    type: 'GPUspotlight',
+    type: 'spotlight',
     name: '屏幕聚光灯',
     intensity: 2,
     color: 0xffffed,
@@ -94,7 +94,7 @@ export default [
   },
   {
     key: 'spot_light_floor_5',
-    type: 'GPUspotlight',
+    type: 'spotlight',
     name: '屏幕聚光灯',
     intensity: 2,
     color: 0xffffed,
@@ -106,7 +106,7 @@ export default [
 
   {
     key: 'rect_area_light_1',
-    type: 'GPUplanelight',
+    type: 'planelight',
     name: '面光灯',
     intensity: 1.2,
     color: 0xffffff,
@@ -115,7 +115,7 @@ export default [
   },
   {
     key: 'rect_area_light_2',
-    type: 'GPUplanelight',
+    type: 'planelight',
     name: '面光灯',
     intensity: 0.5,
     color: 0xffffff,

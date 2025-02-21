@@ -13,7 +13,7 @@ declare module '*.vue' {
 declare module 'path-browserify'
 declare module 'nprogress'
 
-declare module '*/webgpu' {
+declare module 'three/webgpu' {
   export * from 'three/src/Three.WebGPU'
 }
 

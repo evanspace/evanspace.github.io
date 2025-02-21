@@ -4,7 +4,7 @@ import * as THREE from 'three/webgpu'
 
 import { GUI } from 'dat.gui'
 
-const { createStripSmoke } = ThreeScene.Hooks.useSmoke()
+const { createStripSmoke } = ThreeScene.Hooks.useSmoke(THREE)
 
 const TSL = THREE.TSL
 const {
@@ -50,6 +50,14 @@ export class SmokeScene extends ThreeScene.Scene {
 
   render() {
     this.renderer.renderAsync(this.scene, this.camera)
+  }
+
+  run() {
+    this.renderer.setAnimationLoop(() => {
+      this.animate()
+      this.modelAnimate()
+    })
+    return this
   }
 
   createScene() {
