@@ -11,7 +11,7 @@ export default [
   {
     key: KEYS.M_CONPANT_FLOOR,
     name: '公司',
-    size: 16.6,
+    size: 14.5,
     url: '/二十五楼.glb'
   },
 

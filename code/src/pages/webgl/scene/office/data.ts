@@ -65,7 +65,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 13.4,
+      size: 136,
       url: '/公司总部.glb'
     },
     {
@@ -90,7 +90,7 @@ export const getPageOpts = animateBack => ({
     {
       key: CONPANT_FLOOR,
       name: '公司',
-      size: 16.6,
+      size: 14.5,
       url: '/二十五楼.glb'
     },
 
