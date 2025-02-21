@@ -36,6 +36,7 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { FloorThreeScene } from './methods'
 import { colors } from './colors'
 import { Utils, Hooks } from 'three-scene/build/three-scene.module'
+import { useSky } from '@/hooks/sky'
 
 import DEFAULTCONFIG from './config.ts'
 
@@ -64,7 +65,10 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
 
 const COLORS = Utils.deepMerge(colors, props.colors)
 
-const { change: changeBackground, load: backgroundLoad, skys } = Hooks.useBackground()
+const { changeBackground, backgroundLoad } = Hooks.useBackground(
+  props.baseUrl + '/oss/sky/',
+  useSky().skys
+)
 const { progress, loadModel, loadModels, getModel } = Hooks.useModelLoader({
   baseUrl: props.baseUrl,
   dracoPath: props.dracoPath,
@@ -535,7 +539,7 @@ const load = () => {
 const initPage = () => {
   load()
   if (props.skyCode) {
-    backgroundLoad(scene, props.skyCode as typeof skys[number])
+    backgroundLoad(scene, props.skyCode)
   }
 }
 

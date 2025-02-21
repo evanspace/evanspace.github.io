@@ -2,8 +2,12 @@ import * as THREE from 'three'
 import * as ThreeScene from 'three-scene'
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import { useSky } from '@/hooks/sky'
 
-const { backgroundLoad } = ThreeScene.Hooks.useBackground()
+const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { skys } = useSky()
+
+const { backgroundLoad } = ThreeScene.Hooks.useBackground(base + '/oss/sky/', skys)
 
 export class NewThreeScene extends ThreeScene.Scene {
   clock: InstanceType<typeof THREE.Clock>
@@ -73,7 +77,7 @@ export class NewThreeScene extends ThreeScene.Scene {
     boxMesh.castShadow = true
     this.addObject(boxMesh)
 
-    backgroundLoad(this.scene, '102')
+    backgroundLoad(this, '102')
   }
 
   modelAnimate() {

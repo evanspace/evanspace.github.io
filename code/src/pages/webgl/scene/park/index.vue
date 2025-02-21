@@ -74,6 +74,7 @@ import * as request from './request'
 import { Hooks, Utils } from 'three-scene'
 import { useResize } from '@/hooks/scene-resize'
 import { colors } from './colors'
+import { useSky } from '@/hooks/sky'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
@@ -101,7 +102,11 @@ const tipOpts = reactive(getTipOpts())
 const containerRef = ref()
 const COLORS = Utils.deepMerge(colors, pageOpts.colors)
 
-const { changeBackground, backgroundLoad } = Hooks.useBackground()
+const { skys } = useSky()
+const { changeBackground, backgroundLoad } = Hooks.useBackground(
+  pageOpts.baseUrl + '/oss/sky/',
+  skys
+)
 const { progress, loadModels, getModel, virtualization, closeVirtualization } =
   Hooks.useModelLoader({
     baseUrl: pageOpts.baseUrl,

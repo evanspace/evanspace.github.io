@@ -11,10 +11,10 @@
 <script lang="ts" setup>
 import { ref, onMounted, watch, withDefaults, toRaw } from 'vue'
 import { MapThreeScene } from './methods'
+import { useSky } from '@/hooks/sky'
 
 import { Utils, Hooks } from 'three-scene/build/three-scene.module'
 
-const { backgroundLoad, skys } = Hooks.useBackground()
 const { transformGeoJSON } = Hooks.useConvertData()
 const { show, dialog } = Hooks.useDialog({
   style: {
@@ -38,6 +38,8 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
 })
 
 const containerRef = ref()
+
+const { backgroundLoad } = Hooks.useBackground(props.baseUrl + '/oss/sky/', useSky().skys)
 
 // 加载完成
 const emits = defineEmits<{
@@ -137,7 +139,7 @@ let scene: InstanceType<typeof MapThreeScene>
 
 const initPage = () => {
   if (props.skyCode) {
-    backgroundLoad(scene, props.skyCode as typeof skys[number])
+    backgroundLoad(scene, props.skyCode)
   }
   // 波纹板
   if (props.corrugatedPlate) {

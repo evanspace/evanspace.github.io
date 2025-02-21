@@ -76,6 +76,7 @@ import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './method
 import { onListen } from './listen'
 
 import { useResize } from '@/hooks/scene-resize'
+import { useSky } from '@/hooks/sky'
 import { Hooks, Utils } from 'three-scene'
 
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
@@ -101,7 +102,8 @@ const pageOpts = reactive(
 )
 const tipOpts = reactive(getTipOpts())
 
-const { backgroundLoad } = Hooks.useBackground()
+const { skys } = useSky()
+const { backgroundLoad } = Hooks.useBackground(pageOpts.baseUrl + '/oss/sky/', skys)
 const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
   baseUrl: pageOpts.baseUrl,
   indexDB: {
@@ -231,7 +233,7 @@ const onClickLeft = object => {
 
 const initPage = () => {
   load()
-  backgroundLoad(scene, pageOpts.skyCode as any)
+  backgroundLoad(scene, pageOpts.skyCode)
 
   onListen(scene)
 }

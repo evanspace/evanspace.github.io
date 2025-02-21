@@ -34,7 +34,7 @@ import { ref, watch, toRaw, onMounted, withDefaults, nextTick } from 'vue'
 import * as THREE from 'three'
 
 import { DeviceThreeScene } from './methods'
-
+import { useSky } from '@/hooks/sky'
 import { colors } from './colors'
 import { Utils, Hooks } from 'three-scene'
 
@@ -82,7 +82,10 @@ const emits = defineEmits<{
 
 const COLORS = Utils.deepMerge(colors, props.colors)
 
-const { changeBackground, backgroundLoad, skys } = Hooks.useBackground()
+const { changeBackground, backgroundLoad } = Hooks.useBackground(
+  props.baseUrl + '/oss/sky/',
+  useSky().skys
+)
 const { progress, MODEL_MAP, loadModel, loadModels, getModel } = Hooks.useModelLoader({
   baseUrl: props.baseUrl,
   dracoPath: props.dracoPath,
@@ -494,7 +497,7 @@ const load = () => {
 const initPage = () => {
   load()
   if (props.skyCode) {
-    backgroundLoad(scene, props.skyCode as typeof skys[number])
+    backgroundLoad(scene, props.skyCode)
   }
 }
 

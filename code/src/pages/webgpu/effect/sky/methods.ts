@@ -2,7 +2,7 @@ import * as THREE from 'three/webgpu'
 import { RGBMLoader } from 'three/examples/jsm/loaders/RGBMLoader'
 import * as ThreeScene from 'three-scene'
 import { gaussianBlur } from 'three/examples/jsm/tsl/display/GaussianBlurNode'
-
+import { useSky } from '@/hooks/sky'
 import { GUI } from 'dat.gui'
 
 const TSL = THREE.TSL
@@ -26,9 +26,10 @@ const {
 } = TSL
 const Hooks = ThreeScene.Hooks
 
-const { getBgGroup } = Hooks.useBackground()
-
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { skys } = useSky()
+const { getBgGroup } = Hooks.useBackground(base + '/oss/sky/', skys)
+
 const textureLoader = new THREE.TextureLoader()
 const iceDiffuse = textureLoader.load(`${base}/oss/textures/gpu/water.jpg`)
 iceDiffuse.wrapS = THREE.RepeatWrapping

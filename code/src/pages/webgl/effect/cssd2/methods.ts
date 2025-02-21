@@ -2,12 +2,14 @@ import * as THREE from 'three'
 import * as ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
+import { useSky } from '@/hooks/sky'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { skys } = useSky()
 const textureLoader = new THREE.TextureLoader()
 
 const Hooks = ThreeScene.Hooks
-const { backgroundLoad } = Hooks.useBackground()
+const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 
 // 创建地球
@@ -86,7 +88,7 @@ export class Css2dScene extends ThreeScene.Scene {
     super(options)
 
     this.createClock()
-    backgroundLoad(this.scene, '201')
+    backgroundLoad(this, '201')
 
     this.css2DRender = initCSS2DRender(this.options, this.container)
     this.css2DRender.domElement.className = 'three-scene__dot-wrap'

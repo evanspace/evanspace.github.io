@@ -1,9 +1,12 @@
 import * as THREE from 'three'
+import * as ThreeScene from 'three-scene'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { Water } from 'three/examples/jsm/objects/Water'
-import * as ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
+import { useSky } from '@/hooks/sky'
 
+const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { skys } = useSky()
 const Utils = ThreeScene.Utils
 const Hooks = ThreeScene.Hooks
 import DefaultConfig from './config'
@@ -17,7 +20,7 @@ const {
   setGlassMaterial,
   centerBoxHelper
 } = Hooks.useMaterial()
-const { backgroundLoad, skys } = Hooks.useBackground()
+const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
 const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
 
 const _ElMessage = opts => {
@@ -47,8 +50,6 @@ const Message = new Proxy(
     }
   }
 )
-
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const createWater = (model?) => {
   const waterGeometry = model ? model.geometry : new THREE.PlaneGeometry(200, 200)
@@ -562,8 +563,8 @@ export class ConvertThreeScene extends ThreeScene.Scene {
   addEvnGui() {
     const gui = this.gui
     const option = {
-      bgCode: '101',
-      hdr: 'skidpan_2k',
+      bgCode: '',
+      hdr: '',
       color1: 0xffffff,
       color2: 0xffffff
     }

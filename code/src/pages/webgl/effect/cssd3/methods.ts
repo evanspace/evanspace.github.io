@@ -2,14 +2,16 @@ import * as THREE from 'three'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import * as ThreeScene from 'three-scene'
 import { GUI } from 'dat.gui'
+import { useSky } from '@/hooks/sky'
 
 import { getData } from './data'
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { skys } = useSky()
 const textureLoader = new THREE.TextureLoader()
 
 const Hooks = ThreeScene.Hooks
-const { backgroundLoad } = Hooks.useBackground()
+const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
 const { initCSS3DRender, createCSS3DDom } = Hooks.useCSS3D()
 
 // 创建地球
