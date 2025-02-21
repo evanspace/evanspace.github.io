@@ -754,7 +754,7 @@ export class OfficeScene extends ThreeScene.Scene {
     dom.style.display = isCharacter ? 'block' : 'none'
   }
   // 清除人物视角状态
-  clearCharacterSight() {
+  clearPersonSightStatus() {
     this.currentSight = SIGHT_MAP.SCREEN
     this.togglePersonView()
   }
@@ -900,7 +900,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 公司鸟瞰图
   toggleBridCompany() {
     if (this.judgeCruise()) return
-    this.clearCharacterSight()
+    this.clearPersonSightStatus()
     this.judgeAndStopRoam()
 
     const name = DEFAULTCONFIG.companyModelName
@@ -1009,16 +1009,15 @@ export class OfficeScene extends ThreeScene.Scene {
   // 相机转场
   cameraTransition(object) {
     if (this.judgeCruise()) return
+    if (this.diffusion.visible) {
+      ElMessage.warning({
+        message: '人物移动中，不可操作！',
+        grouping: true
+      })
+      return
+    }
 
-    // if (this.mouseClickDiffusion.visible) {
-    //   ElMessage.warning({
-    //     message: '人物移动中，不可操作！',
-    //     grouping: true
-    //   })
-    //   return
-    // }
-
-    this.clearCharacterSight()
+    this.clearPersonSightStatus()
 
     const { to, target = object.position } = object.data
 
@@ -1052,7 +1051,8 @@ export class OfficeScene extends ThreeScene.Scene {
   // 控制器重置
   controlReset() {
     this.judgeAndStopRoam()
-    // this.clearCharacterSight()
+    this.clearPersonSightStatus()
+    this.closeVirtualization()
     if (!this.controls) return
     this.controls.enablePan = true
     this.controls.maxDistance = 1500
@@ -1068,7 +1068,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 漫游
   toggleRoam() {
-    // this.clearCharacterSight()
+    this.clearPersonSightStatus()
     if (this.judgeAndStopRoam()) return
     const points = this.extend.roamPoints || []
     if (points.length == 0) return

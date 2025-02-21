@@ -144,7 +144,14 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   },
   directionalLight: {
     intensity: 4,
-    light2: false
+    light2: false,
+    position: [2000, 4000, 3200],
+    shadow: {
+      mapSize: 4096 * 4
+    },
+    shadowCamera: {
+      boundary: 10000
+    }
   }
 }
 let scene: InstanceType<typeof OfficeScene>
