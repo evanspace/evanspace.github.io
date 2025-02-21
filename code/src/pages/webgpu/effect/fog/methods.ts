@@ -87,6 +87,16 @@ export class FogScene extends ThreeScene.Scene {
 
     this.gui = new GUI()
     this.addGui()
+
+    console.log(this)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
   }
 
   render() {

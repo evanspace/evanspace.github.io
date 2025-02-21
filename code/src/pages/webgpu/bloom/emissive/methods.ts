@@ -46,6 +46,14 @@ export class EmissiveScene extends ThreeScene.Scene {
     return new THREE.WebGPURenderer()
   }
 
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
   addGui(bloomPass) {
     const gui = this.gui
 

@@ -72,6 +72,14 @@ export class OutlineScene extends ThreeScene.Scene {
     return new THREE.WebGPURenderer()
   }
 
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
   addModel(model) {
     this.group.children.length = 0
     let scale = 1

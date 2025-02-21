@@ -75,10 +75,15 @@ export class ParallaxScene extends ThreeScene.Scene {
   }
 
   render() {
-    ;(this.renderer as InstanceType<typeof THREE.WebGPURenderer>).renderAsync(
-      this.scene,
-      this.camera
-    )
+    this.renderer.renderAsync(this.scene, this.camera)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
   }
 
   createRender() {

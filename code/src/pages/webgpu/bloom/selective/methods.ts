@@ -43,6 +43,14 @@ export class SelectiveScene extends ThreeScene.Scene {
     this.bindEvent()
   }
 
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
   createRender() {
     return new THREE.WebGPURenderer()
   }

@@ -172,13 +172,13 @@ export default ({ mode }) => {
       outDir: '../docs', //指定输出路径
       assetsDir: 'assets', // 指定生成静态资源的存放路径
       minify: 'terser', // 混淆器，terser构建后文件体积更小
-      sourcemap: !isProduction, // 生成 source map
+      sourcemap: isProduction, // 生成 source map
       terserOptions: {
         // 打包时清除 console 和 debug 相关代码
         compress: {
-          drop_console: isProduction,
-          drop_debugger: isProduction,
-          pure_funcs: ['console.log']
+          // drop_console: isProduction,
+          // drop_debugger: isProduction,
+          // pure_funcs: ['console.log']
         }
       },
 

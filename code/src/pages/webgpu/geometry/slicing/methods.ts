@@ -1,5 +1,4 @@
 import * as ThreeScene from 'three-scene'
-
 import * as THREE from 'three/webgpu'
 
 import { GUI } from 'dat.gui'
@@ -68,6 +67,14 @@ export class SlicingScene extends ThreeScene.Scene {
 
   render() {
     this.renderer.renderAsync(this.scene, this.camera)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
   }
 
   createRender() {
