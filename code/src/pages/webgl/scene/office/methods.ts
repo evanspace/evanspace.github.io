@@ -1108,12 +1108,11 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = new THREE.Vector3(0, 185, 0)
-      to = { x: 0, y: 340, z: 0 }
+      target = new THREE.Vector3(8.5, 185, 0)
+      to = { x: 8.5, y: 290, z: 135 }
     }
 
-    const dis = target.distanceTo(to)
-    this.controls.maxDistance = dis
+    this.controls.maxDistance = 320
 
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }

@@ -355,10 +355,6 @@ const loopLoadObject = async (item: ObjectItem) => {
 // 组装
 const assemblyScenario = () => {
   return new Promise(async resolve => {
-    // 加载进度 100
-    progress.percentage = 100
-    progress.show = false
-
     // 清除
     scene.clearBuilding()
 
@@ -377,12 +373,28 @@ const assemblyScenario = () => {
     // @ts-ignore
     Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
       scene.controlSave()
-      setTimeout(() => {
+      // 加载进度 100
+      progress.percentage = 100
+      progress.show = false
+
+      nextTick(() => {
         Emitter.emit('LIGHT:CLOSE')
         resolve(1)
-      }, 1000 * 3)
+      })
     })
   })
+}
+
+// 加载场景
+const loadScene = async res => {
+  await assemblyScenario()
+  createRoblt()
+  createCharacter()
+  // 绘制画布纹理
+  Emitter.emit('SCREEN:WELCOM', dialog.content)
+  scene.addVideoMaterial(res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind))
+  scene.addCanvasMaterial(res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind))
+  scene.addAirWindMaterial(res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind))
 }
 
 // 加载
@@ -408,7 +420,7 @@ const load = () => {
           return res
         })
       })
-      .then(async res => {
+      .then(res => {
         let json: any = {}
         if (res.ConfigJson instanceof Object) {
           json = res.ConfigJson
@@ -423,20 +435,10 @@ const load = () => {
         })
         pageOpts.cruise.points = json.cruise || []
         pageOpts.roamPoints = json.roamPoints || []
-        await assemblyScenario()
-        createRoblt()
-        createCharacter()
-        // 绘制画布纹理
-        Emitter.emit('SCREEN:WELCOM', dialog.content)
-        scene.addVideoMaterial(
-          res.JsonList.filter(it => it.type === VIDEO_SWITCH).map(it => it.bind)
-        )
-        scene.addCanvasMaterial(
-          res.JsonList.filter(it => it.type === SCREEN_EDIT).map(it => it.bind)
-        )
-        scene.addAirWindMaterial(
-          res.JsonList.filter(it => it.type === AIR_SWITCH).map(it => it.bind)
-        )
+
+        setTimeout(() => {
+          loadScene(res)
+        }, 100)
       })
   })
 }

@@ -65,7 +65,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 136,
+      size: 13.6,
       url: '/公司总部.glb'
     },
     {
