@@ -110,7 +110,7 @@ const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 59
+    version: 64
   }
 })
 const { options: dialog } = Hooks.useDialog()
