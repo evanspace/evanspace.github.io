@@ -1,4 +1,3 @@
-
 export type AppSkin = 'light' | 'dark' | string
 
 type Logo = {
@@ -45,8 +44,8 @@ export interface AppStore {
   staticPath: string
   areaList: Array<any>
   oss: string
+  historyRoutes: string[]
 }
-
 
 interface UserInfo {
   id: string
@@ -67,16 +66,14 @@ export interface UserStore {
   changePassword: boolean
 }
 
-
 export interface AssetsStore {
   staticPath: string
   oss: string
   origin: string
   bucket: string
-  
+
   wsIp?: string
 }
-
 
 export interface WsStore {
   lockReconnect: boolean

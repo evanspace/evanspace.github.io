@@ -155,6 +155,8 @@ export class OfficeScene extends ThreeScene.Scene {
     this.addFleeting()
     // 路灯
     this.addStreetLamp()
+    // 居民灯
+    this.addResidentLight()
 
     // 查找灯光
     this.findLight()
@@ -408,6 +410,12 @@ export class OfficeScene extends ThreeScene.Scene {
   addStreetLamp() {
     this.streetLampGroup = MS.createStreetLampGroup(DEFAULTCONFIG.streetLamps)
     this.addObject(this.streetLampGroup)
+  }
+
+  // 添加居民灯
+  addResidentLight() {
+    this.residentLightGroup = MS.createResidentLightGroup(DEFAULTCONFIG.residentLights)
+    this.addObject(this.residentLightGroup)
   }
 
   // 窗帘动画
@@ -950,13 +958,13 @@ export class OfficeScene extends ThreeScene.Scene {
       this.historyTarget = new THREE.Vector3().copy(this.controls.target)
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
-      target = new THREE.Vector3(0, 185, 0)
-      to = { x: 0, y: 340, z: 0 }
+      target = new THREE.Vector3(8.5, 185, 0)
+      to = { x: 8.5, y: 290, z: 135 }
     }
 
-    const dis = target.distanceTo(to)
+    this.controls.maxDistance = 320
+
     this.controls.enablePan = isFocus
-    this.controls.maxDistance = dis
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 

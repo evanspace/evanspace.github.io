@@ -250,6 +250,22 @@ export const createStreetLampGroup = (list, color: number | string = 0xffffff) =
   return group
 }
 
+export const createResidentLightGroup = (list, color: number | string = 0xffffff) => {
+  const group = new THREE.Group()
+  const pointLight = new THREE.PointLight(color, 10, 100, 0.4)
+  for (let i = 0; i < list.length; i++) {
+    const light = pointLight.clone()
+    const [x, y, z] = list[i]
+    light.position.set(x, y, z)
+    group.add(light)
+    // const helper = new THREE.PointLightHelper(light)
+    // group.add(helper)
+  }
+  group.name = '居民灯'
+  group.visible = false
+  return group
+}
+
 /**
  * 创建模型动画
  * @param model 模型

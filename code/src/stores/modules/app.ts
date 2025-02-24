@@ -5,7 +5,7 @@
  * @date: 2023.07.24 16:15:42
  * @week: 周一
  * @version: V
-* */
+ * */
 import { defineStore } from 'pinia'
 import { setStorage, getStorage } from '@utils/storage'
 import i18n from '@/locales'
@@ -15,12 +15,11 @@ import { Api, Axios } from '@/config'
 const env = import.meta.env
 const staticPath = env.VITE_BEFORE_STATIC_PATH
 
-
 import type { AppSkin, AppStore } from './index'
-const skin: AppSkin = getStorage( 'SITE_SKIN' ) || 'light'
+const skin: AppSkin = getStorage('SITE_SKIN') || 'light'
 
-if ( skin == 'dark' ) {
-  document.documentElement.classList.add( 'dark' )
+if (skin == 'dark') {
+  document.documentElement.classList.add('dark')
 }
 
 // 多语言
@@ -43,25 +42,25 @@ const appStore: AppStore = {
   logo: {
     custom: false,
     normal: '',
-    small: '',
+    small: ''
   },
-  
+
   // 皮肤
   skin,
   toggleSkin: true,
 
   tag: {
     // 是否展示
-    show: true,
+    show: true
   },
   navbar: {
     show: true,
-    hasBreadcrumb: true,
+    hasBreadcrumb: true
   },
   sidebar: {
     hasToggleBtn: true,
-    opened: getStorage( sidebarIsopenKey ) == '1',
-    withoutAnimation: false,
+    opened: getStorage(sidebarIsopenKey) == '1',
+    withoutAnimation: false
   },
   // 模块
   module: {
@@ -78,43 +77,43 @@ const appStore: AppStore = {
 
   // oss 资源
   oss: '',
+
+  // 历史路由
+  historyRoutes: []
 }
 
-export const useAppStore = defineStore( {
+export const useAppStore = defineStore({
   id: 'app',
   state: () => appStore,
 
-  getters: {
-
-  },
+  getters: {},
   actions: {
     // 更新 logo 信息
-    updateLogo( opts: { normal: any; small: any } ) {
-
-      if ( opts.normal ) {
+    updateLogo(opts: { normal: any; small: any }) {
+      if (opts.normal) {
         this.logo.normal = opts.normal
       }
-      if ( opts.small ) {
+      if (opts.small) {
         this.logo.small = opts.small
       }
-      let status = Boolean( opts.normal || opts.small )
+      let status = Boolean(opts.normal || opts.small)
       this.logo.custom = status
       // this.navbar.show = !status
     },
 
     // 更新皮肤
-    updateSkin( skin: AppSkin ) {
+    updateSkin(skin: AppSkin) {
       this.skin = skin
-      if ( skin == 'dark' ) {
-        document.documentElement.classList.add( 'dark' )
+      if (skin == 'dark') {
+        document.documentElement.classList.add('dark')
       } else {
-        document.documentElement.classList.remove( 'dark' )
+        document.documentElement.classList.remove('dark')
       }
-      setStorage( 'SITE_SKIN', skin )
+      setStorage('SITE_SKIN', skin)
     },
 
     // 更新 tags 状态
-    updateTagsStatus( display: boolean ) {
+    updateTagsStatus(display: boolean) {
       this.tag.show = display
     },
 
@@ -123,61 +122,64 @@ export const useAppStore = defineStore( {
       const sidebar = this.sidebar
       sidebar.opened = !sidebar.opened
       sidebar.withoutAnimation = false
-      if ( sidebar.opened ) {
-        setStorage( sidebarIsopenKey, '1' )
+      if (sidebar.opened) {
+        setStorage(sidebarIsopenKey, '1')
       } else {
-        setStorage( sidebarIsopenKey, '0' )
+        setStorage(sidebarIsopenKey, '0')
       }
     },
 
     // 更新语言
-    updateLangeuage( language: any ) {
+    updateLangeuage(language: any) {
       i18n.global.locale.value = language
-      setStorage( 'LANGUAGE', language )
-      this.$patch( {
+      setStorage('LANGUAGE', language)
+      this.$patch({
         isEn: language == 'en',
         language
-      } )
+      })
     },
 
     // 导航栏状态
-    updatSidebarStatus( display: boolean ) {
+    updatSidebarStatus(display: boolean) {
       this.navbar.show = display
     },
 
     // 模块列表
-    updateModules( list: never[] ) {
+    updateModules(list: never[]) {
       this.module.list = list
     },
 
     // 模块状态
-    updateModuleStatus( active: string ) {
+    updateModuleStatus(active: string) {
       this.module.active = active
     },
 
-    area( ParentCode: number = 0 ) {
-      return Axios.get( Api.area.tree, {
-        ParentCode
-      }, false )
-      .then( list => {
-        list = list.map( item => {
-          if ( ParentCode == 0 ) {
-            this.area( item.AreaCode )
+    area(ParentCode: number = 0) {
+      return Axios.get(
+        Api.area.tree,
+        {
+          ParentCode
+        },
+        false
+      ).then(list => {
+        list = list.map(item => {
+          if (ParentCode == 0) {
+            this.area(item.AreaCode)
           }
           return {
             ...item,
             label: item.Name,
-            value: item.AreaCode,
+            value: item.AreaCode
           }
-        } )
+        })
         // 循环查询下级
-        if ( ParentCode == 0 ) {
+        if (ParentCode == 0) {
           this.areaList = list
         } else {
-          let index = this.areaList.findIndex( it => it.value == ParentCode )
-          this.areaList[ index ].children = list
+          let index = this.areaList.findIndex(it => it.value == ParentCode)
+          this.areaList[index].children = list
         }
-      } )
+      })
     }
   }
-} )
+})

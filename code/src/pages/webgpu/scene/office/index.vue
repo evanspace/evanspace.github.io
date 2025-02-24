@@ -92,8 +92,15 @@ import * as request from './request'
 import { ObjectItem } from 'three-scene/types/model'
 import { useDialog } from '@/hooks/dialog'
 import { getStorage, setStorage } from '@/common/utils/storage'
+import { useAppStore } from '@/stores'
 
 const { Hooks, Utils, THREE } = MS
+
+const appStore = useAppStore()
+// 存在则刷新
+if (appStore.historyRoutes.includes('/webgpu/scene/office')) {
+  window.location.reload()
+}
 
 // 界面配置
 const pageOpts = reactive(getPageOpts())
