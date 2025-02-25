@@ -13,7 +13,7 @@ const Utils = ThreeScene.Utils
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting(THREE)
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
-const { createStripSmoke } = Hooks.useSmoke(THREE)
+const { createStripSmoke, createParticleSmoke } = Hooks.useSmoke(THREE)
 
 const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
@@ -250,6 +250,12 @@ export const createStreetLampGroup = (list, color: number | string = 0xffffff) =
   return group
 }
 
+/**
+ * 创建居民灯组
+ * @param list 灯光列表
+ * @param color 灯光颜色
+ * @returns
+ */
 export const createResidentLightGroup = (list, color: number | string = 0xffffff) => {
   const group = new THREE.Group()
   const pointLight = new THREE.PointLight(color, 10, 100, 0.4)
@@ -258,10 +264,8 @@ export const createResidentLightGroup = (list, color: number | string = 0xffffff
     const [x, y, z] = list[i]
     light.position.set(x, y, z)
     group.add(light)
-    // const helper = new THREE.PointLightHelper(light)
-    // group.add(helper)
   }
-  group.name = '居民灯'
+  group.name = '居民灯组'
   group.visible = false
   return group
 }
@@ -567,7 +571,11 @@ export const liftMove = (liftName, from, to) => {
  * @param _names
  * @returns
  */
-export const createAirGroup = (scene: THREE.Scene, speed: ReturnType<typeof uniform>) => {
+export const createAirGroup = (
+  scene: THREE.Scene,
+  speed: ReturnType<typeof uniform>,
+  type?: number
+) => {
   // 空调风列表
   const data = DEFAULTCONFIG.airWinds
   const group = new THREE.Group()
@@ -584,16 +592,28 @@ export const createAirGroup = (scene: THREE.Scene, speed: ReturnType<typeof unif
     for (let j = 0; j < list.length; j++) {
       const { width, height, position: pos, rotation } = list[j]
       const { x = 0, y = 0, z = 0 } = rotation
-      const mesh = createStripSmoke({
-        width,
-        height,
-        speed,
-        color: 0x76b6ff,
-        twistNums: Math.floor(Math.random() * 4 + 1),
-        twistRange: Math.random() * 1,
-        offset: Math.random() * 1,
-        segment: 2
-      })
+      const mesh = !type
+        ? createParticleSmoke({
+            speed,
+            count: Math.floor(Math.random() * 100 + 50),
+            mixColor: 0xffffff,
+            offsetRangeMin: [-5, 2, 0],
+            offsetRangeMax: [5, 3, 3],
+            scaleMin: 0.1,
+            scaleMax: 1.2,
+            mixColorStart: 0.15,
+            textureSrc: `${DEFAULTCONFIG.baseUrl}/oss/textures/effect/snowflake.png`
+          })
+        : createStripSmoke({
+            width,
+            height,
+            speed,
+            color: 0x76b6ff,
+            twistNums: Math.floor(Math.random() * 4 + 1),
+            twistRange: Math.random() * 1,
+            offset: Math.random() * 1,
+            segment: 2
+          })
 
       // 角度、位置
       const sp = Math.PI / 180

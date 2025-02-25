@@ -122,7 +122,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 空调组
   airGroup?: InstanceType<typeof THREE.Group>
-  airSpeed = THREE.TSL.uniform(0.1)
+  airSpeed = THREE.TSL.uniform(0.05)
 
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
@@ -177,8 +177,12 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 渲染器
   createRender() {
-    const render = new THREE.WebGPURenderer()
+    const render = new THREE.WebGPURenderer(this.options.render)
     return render
+  }
+
+  createScene() {
+    return new THREE.Scene()
   }
 
   createDirectionalLight(color: string | number, intensity: number) {
@@ -375,7 +379,6 @@ export class OfficeScene extends ThreeScene.Scene {
   // 开关灯
   lightSwitch(object, isOpen?: boolean, max?: number) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
-    console.log(light)
     if (!light) return
     console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
     light.forEach((el, index) => {
@@ -995,13 +998,13 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
   // 空调风速
-  changeAirWindSpeed(speed = 0.1) {
+  changeAirWindSpeed(speed = 0.02) {
     this.airSpeed.value += speed
-    if (this.airSpeed.value < 0.1) {
-      this.airSpeed.value = 0.1
+    if (this.airSpeed.value < 0.05) {
+      this.airSpeed.value = 0.05
     }
-    if (this.airSpeed.value > 1) {
-      this.airSpeed.value = 1
+    if (this.airSpeed.value > 0.5) {
+      this.airSpeed.value = 0.5
     }
   }
 

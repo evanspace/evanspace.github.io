@@ -130,6 +130,9 @@ const containerRef = ref()
 const options: ConstructorParameters<typeof OfficeScene>[0] = {
   cruise: pageOpts.cruise,
   baseUrl: DEFAULTCONFIG.baseUrl,
+  render: {
+    alpha: true
+  },
   controls: {
     visible: !false,
     enableDamping: true,
@@ -260,15 +263,12 @@ const assemblyScenario = () => {
     const to = scene.getValidTargetPosition(pageOpts.config || {})
 
     // 入场动画
-    // @ts-ignore
-    Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
+    Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
       scene.controlSave()
       nextTick(() => {
         Emitter.emit('LIGHT:CLOSE')
         resolve(1)
       })
-      // setTimeout(() => {
-      // }, 1000 * 3)
     })
   })
 }

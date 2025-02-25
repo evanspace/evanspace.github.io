@@ -469,10 +469,10 @@ JsonList.push(...lightSwitchs)
 // 空调-锚点
 const airSwitch = [
   {
-    name: '空调开关',
+    name: '空调总开关',
     type: 'AIR_SWITCH',
-    position: { x: 13.3, y: anchorHeight, z: 49 },
-    bind: '_空调风_grp'
+    position: { x: 13.3, y: anchorHeight, z: 49 }
+    // bind: '_空调风_grp'
   },
 
   {

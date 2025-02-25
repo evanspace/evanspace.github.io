@@ -155,8 +155,8 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   })
 
   // 空调风速+
-  Emitter.on('AIR:WINDADD', () => scene.changeAirWindSpeed(0.1))
-  Emitter.on('AIR:WINDSUB', () => scene.changeAirWindSpeed(-0.1))
+  Emitter.on('AIR:WINDADD', () => scene.changeAirWindSpeed(0.02))
+  Emitter.on('AIR:WINDSUB', () => scene.changeAirWindSpeed(-0.02))
 
   // 场景坐标
   Emitter.on('SCENE:POS', () => scene?.getPosition())

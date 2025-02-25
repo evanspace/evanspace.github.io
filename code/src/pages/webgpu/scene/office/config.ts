@@ -20,7 +20,7 @@ export default {
     cache: true,
     dbName: 'THREE__OFFICE__GPU_DB',
     tbName: 'TB',
-    version: 30
+    version: 31
   },
 
   // 判断点击间隔时间

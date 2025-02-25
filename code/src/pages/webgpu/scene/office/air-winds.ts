@@ -159,13 +159,13 @@ export default [
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 29.5 },
+        position: { x: -41, y: 192.6, z: 29.5 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 35.3 },
+        position: { x: -41, y: 192.6, z: 35.3 },
         rotation: { x: 0, y: 0, z: 90 }
       }
     ]
@@ -176,19 +176,19 @@ export default [
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 10.2 },
+        position: { x: -41, y: 192.6, z: 10.2 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 15.3 },
+        position: { x: -41, y: 192.6, z: 15.3 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 20.3 },
+        position: { x: -41, y: 192.6, z: 20.3 },
         rotation: { x: 0, y: 0, z: 90 }
       }
     ]
@@ -199,19 +199,19 @@ export default [
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: -9 },
+        position: { x: -41, y: 192.6, z: -9 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: -4 },
+        position: { x: -41, y: 192.6, z: -4 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: 1 },
+        position: { x: -41, y: 192.6, z: 1 },
         rotation: { x: 0, y: 0, z: 90 }
       }
     ]
@@ -222,19 +222,19 @@ export default [
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: -30 },
+        position: { x: -41, y: 192.6, z: -30 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: -25 },
+        position: { x: -41, y: 192.6, z: -25 },
         rotation: { x: 0, y: 0, z: 90 }
       },
       {
         width: 5,
         height: 15,
-        position: { x: -38.41, y: 192.6, z: -20 },
+        position: { x: -41, y: 192.6, z: -20 },
         rotation: { x: 0, y: 0, z: 90 }
       }
     ]
