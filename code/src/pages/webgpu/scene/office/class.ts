@@ -134,8 +134,6 @@ export class OfficeScene extends ThreeScene.Scene {
 
     this.createClock()
 
-    console.log(this.scene)
-
     // 场景合成
     this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
 
@@ -506,6 +504,7 @@ export class OfficeScene extends ThreeScene.Scene {
       }
       // 关电梯门
       this.dubleHorizontalDoor(opt, 2.3, false).then(() => {
+        const personModel = this.person
         // 电梯移动
         MS.liftMove(liftName, bpos, { y: cpos.y })
           .onUpdate(pos => {
@@ -513,8 +512,10 @@ export class OfficeScene extends ThreeScene.Scene {
             if (personIsFllow) {
               if (!this.person) return
               this.person.position.y = pos.y
-              this.camera.position.y = pos.y
-              this.setControlTarget(this.person.position)
+              // 获取前进坐标
+              const newPos = MS.getForwardPosition(personModel, 0.1)
+              this.camera.position.y = pos.y + this.personSightHeight
+              this.setControlTarget(newPos)
             }
           })
           .onComplete(() => {

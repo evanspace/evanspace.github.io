@@ -549,6 +549,25 @@ export const getModelAction = model => {
 }
 
 /**
+ * 获取前进坐标
+ * @param model 模型对象
+ * @param step 步（前进多少）
+ * @returns
+ */
+export const getForwardPosition = (model, step) => {
+  if (!model) return new THREE.Vector3()
+  // 向量
+  const dir = new THREE.Vector3()
+  // 获取的视线方向
+  model.getWorldDirection(dir)
+  // dis向量表示相机沿着相机视线方向平移的位移量
+  const dis = dir.clone().multiplyScalar(step)
+  // 初始位置+偏移向量
+  const pos = model.position.clone().add(dis) || new THREE.Vector3()
+  return pos
+}
+
+/**
  * 电梯移动
  * @param liftName 电梯组名称
  * @param from 动画初始坐标
