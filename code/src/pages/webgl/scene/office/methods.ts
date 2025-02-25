@@ -677,6 +677,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
           duration: duration
         })
 
+        const characterModel = this.character
+
         // 电梯移动
         new TWEEN.Tween(bpos)
           .to(
@@ -692,8 +694,17 @@ export class OfficeThreeScene extends ThreeScene.Scene {
             if (fllow) {
               if (!this.character) return
               this.character.position.y = pos.y
-              this.camera.position.y = pos.y
-              this.setControlTarget(this.character.position)
+
+              // 向量
+              const dir = new THREE.Vector3()
+              // 获取的视线方向
+              characterModel?.getWorldDirection(dir)
+              // dis向量表示相机沿着相机视线方向平移的位移量
+              const dis = dir.clone().multiplyScalar(0.1)
+              // 初始位置+偏移向量
+              const newPos = characterModel?.position.clone().add(dis) || new THREE.Vector3()
+              this.camera.position.y = pos.y + this.characterSightHeight
+              this.setControlTarget(newPos)
             }
           })
           .onComplete(() => {
