@@ -683,15 +683,47 @@ export class ConvertThreeScene extends ThreeScene.Scene {
           group.add(el.target)
         }
       }
-      materialReplace(group, this.guiOpts, el)
+      // materialReplace(group, this.guiOpts, el)
     })
 
     if (group.children.length) {
       this.addHelper(group)
     }
 
-    obj.name = filename
+    // obj.name = filename
+    // let model = Utils.modelDeepClone(obj)
     let model = Utils.modelDeepClone(obj)
+    const list = Utils.findObjectsByHasProperty(model.children, ['true'], 'isSkinnedMesh')
+
+    if (list.length) {
+      model = obj
+      // let model = new THREE.Group()
+      // const object = obj
+      // let rootBone = object.children[1].clone()
+      // model.add(rootBone)
+
+      // // let model = Utils.modelDeepClone(obj)
+
+      // const bones: InstanceType<typeof THREE.Bone>[] = []
+      // model.traverse((el: any) => {
+      //   if (el.isBone) {
+      //     bones.push(el)
+      //   }
+      // })
+
+      // const aaa = object.children[0].children[0]
+      // let skinmesh = aaa.clone()
+
+      // let newArr = aaa.skeleton.bones.map(item => {
+      //   return bones.find(e => item.name === e.name)
+      // })
+
+      // console.log(skinmesh)
+      // skinmesh.bind(new THREE.Skeleton(newArr, object.children[1].boneInverses))
+      // model.add(skinmesh)
+    }
+
+    console.log(model)
     const p = model.position
     guiOpts.dotText = `模型初始坐标: {
       "x": ${p.x},

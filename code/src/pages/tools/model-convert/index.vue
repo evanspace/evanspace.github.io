@@ -34,6 +34,9 @@ const options: ConstructorParameters<typeof ConvertThreeScene>[0] = {
   grid: {
     visible: true
   },
+  camera: {
+    position: [-50, 50, 100]
+  },
   axes: {
     visible: true
   }
