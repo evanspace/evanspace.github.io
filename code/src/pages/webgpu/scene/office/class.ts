@@ -604,7 +604,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.person = model
     const { mixer, actions } = MS.getModelAction(model)
     // 默认状态
-    const defaultAction = actions['PlayOne-Talk']
+    const defaultAction = actions['PlayOne-Headnod']
     defaultAction.play()
     // 步行
     const runging = actions['PlayOne-Walk']

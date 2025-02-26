@@ -156,11 +156,8 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     intensity: 4,
     light2: false,
     position: [2000, 4000, 3200],
-    shadow: {
-      mapSize: 4096 * 2
-    },
     shadowCamera: {
-      boundary: 10000
+      boundary: 5000
     }
   }
 }
