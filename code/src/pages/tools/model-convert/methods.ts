@@ -518,6 +518,40 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       rotation: 0,
       scale: 1,
       timeScale: 1,
+      changeAnimate: () => {
+        this.modelGroup?.children.forEach((model: any) => {
+          if (model.__action__) {
+            const names = model.__action_names__ || ['']
+            const len = names.length
+            let name = names[0]
+            for (let key in model.__action__) {
+              const runing = model.__action__[key].isRunning()
+              if (runing) {
+                name = key
+                break
+              }
+            }
+            let index = names.findIndex(el => el === name)
+            index++
+            if (index > len - 1) index = 0
+            name = names[index]
+            if (name) {
+              model.__mixer__?.stopAllAction()
+              ElMessage.success(`当前执行动画【${name}】，第${index + 1}个，共${len}个动画`)
+              model.__action__[name].play()
+            }
+          }
+        })
+
+        // model.__action_names__ = names
+        // model.__action__ = action
+        // model.__mixer__ = mixer
+      },
+      stopAnimate: () => {
+        this.modelGroup?.children.forEach((model: any) => {
+          model.__mixer__?.stopAllAction()
+        })
+      },
       center: () => this.modelCenter()
     }
     const group = gui.addFolder('重置')
@@ -555,6 +589,8 @@ export class ConvertThreeScene extends ThreeScene.Scene {
           }
         })
       })
+    group.add(option, 'changeAnimate').name('切换动画')
+    group.add(option, 'stopAnimate').name('停止动画')
     group.add(option, 'center').name('居中')
     group.open()
   }
@@ -744,14 +780,17 @@ export class ConvertThreeScene extends ThreeScene.Scene {
     // 动画
     if (obj.animations.length) {
       let mixer = new THREE.AnimationMixer(model)
+      const names: string[] = []
       const action = obj.animations.reduce((ob, cur: any) => {
         const key = cur.name || ''
+        names.push(key)
         ob[key] = mixer.clipAction(cur)
-        ob[key].play()
         ob[key].timeScale = 1
         return ob
       }, {})
+      action[names[0]].play()
 
+      model.__action_names__ = names
       model.__action__ = action
       model.__mixer__ = mixer
     }
