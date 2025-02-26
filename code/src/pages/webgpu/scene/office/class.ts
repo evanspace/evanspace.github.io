@@ -99,7 +99,7 @@ export class OfficeScene extends ThreeScene.Scene {
     extra: {
       mixer: InstanceType<typeof THREE.AnimationMixer>
       actions: Record<string, InstanceType<typeof THREE.AnimationAction>>
-      dance: InstanceType<typeof THREE.AnimationAction>
+      defaultAction: InstanceType<typeof THREE.AnimationAction>
       runging: InstanceType<typeof THREE.AnimationAction>
     }
   }
@@ -603,16 +603,16 @@ export class OfficeScene extends ThreeScene.Scene {
   addPerson(model) {
     this.person = model
     const { mixer, actions } = MS.getModelAction(model)
-    // 舞蹈
-    const dance = actions['PlayOne-Talk']
-    dance.play()
+    // 默认状态
+    const defaultAction = actions['PlayOne-Talk']
+    defaultAction.play()
     // 步行
     const runging = actions['PlayOne-Walk']
     model.extra = {
       mixer,
       actions,
       runging,
-      dance
+      defaultAction
     }
     this.addObject(model)
     this.addPersonEvent()
@@ -621,13 +621,13 @@ export class OfficeScene extends ThreeScene.Scene {
   personWalk(isWalk = true) {
     const personModel = this.person
     if (!personModel) return
-    const { dance, runging } = personModel.extra
+    const { defaultAction, runging } = personModel.extra
     if (isWalk) {
-      dance.stop()
+      defaultAction.stop()
       runging.play()
     } else {
       runging.stop()
-      dance.play()
+      defaultAction.play()
     }
   }
   // 人物事件
