@@ -719,7 +719,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
           group.add(el.target)
         }
       }
-      // materialReplace(group, this.guiOpts, el)
+      materialReplace(group, this.guiOpts, el)
     })
 
     if (group.children.length) {
