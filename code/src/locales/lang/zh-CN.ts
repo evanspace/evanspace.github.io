@@ -44,6 +44,9 @@ export default {
     card: '卡片',
     button: '按钮',
 
+    game: '游戏',
+    gobang: '五子棋',
+
     svg: 'SVG',
     texture: '纹理',
 

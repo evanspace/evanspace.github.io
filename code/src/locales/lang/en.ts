@@ -44,6 +44,9 @@ export default {
     card: 'card',
     button: 'button',
 
+    game: 'game',
+    gobang: 'gobang',
+
     svg: 'SVG',
     texture: 'texture',
 
