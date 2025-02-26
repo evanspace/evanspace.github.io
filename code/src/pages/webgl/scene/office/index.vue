@@ -467,11 +467,6 @@ const createCharacter = () => {
   }
   obj.scale.setScalar(0.75)
 
-  // 手臂问题，暂隐藏
-  const l = obj.getObjectByName('HandL')
-  const r = obj.getObjectByName('HandR')
-  l.visible = false
-  r.visible = false
   scene.addCharacter(obj, move)
 }
 

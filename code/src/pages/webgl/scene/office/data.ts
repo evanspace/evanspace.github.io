@@ -169,8 +169,8 @@ export const getPageOpts = animateBack => ({
     {
       key: CHARACTER,
       name: '人物',
-      size: 2.2,
-      url: '/oss/model/park/RobotExpressive.glb'
+      size: 0.3,
+      url: '/oss/model/common/RootNode.glb'
     },
 
     {

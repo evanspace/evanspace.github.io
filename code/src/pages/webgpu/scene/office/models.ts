@@ -43,8 +43,8 @@ export default [
   {
     key: KEYS.M_PERSON,
     name: '人物',
-    size: 2.2,
-    url: '/oss/model/park/RobotExpressive.glb'
+    size: 1.8,
+    url: '/oss/model/common/人物.glb'
   },
 
   // 灯光

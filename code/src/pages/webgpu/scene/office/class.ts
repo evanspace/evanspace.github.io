@@ -99,6 +99,7 @@ export class OfficeScene extends ThreeScene.Scene {
     extra: {
       mixer: InstanceType<typeof THREE.AnimationMixer>
       actions: Record<string, InstanceType<typeof THREE.AnimationAction>>
+      dance: InstanceType<typeof THREE.AnimationAction>
       runging: InstanceType<typeof THREE.AnimationAction>
     }
   }
@@ -603,23 +604,36 @@ export class OfficeScene extends ThreeScene.Scene {
     this.person = model
     const { mixer, actions } = MS.getModelAction(model)
     // 舞蹈
-    const dance = actions['Dance']
+    const dance = actions['PlayOne-Talk']
     dance.play()
     // 步行
-    const runging = actions['Walking']
+    const runging = actions['PlayOne-Walk']
     model.extra = {
       mixer,
       actions,
-      runging
+      runging,
+      dance
     }
     this.addObject(model)
     this.addPersonEvent()
+  }
+  // 人物行走
+  personWalk(isWalk = true) {
+    const personModel = this.person
+    if (!personModel) return
+    const { dance, runging } = personModel.extra
+    if (isWalk) {
+      dance.stop()
+      runging.play()
+    } else {
+      runging.stop()
+      dance.play()
+    }
   }
   // 人物事件
   addPersonEvent() {
     const personModel = this.person
     if (!personModel) return
-    const runging = personModel.extra.runging
     const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
 
     // 插入事件 播放/暂停 动作
@@ -627,7 +641,7 @@ export class OfficeScene extends ThreeScene.Scene {
       e => {
         if (personModel.__runing__) return
         if (keys.includes(e.keyCode)) {
-          runging.play()
+          this.personWalk()
         }
         if (this.isPersonSight()) {
           if (keyboardPressed('X')) {
@@ -641,7 +655,7 @@ export class OfficeScene extends ThreeScene.Scene {
       e => {
         if (personModel.__runing__) return
         if (keys.includes(e.keyCode)) {
-          runging.stop()
+          this.personWalk(false)
         }
       }
     )
@@ -829,8 +843,7 @@ export class OfficeScene extends ThreeScene.Scene {
     const lookAt = intersct.point
     const obj = this.diffusion
 
-    const { runging } = personModel.extra
-    runging.play()
+    this.personWalk()
 
     obj.position.copy(lookAt.clone().add(new THREE.Vector3(0, 0.05, 0)))
     obj.visible = true
@@ -846,14 +859,14 @@ export class OfficeScene extends ThreeScene.Scene {
             this.checkCharacterCollide(pos, liftMeshName.includes(intersct.object.name) ? 2 : 0.3)
           ) {
             stop()
-            runging.stop()
+            this.personWalk(false)
             personModel.__runing__ = false
             obj.visible = false
           }
         },
         pos => {
           this.setControlTarget(pos)
-          runging.stop()
+          this.personWalk(false)
           personModel.__runing__ = false
           obj.visible = false
           resolve(personModel)

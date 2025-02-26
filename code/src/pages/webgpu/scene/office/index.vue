@@ -353,13 +353,9 @@ const createPerson = () => {
     z: 37.6
   }
   model.position.set(x, y, z)
-  model.scale.setScalar(0.75)
+  model.rotateY(Math.PI * 1)
+  model.scale.setScalar(2)
 
-  // 手臂问题，暂隐藏
-  const l = model.getObjectByName('HandL')
-  const r = model.getObjectByName('HandR')
-  l.visible = false
-  r.visible = false
   scene.addPerson(model)
 }
 
