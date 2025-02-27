@@ -64,7 +64,7 @@ export default [
     name: '主机聚光灯',
     intensity: 8,
     color: 0xffffed,
-    castShadow: false,
+    castShadow: true,
     distance: 20,
     penumbra: 0.5,
     mapUrl: '/oss/textures/disturb.jpg'

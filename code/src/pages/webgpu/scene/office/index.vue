@@ -151,9 +151,9 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   directionalLight: {
     intensity: 4,
     light2: false,
-    position: [2000, 4000, 3200],
+    position: [2000, 7000, 2000],
     shadow: {
-      mapSize: 1024
+      mapSize: 512 * 4
     },
     shadowCamera: {
       boundary: 5000
