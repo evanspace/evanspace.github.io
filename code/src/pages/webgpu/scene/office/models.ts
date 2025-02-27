@@ -52,11 +52,12 @@ export default [
     key: 'spot_light_floor_1',
     type: 'spotlight',
     name: '主机聚光灯',
-    intensity: 4,
+    intensity: 8,
     color: 0xffffed,
     castShadow: false,
     distance: 20,
-    penumbra: 0.5
+    penumbra: 0.5,
+    iesMap: '/oss/ies/06b4cfdc8805709e767b5e2e904be8ad.ies'
   },
   {
     key: 'spot_light_floor_2',
