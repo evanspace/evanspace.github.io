@@ -735,6 +735,8 @@ export class MapThreeScene extends ThreeScene.Scene {
     if (this.flywireGroup) {
       flywireUpdate()
     }
+
+    TWEEN.update()
   }
   resize() {
     super.resize()
