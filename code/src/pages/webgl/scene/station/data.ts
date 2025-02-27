@@ -38,7 +38,7 @@ export const getPageOpts = animateBack => ({
     {
       key: MAIN_SCENE,
       name: '场景',
-      size: 65.1,
+      size: 78.8,
       url: '/深圳北站.glb'
     },
     {
@@ -99,13 +99,13 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/oss/model/park/机器人.glb'
+      url: '/oss/model/common/机器人.glb'
     },
     {
       key: CHARACTER,
       name: '人物',
-      size: 2.2,
-      url: '/oss/model/park/RobotExpressive.glb'
+      size: 0.3,
+      url: '/oss/model/common/RootNode.glb'
     },
 
     {

@@ -763,6 +763,8 @@ export class ParkThreeScene extends ThreeScene.Scene {
         el.__mixer__.update(delta)
       })
     }
+
+    TWEEN.update()
   }
 
   // 双击

@@ -110,7 +110,7 @@ const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 64
+    version: 65
   }
 })
 const { options: dialog } = Hooks.useDialog()
@@ -152,6 +152,7 @@ onMounted(() => {
       '楼梯',
       '机房地面',
       '地面005',
+      '地面006',
       '立方体128',
       '立方体780_1',
       '11111',
@@ -503,12 +504,6 @@ const createCharacter = () => {
   // move.x = -1.6
   // move.y = 27.5
   // move.z = 127.8
-
-  // 手臂问题，暂隐藏
-  const l = obj.getObjectByName('HandL')
-  const r = obj.getObjectByName('HandR')
-  l.visible = false
-  r.visible = false
 
   obj.scale.setScalar(2)
 

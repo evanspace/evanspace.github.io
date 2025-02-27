@@ -244,13 +244,13 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/机器人.glb'
+      url: '/odd/model/common/机器人.glb'
     },
     {
       key: CHARACTER,
       name: '人物',
-      size: 2.2,
-      url: '/RobotExpressive.glb'
+      size: 0.3,
+      url: '/oss/model/common/RootNode.glb'
     },
 
     {
@@ -322,7 +322,7 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/light.png'
     }
   ].map(item => {
-    if (item.url) {
+    if (item.url && item.url.indexOf('oss') < 0) {
       item.url = '/oss/model/park' + item.url
     }
     if (item.mapUrl) {
