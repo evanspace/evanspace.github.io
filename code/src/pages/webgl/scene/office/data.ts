@@ -180,6 +180,7 @@ export const getPageOpts = animateBack => ({
       intensity: 8,
       color: 0xffffed,
       distance: 20
+      // mapUrl: '/oss/textures/disturb.jpg'
     },
     {
       key: 'spot_light_floor_2',
@@ -272,7 +273,7 @@ export const getPageOpts = animateBack => ({
     if (item.url && item.url.indexOf('oss') < 0) {
       item.url = '/oss/model/office' + item.url
     }
-    if (item.mapUrl) {
+    if (item.mapUrl && item.mapUrl.indexOf('oss') < 0) {
       item.mapUrl = '/oss/textures/office' + item.mapUrl
     }
     if (!item.range) {

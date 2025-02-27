@@ -59,10 +59,10 @@ export class SpotScene extends ThreeScene.Scene {
   async addLight() {
     const group = this.lightGroup
     const [iesTexture1, iesTexture2, iesTexture3, iesTexture4] = await Promise.all([
-      iesLoader.loadAsync('/oss/ies/007cfb11e343e2f42e3b476be4ab684e.ies'),
-      iesLoader.loadAsync('/oss/ies/06b4cfdc8805709e767b5e2e904be8ad.ies'),
-      iesLoader.loadAsync('/oss/ies/02a7562c650498ebb301153dbbf59207.ies'),
-      iesLoader.loadAsync('/oss/ies/1a936937a49c63374e6d4fbed9252b29.ies')
+      iesLoader.loadAsync('/oss/ies/101.ies'),
+      iesLoader.loadAsync('/oss/ies/102.ies'),
+      iesLoader.loadAsync('/oss/ies/103.ies'),
+      iesLoader.loadAsync('/oss/ies/104.ies')
     ])
     console.log(iesTexture1, iesTexture2, iesTexture3, iesTexture4)
     this.addObject(group)

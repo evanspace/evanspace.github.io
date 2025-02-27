@@ -57,18 +57,19 @@ export default [
     castShadow: false,
     distance: 20,
     penumbra: 0.5,
-    iesMap: '/oss/ies/06b4cfdc8805709e767b5e2e904be8ad.ies'
+    mapUrl: '/oss/textures/disturb.jpg'
   },
   {
     key: 'spot_light_floor_2',
     type: 'spotlight',
     name: '会议室聚光灯',
-    intensity: 2,
+    intensity: 20,
     color: 0xffffed,
     castShadow: false,
     penumbra: 0.5,
     angle: Math.PI * 0.36,
-    distance: 10
+    distance: 10,
+    iesMap: '/oss/ies/103.ies'
   },
 
   {
@@ -222,7 +223,7 @@ export default [
   if (item.url && item.url.indexOf('oss') < 0) {
     item.url = '/oss/model/office' + item.url
   }
-  if (item.mapUrl) {
+  if (item.mapUrl && item.mapUrl.indexOf('oss') < 0) {
     item.mapUrl = '/oss/textures/office' + item.mapUrl
   }
   if (!item.range) {
