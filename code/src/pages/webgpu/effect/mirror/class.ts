@@ -227,7 +227,7 @@ export class MirrorScene extends ThreeScene.Scene {
       gui
         .addColor(light, 'color')
         .name('灯光颜色')
-        .onChange(e => {
+        .onChange(() => {
           const helper = this.scene.getObjectByProperty(
             'type',
             'PointLightHelper'
