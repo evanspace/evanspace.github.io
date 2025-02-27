@@ -56,6 +56,16 @@ export default [
     color: 0xffffed,
     castShadow: false,
     distance: 20,
+    penumbra: 0.5
+  },
+  {
+    key: 'spot_light_floor_1_2',
+    type: 'spotlight',
+    name: '主机聚光灯',
+    intensity: 8,
+    color: 0xffffed,
+    castShadow: false,
+    distance: 20,
     penumbra: 0.5,
     mapUrl: '/oss/textures/disturb.jpg'
   },

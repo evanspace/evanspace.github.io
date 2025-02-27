@@ -141,10 +141,6 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     screenSpacePanning: false,
     maxDistance: 1500
   },
-  axes: {
-    visible: true,
-    size: 1000
-  },
   camera: {
     near: 3,
     fov: 45
@@ -156,6 +152,9 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     intensity: 4,
     light2: false,
     position: [2000, 4000, 3200],
+    shadow: {
+      mapSize: 1024
+    },
     shadowCamera: {
       boundary: 5000
     }

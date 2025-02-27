@@ -301,6 +301,12 @@ const lights = [
   },
   {
     name: '主机照明灯',
+    type: 'spot_light_floor_1_2',
+    position: { x: 25.5, y: 190.7, z: 53.1 },
+    to: { x: 25.5, y: 190.7, z: 53.2 }
+  },
+  {
+    name: '主机照明灯',
     type: 'spot_light_floor_1',
     position: { x: 25.1, y: 190.7, z: 54.6 },
     to: { x: 25.1, y: 188.7, z: 58.4 }
