@@ -108,6 +108,7 @@ export default {
     fog: '雾化',
     parallax: '视差',
     slicing: '切片',
+    mirror: '镜面',
 
     bloom: '发光',
     selective: '选择性',

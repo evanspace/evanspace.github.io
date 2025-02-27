@@ -17,6 +17,10 @@ declare module 'three/webgpu' {
   export * from 'three/src/Three.WebGPU'
 }
 
+declare module 'three/tsl' {
+  export * from 'three/src/Three.tsl'
+}
+
 // 环境变量 TypeScript 的智能提示
 declare interface ImportMetaEnv {
   /**

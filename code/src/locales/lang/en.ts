@@ -108,6 +108,7 @@ export default {
     fog: 'fog',
     parallax: 'parallax',
     slicing: 'slicing',
+    mirror: 'mirror',
 
     bloom: 'bloom',
     selective: 'selective',
