@@ -169,8 +169,8 @@ export const getPageOpts = animateBack => ({
     {
       key: CHARACTER,
       name: '人物',
-      size: 0.3,
-      url: '/oss/model/common/RootNode.glb'
+      size: 1.3,
+      url: '/oss/model/common/小艺.glb'
     },
 
     {

@@ -70,7 +70,13 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   character?: InstanceType<typeof THREE.Group> & {
     __runing__?: boolean
   }
-  characterSightHeight = DEFAULTCONFIG.characterSightHeight
+
+  // 人物偏移向量
+  characterSightOffset = new THREE.Vector3(
+    DEFAULTCONFIG.characterSightOffset.x,
+    DEFAULTCONFIG.characterSightOffset.y,
+    DEFAULTCONFIG.characterSightOffset.z
+  )
 
   // 当前视角
   currentSight: string
@@ -504,12 +510,12 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       actions[clip.name] = action
     }
 
-    // 舞蹈
-    const dance = actions['Dance']
-    dance.play()
+    // 默认状态
+    const defaultAction = actions[DEFAULTCONFIG.personDefaultAnimateName]
+    defaultAction.play()
 
     // 步行
-    const runging = actions['Walking']
+    const runging = actions[DEFAULTCONFIG.personRuningAnimateName]
 
     model.extra = {
       mixer,
@@ -568,7 +574,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.toggleCharacterView()
 
     // 向量
-    const up = new THREE.Vector3(0, this.characterSightHeight, 0)
+    const up = new THREE.Vector3().add(this.characterSightOffset.clone())
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
@@ -581,7 +587,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       this.camera.lookAt(pos)
       // 相机高度距离人物大于 8
       if (Math.abs(this.camera.position.y - pos.y) > 8) {
-        this.camera.position.y = pos.y
+        this.camera.position.setY(pos.y)
+        this.camera.position.setZ(pos.z)
       }
     } else {
       this.camera.position.copy(to)
@@ -630,7 +637,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.characterSightHeight, 0)))
+    this.controls.target.copy(point.clone().add(this.characterSightOffset.clone()))
     this.camera.lookAt(this.controls.target)
   }
 
@@ -697,7 +704,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
             // 人物跟随
             if (fllow) {
               if (!this.character) return
-              this.character.position.y = pos.y
+              this.character.position.setY(pos.y)
 
               // 向量
               const dir = new THREE.Vector3()
@@ -707,7 +714,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
               const dis = dir.clone().multiplyScalar(0.1)
               // 初始位置+偏移向量
               const newPos = characterModel?.position.clone().add(dis) || new THREE.Vector3()
-              this.camera.position.y = pos.y + this.characterSightHeight
+              this.camera.position.y = pos.y + this.characterSightOffset.y
               this.setControlTarget(newPos)
             }
           })

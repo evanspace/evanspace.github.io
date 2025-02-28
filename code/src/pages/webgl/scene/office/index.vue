@@ -148,7 +148,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
     cache: true,
     dbName: 'THREE__OFFICE__DB',
     tbName: 'TB',
-    version: 76
+    version: 78
   }
 })
 
@@ -167,7 +167,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     maxDistance: 1500
   },
   camera: {
-    near: 3,
+    near: 1.8,
     fov: 45
   },
   directionalLight: {
@@ -465,7 +465,7 @@ const createCharacter = () => {
     y: 184.6,
     z: 37.6
   }
-  obj.scale.setScalar(0.75)
+  obj.scale.setScalar(0.7)
 
   scene.addCharacter(obj, move)
 }
