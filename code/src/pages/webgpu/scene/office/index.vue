@@ -291,6 +291,29 @@ const cameraPositionList = computed(() =>
   modelConfigList.value.filter(it => it.type === KEYS.M_ANCHOR_POS)
 )
 
+// 加载场景
+const loadScene = async res => {
+  //  组装场景
+  await assemblyScenario()
+
+  // 创建人物
+  createPerson()
+  // 绘制画布纹理
+  Emitter.emit('SCREEN:WELCOM', dialog.content)
+  // 添加视频材质
+  scene.addVideoMaterial(
+    res.JsonList.filter(it => it.type === KEYS.M_VIDEO_SWITCH).map(it => it.bind)
+  )
+  // 添加画布纹理
+  scene.addCanvasMaterial(
+    res.JsonList.filter(it => it.type === KEYS.M_SCREEN_EDIT).map(it => it.bind)
+  )
+  // 添加空调材质
+  scene.addAirWindMaterial(
+    res.JsonList.filter(it => it.type === KEYS.M_AIR_SWITCH).map(it => it.bind)
+  )
+}
+
 // 加载
 const load = () => {
   loadModels(pageOpts.models, () => {
@@ -311,25 +334,7 @@ const load = () => {
       pageOpts.roamPoints = json.roamPoints || []
 
       setTimeout(() => {
-        //  组装场景
-        assemblyScenario().then(() => {
-          // 创建人物
-          createPerson()
-          // 绘制画布纹理
-          Emitter.emit('SCREEN:WELCOM', dialog.content)
-          // 添加视频材质
-          scene.addVideoMaterial(
-            res.JsonList.filter(it => it.type === KEYS.M_VIDEO_SWITCH).map(it => it.bind)
-          )
-          // 添加画布纹理
-          scene.addCanvasMaterial(
-            res.JsonList.filter(it => it.type === KEYS.M_SCREEN_EDIT).map(it => it.bind)
-          )
-          // 添加空调材质
-          scene.addAirWindMaterial(
-            res.JsonList.filter(it => it.type === KEYS.M_AIR_SWITCH).map(it => it.bind)
-          )
-        })
+        loadScene(res)
       }, 100)
     })
   })

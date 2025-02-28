@@ -616,11 +616,11 @@ export class OfficeScene extends ThreeScene.Scene {
     if (!personModel) return
     const { defaultAction, runging } = personModel.extra
     if (isWalk) {
-      defaultAction.stop()
       runging.play()
+      defaultAction.stop()
     } else {
-      runging.stop()
       defaultAction.play()
+      runging.stop()
     }
   }
   // 人物事件
