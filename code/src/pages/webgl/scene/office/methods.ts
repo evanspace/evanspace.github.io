@@ -74,10 +74,16 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 当前视角
   currentSight: string
-  // 历史中心点（视角切换）
-  historyTarget: InstanceType<typeof THREE.Vector3>
-  // 历史相机坐标（视角切换）
-  historyCameraPosition: InstanceType<typeof THREE.Vector3>
+
+  // 缓存信息
+  controlCache = {
+    // 中心目标
+    target: new THREE.Vector3(),
+    // 相机坐标
+    cameraPosition: new THREE.Vector3(),
+    // 视角最远距离
+    maxDistance: 0
+  }
 
   // 动画模型集合
   animateModels: ThreeModelItem[] = []
@@ -133,8 +139,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
     this.createClock()
     this.currentSight = sightMap.full
-    this.historyTarget = new THREE.Vector3()
-    this.historyCameraPosition = new THREE.Vector3()
+    this.controlCache.maxDistance = this.options.controls.maxDistance
 
     this.findLight()
     this.bindEvent()
@@ -555,11 +560,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     const isCharacter = sight === sightMap.npc
     if (!this.controls) return
 
-    // 控制器操作限制切换
-    this.controls.maxDistance = isCharacter ? (type == 3 ? 10 : 0) : 800
-    this.controls.screenSpacePanning = !isCharacter
-    this.controls.enablePan = !isCharacter
-    // this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
+    let { target, to, maxDistance } = this.getControlsCache()
 
     if (!this.character) return
     const position = this.character.position
@@ -574,8 +575,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         message: '鼠标点击地面移动，或键盘 W、S 前后移动，A、D调整左右方向，X 加速，Z 减速!',
         grouping: true
       })
-      this.historyTarget = this.controls.target.clone()
-      this.historyCameraPosition = this.camera.position.clone()
+      this.setControlCache()
       const pos = position.clone().add(up)
 
       this.camera.lookAt(pos)
@@ -584,12 +584,16 @@ export class OfficeThreeScene extends ThreeScene.Scene {
         this.camera.position.y = pos.y
       }
     } else {
-      this.camera.position.copy(this.historyCameraPosition)
-      this.camera.lookAt(position)
+      this.camera.position.copy(to)
+      this.camera.lookAt(this.controls.target)
     }
 
-    const vect = isCharacter ? position : this.historyTarget
-    const pos = vect.clone().add(up)
+    // 控制器操作限制切换
+    this.controls.maxDistance = isCharacter ? (type == 3 ? 10 : 0) : maxDistance
+    this.controls.screenSpacePanning = !isCharacter
+    this.controls.enablePan = !isCharacter
+
+    const pos = isCharacter ? position.clone().add(up) : target
     this.controls.target.copy(pos)
   }
 
@@ -916,9 +920,8 @@ export class OfficeThreeScene extends ThreeScene.Scene {
 
   // 空调开关
   toggleAir(object, isOpen?) {
-    const dobj = this.scene.getObjectByName(object.data.bind) as any
-    console.log(dobj)
-    if (!dobj) return
+    const dobj = this.buildingGroup?.getObjectByName(object.data.bind) as any
+    if (!dobj) return console.log(dobj, this.buildingGroup)
     dobj.__open__ = isOpen ?? !dobj.__open__
     dobj.visible = dobj.__open__
   }
@@ -1111,19 +1114,18 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   // 公司聚焦
   toggleCompanyFocus(isFocus) {
     if (!this.controls) return
-    let target = this.historyTarget
-    let to = this.historyCameraPosition as XYZ
+
+    let { target, to, maxDistance } = this.getControlsCache()
 
     // 聚焦移动 暂存场景参数
     if (isFocus) {
-      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
-      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
-
+      this.setControlCache()
       target = new THREE.Vector3(8.5, 185, 0)
-      to = { x: 8.5, y: 290, z: 135 }
+      to = new THREE.Vector3(8.5, 290, 135)
+      maxDistance = 320
     }
 
-    this.controls.maxDistance = 320
+    this.controls.maxDistance = maxDistance
 
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
@@ -1150,17 +1152,36 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.clearCharacterSight()
     this.closeVirtualization()
     if (!this.controls) return
-    this.controls.enablePan = true
-    this.controls.maxDistance = 1500
-    this.controls.maxPolarAngle = Math.PI * 0.48
+    const controls = this.options.controls
+    Object.keys(controls).forEach(key => {
+      this.controls && (this.controls[key] = controls[key])
+    })
     super.controlReset()
+  }
+
+  // 缓存控制信息
+  setControlCache() {
+    if (!this.controls) return
+    const controlCache = this.controlCache
+    controlCache.target = controlCache.target.copy(this.controls.target)
+    controlCache.cameraPosition = controlCache.cameraPosition.copy(this.camera.position)
+    controlCache.maxDistance = this.controls.maxDistance
+  }
+  // 获取缓存控制信息
+  getControlsCache() {
+    const controlCache = this.controlCache
+    return {
+      target: controlCache.target,
+      to: controlCache.cameraPosition,
+      maxDistance: controlCache.maxDistance
+    }
   }
 
   // 判断漫游，并停止
   judgeAndStopRoam() {
     if (getRoamStatus()) {
       if (this.controls) {
-        this.controls.maxDistance = 1500
+        this.controls.maxDistance = this.options.controls.maxDistance
       }
       roamPause()
       return true
