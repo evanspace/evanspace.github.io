@@ -726,7 +726,9 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       this.addHelper(group)
     }
 
-    // obj.name = filename
+    if (!obj.isMesh) {
+      obj.name = filename
+    }
     // let model = Utils.modelDeepClone(obj)
     let model = Utils.modelDeepClone(obj)
     const list = Utils.findObjectsByHasProperty(model.children, ['true'], 'isSkinnedMesh')
