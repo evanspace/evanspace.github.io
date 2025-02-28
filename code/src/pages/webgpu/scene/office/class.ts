@@ -95,10 +95,16 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 当前视角
   currentSight = SIGHT_MAP.SCREEN
-  // 历史中心点（视角切换）
-  historyTarget: InstanceType<typeof THREE.Vector3> = new THREE.Vector3()
-  // 历史相机坐标（视角切换）
-  historyCameraPosition: InstanceType<typeof THREE.Vector3> = new THREE.Vector3()
+
+  // 缓存信息
+  controlCache = {
+    // 中心目标
+    target: new THREE.Vector3(),
+    // 相机坐标
+    cameraPosition: new THREE.Vector3(),
+    // 视角最远距离
+    maxDistance: 0
+  }
 
   // 扩散波效果
   diffusion: InstanceType<typeof THREE.Mesh> = new THREE.Mesh()
@@ -150,6 +156,8 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 扩散波
     this.addDiffusion()
+
+    this.controlCache.maxDistance = this.options.controls.maxDistance
     console.log(this)
   }
 
@@ -729,13 +737,11 @@ export class OfficeScene extends ThreeScene.Scene {
       : SIGHT_MAP.PERSON_THREE
     this.currentSight = sight
 
-    console.log(sight)
-
-    // 控制器限制切换
-    this.controlsLimitSet()
     // 人物视角界面效果
     this.togglePersonView()
     this.cameraChangeByPerson()
+    // 控制器限制切换
+    this.controlsLimitSet()
   }
   // 控制器限制设置
   controlsLimitSet() {
@@ -745,7 +751,7 @@ export class OfficeScene extends ThreeScene.Scene {
     const isPerson = isPersonFirst || sight === SIGHT_MAP.PERSON_THREE
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isPerson ? (isPersonFirst ? 0 : 10) : 800
+    this.controls.maxDistance = isPerson ? (isPersonFirst ? 0 : 10) : this.controlCache.maxDistance
     this.controls.screenSpacePanning = !isPerson
     this.controls.enablePan = !isPerson
   }
@@ -775,6 +781,8 @@ export class OfficeScene extends ThreeScene.Scene {
     // 人物视角
     const isPerson = this.isPersonSight()
     const position = this.person.position
+
+    let { target, to } = this.getControlsCache()
     // 向量
     const up = new THREE.Vector3(0, this.personSightHeight, 0)
     /// 切换到人物视角，暂存控制参数
@@ -785,8 +793,8 @@ export class OfficeScene extends ThreeScene.Scene {
           .join('、')}，来控制人物！`,
         grouping: true
       })
-      this.historyTarget = this.controls.target.clone()
-      this.historyCameraPosition = this.camera.position.clone()
+
+      this.setControlCache()
       const pos = position.clone().add(up)
 
       this.camera.lookAt(pos)
@@ -795,12 +803,11 @@ export class OfficeScene extends ThreeScene.Scene {
         this.camera.position.y = pos.y
       }
     } else {
-      this.camera.position.copy(this.historyCameraPosition)
-      this.camera.lookAt(position)
+      this.camera.position.copy(to)
+      this.camera.lookAt(this.controls.target)
     }
 
-    const vect = isPerson ? position : this.historyTarget
-    const pos = vect.clone().add(up)
+    const pos = isPerson ? position.clone().add(up) : target
     this.controls.target.copy(pos)
   }
   // 人物加速
@@ -952,20 +959,15 @@ export class OfficeScene extends ThreeScene.Scene {
   // 公司聚焦
   toggleCompanyFocus(isFocus) {
     if (!this.controls) return
-    let target = this.historyTarget
-    let to = this.historyCameraPosition as XYZ
-
+    let { target, to, maxDistance } = this.getControlsCache()
     // 聚焦移动 暂存场景参数
     if (isFocus) {
-      this.historyTarget = new THREE.Vector3().copy(this.controls.target)
-      this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
-
+      this.setControlCache()
       target = new THREE.Vector3(8.5, 185, 0)
-      to = { x: 8.5, y: 290, z: 135 }
-      this.controls.maxDistance = 320
+      to = new THREE.Vector3(8.5, 290, 135)
+      maxDistance = 320
     }
-
-    this.controls.enablePan = isFocus
+    this.controls.maxDistance = maxDistance
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 
@@ -1057,6 +1059,9 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
 
+  ///////////////////////////
+  /////////// 控制 ///////////
+  ///////////////////////////
   // 控制器重置
   controlReset() {
     this.judgeAndStopRoam()
@@ -1068,6 +1073,23 @@ export class OfficeScene extends ThreeScene.Scene {
       this.controls && (this.controls[key] = controls[key])
     })
     super.controlReset()
+  }
+  // 缓存控制信息
+  setControlCache() {
+    if (!this.controls) return
+    const controlCache = this.controlCache
+    controlCache.target = controlCache.target.copy(this.controls.target)
+    controlCache.cameraPosition = controlCache.cameraPosition.copy(this.camera.position)
+    controlCache.maxDistance = this.controls.maxDistance
+  }
+  // 获取缓存控制信息
+  getControlsCache() {
+    const controlCache = this.controlCache
+    return {
+      target: controlCache.target,
+      to: controlCache.cameraPosition,
+      maxDistance: controlCache.maxDistance
+    }
   }
   // 设置控制中心点
   setControlTarget(point) {
@@ -1102,7 +1124,7 @@ export class OfficeScene extends ThreeScene.Scene {
   judgeAndStopRoam() {
     if (getRoamStatus()) {
       if (this.controls) {
-        this.controls.maxDistance = 1500
+        this.controls.maxDistance = this.options.controls.maxDistance
       }
       roamPause()
       return true
