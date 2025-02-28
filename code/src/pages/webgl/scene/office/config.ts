@@ -5,14 +5,17 @@ export default {
   // 判断点击间隔时间
   clickIntervalTime: 300,
 
-  // 人物视线高度
-  characterSightHeight: 3.5,
   // 人物视线偏移坐标
   characterSightOffset: {
     x: 0,
     y: 3.5,
     z: 0.1
   },
+
+  // 人物默认状态动画
+  personDefaultAnimateName: 'PlayOne-Headnod',
+  // 人物行走状态动画
+  personRuningAnimateName: 'PlayOne-Walk',
 
   // 碰撞间距
   collisionSpace: 1,
@@ -51,10 +54,5 @@ export default {
   ],
 
   // 公司模型名称
-  companyModelName: '二十五楼',
-
-  // 人物默认状态动画
-  personDefaultAnimateName: 'PlayOne-Headnod',
-  // 人物行走状态动画
-  personRuningAnimateName: 'PlayOne-Walk'
+  companyModelName: '二十五楼'
 }

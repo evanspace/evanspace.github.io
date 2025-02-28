@@ -509,11 +509,9 @@ export class OfficeThreeScene extends ThreeScene.Scene {
       const action = mixer.clipAction(clip)
       actions[clip.name] = action
     }
-
     // 默认状态
     const defaultAction = actions[DEFAULTCONFIG.personDefaultAnimateName]
     defaultAction.play()
-
     // 步行
     const runging = actions[DEFAULTCONFIG.personRuningAnimateName]
 
@@ -574,7 +572,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     this.toggleCharacterView()
 
     // 向量
-    const up = new THREE.Vector3().add(this.characterSightOffset.clone())
+    const up = this.characterSightOffset.clone()
     /// 切换到人物视角，暂存控制参数
     if (isCharacter) {
       ElMessage.success({
