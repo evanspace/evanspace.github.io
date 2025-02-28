@@ -903,7 +903,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     })
 
     for (let i = 0; i < names.length; i++) {
-      const dobj = this.scene.getObjectByName(names[i]) as any
+      const dobj = this.buildingGroup?.getObjectByName(names[i]) as any
       if (!dobj) return
       dobj.traverse(el => {
         if (el.isMesh) {
