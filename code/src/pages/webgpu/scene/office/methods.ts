@@ -459,20 +459,13 @@ export const drawBdCanvas = (canvas, text = '') => {
 // 创建视频元素
 export const createVideoDom = (src?: string) => {
   const dom = document.createElement('video')
-  dom.src = DEFAULTCONFIG.baseUrl + (src || '/oss/textures/park/sintel.mp4')
+  dom.src = src || DEFAULTCONFIG.screenVideo
   dom.loop = true
-  // videoDom.autoplay = true
   return dom
 }
 
 // 视频封面
-export const videoCoverTexture = new THREE.TextureLoader().load(
-  DEFAULTCONFIG.baseUrl + '/oss/textures/office/cover.jpg'
-)
-// 空调风纹理
-export const windTexture = new THREE.TextureLoader().load(
-  DEFAULTCONFIG.baseUrl + '/oss/textures/office/wind.png'
-)
+export const videoCoverTexture = new THREE.TextureLoader().load(DEFAULTCONFIG.videoCover)
 
 /**
  * 添加视频材质
@@ -621,7 +614,7 @@ export const createAirGroup = (
             scaleMin: 0.1,
             scaleMax: 1.2,
             mixColorStart: 0.15,
-            textureSrc: `${DEFAULTCONFIG.baseUrl}/oss/textures/effect/snowflake.png`
+            textureSrc: DEFAULTCONFIG.airParticleTexture
           })
         : createStripSmoke({
             width,

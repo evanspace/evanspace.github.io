@@ -477,8 +477,8 @@ const airSwitch = [
   {
     name: '空调总开关',
     type: 'AIR_SWITCH',
-    position: { x: 13.3, y: anchorHeight, z: 49 }
-    // bind: '_空调风_grp'
+    position: { x: 13.3, y: anchorHeight, z: 49 },
+    bind: '_空调风_grp'
   },
 
   {

@@ -20,22 +20,7 @@ const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 const { checkCollide } = Hooks.useCollide()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
-const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(
-  [
-    '1.png',
-    '2.png',
-    '3.png',
-    '4.png',
-    '5.png',
-    '6.png',
-    '7.png',
-    '8.png',
-    '9.png',
-    '10.png',
-    '11.png',
-    '12.png'
-  ].map(it => `${DEFAULTCONFIG.baseUrl}/oss/textures/diffusion/${it}`)
-)
+const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(DEFAULTCONFIG.diffusionImgs)
 
 // 视角映射
 const SIGHT_MAP = {
@@ -977,9 +962,8 @@ export class OfficeScene extends ThreeScene.Scene {
 
       target = new THREE.Vector3(8.5, 185, 0)
       to = { x: 8.5, y: 290, z: 135 }
+      this.controls.maxDistance = 320
     }
-
-    this.controls.maxDistance = 320
 
     this.controls.enablePan = isFocus
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
@@ -1079,9 +1063,10 @@ export class OfficeScene extends ThreeScene.Scene {
     this.clearPersonSightStatus()
     this.closeVirtualization()
     if (!this.controls) return
-    this.controls.enablePan = true
-    this.controls.maxDistance = 1500
-    this.controls.maxPolarAngle = Math.PI * 0.48
+    const controls = this.options.controls
+    Object.keys(controls).forEach(key => {
+      this.controls && (this.controls[key] = controls[key])
+    })
     super.controlReset()
   }
   // 设置控制中心点

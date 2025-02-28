@@ -99,5 +99,28 @@ export default {
   ],
 
   // 空调风
-  airWinds
+  airWinds,
+
+  // 波纹图
+  diffusionImgs: [
+    '/oss/textures/diffusion/1.png',
+    '/oss/textures/diffusion/2.png',
+    '/oss/textures/diffusion/3.png',
+    '/oss/textures/diffusion/4.png',
+    '/oss/textures/diffusion/5.png',
+    '/oss/textures/diffusion/6.png',
+    '/oss/textures/diffusion/7.png',
+    '/oss/textures/diffusion/8.png',
+    '/oss/textures/diffusion/9.png',
+    '/oss/textures/diffusion/10.png',
+    '/oss/textures/diffusion/11.png',
+    '/oss/textures/diffusion/12.png'
+  ].map(src => baseUrl + src),
+
+  // 屏幕视频
+  screenVideo: baseUrl + '/oss/textures/park/sintel.mp4',
+  // 视频封面
+  videoCover: baseUrl + '/oss/textures/office/cover.jpg',
+  // 空调粒子纹理
+  airParticleTexture: baseUrl + '/oss/textures/effect/snowflake.png'
 }
