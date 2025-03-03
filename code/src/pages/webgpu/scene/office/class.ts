@@ -4,7 +4,7 @@ import * as ThreeScene from 'three-scene'
 import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
-import { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/types/model'
+import { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
 const { Utils, Hooks } = MS
 

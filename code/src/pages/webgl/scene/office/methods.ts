@@ -7,7 +7,7 @@ import * as ThreeScene from 'three-scene'
 import DEFAULTCONFIG from './config'
 
 import type { ExtendOptions } from '.'
-import type { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 import { copy } from '@/common/utils/document'
 
 const Hooks = ThreeScene.Hooks
