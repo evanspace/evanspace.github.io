@@ -43,6 +43,7 @@ export default {
     excess: '过渡',
     card: '卡片',
     button: '按钮',
+    performance: '性能',
 
     game: '游戏',
     gobang: '五子棋',

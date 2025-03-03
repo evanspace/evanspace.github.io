@@ -43,6 +43,7 @@ export default {
     excess: 'excess',
     card: 'card',
     button: 'button',
+    performance: 'performance',
 
     game: 'game',
     gobang: 'gobang',
