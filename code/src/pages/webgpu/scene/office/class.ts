@@ -88,8 +88,14 @@ export class OfficeScene extends ThreeScene.Scene {
       runging: InstanceType<typeof THREE.AnimationAction>
     }
   }
-  // 人物视线高度
-  personSightHeight = DEFAULTCONFIG.personSightHeight
+
+  // 人物偏移向量
+  personSightOffset = new THREE.Vector3(
+    DEFAULTCONFIG.personSightOffset.x,
+    DEFAULTCONFIG.personSightOffset.y,
+    DEFAULTCONFIG.personSightOffset.z
+  )
+
   // 移动系数
   moveFactor = DEFAULTCONFIG.moveFactor
 
@@ -505,10 +511,10 @@ export class OfficeScene extends ThreeScene.Scene {
             // 人物跟随
             if (personIsFllow) {
               if (!this.person) return
-              this.person.position.y = pos.y
+              this.person.position.setY(pos.y)
               // 获取前进坐标
               const newPos = MS.getForwardPosition(personModel, 0.1)
-              this.camera.position.y = pos.y + this.personSightHeight
+              this.camera.position.y = pos.y + this.personSightOffset.y
               this.setControlTarget(newPos)
             }
           })
@@ -597,10 +603,10 @@ export class OfficeScene extends ThreeScene.Scene {
     this.person = model
     const { mixer, actions } = MS.getModelAction(model)
     // 默认状态
-    const defaultAction = actions['PlayOne-Headnod']
+    const defaultAction = actions[DEFAULTCONFIG.personDefaultAnimateName]
     defaultAction.play()
     // 步行
-    const runging = actions['PlayOne-Walk']
+    const runging = actions[DEFAULTCONFIG.personRuningAnimateName]
     model.extra = {
       mixer,
       actions,
@@ -784,7 +790,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
     let { target, to } = this.getControlsCache()
     // 向量
-    const up = new THREE.Vector3(0, this.personSightHeight, 0)
+    const up = this.personSightOffset.clone()
     /// 切换到人物视角，暂存控制参数
     if (isPerson) {
       ElMessage.success({
@@ -1094,7 +1100,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 设置控制中心点
   setControlTarget(point) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(new THREE.Vector3(0, this.personSightHeight, 0)))
+    this.controls.target.copy(point.clone().add(this.personSightOffset.clone()))
     this.camera.lookAt(this.controls.target)
   }
 

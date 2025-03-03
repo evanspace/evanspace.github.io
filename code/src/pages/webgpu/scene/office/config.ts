@@ -26,8 +26,12 @@ export default {
   // 判断点击间隔时间
   clickIntervalTime: 300,
 
-  // 人物视线高度
-  personSightHeight: 3.5,
+  // 人物视线偏移坐标
+  personSightOffset: {
+    x: 0,
+    y: 3.5,
+    z: 0.1
+  },
   // 人物视角元素 class
   personSightClass: 'person-sight',
   // 人物视角键盘控制
@@ -39,6 +43,10 @@ export default {
     { code: 'X', desc: '加速' },
     { code: 'Z', desc: '减速' }
   ],
+  // 人物默认状态动画
+  personDefaultAnimateName: 'PlayOne-Headnod',
+  // 人物行走状态动画
+  personRuningAnimateName: 'PlayOne-Walk',
 
   // 电梯地面网格名称
   liftGroundMeshName: ['电梯地板002', '电梯地板'],
