@@ -1,1 +1,0 @@
-import{Y as o,c5 as t}from"./vendor-16889df9.js";import{d as s}from"./object-fb68a4c2.js";const e=(e={})=>{const r=o(s({show:!1,style:{left:"",top:""},select:[],data:{},title:"",position:{top:0,left:0}},e));return{dialog:r,options:r,show:t(r.show)}};export{e as u};

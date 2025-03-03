@@ -1,2 +1,0 @@
-import{_ as s}from"./index-0ff7c08c.js";import{o as a,g as c,h as d}from"./vendor-08e99294.js";const o={class:"page"};const r=s({},[["render",function(s,r){return a(),c("div",o,r[0]||(r[0]=[d("div",{class:"cup"},[d("div",{class:"cup-body"},[d("div",{class:"layer"}),d("div",{class:"layer"})])],-1)]))}],["__scopeId","data-v-00c32c94"]]);export{r as default};
-//# sourceMappingURL=index-80c80440.js.map

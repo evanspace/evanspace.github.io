@@ -1,1 +1,0 @@
-import{d as o}from"./scene-resize-6ab2e993.js";import{Y as s,cB as t}from"./vendor-8986b6ad.js";const e=(e={})=>{const r=s(o({show:!1,style:{left:"",top:""},select:[],data:{},title:"",position:{top:0,left:0}},e));return{dialog:r,options:r,show:t(r.show)}};export{e as u};

@@ -1,1 +1,0 @@
-import{_ as s}from"./index-107f9d2d.js";import{o as a,g as o,h as r}from"./vendor-f8b8a23f.js";const t={class:"pagem p-sm"};const e=s({},[["render",function(s,e){return a(),o("div",t,e[0]||(e[0]=[r("div",{class:"container"},[r("img",{src:"/imgs/corrugation.jpg",alt:""})],-1)]))}],["__scopeId","data-v-64ea757f"]]);export{e as default};
