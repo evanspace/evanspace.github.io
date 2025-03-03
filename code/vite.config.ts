@@ -172,6 +172,7 @@ export default ({ mode }) => {
       // chunkSizeWarningLimit: 1500,
       target: 'modules',
       outDir: '../docs', //指定输出路径
+      emptyOutDir: true, // 确保每次构建前清空输出目录
       assetsDir: 'assets', // 指定生成静态资源的存放路径
       minify: 'terser', // 混淆器，terser构建后文件体积更小
       sourcemap: !isProduction, // 生成 source map
