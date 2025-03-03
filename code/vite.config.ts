@@ -50,8 +50,10 @@ export default ({ mode }) => {
         // 相对于插件文件的位置
         jsonPath: './public/sys/manifest.json'
       }),
-      // gzip
-      viteCompression(),
+      // 压缩配置
+      viteCompression({
+        algorithm: 'brotliCompress' // gzip 压缩，br 压缩
+      }),
       // 按需导入
       AutoImport({
         resolvers: [
