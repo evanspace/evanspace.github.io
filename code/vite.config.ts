@@ -52,7 +52,13 @@ export default ({ mode }) => {
       }),
       // 压缩配置
       viteCompression({
-        algorithm: 'brotliCompress' // gzip 压缩，br 压缩
+        algorithm: 'brotliCompress', // gzip 压缩，br 压缩
+        ext: '.br'
+      }),
+      // 压缩配置
+      viteCompression({
+        algorithm: 'gzip', // gzip 压缩，br 压缩
+        ext: '.gz'
       }),
       // 按需导入
       AutoImport({
