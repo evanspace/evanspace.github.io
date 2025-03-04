@@ -5,6 +5,8 @@
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
 
+      <div class="item" @click="scene.exportImage()">截图</div>
+
       <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
       <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
         {{ item.name }}
@@ -165,6 +167,10 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
     // enablePan: false,
     screenSpacePanning: false,
     maxDistance: 1500
+  },
+  render: {
+    alpha: true,
+    preserveDrawingBuffer: true
   },
   camera: {
     near: 1.8,
