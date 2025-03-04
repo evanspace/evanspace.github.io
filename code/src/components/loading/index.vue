@@ -4,7 +4,7 @@
     :class="$style.wrap"
     :style="{
       '--bg-color': bgColor ? String(bgColor) : '',
-      '--bg-filter': (100 - progress) / 10 + 'px'
+      '--bg-filter': ((100 - progress) / 100) * 30 + 'px'
     }"
     @dblclick.stop
     v-if="modelValue"
