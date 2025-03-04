@@ -47,7 +47,11 @@
 
     <t-first-person />
 
-    <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+    <t-loading
+      v-model="progress.show"
+      :progress="progress.percentage"
+      :bg-src="pageOpts.bgSrc"
+    ></t-loading>
 
     <!-- 楼层选择 -->
     <div :class="$style['floor-select']" v-show="floorOpts.show">
@@ -174,7 +178,8 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   },
   camera: {
     near: 1.8,
-    fov: 45
+    fov: 45,
+    position: [-799.2, 55, 376.3]
   },
   directionalLight: {
     intensity: 4,
@@ -374,20 +379,20 @@ const assemblyScenario = () => {
     scene.setCruisePoint(pageOpts.cruise.points)
 
     const to = scene.getValidTargetPosition(pageOpts.config || {})
+    scene.camera.position.set(to.x, to.y, to.z)
+    scene.controlSave()
+    // 加载进度 100
+    progress.percentage = 100
+    progress.show = false
+
+    nextTick(() => {
+      Emitter.emit('LIGHT:CLOSE')
+      resolve(1)
+    })
 
     // 入场动画
-    // @ts-ignore
-    Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
-      scene.controlSave()
-      // 加载进度 100
-      progress.percentage = 100
-      progress.show = false
-
-      nextTick(() => {
-        Emitter.emit('LIGHT:CLOSE')
-        resolve(1)
-      })
-    })
+    // Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
+    // })
   })
 }
 
