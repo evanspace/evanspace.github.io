@@ -5,7 +5,7 @@ const devEnv = import.meta.env.VITE_MODE !== 'production-'
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
 export const MAIN_SCENE = 'MAIN_SCENE' // 主场景
-export const CONPANT_FLOOR = 'campany_floor' // 公司楼层
+export const CAMPANY_FLOOR = 'campany_floor' // 公司楼层
 export const CURTAIN = 'curtain' // 窗帘
 
 export const ROBOT = 'ROBOT' // 机器人
@@ -60,7 +60,7 @@ export const getPageOpts = animateBack => ({
     CURTAIN_SWITCH,
     MODE_SWITCH
   ],
-  animationModelType: [MAIN_SCENE, CONPANT_FLOOR, CURTAIN],
+  animationModelType: [MAIN_SCENE, CAMPANY_FLOOR, CURTAIN],
 
   models: [
     {
@@ -89,7 +89,7 @@ export const getPageOpts = animateBack => ({
     },
 
     {
-      key: CONPANT_FLOOR,
+      key: CAMPANY_FLOOR,
       name: '公司',
       size: 14.5,
       url: '/二十五楼.glb'

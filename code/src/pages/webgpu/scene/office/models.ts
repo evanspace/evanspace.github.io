@@ -9,7 +9,7 @@ export default [
     url: '/公司总部.glb'
   },
   {
-    key: KEYS.M_CONPANT_FLOOR,
+    key: KEYS.M_CAMPANY_FLOOR,
     name: '公司',
     size: 14.6,
     url: '/二十五楼.glb'

@@ -5,7 +5,7 @@ export default {
   // 窗帘
   M_CURTAIN: 'curtain',
   // 公司楼层
-  M_CONPANT_FLOOR: 'campany_floor',
+  M_CAMPANY_FLOOR: 'campany_floor',
 
   // 人物
   M_PERSON: 'PERSON',

@@ -48,7 +48,7 @@ export const getPageOpts = (): {
     KEYS.M_CURTAIN_SWITCH,
     KEYS.M_MODE_SWITCH
   ],
-  animationModelType: [KEYS.M_MAIN_SCENE, KEYS.M_CONPANT_FLOOR, KEYS.M_CURTAIN],
+  animationModelType: [KEYS.M_MAIN_SCENE, KEYS.M_CAMPANY_FLOOR, KEYS.M_CURTAIN],
 
   config: {},
   cruise: {
