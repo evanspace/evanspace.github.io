@@ -8,6 +8,9 @@ export default {
   // 基础地址
   baseUrl,
 
+  // 背景图
+  bgSrc: baseUrl + '/oss/img/office/bg.jpg',
+
   // 天空风格 hdr
   sky: {
     day: '/oss/textures/hdr/101.hdr',

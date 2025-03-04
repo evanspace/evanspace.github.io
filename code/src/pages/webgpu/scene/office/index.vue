@@ -43,7 +43,11 @@
 
     <div class="h-100" ref="containerRef"></div>
 
-    <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+    <t-loading
+      v-model="progress.show"
+      :progress="progress.percentage"
+      :bg-src="DEFAULTCONFIG.bgSrc"
+    ></t-loading>
 
     <t-tip-msg v-model="tipOpts.show" :style="tipOpts.style" :msg="tipOpts.msg"></t-tip-msg>
 
@@ -143,7 +147,8 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   },
   camera: {
     near: 3,
-    fov: 45
+    fov: 45,
+    position: [-799.2, 55, 376.3]
   },
   ambientLight: {
     intensity: 0.01
@@ -244,10 +249,6 @@ const loadSceneModel = () => {
 // 场景组装
 const assemblyScenario = () => {
   return new Promise(async resolve => {
-    // 加载进度 100
-    progress.percentage = 100
-    progress.show = false
-
     await nextTick()
     await loadSceneModel()
 
@@ -256,16 +257,25 @@ const assemblyScenario = () => {
     // 巡航
     scene.setCruisePoint(pageOpts.cruise?.points || [])
 
+    console.log(scene.controls?.target)
     const to = scene.getValidTargetPosition(pageOpts.config || {})
+    scene.camera.position.set(to.x, to.y, to.z)
+    scene.controlSave()
+    Emitter.emit('LIGHT:CLOSE')
+    // 加载进度 100
+    progress.percentage = 100
+    progress.show = false
+
+    resolve(1)
 
     // 入场动画
-    Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
-      scene.controlSave()
-      nextTick(() => {
-        Emitter.emit('LIGHT:CLOSE')
-        resolve(1)
-      })
-    })
+    // Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
+    //   scene.controlSave()
+    //   nextTick(() => {
+    //     Emitter.emit('LIGHT:CLOSE')
+    //     resolve(1)
+    //   })
+    // })
   })
 }
 

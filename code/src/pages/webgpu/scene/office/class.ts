@@ -378,7 +378,7 @@ export class OfficeScene extends ThreeScene.Scene {
   lightSwitch(object, isOpen?: boolean, max?: number) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
-    console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
+    // console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
     light.forEach((el, index) => {
       // max 存在则默认未点亮，其他关闭
       let visible = max != void 0 && max >= 0 ? false : isOpen != void 0 ? isOpen : !el.visible
@@ -928,7 +928,6 @@ export class OfficeScene extends ThreeScene.Scene {
 
     const name = DEFAULTCONFIG.companyModelName
     const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
-    console.log(model)
     if (!model) {
       ElMessage.warning({
         message: `未找到【${name}】模块！`,
