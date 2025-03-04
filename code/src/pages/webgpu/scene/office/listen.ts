@@ -14,65 +14,15 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   Emitter.on('CAMERA:THREE', () => scene?.togglePersonSight(3))
 
   // 大门
-  Emitter.on('CAMERA:GATE', () => {
-    const object = {
-      data: {
-        name: '一楼大门',
-        type: 'ANCHOR_POS',
-        to: { x: -1.3, y: 6.2, z: 102.3 },
-        target: { x: -1.4, y: 5.8, z: 97.4 }
-      }
-    }
-    scene?.cameraTransition(object)
-  })
+  Emitter.on('CAMERA:GATE', () => scene?.cameraTransitionByModelname('一楼大门'))
   // 前台
-  Emitter.on('CAMERA:RECCEPTION', () => {
-    const object = {
-      data: {
-        name: '公司前台',
-        type: 'ANCHOR_POS',
-        to: { x: 15.3, y: 188, z: 33.2 },
-        target: { x: 15.3, y: 188, z: 36.3 }
-      }
-    }
-    scene?.cameraTransition(object)
-  })
+  Emitter.on('CAMERA:RECCEPTION', () => scene?.cameraTransitionByModelname('公司前台'))
   // 办公区域
-  Emitter.on('CAMERA:OFFICE', () => {
-    const object = {
-      data: {
-        name: '办公区域',
-        type: 'ANCHOR_POS',
-        to: { x: -38, y: 188, z: 35.3 },
-        target: { x: -35.4, y: 188, z: 36.4 }
-      }
-    }
-    scene?.cameraTransition(object)
-  })
+  Emitter.on('CAMERA:OFFICE', () => scene?.cameraTransitionByModelname('办公区域'))
   // 大会议室
-  Emitter.on('CAMERA:LCR', () => {
-    const object = {
-      data: {
-        name: '大会议室',
-        type: 'ANCHOR_POS',
-        to: { x: -28.8, y: 188, z: 52.7 },
-        target: { x: -33.7, y: 188, z: 53.4 }
-      }
-    }
-    scene?.cameraTransition(object)
-  })
+  Emitter.on('CAMERA:LCR', () => scene?.cameraTransitionByModelname('大会议室'))
   // 老板办公室
-  Emitter.on('CAMERA:BOSS', () => {
-    const object = {
-      data: {
-        name: '领导办公',
-        type: 'ANCHOR_POS',
-        to: { x: 69.4, y: 188, z: -0.4 },
-        target: { x: 65, y: 188, z: -2.7 }
-      }
-    }
-    scene?.cameraTransition(object)
-  })
+  Emitter.on('CAMERA:BOSS', () => scene?.cameraTransitionByModelname('老板办公室'))
 
   // 人物加速
   Emitter.on('PERSON:ADD', () => scene?.personSpeed())

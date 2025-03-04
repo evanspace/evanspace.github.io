@@ -24,7 +24,8 @@ const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(DEFAULTCONFIG.d
 
 // 视角映射
 const SIGHT_MAP = {
-  SCREEN: 'SCREEN', // 屏幕
+  SCREEN: 'SCREEN', // 全屏
+  BIRD_VIEW: 'BIRD_VIEW', // 鸟瞰
   PERSON_FIRST: 'PERSON_FIRST', // 人物·第一人称
   PERSON_THREE: 'PERSON_THREE' // 人物·第三人称
 }
@@ -122,6 +123,9 @@ export class OfficeScene extends ThreeScene.Scene {
   airGroup?: InstanceType<typeof THREE.Group>
   airSpeed = THREE.TSL.uniform(0.05)
 
+  // hover 组
+  hoverGroup?: InstanceType<typeof THREE.Group>
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -153,6 +157,8 @@ export class OfficeScene extends ThreeScene.Scene {
     this.addStreetLamp()
     // 居民灯
     this.addResidentLight()
+    // hover 组
+    this.addHoverGroup()
 
     // 查找灯光
     this.findLight()
@@ -417,6 +423,23 @@ export class OfficeScene extends ThreeScene.Scene {
   addResidentLight() {
     this.residentLightGroup = MS.createResidentLightGroup(DEFAULTCONFIG.residentLights)
     this.addObject(this.residentLightGroup)
+  }
+
+  // 添加 hover 组
+  addHoverGroup() {
+    const group = new THREE.Group()
+    group.name = 'hover 组'
+    this.hoverGroup = group
+    this.addObject(group)
+  }
+  // 添加 hover 模型
+  addHover(model) {
+    const obj = MS.convertHoverMaterial(model)
+    this.hoverGroup?.add(obj)
+  }
+  // hover 重置
+  resetHover() {
+    MS.hoverEmptyGroup([], this.container, this.hoverGroup)
   }
 
   // 窗帘动画
@@ -1047,6 +1070,13 @@ export class OfficeScene extends ThreeScene.Scene {
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
   }
+  // 相机名称转创
+  cameraTransitionByModelname(name) {
+    const cameraTransitionList = DEFAULTCONFIG.cameraTransitionList
+    const obj = cameraTransitionList.find(it => it.name === name)
+    if (!obj) return
+    this.cameraTransition({ data: obj })
+  }
 
   // 添加模型动画
   addModelAnimate(model, animations = [], play: boolean = true, timeScale: number = 1) {
@@ -1174,15 +1204,27 @@ export class OfficeScene extends ThreeScene.Scene {
   // 检查相交对象
   checkIntersectObjects(e: PointerEvent) {
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
-    // 锚点或者地面
-    const objects =
-      this.buildingGroup?.children
-        .filter((it: any) => it.visible)
-        .map(it => {
-          it.children = it.children.filter(t => t.visible)
-          return it
-        })
-        .concat(this.anchorGroup?.children || []) || []
+
+    const maxDistance = this.controls?.maxDistance || 0
+    const hoverDistance = DEFAULTCONFIG.hoverDistance
+
+    let objects: any[] = []
+    // 悬浮组距离
+    const isHoverGroupDistance = maxDistance > hoverDistance.empty
+    // 空组
+    if (isHoverGroupDistance) {
+      objects = this.hoverGroup?.children || []
+    } else {
+      // 锚点或者地面
+      objects =
+        this.buildingGroup?.children
+          .filter((it: any) => it.visible)
+          .map(it => {
+            it.children = it.children.filter(t => t.visible)
+            return it
+          })
+          .concat(this.anchorGroup?.children || []) || []
+    }
 
     // 检查相交对象
     const interscts = MS.getIntersectObjects(
@@ -1192,17 +1234,30 @@ export class OfficeScene extends ThreeScene.Scene {
       this.camera,
       objects,
       // 计算后代，悬浮不计算，否则耗性能
-      isClick
+      isHoverGroupDistance || isClick
     )
 
-    // 处理锚点类型-精灵材质
-    MS.hoverAnchor(interscts, this.extend.onHoverAnchor, this.container, this.anchorGroup)
+    if (isHoverGroupDistance) {
+      MS.hoverEmptyGroup(interscts, this.extend.onHoverCall, this.container, this.hoverGroup)
+    } else {
+      // 处理锚点类型-精灵材质
+      MS.hoverAnchor(interscts, this.extend.onHoverCall, this.container, this.anchorGroup)
+    }
     if (!isClick) return
-
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
       console.log(intersct)
+      if (isHoverGroupDistance) {
+        const object = intersct.object
+        const obj = DEFAULTCONFIG.cameraTransitionList.find(
+          it => it.name + DEFAULTCONFIG.hoverNameSuffix === object.name
+        )
+        if (!obj) return
+        object.visible = false
+        this.cameraTransition({ data: obj })
+        return
+      }
 
       // 建筑
       const obj = MS.findParentIsBuilding(object)
@@ -1242,6 +1297,7 @@ export class OfficeScene extends ThreeScene.Scene {
     this.dotGroup = void 0
     this.anchorGroup = void 0
     this.lightGroup = void 0
+    this.hoverGroup = void 0
     this.fleetingGroup = void 0
     this.streetLampGroup = void 0
     this.residentLightGroup = void 0

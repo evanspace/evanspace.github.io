@@ -33,6 +33,12 @@ export default [
     size: 2.7,
     url: '/高层.glb'
   },
+  {
+    key: KEYS.M_COMPANY_EMPTY_GROUP,
+    name: '高层',
+    size: 0.01,
+    url: '/二十五楼-空组.glb'
+  },
 
   {
     key: KEYS.M_ROBOT,

@@ -6,6 +6,8 @@ export default {
   M_CURTAIN: 'curtain',
   // 公司楼层
   M_CAMPANY_FLOOR: 'campany_floor',
+  // 公司空组-（空壳）
+  M_COMPANY_EMPTY_GROUP: 'company_empty_group',
 
   // 人物
   M_PERSON: 'PERSON',

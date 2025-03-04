@@ -59,6 +59,7 @@ export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) =
   // 色调映射
   renderer.toneMapping = THREE.NeutralToneMapping
   const postProcessing = new THREE.PostProcessing(renderer)
+
   if (isEnv) {
     postProcessing.outputNode = outputPass.add(bloomPass)
   } else {
@@ -638,4 +639,63 @@ export const createAirGroup = (
   }
 
   return group
+}
+
+/**
+ * 转换 hover 材质
+ * @param model 模型
+ * @returns
+ */
+export const convertHoverMaterial = model => {
+  const selectObject = DEFAULTCONFIG.selectObject
+  const material = new THREE.MeshBasicNodeMaterial({
+    transparent: true,
+    opacity: 0.2,
+    color: selectObject.color
+  })
+  material.mrtNode = THREE.TSL.mrt({
+    bloomIntensity: THREE.TSL.uniform(selectObject.bloomIntensity)
+  })
+
+  if (model.isMesh) {
+    model.material = material
+    model.visible = false
+  }
+  model.traverse(el => {
+    if (el.isMesh) {
+      el.material = material
+      el.visible = false
+    }
+  })
+  return model
+}
+
+/**
+ * 悬浮 空组
+ * @param interscts 交叉对象列表
+ * @param callback 回调
+ * @param container 容器
+ * @param group 空组
+ */
+export const hoverEmptyGroup = (interscts, callback, container, group) => {
+  if (typeof callback === 'function') callback(interscts[0], style)
+
+  if (interscts.length) {
+    const intersct = interscts[0]
+    const object = intersct.object
+    container.style.cursor = 'pointer'
+
+    group?.traverse(el => {
+      if (el.isMesh) {
+        el.visible = el.uuid === object.uuid
+      }
+    })
+  } else {
+    container.style.cursor = 'auto'
+    group?.traverse(el => {
+      if (el.isMesh) {
+        el.visible = false
+      }
+    })
+  }
 }

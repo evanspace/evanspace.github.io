@@ -156,7 +156,7 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   directionalLight: {
     intensity: 4,
     light2: false,
-    position: [2000, 7000, 2000],
+    position: [0, 7000, 2000],
     shadow: {
       mapSize: 512 * 4
     },
@@ -193,7 +193,7 @@ const createDotObject = item => {
 
 // 加载场景模型
 const loadSceneModel = () => {
-  initModels(modelConfigList.value, (item: ObjectItem) => {
+  return initModels(modelConfigList.value, (item: ObjectItem) => {
     if (!item) return Promise.resolve()
     const { type } = item
     if (type === KEYS.M_ANCHOR_POS) return Promise.resolve()
@@ -301,6 +301,9 @@ const loadScene = async res => {
 
   // 创建人物
   createPerson()
+  // 添加公司空组
+  addCompanyEmptyGroup()
+
   // 绘制画布纹理
   Emitter.emit('SCREEN:WELCOM', dialog.content)
   // 添加视频材质
@@ -361,6 +364,12 @@ const createPerson = () => {
   model.scale.setScalar(2)
 
   scene.addPerson(model)
+}
+
+// 添加公司空组
+const addCompanyEmptyGroup = () => {
+  const model = getModel(KEYS.M_COMPANY_EMPTY_GROUP)
+  scene.addHover(model)
 }
 
 // 楼层移动至
@@ -445,16 +454,18 @@ onMounted(() => {
   scene = new OfficeScene(options, {
     canvas: canvasTextureRef.value,
     // 悬浮提示
-    onHoverAnchor: (object, style) => {
-      const isShow = !!object && object.object._isAnchor_
+    onHoverCall: (object, style) => {
+      console.log(object)
+      const isShow = !!object
       tipOpts.show = isShow
       if (isShow) {
+        const model = object.object
         tipOpts.style.top = style.top
         tipOpts.style.left = style.left
-        const data = object.object.data
+        const data = model.data || {}
         tipOpts.msg = `
-          <p>${data.name}</p>
-          <p>类型：${data.type}</p>
+          <p>${data.name || model.name}</p>
+          <p>类型：${data.type || '无'}</p>
           <p>绑定：${data.bind || '无'}</p>
         `
       }
@@ -465,6 +476,11 @@ onMounted(() => {
       if (object && object.data) {
         onClickLeft(object)
       }
+    },
+
+    // 右键
+    onClickRight: () => {
+      console.log('右键')
     },
 
     // 点击地面

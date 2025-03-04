@@ -133,5 +133,49 @@ export default {
   // 视频封面
   videoCover: baseUrl + '/oss/textures/office/cover.jpg',
   // 空调粒子纹理
-  airParticleTexture: baseUrl + '/oss/textures/effect/snowflake.png'
+  airParticleTexture: baseUrl + '/oss/textures/effect/snowflake.png',
+
+  // hover 距离配置
+  // 大于额定值则启用
+  hoverDistance: {
+    // 空组
+    empty: 100
+  },
+  // 后缀
+  hoverNameSuffix: '-立方体',
+
+  // 相机转场列表
+  cameraTransitionList: [
+    {
+      name: '一楼大门',
+      to: { x: -1.3, y: 6.2, z: 102.3 },
+      target: { x: -1.4, y: 5.8, z: 97.4 }
+    },
+    {
+      name: '公司前台',
+      to: { x: 15.3, y: 188, z: 33.2 },
+      target: { x: 15.3, y: 188, z: 36.3 }
+    },
+    {
+      name: '办公区域',
+      to: { x: -38, y: 188, z: 35.3 },
+      target: { x: -35.4, y: 188, z: 36.4 }
+    },
+    {
+      name: '老板办公室',
+      to: { x: 69.4, y: 188, z: -0.4 },
+      target: { x: 65, y: 188, z: -2.7 }
+    },
+    {
+      name: '大会议室',
+      to: { x: -28.8, y: 188, z: 52.7 },
+      target: { x: -33.7, y: 188, z: 53.4 }
+    }
+  ],
+
+  // 选中对象
+  selectObject: {
+    color: 0x27ffb0,
+    bloomIntensity: 0.3
+  }
 }

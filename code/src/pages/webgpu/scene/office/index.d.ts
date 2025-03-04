@@ -30,5 +30,6 @@ export interface ExtendOptions {
   onClickGround: (object?, intersct?) => void
   onClickRight: (e) => void
   animateCall: () => void
-  onHoverAnchor: (object, style) => void
+  // 悬浮回调
+  onHoverCall: (object, style) => void
 }
