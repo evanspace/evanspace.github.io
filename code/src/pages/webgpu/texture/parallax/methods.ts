@@ -88,7 +88,7 @@ export class ParallaxScene extends ThreeScene.Scene {
   }
 
   createRender() {
-    return new THREE.WebGPURenderer(this.options.render) as any
+    return new THREE.WebGPURenderer(this.options.render)
   }
 
   addGui() {
