@@ -1,7 +1,71 @@
-@use '@/assets/css/mixin.scss';
 
-.loading {
-
+.wrap {
+  --bg-color: rgba(0, 0, 0, .5);
+  --bg-filter: 10px;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  z-index: 9;
+  position: absolute;
+  transform: translate( -50%, -50% );
 }
 
-@include mixin.scene-loading;
+.bg {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  object-fit: cover
+}
+
+.loading {
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+  backdrop-filter: saturate(80%) blur(var(--bg-filter));
+  // backdrop-filter: saturate(80%) blur(10px);
+}
+
+
+
+.progress {
+  width: 60%;
+  display: flex;
+  .bar-out {
+    flex: 1;
+    height: 15px;
+    overflow: hidden;
+    border-radius: 20px;
+    background-color: var( --el-border-color-lighter );
+  }
+  .bar {
+    width: var( --percentage );
+    height: 100%;
+    animation: striped-flow 30s linear infinite;
+    border-radius: 20px;
+    background-color: var( --el-color-primary );
+    background-size: 1.25em 1.25em;
+    background-image: linear-gradient(45deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%,transparent);
+  }
+
+  @keyframes striped-flow {
+    0% {
+      background-position: -100%
+    }
+    100% {
+      background-position: 100%;
+    }
+  }
+  .text {
+    color: #fff;
+    width: 80px;
+    padding: 0 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+}
