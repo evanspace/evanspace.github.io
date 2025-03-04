@@ -257,7 +257,6 @@ const assemblyScenario = () => {
     // 巡航
     scene.setCruisePoint(pageOpts.cruise?.points || [])
 
-    console.log(scene.controls?.target)
     const to = scene.getValidTargetPosition(pageOpts.config || {})
     scene.camera.position.set(to.x, to.y, to.z)
     scene.controlSave()
@@ -265,16 +264,10 @@ const assemblyScenario = () => {
     // 加载进度 100
     progress.percentage = 100
     progress.show = false
-
     resolve(1)
 
     // 入场动画
     // Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
-    //   scene.controlSave()
-    //   nextTick(() => {
-    //     Emitter.emit('LIGHT:CLOSE')
-    //     resolve(1)
-    //   })
     // })
   })
 }
