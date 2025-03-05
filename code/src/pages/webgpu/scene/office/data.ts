@@ -57,7 +57,7 @@ export const getPageOpts = (
     color: 0x1fe4ec,
     visible: true,
     auto: false,
-    alway: true,
+    alway: !true,
     mapUrl: '/oss/textures/cruise/line2.png', // 1-18
     repeat: [0.2, 1],
     width: 2,
@@ -67,7 +67,8 @@ export const getPageOpts = (
     mapSpeed: 0.02,
     points: [],
     close: false,
-    offset: 5.2,
+    // offset: 5.2,
+    offset: 3.5,
     bloomIntensity: 0.5,
     animateBack: animateBack
   },

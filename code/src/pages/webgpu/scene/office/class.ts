@@ -663,7 +663,8 @@ export class OfficeScene extends ThreeScene.Scene {
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
-        if (personModel.__runing__) return
+        // 人物运行中或者巡航激活则不处理
+        if (personModel.__runing__ || this.options.cruise.enabled) return
         if (keys.includes(e.keyCode)) {
           this.personWalk()
         }
@@ -677,7 +678,7 @@ export class OfficeScene extends ThreeScene.Scene {
         }
       },
       e => {
-        if (personModel.__runing__) return
+        if (personModel.__runing__ || this.options.cruise.enabled) return
         if (keys.includes(e.keyCode)) {
           this.personWalk(false)
         }
@@ -1191,6 +1192,11 @@ export class OfficeScene extends ThreeScene.Scene {
       this.personWalk(false)
     }
     super.toggleCruise(close)
+  }
+  // 巡航状态回调
+  cruiseStatusCall({ enabled, runing }) {
+    if (!enabled) return
+    this.personWalk(runing)
   }
   // 判断巡航
   judgeCruise() {
