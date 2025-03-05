@@ -110,7 +110,9 @@ export class OfficeScene extends ThreeScene.Scene {
     // 相机坐标
     cameraPosition: new THREE.Vector3(),
     // 视角最远距离
-    maxDistance: 0
+    maxDistance: 0,
+    // 人物坐标
+    personPosition: new THREE.Vector3()
   }
 
   // 扩散波效果
@@ -1174,10 +1176,21 @@ export class OfficeScene extends ThreeScene.Scene {
   }
 
   // 定点巡航
-  toggleCruise(close?: boolean, useCache = true) {
+  toggleCruise(close?: boolean) {
     this.clearPersonSightStatus()
     this.judgeAndStopRoam()
-    super.toggleCruise(close, useCache)
+    const runing = !(close ?? this.options.cruise.runing)
+    // 即将运行则缓存人物坐标
+    if (runing && this.person) {
+      this.controlCache.personPosition.copy(this.person?.position)
+      // 停止行走
+      this.personWalk()
+    } else {
+      // 人物坐标恢复巡航前
+      this.person?.position.copy(this.controlCache.personPosition)
+      this.personWalk(false)
+    }
+    super.toggleCruise(close)
   }
   // 判断巡航
   judgeCruise() {

@@ -41,12 +41,6 @@ export default [
   },
 
   {
-    key: KEYS.M_ROBOT,
-    name: '机器人',
-    size: 0.3,
-    url: '/oss/model/common/机器人.glb'
-  },
-  {
     key: KEYS.M_PERSON,
     name: '人物',
     size: 1.8,

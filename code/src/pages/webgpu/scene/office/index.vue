@@ -107,7 +107,12 @@ if (appStore.historyRoutes.includes('/webgpu/scene/office')) {
 }
 
 // 界面配置
-const pageOpts = reactive(getPageOpts())
+const pageOpts = reactive(
+  getPageOpts((pos, lookAt, curve, progress, enabled) => {
+    if (!enabled || !scene.person) return
+    MS.cruiseTargetMove(scene.person, pos, lookAt, curve, progress)
+  })
+)
 // 提示框
 const tipOpts = reactive(getTipOpts())
 // 电梯楼层配置

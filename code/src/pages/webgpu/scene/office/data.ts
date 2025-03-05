@@ -6,7 +6,9 @@ import models from './models'
  * 获取页面配置
  * @returns
  */
-export const getPageOpts = (): {
+export const getPageOpts = (
+  animateBack
+): {
   /**
    * 锚点类型
    */
@@ -55,7 +57,7 @@ export const getPageOpts = (): {
     color: 0x1fe4ec,
     visible: true,
     auto: false,
-    // alway: true,
+    alway: true,
     mapUrl: '/oss/textures/cruise/line2.png', // 1-18
     repeat: [0.2, 1],
     width: 2,
@@ -66,8 +68,8 @@ export const getPageOpts = (): {
     points: [],
     close: false,
     offset: 5.2,
-    alway: true,
-    bloomIntensity: 0.5
+    bloomIntensity: 0.5,
+    animateBack: animateBack
   },
   roamPoints: [],
 
