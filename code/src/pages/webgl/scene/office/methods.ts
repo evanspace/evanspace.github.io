@@ -1008,6 +1008,13 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     Utils.cameraLookatAnimate(this.camera as any, pos, this.controls.target)
   }
 
+  // 定点巡航
+  toggleCruise(close?: boolean, useCache = true) {
+    this.clearCharacterSight()
+    this.judgeAndStopRoam()
+    super.toggleCruise(close, useCache)
+  }
+
   // 判断是否巡航中
   judgeCruise() {
     if (this.options.cruise.runing) {
