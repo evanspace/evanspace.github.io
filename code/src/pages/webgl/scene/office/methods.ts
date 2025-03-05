@@ -1009,10 +1009,10 @@ export class OfficeThreeScene extends ThreeScene.Scene {
   }
 
   // 定点巡航
-  toggleCruise(close?: boolean, useCache = true) {
+  toggleCruise(close?: boolean) {
     this.clearCharacterSight()
     this.judgeAndStopRoam()
-    super.toggleCruise(close, useCache)
+    super.toggleCruise(close)
   }
 
   // 判断是否巡航中
