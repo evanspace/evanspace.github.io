@@ -16,13 +16,13 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   // 大门
   Emitter.on('CAMERA:GATE', () => scene?.cameraTransitionByModelname('一楼大门'))
   // 前台
-  Emitter.on('CAMERA:RECCEPTION', () => scene?.cameraTransitionByModelname('公司前台'))
+  Emitter.on('CAMERA:RECCEPTION', () => scene?.cameraTransitionByModelname('前台'))
   // 办公区域
-  Emitter.on('CAMERA:OFFICE', () => scene?.cameraTransitionByModelname('办公区域'))
+  Emitter.on('CAMERA:OFFICE', () => scene?.cameraTransitionByModelname('办公'))
   // 大会议室
   Emitter.on('CAMERA:LCR', () => scene?.cameraTransitionByModelname('大会议室'))
   // 老板办公室
-  Emitter.on('CAMERA:BOSS', () => scene?.cameraTransitionByModelname('老板办公室'))
+  Emitter.on('CAMERA:BOSS', () => scene?.cameraTransitionByModelname('总裁'))
 
   // 人物加速
   Emitter.on('PERSON:ADD', () => scene?.personSpeed())

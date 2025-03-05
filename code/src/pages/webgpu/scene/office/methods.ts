@@ -678,6 +678,7 @@ export const convertHoverMaterial = model => {
  * @param group 空组
  */
 export const hoverEmptyGroup = (interscts, callback, container, group) => {
+  if (interscts[0]) interscts[0].object._isEmptyMesh_ = true
   if (typeof callback === 'function') callback(interscts[0], style)
 
   if (interscts.length) {

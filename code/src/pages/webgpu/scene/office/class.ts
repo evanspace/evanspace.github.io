@@ -439,7 +439,7 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // hover 重置
   resetHover() {
-    MS.hoverEmptyGroup([], this.container, this.hoverGroup)
+    MS.hoverEmptyGroup([], null, this.container, this.hoverGroup)
   }
 
   // 窗帘动画
@@ -975,6 +975,12 @@ export class OfficeScene extends ThreeScene.Scene {
       filter: ['电梯-1']
     })
   }
+  // 获取当前鸟瞰状态
+  getBridStatus() {
+    const name = DEFAULTCONFIG.companyModelName
+    const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
+    return model.__isFocus__
+  }
   // 关闭虚化
   closeVirtualization() {
     const name = DEFAULTCONFIG.companyModelName
@@ -1168,10 +1174,10 @@ export class OfficeScene extends ThreeScene.Scene {
   }
 
   // 定点巡航
-  toggleCruise(close?: boolean) {
-    super.toggleCruise(close)
-    // 场景合成
-    this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
+  toggleCruise(close?: boolean, useCache = true) {
+    this.clearPersonSightStatus()
+    this.judgeAndStopRoam()
+    super.toggleCruise(close, useCache)
   }
   // 判断巡航
   judgeCruise() {

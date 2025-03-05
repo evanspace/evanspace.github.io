@@ -23,11 +23,11 @@ export default {
     cache: true,
     dbName: 'THREE__OFFICE__GPU_DB',
     tbName: 'TB',
-    version: 38
+    version: 40
   },
 
   // 判断点击间隔时间
-  clickIntervalTime: 300,
+  clickIntervalTime: 150,
 
   // 人物视线偏移坐标
   personSightOffset: {
@@ -141,8 +141,8 @@ export default {
     // 空组
     empty: 100
   },
-  // 后缀
-  hoverNameSuffix: '-立方体',
+  // 空组网格名称后缀
+  hoverNameSuffix: '-区域',
 
   // 相机转场列表
   cameraTransitionList: [
@@ -152,17 +152,17 @@ export default {
       target: { x: -1.4, y: 5.8, z: 97.4 }
     },
     {
-      name: '公司前台',
+      name: '前台',
       to: { x: 15.3, y: 188, z: 33.2 },
       target: { x: 15.3, y: 188, z: 36.3 }
     },
     {
-      name: '办公区域',
+      name: '办公',
       to: { x: -38, y: 188, z: 35.3 },
       target: { x: -35.4, y: 188, z: 36.4 }
     },
     {
-      name: '老板办公室',
+      name: '总裁',
       to: { x: 69.4, y: 188, z: -0.4 },
       target: { x: 65, y: 188, z: -2.7 }
     },
@@ -170,6 +170,66 @@ export default {
       name: '大会议室',
       to: { x: -28.8, y: 188, z: 52.7 },
       target: { x: -33.7, y: 188, z: 53.4 }
+    },
+    {
+      name: '人事部',
+      to: { x: -32.4, y: 188, z: 35.9 },
+      target: { x: -31.4, y: 188, z: 33.2 }
+    },
+    {
+      name: '小会议室',
+      to: { x: -9.9, y: 188, z: 28.9 },
+      target: { x: -10, y: 188, z: 26 }
+    },
+    {
+      name: '研发及商务',
+      to: { x: 71.2, y: 188, z: 41.9 },
+      target: { x: 68.9, y: 188, z: 43.1 }
+    },
+    {
+      name: '陈总办公室',
+      to: { x: -40.8, y: 188, z: 26.8 },
+      target: { x: -43.1, y: 188, z: 29.4 }
+    },
+    {
+      name: '逄总办公室',
+      to: { x: -43.1, y: 188, z: 8.2 },
+      target: { x: -44.5, y: 188, z: 10.7 }
+    },
+    {
+      name: '财务部',
+      to: { x: -41.7, y: 188, z: -15 },
+      target: { x: -43.2, y: 188, z: -12.2 }
+    },
+    {
+      name: 'CFO',
+      to: { x: -42.8, y: 188, z: -14.7 },
+      target: { x: -44, y: 188, z: -17.2 }
+    },
+    {
+      name: '大洽谈室',
+      to: { x: 54.14, y: 188, z: 30.5 },
+      target: { x: 59.1, y: 188, z: 30.3 }
+    },
+    {
+      name: '程总办公室',
+      to: { x: 55.4, y: 188, z: 23.4 },
+      target: { x: 58.4, y: 188, z: 21.8 }
+    },
+    {
+      name: '茶室',
+      to: { x: 44, y: 188, z: 1.7 },
+      target: { x: 42, y: 188, z: 4.3 }
+    },
+    {
+      name: '洽谈室一',
+      to: { x: -13.1, y: 188, z: -26.7 },
+      target: { x: -16.8, y: 188, z: -24.6 }
+    },
+    {
+      name: '洽谈室二',
+      to: { x: 46.3, y: 188, z: 28.9 },
+      target: { x: 43.6, y: 188, z: 27.2 }
     }
   ],
 

@@ -64,8 +64,9 @@ export const getPageOpts = (): {
     speed: 20,
     mapSpeed: 0.02,
     points: [],
-    close: true,
+    close: false,
     offset: 5.2,
+    alway: true,
     bloomIntensity: 0.5
   },
   roamPoints: [],

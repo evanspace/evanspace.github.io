@@ -455,8 +455,7 @@ onMounted(() => {
     canvas: canvasTextureRef.value,
     // 悬浮提示
     onHoverCall: (object, style) => {
-      console.log(object)
-      const isShow = !!object
+      const isShow = !!object && (object.object._isAnchor_ || object.object._isEmptyMesh_)
       tipOpts.show = isShow
       if (isShow) {
         const model = object.object
@@ -480,7 +479,11 @@ onMounted(() => {
 
     // 右键
     onClickRight: () => {
-      console.log('右键')
+      const status = scene?.getBridStatus()
+      // 当前如果为鸟瞰状态则复位
+      if (status) {
+        scene?.toggleCompanyFocus(true)
+      }
     },
 
     // 点击地面

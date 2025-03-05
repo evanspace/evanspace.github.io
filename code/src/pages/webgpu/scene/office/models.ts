@@ -30,13 +30,13 @@ export default [
   {
     key: 'floor_heigh',
     name: '高层',
-    size: 2.7,
+    size: 0.5,
     url: '/高层.glb'
   },
   {
     key: KEYS.M_COMPANY_EMPTY_GROUP,
     name: '高层',
-    size: 0.01,
+    size: 0.02,
     url: '/二十五楼-空组.glb'
   },
 
