@@ -14,8 +14,7 @@
 import { useTagsStore } from '@/stores'
 
 const tagsStore = useTagsStore()
-const cachedViews = computed( () => tagsStore.cachedViews )
-
+const cachedViews = computed(() => tagsStore.cachedViews)
 </script>
 
 <style lang="scss">
@@ -31,5 +30,3 @@ const cachedViews = computed( () => tagsStore.cachedViews )
   padding-top: calc(var(--tags-view-height) + var(--header-nav-height));
 }
 </style>
-
-

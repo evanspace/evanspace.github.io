@@ -47,6 +47,7 @@ export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) =
   }
 
   const outputPass = scenePass.getTextureNode()
+
   let bloomPass
   if (isEnv) {
     const emissivePass = scenePass.getTextureNode('emissive')
@@ -654,7 +655,7 @@ export const convertHoverMaterial = model => {
     color: selectObject.color
   })
   material.mrtNode = THREE.TSL.mrt({
-    bloomIntensity: THREE.TSL.uniform(selectObject.bloomIntensity)
+    bloomIntensity: THREE.TSL.float(selectObject.bloomIntensity)
   })
 
   if (model.isMesh) {
@@ -704,25 +705,23 @@ export const hoverEmptyGroup = (interscts, callback, container, group) => {
 /**
  * 巡航目标移动
  * @param target 需要移动的目标
- * @param pos 相机坐标
- * @param lookAt 相机焦点
- * @param curve 巡航曲线
- * @param progress 进度
+ * @param options 巡航过渡回参
  */
-export const cruiseTargetMove = (target, pos, lookAt, curve, progress) => {
+export const cruiseTargetMove = (target, options) => {
+  let { position, lookAt, curve, progress } = options
   // 前置视角前 0.02
   progress = progress + 0.02
   if (progress > 1) progress = progress - 1
   // 当前曲线进度坐标
   const cPos = curve.getPointAt(progress)
-  pos = cPos.clone().add(new THREE.Vector3(0, 0.1, 0))
+  position = cPos.clone().add(new THREE.Vector3(0, 0.1, 0))
   const oft = 0.001
   let ts = progress + oft
   if (ts > 1) ts = ts - 1
   lookAt = curve.getPointAt(ts)
 
-  target.position.copy(pos.clone().add(new THREE.Vector3(0, 0.1, 0)))
+  target.position.copy(position.clone().add(new THREE.Vector3(0, 0.1, 0)))
   // // 求正切值
-  const angle = Math.atan2(-lookAt.z + pos.z, lookAt.x - pos.x)
+  const angle = Math.atan2(-lookAt.z + position.z, lookAt.x - position.x)
   target.rotation.y = Math.PI * 0.5 + angle
 }

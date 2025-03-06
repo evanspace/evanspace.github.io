@@ -1,45 +1,7 @@
 <template>
   <div class="three-page" :class="$style.page">
     <!-- 操作按钮 -->
-    <div class="scene-operation">
-      <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
-
-      <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
-
-      <div class="item" v-for="item in cameraPositionList" @click="onCameraTransition(item)">
-        {{ item.name }}
-      </div>
-
-      <div class="item" @click="() => Emitter.emit('CAMERA:CRUISE')">定点巡航</div>
-      <div class="item" @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
-
-      <div class="item" @click="() => Emitter.emit('LIGHT:CLG')">灯组开关</div>
-      <div class="item" @click="() => Emitter.emit('LIGHT:FIRSTFLOOR')">一楼灯开关</div>
-      <div
-        class="item"
-        @click="() => Emitter.emit('LIGHT:LCR', null, Math.floor(Math.random() * 5))"
-      >
-        大会议室灯
-      </div>
-
-      <div class="item" @click="() => Emitter.emit('CURTAIN:TOGGLE')">窗帘开关</div>
-      <div class="item" @click="() => Emitter.emit('EFFECT:FLEETING')">流光开关</div>
-
-      <div class="item" @click="() => Emitter.emit('SKY:DAY')">白天</div>
-      <div class="item" @click="() => Emitter.emit('SKY:EVENING')">傍晚</div>
-      <div class="item" @click="() => Emitter.emit('SKY:NIGHT')">夜间</div>
-
-      <div class="item" @click="() => Emitter.emit('AIR:MAIN')">空调开关</div>
-      <div class="item" @click="() => Emitter.emit('AIR:WINDADD')">空调风速+</div>
-      <div class="item" @click="() => Emitter.emit('AIR:WINDSUB')">空调风速-</div>
-
-      <div class="item" @click="() => Emitter.emit('CAMERA:FIRST')">第一人称</div>
-      <div class="item" @click="() => Emitter.emit('CAMERA:THREE')">第三人称</div>
-      <div class="item" @click="() => Emitter.emit('PERSON:ADD')">人物加速</div>
-      <div class="item" @click="() => Emitter.emit('PERSON:SUB')">人物减速</div>
-
-      <div class="item" @click="() => Emitter.emit('BIRD:COMPANY')">鸟瞰</div>
-    </div>
+    <t-operation :list="cameraPositionList" @change="onCameraTransition"></t-operation>
 
     <div class="h-100" ref="containerRef"></div>
 
@@ -81,6 +43,7 @@ import tLoading from '@/components/loading/index.vue'
 import tTipMsg from './tip-msg.vue'
 import tEditDialog from './edit-dialog.vue'
 import tFirstPerson from './first-person.vue'
+import tOperation from './oprtation.vue'
 
 import { getPageOpts, getTipOpts, getFloorOpts } from './data'
 import KEYS from './keys'
@@ -103,16 +66,11 @@ const { Hooks, Utils, THREE } = MS
 const appStore = useAppStore()
 // 存在则刷新
 if (appStore.historyRoutes.includes('/webgpu/scene/office')) {
-  window.location.reload()
+  // window.location.reload()
 }
 
 // 界面配置
-const pageOpts = reactive(
-  getPageOpts((pos, lookAt, curve, progress, enabled) => {
-    if (!enabled || !scene.person) return
-    MS.cruiseTargetMove(scene.person, pos, lookAt, curve, progress)
-  })
-)
+const pageOpts = reactive(getPageOpts())
 // 提示框
 const tipOpts = reactive(getTipOpts())
 // 电梯楼层配置
@@ -139,6 +97,7 @@ const containerRef = ref()
 const options: ConstructorParameters<typeof OfficeScene>[0] = {
   cruise: pageOpts.cruise,
   baseUrl: DEFAULTCONFIG.baseUrl,
+  // env: DEFAULTCONFIG.sky[0],
   render: {
     alpha: true
   },
@@ -162,6 +121,7 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     intensity: 4,
     light2: false,
     position: [0, 7000, 2000],
+    position2: [0, 7000, -2000],
     shadow: {
       mapSize: 512 * 4
     },
@@ -444,6 +404,7 @@ const onClickLeft = object => {
       break
     case KEYS.M_SCREEN_EDIT: // 大屏欢迎词编辑
       dialog.show = true
+      tipOpts.show = false
       break
     case KEYS.M_AIR_SWITCH: // 空调
       Emitter.emit('AIR:ODD', object)

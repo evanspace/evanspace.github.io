@@ -17,7 +17,7 @@ const {
 } = Hooks.useRoam()
 const { dubleHorizontal, dubleRotate, oddRotate } = Hooks.useOpenTheDoor()
 const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
-const { createMove, moveAnimate } = Hooks.useMoveAnimate()
+const { createMove, moveAnimate, stop: moveStop } = Hooks.useMoveAnimate()
 const { checkCollide } = Hooks.useCollide()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(DEFAULTCONFIG.diffusionImgs)
@@ -32,6 +32,8 @@ const SIGHT_MAP = {
 
 // 地面网格名称
 const GROUND_MESH_NAMES = DEFAULTCONFIG.groundMeshName.concat(DEFAULTCONFIG.liftGroundMeshName)
+
+const envTexture = new Map()
 
 export class OfficeScene extends ThreeScene.Scene {
   // 扩展参数
@@ -171,14 +173,8 @@ export class OfficeScene extends ThreeScene.Scene {
     // 扩散波
     this.addDiffusion()
 
-    this.controlCache.maxDistance = this.options.controls.maxDistance
+    this.setControlCache()
     console.log(this)
-  }
-
-  // 设置环境贴图
-  setEnv(texture) {
-    this.scene.environment = texture
-    this.scene.background = texture
   }
 
   // 渲染器
@@ -201,7 +197,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 渲染
   render() {
-    this.postProcessing.renderAsync()
+    this.postProcessing?.renderAsync()
   }
 
   run() {
@@ -277,6 +273,12 @@ export class OfficeScene extends ThreeScene.Scene {
     this.setStyleOptions(0.01, 0.3, this.sky.night, true)
   }
 
+  // 设置环境贴图
+  setEnv(texture) {
+    this.scene.environment = texture
+    this.scene.background = texture.clone()
+  }
+
   // 设置 sky 参数 (环境光强度，平行光强度，hdr，可见)
   setStyleOptions(ambIntensity, dirIntensity, hdr, visible = false) {
     this.ambientLight.intensity = ambIntensity
@@ -286,12 +288,15 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
     this.toggleCruiseBloom(visible, THREE)
 
-    this.loadEnvTexture(hdr, _texture => {
-      // this.postProcessing.needsUpdate = true
-      // console.log(this.scene.environment)
-      // this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
-      // console.log(this.postProcessing)
-    })
+    console.log(envTexture.get(hdr))
+    if (envTexture.get(hdr)) {
+      this.setEnv(envTexture.get(hdr))
+    } else {
+      this.loadEnvTexture(hdr, _texture => {
+        console.log(_texture)
+        envTexture.set(hdr, _texture)
+      })
+    }
   }
 
   // 自动切换场景风格
@@ -698,7 +703,7 @@ export class OfficeScene extends ThreeScene.Scene {
       if (this.isPersonSight() && !personModel.__runing__) {
         const factor = 1 + this.moveFactor / 5
         // 移动速度
-        const steep = 5 * delta * factor
+        const steep = DEFAULTCONFIG.personRuningSpeed * delta * factor
         // 旋转速度
         const angle = Math.PI * 0.2 * delta * factor
         // 前进后退
@@ -756,18 +761,27 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 人物视角
   togglePersonSight(type?: number) {
-    // 巡航中不可操作
-    if (this.judgeCruise()) return
-    // 判断漫游并停止
-    this.judgeAndStopRoam()
+    if (!DEFAULTCONFIG.sightToggle) {
+      // 第一视角
+      if (type == 1 && this.currentSight === SIGHT_MAP.PERSON_FIRST) return
+      // 第三视角
+      if (type == 3 && this.currentSight === SIGHT_MAP.PERSON_THREE) return
+    }
+    // 关闭巡航
+    this.closeCruise()
+    // 关闭漫游
+    this.closeRoam()
 
     // 当前视角
-    const sight = this.isPersonSight()
-      ? SIGHT_MAP.SCREEN
-      : type == 1
-      ? SIGHT_MAP.PERSON_FIRST
-      : SIGHT_MAP.PERSON_THREE
-    this.currentSight = sight
+    if (DEFAULTCONFIG.sightToggle) {
+      this.currentSight = this.isPersonSight()
+        ? SIGHT_MAP.SCREEN
+        : type == 1
+        ? SIGHT_MAP.PERSON_FIRST
+        : SIGHT_MAP.PERSON_THREE
+    } else {
+      this.currentSight = type == 1 ? SIGHT_MAP.PERSON_FIRST : SIGHT_MAP.PERSON_THREE
+    }
 
     // 人物视角界面效果
     this.togglePersonView()
@@ -802,9 +816,15 @@ export class OfficeScene extends ThreeScene.Scene {
     const isCharacter = this.isPersonSight()
     dom.style.display = isCharacter ? 'block' : 'none'
   }
-  // 清除人物视角状态
-  clearPersonSightStatus() {
+  // 关闭人物视角
+  clsoePerson() {
     this.currentSight = SIGHT_MAP.SCREEN
+    // 是否行走中
+    if (this.person?.__runing__) {
+      moveStop(false)
+      this.person.__runing__ = false
+      this.diffusion.visible = false
+    }
     this.togglePersonView()
   }
   // 机位切换
@@ -873,6 +893,7 @@ export class OfficeScene extends ThreeScene.Scene {
     obj.visible = true
 
     return new Promise(resolve => {
+      personModel.__runing__ = true
       // 创建移动
       createMove(
         personModel,
@@ -948,10 +969,6 @@ export class OfficeScene extends ThreeScene.Scene {
   ///////////////////////////
   // 公司鸟瞰图
   toggleBridCompany() {
-    if (this.judgeCruise()) return
-    this.clearPersonSightStatus()
-    this.judgeAndStopRoam()
-
     const name = DEFAULTCONFIG.companyModelName
     const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
     if (!model) {
@@ -961,22 +978,28 @@ export class OfficeScene extends ThreeScene.Scene {
       })
       return
     }
+    this.closeCruise()
+    this.clsoePerson()
+    this.closeRoam()
 
+    const oldStatus = model.__isFocus__
     // 设置聚焦
-    model.__isFocus__ = !model.__isFocus__
+    model.__isFocus__ = DEFAULTCONFIG.sightToggle ? !model.__isFocus__ : true
 
-    if (!model.__isFocus__) {
+    if (!model.__isFocus__ && oldStatus != model.__isFocus__) {
       this.closeVirtualization()
       this.toggleCompanyFocus(false)
       return
     }
     this.toggleCompanyFocus(true)
-    virtualization(this.buildingGroup?.children || [], model, {
-      wireframe: !false,
-      hidden: true,
-      opacity: 0.1,
-      filter: ['电梯-1']
-    })
+    if (oldStatus != model.__isFocus__) {
+      virtualization(this.buildingGroup?.children || [], model, {
+        wireframe: !false,
+        hidden: true,
+        opacity: 0.1,
+        filter: ['电梯-1']
+      })
+    }
   }
   // 获取当前鸟瞰状态
   getBridStatus() {
@@ -1006,6 +1029,11 @@ export class OfficeScene extends ThreeScene.Scene {
     }
     this.controls.maxDistance = maxDistance
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+  }
+  // 关闭鸟瞰视角
+  closeBrid() {
+    const status = this.getBridStatus()
+    if (status) this.closeVirtualization()
   }
 
   ///////////////////////////
@@ -1056,26 +1084,15 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 相机转场
   cameraTransition(object) {
-    if (this.judgeCruise()) return
-    if (this.diffusion.visible) {
-      ElMessage.warning({
-        message: '人物移动中，不可操作！',
-        grouping: true
-      })
-      return
-    }
-
-    this.clearPersonSightStatus()
-
     const { to, target = object.position } = object.data
-
     if (!to) return
-
     if (!this.isCameraMove(to) && this.controls) {
-      // 判断漫游并停止
-      this.judgeAndStopRoam()
+      this.closeRoam()
+      this.clsoePerson()
+      this.closeCruise()
+      this.clsoePerson()
       this.controls.enablePan = true
-      this.controls.maxDistance = 5
+      this.controls.maxDistance = DEFAULTCONFIG.cameraMaxDistance.indoor
       Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
     }
   }
@@ -1108,9 +1125,10 @@ export class OfficeScene extends ThreeScene.Scene {
   ///////////////////////////
   // 控制器重置
   controlReset() {
-    this.judgeAndStopRoam()
-    this.clearPersonSightStatus()
-    this.closeVirtualization()
+    // 关闭 漫游、人物、鸟瞰
+    this.closeRoam()
+    this.clsoePerson()
+    this.closeBrid()
     if (!this.controls) return
     const controls = this.options.controls
     Object.keys(controls).forEach(key => {
@@ -1144,12 +1162,13 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 漫游
   toggleRoam() {
-    this.clearPersonSightStatus()
-    if (this.judgeAndStopRoam()) return
+    this.closeCruise()
+    this.clsoePerson()
+    if (this.closeRoam()) return
     const points = this.extend.roamPoints || []
     if (points.length == 0) return
     if (!this.controls) return
-    this.controls.maxDistance = 5
+    this.controls.maxDistance = DEFAULTCONFIG.cameraMaxDistance.roam
     createRoam({
       points,
       segment: 6,
@@ -1164,8 +1183,8 @@ export class OfficeScene extends ThreeScene.Scene {
   setRoamPoint(points) {
     this.extend.roamPoints = points
   }
-  // 判断漫游，并停止
-  judgeAndStopRoam() {
+  // 关闭漫游
+  closeRoam() {
     if (getRoamStatus()) {
       if (this.controls) {
         this.controls.maxDistance = this.options.controls.maxDistance
@@ -1178,8 +1197,13 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 定点巡航
   toggleCruise(close?: boolean) {
-    this.clearPersonSightStatus()
-    this.judgeAndStopRoam()
+    if (!DEFAULTCONFIG.sightToggle) {
+      close = false
+      if (!close === this.options.cruise.runing) return
+    }
+
+    this.clsoePerson()
+    this.closeRoam()
     const runing = !(close ?? this.options.cruise.runing)
     // 即将运行则缓存人物坐标
     if (runing && this.person) {
@@ -1198,6 +1222,24 @@ export class OfficeScene extends ThreeScene.Scene {
     if (!enabled) return
     this.personWalk(runing)
   }
+  // 巡航过渡回调
+  cruiseAnimateCall(options) {
+    if (!options.enabled || !this.person) return
+    MS.cruiseTargetMove(this.person, options)
+  }
+  // 关闭巡航
+  closeCruise() {
+    const isRuning = this.options.cruise.runing
+    super.closeCruise()
+    if (isRuning) {
+      // 人物坐标恢复巡航前
+      this.person?.position.copy(this.controlCache.personPosition)
+      this.personWalk(false)
+      // 关闭人物行走动画
+      this.personWalk(false)
+    }
+  }
+
   // 判断巡航
   judgeCruise() {
     if (this.options.cruise.runing) {
@@ -1234,8 +1276,8 @@ export class OfficeScene extends ThreeScene.Scene {
     const hoverDistance = DEFAULTCONFIG.hoverDistance
 
     let objects: any[] = []
-    // 悬浮组距离
-    const isHoverGroupDistance = maxDistance > hoverDistance.empty
+    // 悬浮组距离 且控制器激活状态
+    const isHoverGroupDistance = maxDistance > hoverDistance.empty && this.controls?.enabled
     // 空组
     if (isHoverGroupDistance) {
       objects = this.hoverGroup?.children || []
@@ -1327,6 +1369,11 @@ export class OfficeScene extends ThreeScene.Scene {
     this.streetLampGroup = void 0
     this.residentLightGroup = void 0
     this.extend = {}
+
+    envTexture.forEach(el => {
+      console.log(el)
+      el.dispose()
+    })
 
     this.renderer.dispose()
     destroyEvent()

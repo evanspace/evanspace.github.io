@@ -50,6 +50,8 @@ export default {
   personDefaultAnimateName: 'PlayOne-Headnod',
   // 人物行走状态动画
   personRuningAnimateName: 'PlayOne-Walk',
+  // 人物行走基础速度
+  personRuningSpeed: 5,
 
   // 电梯地面网格名称
   liftGroundMeshName: ['电梯地板002', '电梯地板'],
@@ -106,7 +108,7 @@ export default {
   // 居民灯
   residentLights: [
     [-13, 169.8, 447.2],
-    [668, 114.9, 481.9]
+    [619, 179.7, 442.5]
   ],
 
   // 空调风
@@ -233,9 +235,18 @@ export default {
     }
   ],
 
-  // 选中对象
+  // 区域选中对象
   selectObject: {
     color: 0x27ffb0,
     bloomIntensity: 0.3
-  }
+  },
+
+  // 相机转场视角最大值
+  cameraMaxDistance: {
+    indoor: 5, // 室内
+    roam: 5 // 漫游
+  },
+
+  // 视角自动切换
+  sightToggle: false
 }

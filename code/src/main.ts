@@ -21,6 +21,17 @@ import './utils/check-update'
 /* 权限控制 */
 import './permission'
 
+if (import.meta.hot) {
+  import.meta.hot.accept(() => {
+    const containers = document.querySelectorAll('.three-page')
+    containers.forEach(container => {
+      while (container.firstChild) {
+        container.removeChild(container.firstChild)
+      }
+    })
+  })
+}
+
 const app = createApp(App)
 
 app.directive('focus', {
