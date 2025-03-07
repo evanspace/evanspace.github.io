@@ -141,7 +141,7 @@ export default {
   // 大于额定值则启用
   hoverDistance: {
     // 空组
-    empty: 100
+    empty: 10000
   },
   // 空组网格名称后缀
   hoverNameSuffix: '-区域',
@@ -244,7 +244,8 @@ export default {
   // 相机转场视角最大值
   cameraMaxDistance: {
     indoor: 5, // 室内
-    roam: 5 // 漫游
+    roam: 5, // 漫游
+    threePerson: 8 // 第三人称
   },
 
   // 视角自动切换

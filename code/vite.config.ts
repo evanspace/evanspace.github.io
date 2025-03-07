@@ -240,7 +240,10 @@ export default ({ mode }) => {
       host: '0.0.0.0', //自定义主机名
       port: 9002, //自定义端口
       // 是否开启 https
-      https: false
+      https: false,
+      headers: {
+        'Cache-Control': 'no-store' // 强制不缓存
+      }
     },
 
     // 预览服务

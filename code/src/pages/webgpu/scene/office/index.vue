@@ -126,7 +126,7 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
       mapSize: 512 * 4
     },
     shadowCamera: {
-      boundary: 5000
+      boundary: 7000
     }
   }
 }
@@ -263,6 +263,10 @@ const cameraPositionList = computed(() =>
 const loadScene = async res => {
   //  组装场景
   await assemblyScenario()
+
+  // 处理透明边界
+  const obj = scene.scene.getObjectByName('透明_边界')
+  if (obj) obj.castShadow = false
 
   // 创建人物
   createPerson()

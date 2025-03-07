@@ -1,4 +1,3 @@
-import * as THREE from 'three/webgpu'
 import * as ThreeScene from 'three-scene'
 
 import DEFAULTCONFIG from './config'
@@ -6,7 +5,7 @@ import * as MS from './methods'
 import { ExtendOptions, Sky } from '.'
 import { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
-const { Utils, Hooks } = MS
+const { Utils, Hooks, THREE } = MS
 
 const {
   createRoam,
@@ -32,8 +31,6 @@ const SIGHT_MAP = {
 
 // 地面网格名称
 const GROUND_MESH_NAMES = DEFAULTCONFIG.groundMeshName.concat(DEFAULTCONFIG.liftGroundMeshName)
-
-const envTexture = new Map()
 
 export class OfficeScene extends ThreeScene.Scene {
   // 扩展参数
@@ -142,6 +139,11 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 场景合成
     this.postProcessing = MS.createPostProcessing(this.scene, this.camera, this.renderer)
+
+    this.pmremGenerator = new THREE.PMREMGenerator(this.renderer)
+    // 预编译着色器
+    // @ts-ignore
+    this.pmremGenerator.compileEquirectangularShader()
 
     // 建筑
     this.addBuildingGroup()
@@ -275,8 +277,10 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 设置环境贴图
   setEnv(texture) {
-    this.scene.environment = texture
-    this.scene.background = texture.clone()
+    this.scene.background = texture
+    const envMap = this.convertPmremTexture(texture)
+    this.scene.environment = envMap
+    texture.dispose()
   }
 
   // 设置 sky 参数 (环境光强度，平行光强度，hdr，可见)
@@ -288,13 +292,9 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
     this.toggleCruiseBloom(visible, THREE)
 
-    if (envTexture.get(hdr)) {
-      this.setEnv(envTexture.get(hdr))
-    } else {
-      this.loadEnvTexture(hdr, _texture => {
-        envTexture.set(hdr, _texture)
-      })
-    }
+    this.loadEnvTexture(hdr, _texture => {
+      // console.log(hdr)
+    })
   }
 
   // 自动切换场景风格
@@ -732,6 +732,7 @@ export class OfficeScene extends ThreeScene.Scene {
       const dis = dir.clone().multiplyScalar(isS ? -steep : steep)
       // 初始位置+偏移向量
       const newPos = personModel?.position.clone().add(dis) || new THREE.Vector3()
+      // 检测碰撞
       if (!this.checkCharacterCollide(newPos)) {
         personModel?.position.copy(newPos)
         if (isS) {
@@ -795,7 +796,11 @@ export class OfficeScene extends ThreeScene.Scene {
     const isPerson = isPersonFirst || sight === SIGHT_MAP.PERSON_THREE
 
     // 控制器操作限制切换
-    this.controls.maxDistance = isPerson ? (isPersonFirst ? 0 : 10) : this.controlCache.maxDistance
+    this.controls.maxDistance = isPerson
+      ? isPersonFirst
+        ? 0
+        : DEFAULTCONFIG.cameraMaxDistance.threePerson
+      : this.controlCache.maxDistance
     this.controls.screenSpacePanning = !isPerson
     this.controls.enablePan = !isPerson
   }
@@ -1152,9 +1157,9 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
   // 设置控制中心点
-  setControlTarget(point) {
+  setControlTarget(position) {
     if (!this.controls) return
-    this.controls.target.copy(point.clone().add(this.personSightOffset.clone()))
+    this.controls.target.copy(position.clone().add(this.personSightOffset.clone()))
     this.camera.lookAt(this.controls.target)
   }
 
@@ -1368,11 +1373,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup = void 0
     this.extend = {}
 
-    envTexture.forEach(el => {
-      el.dispose()
-    })
-
-    this.renderer.dispose()
     destroyEvent()
     super.dispose()
   }
