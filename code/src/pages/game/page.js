@@ -1,6 +1,6 @@
 export default {
   title: 'game',
   icon: 'm-game',
-  order: 13,
+  order: 92,
   noRedirect: true
 }
