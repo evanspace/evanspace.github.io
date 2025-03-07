@@ -111,6 +111,7 @@ export default {
     export: '导出',
     slicing: '切片',
     mirror: '镜面',
+    clearcoat: '清漆',
 
     bloom: '发光',
     selective: '选择性',
