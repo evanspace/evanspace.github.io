@@ -288,12 +288,10 @@ export class OfficeScene extends ThreeScene.Scene {
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
     this.toggleCruiseBloom(visible, THREE)
 
-    console.log(envTexture.get(hdr))
     if (envTexture.get(hdr)) {
       this.setEnv(envTexture.get(hdr))
     } else {
       this.loadEnvTexture(hdr, _texture => {
-        console.log(_texture)
         envTexture.set(hdr, _texture)
       })
     }
@@ -1371,7 +1369,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.extend = {}
 
     envTexture.forEach(el => {
-      console.log(el)
       el.dispose()
     })
 
