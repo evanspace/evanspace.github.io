@@ -1,0 +1,1 @@
+._animate_8yzw6_2{height:100px;overflow:hidden;position:relative}._animate_8yzw6_2 ._dot_8yzw6_7{width:20px;height:20px;position:absolute;animation:_dotMove_8yzw6_1 2s linear infinite;border-radius:50%;background-color:red}@keyframes _dotMove_8yzw6_1{0%{top:75px;left:0}25%{top:10px;left:25%}50%{top:75px;left:50%}75%{top:10px;left:75%}to{top:75px;left:100%}}
