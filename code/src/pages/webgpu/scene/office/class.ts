@@ -246,13 +246,14 @@ export class OfficeScene extends ThreeScene.Scene {
   // 查找灯光
   findLight() {
     // 环境光
-    const amb = this.scene.getObjectByProperty('isAmbientLight', true) as THREE.AmbientLight
+    const amb = this.scene.getObjectByProperty('isAmbientLight', true) as InstanceType<
+      typeof THREE.AmbientLight
+    >
     this.ambientLight = amb
     // 平行光
-    const dire = this.scene.getObjectByProperty(
-      'isDirectionalLight',
-      true
-    ) as THREE.DirectionalLight
+    const dire = this.scene.getObjectByProperty('isDirectionalLight', true) as InstanceType<
+      typeof THREE.DirectionalLight
+    >
     this.directionalLight = dire
   }
 

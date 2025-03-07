@@ -13,11 +13,16 @@ export class ClearcoatScene extends ThreeScene.Scene {
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
+    this.pmremGenerator = new THREE.PMREMGenerator(this.renderer)
+    // 预编译着色器
+    // @ts-ignore
+    this.pmremGenerator.compileEquirectangularShader()
+
     new HDRCubeTextureLoader()
       .setPath(base + '/oss/textures/cube/hdr/601/')
       .load(['px.hdr', 'nx.hdr', 'py.hdr', 'ny.hdr', 'pz.hdr', 'nz.hdr'], texture => {
         this.scene.background = texture
-        this.scene.environment = texture
+        this.scene.environment = this.convertPmremTexture(texture)
         this.addModel()
       })
   }

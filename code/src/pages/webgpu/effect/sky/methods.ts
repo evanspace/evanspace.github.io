@@ -91,6 +91,11 @@ export class SkyScene extends ThreeScene.Scene {
     const waterAmbientLight = new THREE.HemisphereLight(0x333366, 0x74ccf4, 5)
     const skyAmbientLight = new THREE.HemisphereLight(0x74ccf4, 0, 1)
 
+    this.pmremGenerator = new THREE.PMREMGenerator(this.renderer)
+    // 预编译着色器
+    // @ts-ignore
+    this.pmremGenerator.compileEquirectangularShader()
+
     this.addObject(skyAmbientLight)
     this.addObject(waterAmbientLight)
 
@@ -122,9 +127,12 @@ export class SkyScene extends ThreeScene.Scene {
     } = this
     const custom1UV = reflectNode.xyz.mul(TSL.uniform(rotateY1Matrix))
     const custom2UV = reflectNode.xyz.mul(TSL.uniform(rotateY2Matrix))
+
+    const texture1 = this.convertPmremTexture(this.cube1Texture)
+    const texture2 = this.convertPmremTexture(this.cube2Texture)
     const mixCubeMaps = TSL.mix(
-      TSL.pmremTexture(this.cube1Texture, custom1UV),
-      TSL.pmremTexture(this.cube2Texture, custom2UV),
+      TSL.pmremTexture(texture1, custom1UV),
+      TSL.pmremTexture(texture2, custom2UV),
       positionNode.y.add(mixNode).clamp()
     )
 
