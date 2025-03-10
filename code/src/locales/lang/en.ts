@@ -112,6 +112,8 @@ export default {
     slicing: 'slicing',
     mirror: 'mirror',
     clearcoat: 'clearcoat',
+    diffusion: 'diffusion',
+    noise: 'noise',
 
     bloom: 'bloom',
     selective: 'selective',

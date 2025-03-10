@@ -112,6 +112,8 @@ export default {
     slicing: '切片',
     mirror: '镜面',
     clearcoat: '清漆',
+    diffusion: '扩散波',
+    noise: '噪波',
 
     bloom: '发光',
     selective: '选择性',
