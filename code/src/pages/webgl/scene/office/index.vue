@@ -178,7 +178,7 @@ const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
   },
   camera: {
     near: 1.8,
-    fov: 45,
+    fov: 52,
     position: [-799.2, 55, 376.3]
   },
   directionalLight: {
