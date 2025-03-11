@@ -472,7 +472,7 @@ const deviceUpdate = data => {
       const isRun = show
       if (isRun) {
         if (obj.isRunning()) {
-          obj.paused = true
+          obj.paused = false
         } else {
           obj.play()
           obj.paused = false
