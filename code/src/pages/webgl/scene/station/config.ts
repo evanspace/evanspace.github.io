@@ -9,7 +9,7 @@ export default {
     cache: true,
     dbName: 'THREE__STATION__DB',
     tbName: 'TB',
-    version: 67
+    version: 68
   },
 
   // 判断点击间隔时间
