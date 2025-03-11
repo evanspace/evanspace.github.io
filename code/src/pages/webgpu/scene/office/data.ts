@@ -65,7 +65,6 @@ export const getPageOpts = (): {
     mapSpeed: 0.02,
     points: [],
     close: !false,
-    // offset: 5.2,
     offset: 3.5,
     bloomIntensity: 0.1
   },

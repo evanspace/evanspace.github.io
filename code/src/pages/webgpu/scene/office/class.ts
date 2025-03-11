@@ -440,8 +440,8 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 添加 hover 模型
   addHover(model) {
-    const obj = MS.convertHoverMaterial(model)
-    this.hoverGroup?.add(obj)
+    const list = MS.convertHoverMaterial(model)
+    this.hoverGroup?.add(...list)
   }
   // hover 重置
   resetHover() {
@@ -804,6 +804,8 @@ export class OfficeScene extends ThreeScene.Scene {
       : this.controlCache.maxDistance
     this.controls.screenSpacePanning = !isPerson
     this.controls.enablePan = !isPerson
+    // 第一人称则隐藏人物
+    this.person && (this.person.visible = !isPersonFirst)
   }
   // 人物视角
   isPersonSight() {
@@ -829,6 +831,8 @@ export class OfficeScene extends ThreeScene.Scene {
       this.person.__runing__ = false
       this.diffusion.visible = false
     }
+    // 显示人物
+    this.person && (this.person.visible = true)
     this.togglePersonView()
   }
   // 机位切换
@@ -1009,7 +1013,7 @@ export class OfficeScene extends ThreeScene.Scene {
   getBridStatus() {
     const name = DEFAULTCONFIG.companyModelName
     const model = this.buildingGroup?.getObjectByName(name) as ThreeModelItem
-    return model.__isFocus__
+    return model?.__isFocus__
   }
   // 关闭虚化
   closeVirtualization() {
@@ -1175,10 +1179,10 @@ export class OfficeScene extends ThreeScene.Scene {
     this.controls.maxDistance = DEFAULTCONFIG.cameraMaxDistance.roam
     createRoam({
       points,
-      segment: 6,
+      segment: 12,
       tension: 0,
       speed: 2,
-      close: false,
+      close: !false,
       factor: 1
     })
     roamPlay()
@@ -1276,15 +1280,22 @@ export class OfficeScene extends ThreeScene.Scene {
   checkIntersectObjects(e: PointerEvent) {
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
 
+    // 控制最大距离
     const maxDistance = this.controls?.maxDistance || 0
     const hoverDistance = DEFAULTCONFIG.hoverDistance
+    // 跳转鸟瞰网格名称
+    const toBridMeshName = DEFAULTCONFIG.toBridMeshName
 
     let objects: any[] = []
     // 悬浮组距离 且控制器激活状态
     const isHoverGroupDistance = maxDistance > hoverDistance.empty && this.controls?.enabled
     // 空组
     if (isHoverGroupDistance) {
-      objects = this.hoverGroup?.children || []
+      // 鸟瞰视角
+      const isBridSight = this.getBridStatus()
+      objects = (this.hoverGroup?.children || []).filter(
+        el => !isBridSight || (isBridSight && el.name != toBridMeshName)
+      )
     } else {
       // 锚点或者地面
       objects =
@@ -1320,13 +1331,18 @@ export class OfficeScene extends ThreeScene.Scene {
       const object = intersct.object
       console.log(intersct)
       if (isHoverGroupDistance) {
-        const object = intersct.object
+        // 查找相机切换对应对象
         const obj = DEFAULTCONFIG.cameraTransitionList.find(
           it => it.name + DEFAULTCONFIG.hoverNameSuffix === object.name
         )
-        if (!obj) return
         object.visible = false
-        this.cameraTransition({ data: obj })
+        if (!obj) {
+          if (object.name === toBridMeshName) {
+            this.toggleBridCompany()
+          }
+        } else {
+          this.cameraTransition({ data: obj })
+        }
         return
       }
 

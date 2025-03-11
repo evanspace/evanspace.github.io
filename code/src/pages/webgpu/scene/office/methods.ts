@@ -651,7 +651,7 @@ export const convertHoverMaterial = model => {
   const selectObject = DEFAULTCONFIG.selectObject
   const material = new THREE.MeshBasicNodeMaterial({
     transparent: true,
-    opacity: 0.2,
+    opacity: 0.15,
     color: selectObject.color
   })
   material.mrtNode = THREE.TSL.mrt({
@@ -662,13 +662,15 @@ export const convertHoverMaterial = model => {
     model.material = material
     model.visible = false
   }
+  const list: any[] = []
   model.traverse(el => {
     if (el.isMesh) {
       el.material = material
       el.visible = false
+      list.push(el)
     }
   })
-  return model
+  return list
 }
 
 /**

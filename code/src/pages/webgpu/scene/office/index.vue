@@ -110,8 +110,8 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     maxDistance: 1500
   },
   camera: {
-    near: 3,
-    fov: 45,
+    near: 0.01,
+    fov: 52,
     position: [-799.2, 55, 376.3]
   },
   ambientLight: {
