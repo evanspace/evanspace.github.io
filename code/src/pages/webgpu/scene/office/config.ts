@@ -23,8 +23,18 @@ export default {
     cache: true,
     dbName: 'THREE__OFFICE__GPU_DB',
     tbName: 'TB',
-    version: 42
+    version: 46
   },
+
+  // hover 距离配置
+  // 大于额定值则启用
+  hoverDistance: {
+    // 空组
+    empty: 100
+  },
+  // 空组网格名称后缀
+  hoverNameSuffix: '-区域',
+  toBridMeshName: '主建筑',
 
   // 判断点击间隔时间
   clickIntervalTime: 150,
@@ -136,16 +146,6 @@ export default {
   videoCover: baseUrl + '/oss/textures/office/cover.jpg',
   // 空调粒子纹理
   airParticleTexture: baseUrl + '/oss/textures/effect/snowflake.png',
-
-  // hover 距离配置
-  // 大于额定值则启用
-  hoverDistance: {
-    // 空组
-    empty: 100
-  },
-  // 空组网格名称后缀
-  hoverNameSuffix: '-区域',
-  toBridMeshName: '主建筑',
 
   // 相机转场列表
   cameraTransitionList: [

@@ -339,6 +339,12 @@ const createPerson = () => {
 const addCompanyEmptyGroup = () => {
   const model = getModel(KEYS.M_COMPANY_EMPTY_GROUP)
   scene.addHover(model)
+
+  // 处理透明遮挡物
+  const obj = scene.scene.getObjectByName('立方体3475') as any
+  if (!obj) return
+  obj.material.transparent = true
+  obj.material.opacity = 0
 }
 
 // 楼层移动至
