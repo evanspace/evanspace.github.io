@@ -106,19 +106,105 @@ const small_residentials = [
 const small_residentialList = getListByPos(small_residentials, 'small_residential', '小型居民楼')
 JsonList.push(...small_residentialList)
 
-// 监测点
-const monitorCameras = [
+const deviecs: any[] = [
   {
-    name: 'DOT',
-    unit: '%',
-    type: 'DOT',
-    position: {
-      x: 300,
-      y: 10,
-      z: 350
-    }
+    name: '泵组_1-1',
+    type: 'WATER_PUMP',
+    position: { x: 2.9, y: -34.9, z: -37.82 }
+  },
+  {
+    name: '泵组_1-2',
+    position: { x: 2.9, y: -34.9, z: -30.38 }
+  },
+  {
+    name: '泵组_1-3',
+    position: { x: 2.9, y: -34.9, z: -23 }
+  },
+  {
+    name: '泵组_1-4',
+    position: { x: 2.9, y: -34.9, z: -15.4 }
+  },
+  {
+    name: '泵组_1-5',
+    position: { x: 2.9, y: -34.9, z: -7.63 }
   },
 
+  {
+    name: '泵组_2-1',
+    position: { x: -114.9, y: -34.9, z: 45.3 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_2-2',
+    position: { x: -100.9, y: -34.9, z: 45.3 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_2-3',
+    position: { x: -86.75, y: -34.9, z: 45.3 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_2-4',
+    position: { x: -72.33, y: -34.9, z: 45.3 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_2-5',
+    position: { x: -58.4, y: -34.9, z: 45.3 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+
+  {
+    name: '泵组_3-1',
+    position: { x: -113.4, y: -34.9, z: 57.4 }
+  },
+  {
+    name: '泵组_3-2',
+    position: { x: -95.6, y: -34.9, z: 57.4 }
+  },
+  {
+    name: '泵组_3-3',
+    position: { x: -76.5, y: -34.9, z: 57.4 }
+  },
+  {
+    name: '泵组_3-4',
+    position: { x: -58, y: -34.9, z: 57.4 }
+  },
+
+  {
+    name: '泵组_4-1',
+    position: { x: -115.1, y: -34.9, z: 71.2 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_4-2',
+    position: { x: -100.9, y: -34.9, z: 71.2 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_4-3',
+    position: { x: -86.6, y: -34.9, z: 71.2 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_4-4',
+    position: { x: -72.3, y: -34.9, z: 71.2 },
+    rotation: { x: 0, y: -35, z: 0 }
+  },
+  {
+    name: '泵组_4-5',
+    position: { x: -58.3, y: -34.9, z: 71.2 },
+    rotation: { x: 0, y: -35, z: 0 }
+  }
+].map(item => {
+  item.type = 'WATER_PUMP'
+  return item
+})
+JsonList.push(...deviecs)
+
+// 监测点
+const monitorCameras = [
   {
     name: '右侧-光伏板',
     unit: 'kWh',
@@ -153,12 +239,63 @@ const monitorCameras = [
   },
 
   {
-    name: '制冷主机监测点',
-    unit: '%',
-    type: 'DOT',
-    position: { x: -114.9, y: -28.3, z: 45.2 }
+    name: '1#主机',
+    unit: 'kWh',
+    position: { x: -106.3, y: -9.7, z: 6.9 }
+  },
+  {
+    name: '2#主机',
+    unit: 'kWh',
+    position: { x: -102.9, y: -9.7, z: 6.9 }
+  },
+
+  {
+    name: '制冷站水泵',
+    unit: 'kWh',
+    position: { x: -95.8, y: -9.7, z: 6.9 }
+  },
+  {
+    name: '冷却塔',
+    unit: 'kWh',
+    position: { x: -86.9, y: -9.7, z: 6.9 }
+  },
+
+  {
+    name: '1楼末端风柜',
+    unit: 'kWh',
+    position: { x: -77.9, y: -9.7, z: 6.9 }
+  },
+  {
+    name: '2楼末端风柜',
+    unit: 'kWh',
+    position: { x: -69, y: -9.7, z: 6.9 }
+  },
+  {
+    name: '3楼末端风柜',
+    unit: 'kWh',
+    position: { x: -60, y: -9.7, z: 6.9 }
+  },
+  {
+    name: '4楼末端风柜',
+    unit: 'kWh',
+    position: { x: -51.1, y: -9.7, z: 6.9 }
   }
 ]
+  .map(item => {
+    item.type = 'DOT'
+    return item as any
+  })
+  .concat(
+    deviecs.map(item => {
+      const { x, z } = item.position
+      return {
+        ...item,
+        type: 'DOT',
+        unit: 'Hz',
+        position: { x, y: -28.3, z }
+      }
+    })
+  )
 JsonList.push(...monitorCameras)
 
 // 定位点
@@ -327,7 +464,7 @@ export default [
         Name: '车站展示',
         ConfigJson: {
           target: { x: 0, y: 1, z: 114.2 },
-          to: { x: 25.3, y: 154.4, z: 637.2 },
+          to: { x: 222.54, y: 150.82, z: 589.31 },
           cruise: [
             [102.5, CRUISE_POINT_UP, 9.9],
             [102.5, CRUISE_POINT_UP, 291.9],

@@ -60,6 +60,8 @@ const createWater = (model?) => {
 export class StationThreeScene extends ThreeScene.Scene {
   // 建筑集合
   buildingGroup?: InstanceType<typeof THREE.Group>
+  // 设备组
+  deviceGroup?: InstanceType<typeof THREE.Group>
   // 锚点集合
   anchorGroup?: InstanceType<typeof THREE.Group>
   // 点位集合
@@ -138,10 +140,13 @@ export class StationThreeScene extends ThreeScene.Scene {
 
     this.bindEvent()
     this.addBuildingGroup()
+    this.addDeviceGroup()
     this.addFloorGroup()
     this.addAnchorGroup()
     this.addDotGroup()
     this.addLightGroup()
+
+    console.log(this)
   }
 
   // 添加建筑组
@@ -160,6 +165,7 @@ export class StationThreeScene extends ThreeScene.Scene {
     this.animateModels = []
     this.addBuildingGroup()
 
+    this.clearDevice()
     this.clearAnchor()
     this.clearDot()
     this.clearFloor()
@@ -169,6 +175,27 @@ export class StationThreeScene extends ThreeScene.Scene {
   addBuilding(...obj) {
     if (this.buildingGroup) {
       this.buildingGroup.add(...obj)
+    }
+  }
+
+  // 添加设备组
+  addDeviceGroup() {
+    const group = new THREE.Group()
+    group.name = '设备组'
+    this.deviceGroup = group
+    this.addObject(group)
+  }
+  // 清除设备组
+  clearDevice() {
+    if (this.deviceGroup) {
+      this.disposeObj(this.deviceGroup)
+    }
+    this.addDeviceGroup()
+  }
+  // 添加设备
+  addDevice(...obj) {
+    if (this.deviceGroup) {
+      this.deviceGroup.add(...obj)
     }
   }
 
@@ -203,6 +230,7 @@ export class StationThreeScene extends ThreeScene.Scene {
   addDotGroup() {
     const group = new THREE.Group()
     group.name = '点位组'
+    group.visible = false
     this.dotGroup = group
     this.addObject(group)
   }
@@ -295,7 +323,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
       obj.target.position.set(to.x, to.y, to.z)
       // 开灯
-      obj.visible = true
+      obj.visible = false
       this.lightGroup.add(obj)
       this.lightGroup.add(obj.target)
       if (hasHelper) {
@@ -835,12 +863,13 @@ export class StationThreeScene extends ThreeScene.Scene {
       this.historyCameraPosition = new THREE.Vector3().copy(this.camera.position)
 
       target = new THREE.Vector3(-78.4, -33, 29.2)
-      to = { x: -143.7, y: -25.8, z: 67 }
+      to = { x: -3.62, y: -27.53, z: 18.14 }
     }
 
     const dis = target.distanceTo(to)
     this.controls.maxDistance = dis
 
+    this.dotGroup && (this.dotGroup.visible = isFocus)
     Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
   }
 
@@ -851,6 +880,7 @@ export class StationThreeScene extends ThreeScene.Scene {
       closeVirtualization(this.buildingGroup?.children)
     }
     room.__isFocus__ = false
+    this.dotGroup && (this.dotGroup.visible = false)
   }
 
   // 开门
@@ -1180,20 +1210,26 @@ export class StationThreeScene extends ThreeScene.Scene {
 
 // 点位更新回调
 export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
-  // const val = wsStore.getKeyValue( code ).value
-  const val = Math.random() * 40
-  if (val !== void 0) {
-    obj.value = val
+  let val = Math.random() * 40
+  const isHz = obj.unit === 'Hz'
+  if (isHz) {
+    val = Number((35 + Math.random() * 4).toFixed(2))
+  } else {
+    const o = DEFAULTCONFIG.data.find(it => it.name === obj.name)
+    if (o) {
+      val = o.value + Number((Math.random() * 5 - 10).toFixed(2))
+    }
   }
+  obj.value = val
 
-  obj.show = Math.random() > 0.5
+  obj.show = isHz ? Math.random() > 0.5 : true
   obj.value = Number(Number(obj.value || 0).toFixed(2))
   return {
     value: obj.value,
     show: obj.show,
     font: {
-      ...(obj.font || {}),
-      color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
+      ...(obj.font || {})
+      // color: '#' + (0xffffff + val * 1000000).toString(16).substring(0, 6)
     }
   }
 }

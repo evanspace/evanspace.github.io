@@ -1,5 +1,3 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
-
 const devEnv = import.meta.env.VITE_MODE !== 'production'
 
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
@@ -11,26 +9,26 @@ export const CHARACTER = 'CHARACTER' // 人物
 export const FLOOR = 'floor_common' // 楼层
 export const OPEN_DOOR = 'OPEN_DOOR' // 开门
 export const LIGHT_SWITCH = 'LIGHT_SWITCH' // 开关灯
+export const WATER_PUMP = 'WATER_PUMP' // 水泵
 
 export const CRUISE_POINT_UP = 27.5 // y 巡航轴向量
 export const ROAM_POINT_UP = 100 // y 漫游轴向量
 export const getPageOpts = animateBack => ({
   devEnv,
-  baseUrl: base,
   bgColor: '',
   skyCode: '104',
   env: '/oss/textures/hdr/6.hdr',
 
   // dot 点位类型值
   dotKey: 'DOT',
-  dotShowStrict: false,
+  dotShowStrict: true,
 
   config: {},
 
   // 锚点类型
   anchorType: [ANCHOR_POS, ANCHOR_TARGET, OPEN_DOOR, LIGHT_SWITCH],
   // 动画模型类型
-  animationModelType: [MAIN_SCENE, MACHINE_ROOM],
+  animationModelType: [MAIN_SCENE, MACHINE_ROOM, WATER_PUMP],
   // 楼层类型
   floorModelType: [FLOOR],
 
@@ -44,8 +42,14 @@ export const getPageOpts = animateBack => ({
     {
       key: MACHINE_ROOM,
       name: '机房',
-      size: 17.4,
+      size: 3.8,
       url: '/机房.glb'
+    },
+    {
+      key: WATER_PUMP,
+      name: '水泵',
+      size: 0.1,
+      url: '/水泵.glb'
     },
     // {
     //   key: 'building',
@@ -66,12 +70,12 @@ export const getPageOpts = animateBack => ({
     //   url: '/小型居民楼.glb'
     // },
 
-    {
-      key: FLOOR,
-      name: '楼层',
-      size: 6.3,
-      url: '/楼层.glb'
-    },
+    // {
+    //   key: FLOOR,
+    //   name: '楼层',
+    //   size: 6.3,
+    //   url: '/楼层.glb'
+    // },
 
     {
       key: ANCHOR_POS,

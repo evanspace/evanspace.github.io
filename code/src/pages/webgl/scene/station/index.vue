@@ -4,6 +4,7 @@
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject()">随机更新</div>
       <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
+      <div class="btn" @click="() => scene.exportImage()">截图</div>
 
       <div class="item" @click="() => Emitter.emit('CAMERA:ROAM')">全景漫游</div>
       <div class="item" @click="() => Emitter.emit('CAMERA:MACHINEROOM')">制冷机房</div>
@@ -25,7 +26,11 @@
 
     <t-first-person />
 
-    <t-loading v-model="progress.show" :progress="progress.percentage"></t-loading>
+    <t-loading
+      v-model="progress.show"
+      :progress="progress.percentage"
+      :bg-src="DEFAULTCONFIG.bgSrc"
+    ></t-loading>
 
     <!-- // 提示 -->
     <div
@@ -66,15 +71,16 @@ import {
   CHARACTER,
   OPEN_DOOR,
   LIGHT_SWITCH,
+  WATER_PUMP,
   getPageOpts,
   getTipOpts
 } from './data'
 import * as request from './request'
 import Emitter from './emitter'
 
+import DEFAULTCONFIG from './config'
 import { StationThreeScene, dotUpdateObjectCall, getOffsetPoint } from './methods'
 import { onListen } from './listen'
-
 import { useResize } from '@/hooks/scene-resize'
 import { useSky } from '@/hooks/sky'
 import { Hooks, Utils } from 'three-scene'
@@ -103,21 +109,16 @@ const pageOpts = reactive(
 const tipOpts = reactive(getTipOpts())
 
 const { skys } = useSky()
-const { backgroundLoad } = Hooks.useBackground(pageOpts.baseUrl + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(DEFAULTCONFIG.baseUrl + '/oss/sky/', skys)
 const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
-  baseUrl: pageOpts.baseUrl,
-  indexDB: {
-    cache: true,
-    dbName: 'THREE__STATION__DB',
-    tbName: 'TB',
-    version: 65
-  }
+  baseUrl: DEFAULTCONFIG.baseUrl,
+  indexDB: DEFAULTCONFIG.indexDB
 })
 const { options: dialog } = Hooks.useDialog()
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof StationThreeScene>[0] = {
-  baseUrl: pageOpts.baseUrl,
+  baseUrl: DEFAULTCONFIG.baseUrl,
   env: pageOpts.env,
   cruise: pageOpts.cruise,
   controls: {
@@ -128,9 +129,14 @@ const options: ConstructorParameters<typeof StationThreeScene>[0] = {
     screenSpacePanning: false,
     maxDistance: 800
   },
+  render: {
+    alpha: true,
+    preserveDrawingBuffer: true
+  },
   camera: {
-    near: 3,
-    fov: 45
+    near: 0.1,
+    fov: 52,
+    position: [222.54, 150.82, 589.31]
   },
   directionalLight: {
     intensity: 2.2
@@ -270,17 +276,13 @@ const load = () => {
       scene?.addWater('水流')
       createRoblt()
       createCharacter()
-      deviceUpdate()
+      updateObject()
     })
   })
 }
 
 // 组装场景
 const assemblyScenario = async () => {
-  // 加载进度 100
-  progress.percentage = 100
-  progress.show = false
-
   // 清除
   scene.clearBuilding()
 
@@ -292,16 +294,17 @@ const assemblyScenario = async () => {
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
-  const to = scene.getAnimTargetPos(pageOpts.config || {})
+  const to = scene.getValidTargetPosition(pageOpts.config || {})
+  scene.camera.position.set(to.x, to.y, to.z)
+  // 加载进度 100
+  progress.percentage = 100
+  progress.show = false
+  scene.controlSave()
+
   // 入场动画
-  // @ts-ignore
-  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
-    scene.controlSave()
-    setTimeout(() => {
-      // 关灯
-      scene.closeLightGroup()
-    }, 100)
-  })
+  // Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
+  //   scene.closeLightGroup()
+  // })
 }
 
 // 循环加载对象
@@ -338,12 +341,9 @@ const loopLoadObject = async (item: ObjectItem) => {
   model._isBuilding_ = true
   model.data = item
 
-  // 机房隐藏
-  // model.visible = type !== MACHINE_ROOM
-
   // 动画
   if (animationModelType.includes(type)) {
-    scene.addModelAnimate(model, obj.animations, type !== MACHINE_ROOM, 1)
+    scene.addModelAnimate(model, obj.animations, type !== WATER_PUMP, 1)
   }
 
   // 记录备用坐标(更随标记)
@@ -367,6 +367,12 @@ const loopLoadObject = async (item: ObjectItem) => {
     model._position_ = { x, y, z }
     model._isFloor_ = true
     scene.addFloor(model)
+  }
+  // 设备
+  else if (type === WATER_PUMP) {
+    model._isDevice_ = true
+    model.name = item.name
+    scene.addDevice(model)
   } else {
     scene.addBuilding(model)
   }
@@ -432,9 +438,10 @@ const dialogShowData = () => {
   const data = object.data
   dialog.data = data as Partial<ObjectItem>
   dialog.title = data?.name || ''
+  const { x, y, z } = data?.position || {}
   dialog.list = [
-    { name: '属性 1', value: (Math.random() * 100).toFixed(2), unit: '%' },
-    { name: '属性 2', value: (Math.random() * 100).toFixed(2), unit: '%' }
+    { name: '坐标', value: `${x},${y},${z}` },
+    { name: data?.unit === 'Hz' ? '频率' : '用电', value: data?.value, unit: data?.unit }
   ]
   dialog.show = true
 }
@@ -451,20 +458,19 @@ const updateObject = () => {
     // 点位
     if (type === pageOpts.dotKey) {
       updateDotVisible(el)
+      deviceUpdate(el.data)
       return
     }
   })
-
-  deviceUpdate()
 }
 
-const deviceUpdate = () => {
-  // 机房
-  const room = scene.animateModels.find(it => it.data && it.data.type === MACHINE_ROOM)
-  if (room && room.__action__) {
-    Object.keys(room.__action__).forEach(key => {
-      const obj = room.__action__[key]
-      const isRun = Math.random() > 0.5
+const deviceUpdate = data => {
+  const { show, name } = data
+  const model = scene.deviceGroup?.getObjectByName(name) as any
+  if (model && model.__action__) {
+    Object.keys(model.__action__).forEach(key => {
+      const obj = model.__action__[key]
+      const isRun = show
       if (isRun) {
         if (obj.isRunning()) {
           obj.paused = true
@@ -477,6 +483,7 @@ const deviceUpdate = () => {
       }
     })
   }
+  return
 }
 
 // 创建机器人
