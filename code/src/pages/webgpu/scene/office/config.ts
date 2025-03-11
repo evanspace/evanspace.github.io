@@ -23,7 +23,7 @@ export default {
     cache: true,
     dbName: 'THREE__OFFICE__GPU_DB',
     tbName: 'TB',
-    version: 40
+    version: 42
   },
 
   // 判断点击间隔时间
@@ -141,10 +141,11 @@ export default {
   // 大于额定值则启用
   hoverDistance: {
     // 空组
-    empty: 10000
+    empty: 100
   },
   // 空组网格名称后缀
   hoverNameSuffix: '-区域',
+  toBridMeshName: '主建筑',
 
   // 相机转场列表
   cameraTransitionList: [

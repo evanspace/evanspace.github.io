@@ -1028,7 +1028,7 @@ export class OfficeScene extends ThreeScene.Scene {
     if (isFocus) {
       this.setControlCache()
       target = new THREE.Vector3(8.5, 185, 0)
-      to = new THREE.Vector3(8.5, 290, 135)
+      to = new THREE.Vector3(92.8, 291, 104)
       maxDistance = 320
     }
     this.controls.maxDistance = maxDistance
