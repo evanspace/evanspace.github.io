@@ -488,6 +488,9 @@ export class StationThreeScene extends ThreeScene.Scene {
     // this.controls.maxPolarAngle = Math.PI * (isCharacter ? 0.8 : 0.48)
 
     if (!this.character) return
+    const isFirst = isCharacter && type == 1
+    // 第一人称则隐藏人物
+    this.character.visible = !isFirst
     const position = this.character.position
     this.toggleCharacterView()
 
@@ -522,6 +525,8 @@ export class StationThreeScene extends ThreeScene.Scene {
   // 清除人物视角状态
   clearCharacterSight() {
     this.currentSight = sightMap.full
+    // 显示人物
+    this.character && (this.character.visible = true)
     this.toggleCharacterView()
   }
 

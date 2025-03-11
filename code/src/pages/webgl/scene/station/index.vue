@@ -63,7 +63,6 @@
 import tLoading from '@/components/loading/index.vue'
 import tFirstPerson from './first-person.vue'
 import {
-  MACHINE_ROOM,
   ANCHOR_POS,
   ANCHOR_TARGET,
   ROBOT,
