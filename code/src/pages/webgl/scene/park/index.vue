@@ -31,6 +31,7 @@
       v-model="progress.show"
       :bg-color="pageOpts.bgColor"
       :progress="progress.percentage"
+      :bg-src="pageOpts.bgSrc"
     ></t-loading>
 
     <div
@@ -132,7 +133,8 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
     enablePan: !false
   },
   camera: {
-    position: [-85.7, 3.6, 208.6]
+    position: [-118.4, 3, 220.4]
+    // position: [-85.7, 3.6, 208.6]
   },
   cruise: pageOpts.cruise,
   grid: {
@@ -281,10 +283,6 @@ const initDevices = () => {
 
 // 组装场景
 const assemblyScenario = async () => {
-  // 加载进度 100
-  progress.percentage = 100
-  progress.show = false
-
   // 清除
   scene.clearBuilding()
 
@@ -294,12 +292,15 @@ const assemblyScenario = async () => {
   // 巡航
   scene.setCruisePoint(pageOpts.cruise.points)
 
-  const to = scene.getAnimTargetPos(pageOpts.config || {})
+  const to = scene.getValidTargetPosition(pageOpts.config || {})
+  scene.camera.position.set(to.x, to.y, to.z)
+  scene.controlSave()
+  // 加载进度 100
+  progress.percentage = 100
+  progress.show = false
   // 入场动画
-  // @ts-ignore
-  Utils.cameraInSceneAnimate(scene.camera, to, scene.controls.target).then(() => {
-    scene.controlSave()
-  })
+  // Utils.cameraInSceneAnimate(scene.camera, to, scene.controls?.target).then(() => {
+  // })
 }
 
 // 创建机器人

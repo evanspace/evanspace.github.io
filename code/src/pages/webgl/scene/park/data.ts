@@ -22,6 +22,8 @@ export const getPageOpts = animateBack => ({
   skyCode: '104',
   env: '/oss/textures/hdr/3.hdr',
 
+  bgSrc: base + '/oss/img/park/bg.jpg',
+
   // dot 点位类型值
   dotKey: 'DOT',
   dotShowStrict: false,
