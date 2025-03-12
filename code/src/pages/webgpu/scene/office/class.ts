@@ -813,6 +813,10 @@ export class OfficeScene extends ThreeScene.Scene {
       this.currentSight === SIGHT_MAP.PERSON_FIRST || this.currentSight === SIGHT_MAP.PERSON_THREE
     )
   }
+  // 第一人称视角
+  isFirstPersonSight() {
+    return this.currentSight === SIGHT_MAP.PERSON_FIRST
+  }
   // 切换人物界面效果
   togglePersonView() {
     const dom = this.container.parentNode?.querySelector(
@@ -830,6 +834,8 @@ export class OfficeScene extends ThreeScene.Scene {
       moveStop(false)
       this.person.__runing__ = false
       this.diffusion.visible = false
+      // 关闭行走动作
+      this.personWalk(false)
     }
     // 显示人物
     this.person && (this.person.visible = true)
@@ -857,7 +863,13 @@ export class OfficeScene extends ThreeScene.Scene {
       this.setControlCache()
       const pos = position.clone().add(up)
 
-      this.camera.lookAt(pos)
+      // 第一人称相机角度
+      if (this.isFirstPersonSight()) {
+        this.keyboardToTotation()
+      } else {
+        this.camera.lookAt(pos)
+        this.controls.target.copy(position.clone().add(up))
+      }
       // 相机高度距离人物大于 8
       if (Math.abs(this.camera.position.y - pos.y) > 8) {
         this.camera.position.y = pos.y
@@ -865,10 +877,8 @@ export class OfficeScene extends ThreeScene.Scene {
     } else {
       this.camera.position.copy(to)
       this.camera.lookAt(this.controls.target)
+      this.controls.target.copy(target)
     }
-
-    const pos = isPerson ? position.clone().add(up) : target
-    this.controls.target.copy(pos)
   }
   // 人物加速
   personSpeed(speed = 1) {
@@ -1283,6 +1293,12 @@ export class OfficeScene extends ThreeScene.Scene {
   // 检查相交对象
   checkIntersectObjects(e: PointerEvent) {
     let isClick = e.type == 'pointerdown' || e.type == 'pointerup'
+
+    // 点击未弹起 且第一视角
+    if (this.pointer.isClick && this.person && this.isFirstPersonSight()) {
+      const angle = (Math.PI * 2 * e.movementX) / this.options.height
+      this.person.rotation.y -= angle
+    }
 
     // 控制最大距离
     const maxDistance = this.controls?.maxDistance || 0
