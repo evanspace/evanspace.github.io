@@ -3,6 +3,8 @@
     <!-- 操作按钮 -->
     <div class="scene-operation">
       <div class="btn" @click="() => updateObject(true)">随机更新</div>
+
+      <div class="btn" @click="scene.exportImage()">截图</div>
       <div class="btn" @click="() => scene?.toggleSight()">人物视角切换</div>
       <div class="btn" @click="() => scene?.toggleCruise()">定点巡航</div>
       <div class="btn" @click="() => scene?.getPosition()">场景坐标</div>
@@ -117,7 +119,7 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } =
       cache: !true,
       dbName: 'THREE__PARK__DB',
       tbName: 'TB',
-      version: 74
+      version: 75
     }
   })
 
@@ -135,6 +137,10 @@ const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
   cruise: pageOpts.cruise,
   grid: {
     visible: !true
+  },
+  render: {
+    alpha: true,
+    preserveDrawingBuffer: true
   },
   axes: {
     visible: true

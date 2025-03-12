@@ -152,7 +152,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'building_commercial_1',
       name: '商业楼1',
-      size: 0.6,
+      size: 3.6,
       url: '/商业楼1.glb'
     },
     {
@@ -173,12 +173,12 @@ export const getPageOpts = animateBack => ({
       size: 9.6,
       url: '/电梯房.glb'
     },
-    {
-      key: 'building_commercial_5',
-      name: '现代门窗',
-      size: 95,
-      url: '/现代门窗.glb'
-    },
+    // {
+    //   key: 'building_commercial_5',
+    //   name: '现代门窗',
+    //   size: 95.1,
+    //   url: '/现代门窗.glb'
+    // },
     /////////////////////
 
     {
@@ -244,7 +244,7 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/odd/model/common/机器人.glb'
+      url: '/oss/model/common/机器人.glb'
     },
     {
       key: CHARACTER,
