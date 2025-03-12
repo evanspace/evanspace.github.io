@@ -709,10 +709,10 @@ export class OfficeScene extends ThreeScene.Scene {
         this.keyboardToMove(steep)
 
         // 转向
-        if (keyboardPressed('A')) {
+        if (keyboardPressed(['A', 'left'])) {
           personModel.rotation.y += angle
           this.keyboardToTotation()
-        } else if (keyboardPressed('D')) {
+        } else if (keyboardPressed(['D', 'right'])) {
           personModel.rotation.y -= angle
           this.keyboardToTotation()
         }
@@ -723,8 +723,8 @@ export class OfficeScene extends ThreeScene.Scene {
   keyboardToMove(steep) {
     const personModel = this.person
     // 前进后退
-    const isS = keyboardPressed('S')
-    if (keyboardPressed('W') || isS) {
+    const isS = keyboardPressed(['S', 'down'])
+    if (keyboardPressed(['W', 'up']) || isS) {
       // 向量
       const dir = new THREE.Vector3()
       // 获取的视线方向
