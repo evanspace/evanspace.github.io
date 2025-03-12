@@ -237,7 +237,7 @@ export class OfficeScene extends ThreeScene.Scene {
     MS.restoreAnchorMaterial(this.anchorGroup)
 
     // 人物动画
-    this.persionAnimate(delta)
+    this.personAnimate(delta)
 
     // 扩散波
     this.diffusionAnimate()
@@ -690,7 +690,7 @@ export class OfficeScene extends ThreeScene.Scene {
     )
   }
   // 人物动画
-  persionAnimate(delta) {
+  personAnimate(delta) {
     const personModel = this.person
     if (personModel) {
       const mixer = personModel.extra.mixer
@@ -752,8 +752,9 @@ export class OfficeScene extends ThreeScene.Scene {
     const dir = new THREE.Vector3()
     // 目标视线方向坐标
     personModel?.getWorldDirection(dir)
-    const mds = this.controls?.maxDistance || 1
+    const mds = this.controls?.maxDistance || 1.1
     const dis = dir.clone().multiplyScalar(-mds)
+    // 复制相机 y 与向量相加
     const newPos =
       personModel?.position.clone().setY(this.camera.position.y).add(dis) || new THREE.Vector3()
     this.camera.position.copy(newPos)
