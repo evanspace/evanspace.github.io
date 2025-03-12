@@ -173,12 +173,6 @@ export const getPageOpts = animateBack => ({
       size: 9.6,
       url: '/电梯房.glb'
     },
-    // {
-    //   key: 'building_commercial_5',
-    //   name: '现代门窗',
-    //   size: 95.1,
-    //   url: '/现代门窗.glb'
-    // },
     /////////////////////
 
     {

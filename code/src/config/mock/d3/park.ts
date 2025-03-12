@@ -17,11 +17,6 @@ let parkData: any[] = [
     type: 'PARKING_SPACE',
     position: { x: 0, y: 0.1, z: 0 }
   },
-  // {
-  //   name: '栏杆群',
-  //   type: 'RAILING_GROUP',
-  //   position: { x: 0, y: 0, z: 0 }
-  // },
 
   ///////////////////
   {
