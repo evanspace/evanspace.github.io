@@ -12,7 +12,7 @@
             type="textarea"
             v-model="content"
             placeholder="请输入"
-            maxlength="24"
+            maxlength="40"
             show-word-limit
           ></el-input>
         </div>

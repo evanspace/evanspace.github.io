@@ -32,4 +32,6 @@ export interface ExtendOptions {
   animateCall: () => void
   // 悬浮回调
   onHoverCall: (object, style) => void
+  // 空组点击
+  emptyGroupClick: (data) => void
 }

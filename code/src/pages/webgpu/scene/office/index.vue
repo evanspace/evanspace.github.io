@@ -470,6 +470,11 @@ onMounted(() => {
           floorOpts.show = DEFAULTCONFIG.liftGroundMeshName.includes(intersct.object.name)
         })
         .catch(() => {})
+    },
+
+    // 空组点击
+    emptyGroupClick: data => {
+      scene.cameraTransition({ data })
     }
   }).run()
 

@@ -434,17 +434,23 @@ export const drawBdCanvas = (canvas, text = '') => {
   ctx.clearRect(0, 0, w, h)
   ctx.fillStyle = '#f00'
 
-  // 分割为两行
-  const rows = 2,
-    max = 12,
-    len = text.length
-  const rlen = len > max ? Math.ceil(len / rows) : max
-  let list: string[] = [],
-    index = 0
-  while (index < len) {
-    const end = index + rlen
-    list.push(text.substring(index, end))
-    index = end
+  // 换行符分割
+  let list: string[] = text.split(/[\r\n]/g)
+  // 默认自动分割最大长度
+  const max = 12
+  if (list.length == 1 && text.length > max) {
+    list = []
+    let index = 0
+    // 可分割行数
+    const rows = Math.ceil(text.length / max),
+      len = text.length
+    // 均分长度
+    const rlen = len > max ? Math.ceil(len / rows) : max
+    while (index < len) {
+      const end = index + rlen
+      list.push(text.substring(index, end))
+      index = end
+    }
   }
 
   ctx.font = '100 40px 微软雅黑'
@@ -453,7 +459,8 @@ export const drawBdCanvas = (canvas, text = '') => {
   const tl = list.length
 
   list.forEach((tx, index) => {
-    const i = index * tl + 1
+    // 2n-1
+    const i = (index + 1) * 2 - 1
     ctx.fillText(tx, w / 2, (h / tl / 2) * i)
   })
 }

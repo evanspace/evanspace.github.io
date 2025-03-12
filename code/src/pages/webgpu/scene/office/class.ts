@@ -1001,7 +1001,11 @@ export class OfficeScene extends ThreeScene.Scene {
     }
     this.toggleCompanyFocus(true)
     if (oldStatus != model.__isFocus__) {
-      virtualization(this.buildingGroup?.children || [], model, {
+      // 过滤窗帘
+      const list = (this.buildingGroup?.children || []).filter(
+        el => el.name != DEFAULTCONFIG.curtainMeshName
+      )
+      virtualization(list, model, {
         wireframe: !false,
         hidden: true,
         opacity: 0.1,
@@ -1341,7 +1345,7 @@ export class OfficeScene extends ThreeScene.Scene {
             this.toggleBridCompany()
           }
         } else {
-          this.cameraTransition({ data: obj })
+          if (typeof this.extend?.emptyGroupClick === 'function') this.extend.emptyGroupClick(obj)
         }
         return
       }

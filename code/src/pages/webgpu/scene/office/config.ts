@@ -36,6 +36,9 @@ export default {
   hoverNameSuffix: '-区域',
   toBridMeshName: '主建筑',
 
+  // 窗帘材质名称
+  curtainMeshName: '_GROUP_013_grp',
+
   // 判断点击间隔时间
   clickIntervalTime: 150,
 
