@@ -8,6 +8,8 @@ const textureLoader = new THREE.TextureLoader()
 
 const { pass, mrt, output, emissive, float } = THREE.TSL
 
+const { createDiffusion } = ThreeScene.Hooks.useDiffusion2()
+
 export class Scene extends ThreeScene.Scene {
   group = new THREE.Group()
   // 场景合成渲染器
@@ -81,6 +83,16 @@ export class Scene extends ThreeScene.Scene {
     const mesh = this.createDiffusion(1, 0x61b9ea)
     mesh.rotation.x = -Math.PI * 0.5
     this.addObject(mesh)
+
+    const mesh2 = createDiffusion(
+      {
+        textureSrc: baseUrl + '/oss/textures/diffusion/101.png',
+        bloomIntensity: 0.2
+      },
+      THREE
+    )
+    mesh2.position.x = 2
+    this.addObject(mesh2)
   }
 
   // 创建扩散波
