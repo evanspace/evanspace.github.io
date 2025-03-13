@@ -10,16 +10,24 @@ const { pass, mrt, output, emissive, float } = THREE.TSL
 
 export class Scene extends ThreeScene.Scene {
   group = new THREE.Group()
+  // 场景合成渲染器
+  postProcessing: InstanceType<typeof THREE.PostProcessing>
+
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
+
+    // 场景合成
+    this.postProcessing = this.createPostProcessing(this.scene, this.camera, this.renderer)
 
     this.addObject(this.group)
 
     this.addModel()
+
+    console.log(this)
   }
 
   render() {
-    this.renderer.renderAsync(this.scene, this.camera)
+    this.postProcessing?.renderAsync()
   }
 
   createRender() {
@@ -70,20 +78,19 @@ export class Scene extends ThreeScene.Scene {
   }
 
   addModel() {
-    const mesh = this.createDiffusion(2)
+    const mesh = this.createDiffusion(1, 0x61b9ea)
     mesh.rotation.x = -Math.PI * 0.5
-    mesh.position.y = 0.5
     this.addObject(mesh)
   }
 
   // 创建扩散波
   createDiffusion(size: number = 1, color?: number | string) {
     const plane = new THREE.PlaneGeometry(size, size)
-    // material = new THREE.MeshPhongMaterial({
+    // const material = new THREE.MeshPhongMaterial({
     const material = new THREE.MeshBasicNodeMaterial({
       color,
       opacity: 0.8,
-      map: textureLoader.load(baseUrl + '/oss/textures/diffusion/12.png'),
+      map: textureLoader.load(baseUrl + '/oss/textures/diffusion/101.png'),
       transparent: true,
       depthTest: !false,
       side: THREE.DoubleSide
@@ -95,12 +102,13 @@ export class Scene extends ThreeScene.Scene {
     const mesh = new THREE.Mesh(plane, material)
 
     // 缩放
-    const scale = 0.5
+    const scale = 0.1
+    const time = 500
     mesh.scale.setScalar(scale)
 
     // @ts-ignore
     mesh.tween1 = new TWEEN.Tween({ scale: scale, opacity: 0 })
-      .to({ scale: scale * 1.5, opacity: 1 }, 1000)
+      .to({ scale: scale + 1.5, opacity: 1 }, time)
       .delay(0)
       .onUpdate(params => {
         let { scale, opacity } = params
@@ -109,8 +117,8 @@ export class Scene extends ThreeScene.Scene {
       })
 
     // @ts-ignore
-    mesh.tween2 = new TWEEN.Tween({ scale: scale * 1.5, opacity: 1 })
-      .to({ scale: scale * 2, opacity: 0 }, 1000)
+    mesh.tween2 = new TWEEN.Tween({ scale: scale + 1.5, opacity: 1 })
+      .to({ scale: scale + 2, opacity: 0 }, time)
       .onUpdate(params => {
         let { scale, opacity } = params
         mesh.scale.setScalar(scale)
@@ -124,7 +132,7 @@ export class Scene extends ThreeScene.Scene {
     // @ts-ignore
     mesh.tween2.chain(mesh.tween1)
     // @ts-ignore
-    // mesh.tween1.start()
+    mesh.tween1.start()
     return mesh
   }
 

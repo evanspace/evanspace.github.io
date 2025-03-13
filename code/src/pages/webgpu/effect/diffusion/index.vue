@@ -18,7 +18,7 @@ const options: ConstructorParameters<typeof Scene>[0] = {
     visible: true
   },
   camera: {
-    position: [0, 0, 8]
+    position: [0, 5, 2]
   }
 }
 
