@@ -100,7 +100,7 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
   // env: DEFAULTCONFIG.sky[0],
   render: {
     alpha: true
-    // preserveDrawingBuffer: true,
+    // preserveDrawingBuffer: true
     // forceWebGL: true
   },
   controls: {

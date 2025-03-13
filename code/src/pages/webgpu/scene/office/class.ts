@@ -127,9 +127,6 @@ export class OfficeScene extends ThreeScene.Scene {
   // hover 组
   hoverGroup?: InstanceType<typeof THREE.Group>
 
-  // 测试
-  isTest = false
-
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -179,11 +176,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.addDiffusion()
 
     this.setControlCache()
-  }
-
-  openTest() {
-    this.isTest = !this.isTest
-    this.isTest && console.log(this)
   }
 
   // 渲染器
