@@ -77,6 +77,8 @@ const eventNames = [
 
   // 场景坐标
   'SCENE:POS',
+  // 截图
+  'SCENE:SCREENSHOT',
 
   // 白天
   'SKY:DAY',

@@ -1385,6 +1385,11 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
 
+  // 截图
+  capture() {
+    this.exportImage()
+  }
+
   // 销毁场景
   dispose() {
     this.clearVideo()
