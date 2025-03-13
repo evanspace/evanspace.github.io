@@ -111,7 +111,7 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   // 场景坐标
   Emitter.on('SCENE:POS', () => scene?.getPosition())
   Emitter.on('SCENE:TEST', () => scene?.openTest())
-  Emitter.on('SCENE:SCREENSHOT', () => scene?.capture())
+  Emitter.on('SCENE:SCREENSHOT', () => scene?.exportImage())
 
   // 白天
   Emitter.on('SKY:DAY', () => scene?.toByday(scene.style))

@@ -2,7 +2,7 @@
   <div class="scene-operation">
     <div class="btn" @click="() => Emitter.emit('SCENE:POS')">场景坐标</div>
     <div class="btn" @click="() => Emitter.emit('SCENE:TEST')">测试</div>
-    <div class="btn" @click="() => Emitter.emit('SCENE:SCREENSHOT')">截图</div>
+    <!-- <div class="btn" @click="() => Emitter.emit('SCENE:SCREENSHOT')">截图</div> -->
 
     <el-dropdown class="btn" placement="top" :hide-on-click="false">
       <div @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>

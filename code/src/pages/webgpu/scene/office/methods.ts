@@ -11,6 +11,7 @@ const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
 
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
+const { initCSS3DRender, createCSS3DDom } = Hooks.useCSS3D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting(THREE)
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
 const { createStripSmoke, createParticleSmoke } = Hooks.useSmoke(THREE)
@@ -78,7 +79,7 @@ export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) =
  */
 export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
   // const val = wsStore.getKeyValue( code ).value
-  const val = Math.random() * 40
+  const val = Math.random() * 2 - 4 + 26
   if (val !== void 0) {
     obj.value = val
   }
@@ -125,6 +126,38 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
 }
 
 /**
+ * 更新点位隐现
+ * @param scene 场景
+ * @param target 目标对象
+ * @param visible 是否展示
+ */
+export const updateDot3Visible = (scene, target: ThreeModelItem, visible?) => {
+  const item = target.data as ObjectItem
+  const res = dotUpdateObjectCall(item, scene.buildingGroup)
+  if (typeof res === 'object') {
+    Object.keys(res).forEach(key => {
+      item[key] = res[key]
+    })
+  }
+
+  target.visible = visible
+  const dom = target.element?.getElementsByClassName('inner')[0] as HTMLElement
+  if (dom) {
+    const { size, color } = item.font || {}
+    if (size != void 0) {
+      // dom.style.fontSize = typeof size === 'string' ? size : size + 'px'
+    }
+    if (color != void 0) {
+      // dom.style.color = color
+    }
+    const valueDom = dom.querySelector('.value') as HTMLElement
+    const unitDom = dom.querySelector('.unit') as HTMLElement
+    valueDom.textContent = (item.value || 0) + ''
+    unitDom.textContent = (item.unit || '') + ''
+  }
+}
+
+/**
  * 创建 css2d 渲染器
  * @param options 配置
  * @param container 容器
@@ -155,6 +188,62 @@ export const createDotCSS2DDom = (item: ObjectItem, clickBack) => {
     position: [x, y, z],
     onClick: clickBack
   })
+  label.name = item.name
+  label.data = item
+  // 原始点位 备用
+  label._position_ = { x, y, z }
+  return label
+}
+
+/**
+ * 创建 css2d 渲染器
+ * @param options 配置
+ * @param container 容器
+ * @returns
+ */
+export const createCSS3DRender = (options, container) => {
+  return initCSS3DRender(options, container)
+}
+
+/**
+ * 创建点位
+ * @param item 模型配置对象
+ * @param clickBack 点击事件回调
+ * @returns
+ */
+export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
+  const pos = item.position
+  const { size, color } = item.font || {}
+  const { x = 0, y = 0, z = 0 } = pos || {}
+  const label = createCSS3DDom({
+    name: `
+      <div class="label-wrap">
+      <div class="name">${item.name || ''}</div>
+      <span class="inner" style="${
+        size != void 0 ? `font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
+      } ${color != void 0 ? `color: ${color}` : ''}">
+        <span class="value"></span>
+        <span class="unit"></span>
+      </div>
+    </div>
+    `,
+    className: 'dot-3D-label',
+    position: [x, y, z],
+    onClick: clickBack
+  })
+  const geo = new THREE.SphereGeometry(1)
+  const sphere = new THREE.Mesh(
+    geo,
+    new THREE.MeshBasicMaterial({ color: 0xf00f00, transparent: true, opacity: 0.2 })
+  )
+  label.add(sphere)
+  label.rotateY(Math.PI * 0.5)
+  label.scale.setScalar(0.02)
+
+  // console.log(item.name, label, sphere)
+  const { rotation } = Utils.get_P_S_R_param(label, item)
+  const [rx, ry, rz] = rotation
+  label.rotation.set(rx, ry, rz)
   label.name = item.name
   label.data = item
   // 原始点位 备用

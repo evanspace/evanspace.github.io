@@ -48,6 +48,10 @@ export class OfficeScene extends ThreeScene.Scene {
   css2DRender?: ReturnType<typeof MS.createCSS2DRender>
   // 点位集合
   dotGroup?: InstanceType<typeof THREE.Group>
+  // CSS3D 渲染器
+  css3DRender?: ReturnType<typeof MS.createCSS3DRender>
+  // 点位集合
+  dot3Group?: InstanceType<typeof THREE.Group>
   // 灯光组
   lightGroup?: InstanceType<typeof THREE.Group>
 
@@ -154,6 +158,10 @@ export class OfficeScene extends ThreeScene.Scene {
     // CSS2D 渲染器
     this.css2DRender = MS.createCSS2DRender(this.options, this.container)
     this.addDotGroup()
+    // CSS3D 渲染器
+    this.css3DRender = MS.createCSS3DRender(this.options, this.container)
+    this.addDot3Group()
+
     // 灯光
     this.addLightGroup()
 
@@ -176,6 +184,8 @@ export class OfficeScene extends ThreeScene.Scene {
     this.addDiffusion()
 
     this.setControlCache()
+
+    this.setDebounceDuration(1000)
   }
 
   // 渲染器
@@ -216,6 +226,9 @@ export class OfficeScene extends ThreeScene.Scene {
     // css2D 渲染器
     this.css2DRender?.render(this.scene, this.camera)
 
+    // css3D 渲染器
+    this.css3DRender?.render(this.scene, this.camera)
+
     // 场景风格
     this.autoChangeStyle()
 
@@ -237,6 +250,31 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 人物动画
     this.personAnimate(delta)
+
+    this.debounce(() => {
+      this.checkDot3CameraVisibleObjects()
+    })
+  }
+
+  // 监测 3D 点位相机可视对象
+  checkDot3CameraVisibleObjects() {
+    // 巡航视角
+    const isCruise = this.isCruise()
+    if (!isCruise) return
+    const frustum = this.getFrustum()
+    const list = this.dot3Group?.children || []
+    for (let i = 0; i < list.length; i++) {
+      const target = list[i]
+      const object = target.children[0]
+      if (object instanceof THREE.Mesh) {
+        if (this.frustumIntersectsBox(frustum, object)) {
+          const ds = this.camera.position.distanceTo(target.position)
+          target.visible = ds <= DEFAULTCONFIG.dotVisibleDistance
+        } else {
+          target.visible = false
+        }
+      }
+    }
   }
 
   // 查找灯光
@@ -367,6 +405,29 @@ export class OfficeScene extends ThreeScene.Scene {
     const label = MS.createDotCSS2DDom(item, clickBack)
     this.dotGroup.add(label)
     return label
+  }
+
+  // 添加点位组
+  addDot3Group() {
+    if (!this.css3DRender) return
+    this.css3DRender.domElement.className = 'three-scene__dot-wrap'
+    const group = new THREE.Group()
+    group.name = '点位组3'
+    this.dot3Group = group
+    this.scene.add(group)
+  }
+  // 添加点位
+  addDot3(item: ObjectItem, clickBack?) {
+    if (!this.dot3Group) return new THREE.Mesh()
+    const label = MS.createDotCSS3DDom(item, clickBack)
+    this.dot3Group.add(label)
+    return label
+  }
+  // 关闭点位
+  closeDot3() {
+    this.dot3Group?.children.forEach(el => {
+      el.visible = false
+    })
   }
 
   // 添加灯光组
@@ -664,7 +725,7 @@ export class OfficeScene extends ThreeScene.Scene {
     insertEvent(
       e => {
         // 人物运行中或者巡航激活则不处理
-        if (personModel.__runing__ || this.options.cruise.enabled) return
+        if (personModel.__runing__ || this.isCruise()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk()
         }
@@ -678,7 +739,7 @@ export class OfficeScene extends ThreeScene.Scene {
         }
       },
       e => {
-        if (personModel.__runing__ || this.options.cruise.enabled) return
+        if (personModel.__runing__ || this.isCruise()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk(false)
         }
@@ -1248,6 +1309,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 关闭巡航
   closeCruise() {
     const isRuning = this.options.cruise.runing
+    this.closeDot3()
     super.closeCruise()
     if (isRuning) {
       // 人物坐标恢复巡航前
@@ -1305,7 +1367,7 @@ export class OfficeScene extends ThreeScene.Scene {
     let objects: any[] = []
     // 悬浮组距离 且控制器激活状态
     const isHoverGroupDistance =
-      maxDistance > (this.isTest ? 10000 : hoverDistance.empty) && this.controls?.enabled
+      maxDistance > (this._isTest ? 10000 : hoverDistance.empty) && this.controls?.enabled
     // 空组
     if (isHoverGroupDistance) {
       // 鸟瞰视角
@@ -1346,7 +1408,7 @@ export class OfficeScene extends ThreeScene.Scene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
-      this.isTest && console.log(intersct)
+      this._isTest && console.log(intersct)
       if (isHoverGroupDistance) {
         // 查找相机切换对应对象
         const obj = DEFAULTCONFIG.cameraTransitionList.find(
@@ -1381,11 +1443,6 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
 
-  // 截图
-  capture() {
-    this.exportImage()
-  }
-
   // 销毁场景
   dispose() {
     this.clearVideo()
@@ -1402,6 +1459,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
     this.clock = void 0
     this.css2DRender = void 0
+    this.css3DRender = void 0
     this.buildingGroup = void 0
     this.dotGroup = void 0
     this.anchorGroup = void 0

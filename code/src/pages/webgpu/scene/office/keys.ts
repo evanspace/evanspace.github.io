@@ -46,6 +46,8 @@ export default {
   // 空调开关
   M_AIR_SWITCH: 'AIR_SWITCH',
 
-  // dot 点位类型值
-  DOT: 'DOT'
+  // dot 二维点位类型值
+  DOT: 'DOT',
+  // dot 三维点位类型值
+  DOT3: 'DOT3'
 }

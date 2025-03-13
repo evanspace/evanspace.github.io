@@ -97,7 +97,6 @@ const containerRef = ref()
 const options: ConstructorParameters<typeof OfficeScene>[0] = {
   cruise: pageOpts.cruise,
   baseUrl: DEFAULTCONFIG.baseUrl,
-  // env: DEFAULTCONFIG.sky[0],
   render: {
     alpha: true
     // preserveDrawingBuffer: true
@@ -158,6 +157,11 @@ const createDotObject = item => {
   )
 }
 
+// 创建 dot3 点位
+const createDot3Object = item => {
+  MS.updateDot3Visible(scene, scene.addDot3(item), false)
+}
+
 // 加载场景模型
 const loadSceneModel = () => {
   return initModels(modelConfigList.value, (item: ObjectItem) => {
@@ -166,9 +170,13 @@ const loadSceneModel = () => {
     if (type === KEYS.M_ANCHOR_POS) return Promise.resolve()
     const obj = getModel(type)
     if (!obj) {
-      // 点位
+      // 二维点位
       if (type === KEYS.DOT) {
         createDotObject(item)
+      }
+      // 三维点位
+      else if (type === KEYS.DOT3) {
+        createDot3Object(item)
       }
       return Promise.resolve()
     }

@@ -240,5 +240,8 @@ export default {
   },
 
   // 视角自动切换
-  sightToggle: false
+  sightToggle: false,
+
+  // 巡航可视点位距离
+  dotVisibleDistance: 25
 }

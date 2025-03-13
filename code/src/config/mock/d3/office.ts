@@ -32,10 +32,117 @@ const JsonList = [
 const dotList = [
   // {
   //   name: '监测点',
-  //   type: 'DOT'
+  //   type: 'DOT',
+  //   position: { x: -26.98, y: 186.85, z: 36.69 }
   // }
 ]
 JsonList.push(...dotList)
+
+const dot3List = [
+  {
+    name: '前台',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 15.24, y: 186.8, z: 48.6 }
+  },
+  {
+    name: '暖通区',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -10.45, y: 186.8, z: 44.6 }
+  },
+  {
+    name: '大会议室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -33.55, y: 186.9, z: 44.6 }
+  },
+  {
+    name: '副总裁室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -40.3, y: 186.8, z: 31.4 },
+    rotation: { x: 0, y: -90, z: 0 }
+  },
+  {
+    name: '副总裁室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -40.3, y: 186.8, z: 11.2 },
+    rotation: { x: 0, y: -90, z: 0 }
+  },
+  {
+    name: '财务室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -40.3, y: 186.8, z: -9.2 },
+    rotation: { x: 0, y: -90, z: 0 }
+  },
+  {
+    name: 'CFO办公室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -40.3, y: 186.9, z: -18.2 },
+    rotation: { x: 0, y: -90, z: 0 }
+  },
+  {
+    name: '洽谈室一',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -32.2, y: 186.8, z: -17.5 },
+    rotation: { x: 0, y: 90, z: 0 }
+  },
+  {
+    name: '人事区域',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -22.5, y: 186.8, z: 5.2 },
+    rotation: { x: 0, y: 90, z: 0 }
+  },
+  {
+    name: '小会议室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: -10.9, y: 186.8, z: 30.1 },
+    rotation: { x: 0, y: 180, z: 0 }
+  },
+  {
+    name: '洽谈室二',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 46.7, y: 186.8, z: 23.3 },
+    rotation: { x: 0, y: 270, z: 0 }
+  },
+  {
+    name: '茶室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 46.7, y: 186.8, z: 16.7 },
+    rotation: { x: 0, y: 270, z: 0 }
+  },
+  {
+    name: '副总裁室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 55.3, y: 186.8, z: 19.6 },
+    rotation: { x: 0, y: 90, z: 0 }
+  },
+  {
+    name: '大洽谈室',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 55.3, y: 186.8, z: 28.2 },
+    rotation: { x: 0, y: 90, z: 0 }
+  },
+  {
+    name: '研发区',
+    type: 'DOT3',
+    unit: '℃',
+    position: { x: 55.2, y: 186.8, z: 45.9 },
+    rotation: { x: 0, y: 90, z: 0 }
+  }
+]
+JsonList.push(...dot3List)
 
 // 定位点
 const posList = [
