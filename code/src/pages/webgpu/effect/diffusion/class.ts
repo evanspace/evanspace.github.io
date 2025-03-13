@@ -18,14 +18,15 @@ export class Scene extends ThreeScene.Scene {
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
+    this.setDebounceDuration(1000)
+
     // 场景合成
     this.postProcessing = this.createPostProcessing(this.scene, this.camera, this.renderer)
 
+    console.log(this)
     this.addObject(this.group)
 
     this.addModel()
-
-    console.log(this)
   }
 
   render() {
@@ -83,6 +84,7 @@ export class Scene extends ThreeScene.Scene {
     const mesh = this.createDiffusion(1, 0x61b9ea)
     mesh.rotation.x = -Math.PI * 0.5
     this.addObject(mesh)
+    mesh.geometry.computeBoundingBox()
 
     const mesh2 = createDiffusion(
       {
@@ -91,7 +93,8 @@ export class Scene extends ThreeScene.Scene {
       },
       THREE
     )
-    mesh2.position.x = 2
+    mesh2.position.x = 3
+    mesh2.geometry.computeBoundingBox()
     this.addObject(mesh2)
   }
 
@@ -148,5 +151,27 @@ export class Scene extends ThreeScene.Scene {
     return mesh
   }
 
-  modelAnimate() {}
+  modelAnimate() {
+    this.debounce(() => {
+      // this.checkObjects()
+    })
+  }
+
+  checkObjects() {
+    const visibleObjects = this.getVisibleObjects()
+    console.log('Visible objects:', visibleObjects) // 输出或处理可见对象列表
+  }
+
+  getVisibleObjects() {
+    const frustum = this.getFrustum()
+    const visibleObjects: any[] = []
+    this.scene.traverseVisible(object => {
+      if (object instanceof THREE.Mesh) {
+        if (this.frustumIntersectsBox(frustum, object)) {
+          visibleObjects.push(object)
+        }
+      }
+    })
+    return visibleObjects
+  }
 }
