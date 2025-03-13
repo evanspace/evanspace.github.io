@@ -19,7 +19,7 @@ const { keyboardPressed, destroyEvent, insertEvent } = Hooks.useKeyboardState()
 const { createMove, moveAnimate, stop: moveStop } = Hooks.useMoveAnimate()
 const { checkCollide } = Hooks.useCollide()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
-const { createDiffusion, updateDiffusion } = Hooks.useDiffusion2(DEFAULTCONFIG.diffusionImgs)
+const { createDiffusion } = Hooks.useDiffusion2()
 
 // 视角映射
 const SIGHT_MAP = {
@@ -127,6 +127,9 @@ export class OfficeScene extends ThreeScene.Scene {
   // hover 组
   hoverGroup?: InstanceType<typeof THREE.Group>
 
+  // 测试
+  isTest = false
+
   constructor(
     options: ConstructorParameters<typeof ThreeScene.Scene>[0],
     extend: Partial<ExtendOptions>
@@ -176,7 +179,11 @@ export class OfficeScene extends ThreeScene.Scene {
     this.addDiffusion()
 
     this.setControlCache()
-    console.log(this)
+  }
+
+  openTest() {
+    this.isTest = !this.isTest
+    this.isTest && console.log(this)
   }
 
   // 渲染器
@@ -238,9 +245,6 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 人物动画
     this.personAnimate(delta)
-
-    // 扩散波
-    this.diffusionAnimate()
   }
 
   // 查找灯光
@@ -969,18 +973,17 @@ export class OfficeScene extends ThreeScene.Scene {
   ///////////////////////////
   // 添加扩散波
   addDiffusion() {
-    const mesh = createDiffusion(2)
-    mesh.rotation.x = -Math.PI * 0.5
+    const mesh = createDiffusion(
+      {
+        textureSrc: DEFAULTCONFIG.diffusionImg,
+        bloomIntensity: 0.2
+      },
+      THREE
+    )
     mesh.position.y = 0.5
     mesh.visible = false
     this.addObject(mesh)
     this.diffusion = mesh
-  }
-  // 扩散波动画
-  diffusionAnimate() {
-    if (this.diffusion.visible) {
-      updateDiffusion(2)
-    }
   }
 
   ///////////////////////////
@@ -1309,7 +1312,8 @@ export class OfficeScene extends ThreeScene.Scene {
 
     let objects: any[] = []
     // 悬浮组距离 且控制器激活状态
-    const isHoverGroupDistance = maxDistance > hoverDistance.empty && this.controls?.enabled
+    const isHoverGroupDistance =
+      maxDistance > (this.isTest ? 10000 : hoverDistance.empty) && this.controls?.enabled
     // 空组
     if (isHoverGroupDistance) {
       // 鸟瞰视角
@@ -1350,7 +1354,7 @@ export class OfficeScene extends ThreeScene.Scene {
     if (interscts.length) {
       const intersct = interscts[0]
       const object = intersct.object
-      console.log(intersct)
+      this.isTest && console.log(intersct)
       if (isHoverGroupDistance) {
         // 查找相机切换对应对象
         const obj = DEFAULTCONFIG.cameraTransitionList.find(

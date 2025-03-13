@@ -77,6 +77,8 @@ const eventNames = [
 
   // 场景坐标
   'SCENE:POS',
+  // 测试
+  'SCENE:TEST',
   // 截图
   'SCENE:SCREENSHOT',
 
