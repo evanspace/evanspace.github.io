@@ -716,13 +716,13 @@ export class OfficeScene extends ThreeScene.Scene {
   addPersonEvent() {
     const personModel = this.person
     if (!personModel) return
-    const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0))
+    const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0)).concat([38, 40])
 
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
-        // 人物运行中或者巡航激活则不处理
-        if (personModel.__runing__ || this.isCruise()) return
+        // 人物运行中或者巡航激活或者非人物视角则不处理
+        if (personModel.__runing__ || this.isCruise() || !this.isPersonSight()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk()
         }
@@ -736,7 +736,7 @@ export class OfficeScene extends ThreeScene.Scene {
         }
       },
       e => {
-        if (personModel.__runing__ || this.isCruise()) return
+        if (personModel.__runing__ || this.isCruise() || !this.isPersonSight()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk(false)
         }
