@@ -266,7 +266,6 @@ export class OfficeScene extends ThreeScene.Scene {
       if (target instanceof THREE.Mesh) {
         if (this.frustumIntersectsBox(frustum, target)) {
           const ds = this.camera.position.distanceTo(object.position)
-          console.log(object.userData.data.name, ds)
           object.visible = ds <= DEFAULTCONFIG.dotVisibleDistance
         } else {
           object.visible = false
