@@ -259,19 +259,19 @@ export class OfficeScene extends ThreeScene.Scene {
   // 监测 3D 点位相机可视对象
   checkDot3CameraVisibleObjects() {
     // 巡航视角
-    const isCruise = this.isCruise()
-    if (!isCruise) return
+    // const isCruise = this.isCruise()
+    // if (!isCruise) return
     const frustum = this.getFrustum()
     const list = this.dot3Group?.children || []
     for (let i = 0; i < list.length; i++) {
-      const target = list[i]
-      const object = target.children[0]
-      if (object instanceof THREE.Mesh) {
-        if (this.frustumIntersectsBox(frustum, object)) {
-          const ds = this.camera.position.distanceTo(target.position)
-          target.visible = ds <= DEFAULTCONFIG.dotVisibleDistance
+      const object = list[i]
+      const target = MS.getCSS3DObjectTargetMesh(object)
+      if (target instanceof THREE.Mesh) {
+        if (this.frustumIntersectsBox(frustum, target)) {
+          const ds = this.camera.position.distanceTo(object.position)
+          object.visible = ds <= DEFAULTCONFIG.dotVisibleDistance
         } else {
-          target.visible = false
+          object.visible = false
         }
       }
     }
@@ -325,7 +325,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.fleetingGroup && (this.fleetingGroup.visible = visible)
     this.streetLampGroup && (this.streetLampGroup.visible = visible)
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
-    this.toggleCruiseBloom(visible, THREE)
 
     this.loadEnvTexture(hdr, _texture => {
       // console.log(hdr)
@@ -425,9 +424,9 @@ export class OfficeScene extends ThreeScene.Scene {
   }
   // 关闭点位
   closeDot3() {
-    this.dot3Group?.children.forEach(el => {
-      el.visible = false
-    })
+    // this.dot3Group?.children.forEach(el => {
+    //   el.visible = false
+    // })
   }
 
   // 添加灯光组
@@ -1251,7 +1250,7 @@ export class OfficeScene extends ThreeScene.Scene {
     createRoam({
       points,
       segment: 12,
-      tension: 0,
+      tension: 0.5,
       speed: 2,
       close: !false,
       factor: 1
@@ -1319,6 +1318,12 @@ export class OfficeScene extends ThreeScene.Scene {
       this.personWalk(false)
     }
   }
+  // 设置巡航
+  setCruisePoint(points: number[][]) {
+    super.setCruisePoint(points)
+
+    this.toggleCruiseBloom(true, THREE)
+  }
 
   // 判断巡航
   judgeCruise() {
@@ -1354,8 +1359,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
     // 点击未弹起 且第一视角
     if (this.pointer.isClick && this.person && this.isFirstPersonSight()) {
-      const angle = (Math.PI * 2 * e.movementX) / this.options.height
-      this.person.rotation.y -= angle
+      this.person.rotation.y -= this.movementXToAngle(e.movementX)
     }
 
     // 控制最大距离
@@ -1441,6 +1445,13 @@ export class OfficeScene extends ThreeScene.Scene {
     } else {
       if (typeof this.extend?.onClickLeft === 'function') this.extend.onClickLeft()
     }
+  }
+
+  resize() {
+    super.resize()
+    const { width, height } = this.options
+    this.css2DRender?.setSize(width, height)
+    this.css3DRender?.setSize(width, height)
   }
 
   // 销毁场景

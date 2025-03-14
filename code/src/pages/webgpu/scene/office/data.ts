@@ -66,7 +66,7 @@ export const getPageOpts = (): {
     points: [],
     close: !false,
     offset: 3.5,
-    bloomIntensity: 0.1
+    bloomIntensity: 0.2
   },
   roamPoints: [],
 

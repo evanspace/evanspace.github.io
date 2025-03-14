@@ -243,5 +243,5 @@ export default {
   sightToggle: false,
 
   // 巡航可视点位距离
-  dotVisibleDistance: 25
+  dotVisibleDistance: 20
 }

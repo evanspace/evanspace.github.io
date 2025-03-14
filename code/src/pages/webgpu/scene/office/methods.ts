@@ -78,7 +78,6 @@ export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) =
  * @returns
  */
 export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
-  // const val = wsStore.getKeyValue( code ).value
   const val = Math.random() * 2 - 4 + 26
   if (val !== void 0) {
     obj.value = val
@@ -103,8 +102,8 @@ export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
  * @param dotShowStrict 是否严格模式
  */
 export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) => {
-  const item = target.data as ObjectItem
-  const res = dotUpdateObjectCall(item, scene.buildingGroup)
+  const item = (target.data || target.userData.data) as ObjectItem
+  const res = dotUpdateObjectCall(item, scene.dotGroup)
   if (typeof res === 'object') {
     Object.keys(res).forEach(key => {
       item[key] = res[key]
@@ -131,21 +130,25 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
  * @param target 目标对象
  * @param visible 是否展示
  */
-export const updateDot3Visible = (scene, target: ThreeModelItem, visible?) => {
-  const item = target.data as ObjectItem
-  const res = dotUpdateObjectCall(item, scene.buildingGroup)
+export const updateDot3Visible = (scene, object: ThreeModelItem, visible?) => {
+  const item = (object.data || object.userData.data) as ObjectItem
+  const res = dotUpdateObjectCall(item, scene.dot3Group)
   if (typeof res === 'object') {
     Object.keys(res).forEach(key => {
       item[key] = res[key]
     })
   }
 
-  target.visible = visible
+  object.visible = visible
+  const target = object.getObjectByProperty('isCSS3DObject', true) as ReturnType<
+    typeof createCSS3DDom
+  >
+  if (!target) return
   const dom = target.element?.getElementsByClassName('inner')[0] as HTMLElement
   if (dom) {
     const { size, color } = item.font || {}
     if (size != void 0) {
-      // dom.style.fontSize = typeof size === 'string' ? size : size + 'px'
+      dom.style.fontSize = typeof size === 'string' ? size : size + 'px'
     }
     if (color != void 0) {
       // dom.style.color = color
@@ -188,10 +191,10 @@ export const createDotCSS2DDom = (item: ObjectItem, clickBack) => {
     position: [x, y, z],
     onClick: clickBack
   })
-  label.name = item.name
-  label.data = item
+  label.name = item.name + '_2D_Dot'
+  label.userData.data = item
   // 原始点位 备用
-  label._position_ = { x, y, z }
+  label.userData.position = { x, y, z }
   return label
 }
 
@@ -228,27 +231,32 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
     </div>
     `,
     className: 'dot-3D-label',
-    position: [x, y, z],
     onClick: clickBack
   })
+  label.rotateY(Math.PI * 0.5)
+
+  const group = new THREE.Group()
+  group.position.set(x, y, z)
+  group.add(label)
   const geo = new THREE.SphereGeometry(1)
   const sphere = new THREE.Mesh(
     geo,
-    new THREE.MeshBasicMaterial({ color: 0xf00f00, transparent: true, opacity: 0.2 })
+    new THREE.MeshBasicMaterial({ color: 0x14ffec, transparent: true, opacity: 0.2 })
   )
-  label.add(sphere)
-  label.rotateY(Math.PI * 0.5)
-  label.scale.setScalar(0.02)
+  group.add(sphere)
+  group.scale.setScalar(0.02)
 
-  // console.log(item.name, label, sphere)
-  const { rotation } = Utils.get_P_S_R_param(label, item)
+  const { rotation } = Utils.get_P_S_R_param(group, item)
   const [rx, ry, rz] = rotation
-  label.rotation.set(rx, ry, rz)
-  label.name = item.name
-  label.data = item
+  group.rotation.set(rx, ry, rz)
+  group.name = item.name + '_3D_Dot'
+  group.userData.data = item
   // 原始点位 备用
-  label._position_ = { x, y, z }
-  return label
+  group.userData.position = { x, y, z }
+  return group
+}
+export const getCSS3DObjectTargetMesh = target => {
+  return target?.children[1]
 }
 
 /**
