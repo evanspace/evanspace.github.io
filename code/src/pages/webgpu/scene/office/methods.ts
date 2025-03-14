@@ -130,11 +130,18 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
  * @param target 目标对象
  * @param visible 是否展示
  */
+let upts = 0
 export const updateDot3Visible = (object: ThreeModelItem, visible?) => {
   object.visible = visible
   const target = object.getObjectByProperty('isCSS3DObject', true) as ReturnType<
     typeof createCSS3DDom
   >
+  // 限制 10 秒更新
+  const ts = Date.now()
+  if (ts - upts < 1000 * 10) {
+    return
+  }
+  upts = ts
   if (!target) return
   const doms = target.element?.getElementsByClassName('env-item')
   if (doms.length) {
