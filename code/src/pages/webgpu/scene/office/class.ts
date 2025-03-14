@@ -322,7 +322,6 @@ export class OfficeScene extends ThreeScene.Scene {
     this.fleetingGroup && (this.fleetingGroup.visible = visible)
     this.streetLampGroup && (this.streetLampGroup.visible = visible)
     this.residentLightGroup && (this.residentLightGroup.visible = visible)
-    this.toggleCruiseBloom(visible, THREE)
 
     this.loadEnvTexture(hdr, _texture => {
       // console.log(hdr)
@@ -1317,11 +1316,11 @@ export class OfficeScene extends ThreeScene.Scene {
     }
   }
   // 设置巡航
-  // setCruisePoint(points: number[][]) {
-  //   super.setCruisePoint(points)
+  setCruisePoint(points: number[][]) {
+    super.setCruisePoint(points)
 
-  //   this.toggleCruiseBloom(true, THREE)
-  // }
+    this.toggleCruiseBloom(true, THREE)
+  }
 
   // 判断巡航
   judgeCruise() {
