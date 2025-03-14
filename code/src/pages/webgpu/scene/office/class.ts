@@ -258,9 +258,6 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 监测 3D 点位相机可视对象
   checkDot3CameraVisibleObjects() {
-    // 巡航视角
-    // const isCruise = this.isCruise()
-    // if (!isCruise) return
     const frustum = this.getFrustum()
     const list = this.dot3Group?.children || []
     for (let i = 0; i < list.length; i++) {
