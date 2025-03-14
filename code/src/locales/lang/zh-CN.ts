@@ -150,6 +150,7 @@ export default {
 
     modelConvert: '@:route.model@:route.convert',
     format: '格式化',
+    random: '随机',
 
     lookat: '朝向'
   },

@@ -1,0 +1,13 @@
+.page {
+  padding: 10px;
+  font-size: 1.5rem;
+}
+
+
+:global {
+  :local(.page) {
+    .el-card {
+      margin-bottom: 10px;
+    }
+  }
+}

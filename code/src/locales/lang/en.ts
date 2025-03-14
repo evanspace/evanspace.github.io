@@ -150,6 +150,7 @@ export default {
 
     modelConvert: '@:route.model @:route.convert',
     format: 'format',
+    random: 'random',
 
     lookat: 'lookat'
   },
