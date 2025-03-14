@@ -130,33 +130,50 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
  * @param target 目标对象
  * @param visible 是否展示
  */
-export const updateDot3Visible = (scene, object: ThreeModelItem, visible?) => {
-  const item = (object.data || object.userData.data) as ObjectItem
-  const res = dotUpdateObjectCall(item, scene.dot3Group)
-  if (typeof res === 'object') {
-    Object.keys(res).forEach(key => {
-      item[key] = res[key]
-    })
-  }
-
+export const updateDot3Visible = (object: ThreeModelItem, visible?) => {
   object.visible = visible
   const target = object.getObjectByProperty('isCSS3DObject', true) as ReturnType<
     typeof createCSS3DDom
   >
   if (!target) return
-  const dom = target.element?.getElementsByClassName('inner')[0] as HTMLElement
-  if (dom) {
-    const { size, color } = item.font || {}
-    if (size != void 0) {
-      dom.style.fontSize = typeof size === 'string' ? size : size + 'px'
-    }
-    if (color != void 0) {
-      // dom.style.color = color
-    }
-    const valueDom = dom.querySelector('.value') as HTMLElement
-    const unitDom = dom.querySelector('.unit') as HTMLElement
-    valueDom.textContent = (item.value || 0) + ''
-    unitDom.textContent = (item.unit || '') + ''
+  const doms = target.element?.getElementsByClassName('env-item')
+  if (doms.length) {
+    setEnvDomText(doms)
+  }
+}
+
+// 获取环境对应配置
+const getEnvOptions = type => {
+  let value = 0,
+    color = '#fff'
+  switch (type) {
+    case 1:
+      value = 23 + Number((Math.random() * 1 - 0.7).toFixed(2))
+      color = value > 23 ? '#f00' : '#008000'
+      break
+    case 2:
+      value = 70 + Number((Math.random() * 1 - 0.7).toFixed(2))
+      color = value > 70 ? '#f00' : '#008000'
+      break
+    case 3:
+      value = 418 + Number((Math.random() * 5 - 3).toFixed(2))
+      color = value > 420 ? '#f00' : '#008000'
+      break
+  }
+  return {
+    value,
+    color
+  }
+}
+
+// 设置环境节点文本
+const setEnvDomText = doms => {
+  for (let i = 0; i < doms.length; i++) {
+    const env = doms[i]
+    const tDom = env.getElementsByClassName('value')[0] as HTMLElement
+    const { value, color } = getEnvOptions(i + 1)
+    tDom.textContent = value + ''
+    tDom.style.setProperty('--color', color)
   }
 }
 
@@ -220,17 +237,40 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
   const { x = 0, y = 0, z = 0 } = pos || {}
   const label = createCSS3DDom({
     name: `
-      <div class="label-wrap">
-      <div class="name">${item.name || ''}</div>
-      <span class="inner" style="${
-        size != void 0 ? `font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
-      } ${color != void 0 ? `color: ${color}` : ''}">
-        <span class="value"></span>
-        <span class="unit"></span>
+
+      <div class="env-wrap">
+        <div class="title">${item.name || ''}</div>
+        <div class="env-conten" style="${
+          size != void 0 ? `--font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
+        } ${color != void 0 ? `--color: ${color}` : ''}">
+          <div class="env-item">
+            <div class="name">温度</div>
+            <span class="inner">
+              <span class="value">20</span>
+              <span class="unit">°C</span>
+            </span>
+          </div>
+
+          <div class="env-item">
+            <div class="name">湿度</div>
+            <span class="inner">
+              <span class="value">20</span>
+              <span class="unit">%</span>
+            </span>
+          </div>
+
+          <div class="env-item">
+            <div class="name">CO₂</div>
+            <span class="inner">
+              <span class="value">20</span>
+              <span class="unit">ppm</span>
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
     `,
-    className: 'dot-3D-label',
+    className: 'dot-env-box',
+    sprite: true,
     onClick: clickBack
   })
   label.rotateY(Math.PI * 0.5)

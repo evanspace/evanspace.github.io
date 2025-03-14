@@ -159,7 +159,7 @@ const createDotObject = item => {
 
 // 创建 dot3 点位
 const createDot3Object = item => {
-  MS.updateDot3Visible(scene, scene.addDot3(item), true)
+  MS.updateDot3Visible(scene.addDot3(item), true)
 }
 
 // 加载场景模型
