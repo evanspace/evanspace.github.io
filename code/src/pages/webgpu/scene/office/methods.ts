@@ -137,7 +137,7 @@ export const updateDot3Visible = (object: ThreeModelItem, visible?) => {
   >
   // 限制 10 秒更新
   const ts = Date.now()
-  if (ts - (object.userData._ts ?? 0) < 1000 * 10) {
+  if (ts - (object.userData._ts ?? 0) < DEFAULTCONFIG.envRefreshLimitTime) {
     return
   }
   object.userData._ts = ts
@@ -735,11 +735,7 @@ export const liftMove = (liftName, from, to) => {
  * @param _names
  * @returns
  */
-export const createAirGroup = (
-  scene: THREE.Scene,
-  speed: ReturnType<typeof uniform>,
-  type?: number
-) => {
+export const createAirGroup = (scene: THREE.Scene, speed: ReturnType<typeof uniform>) => {
   // 空调风列表
   const data = DEFAULTCONFIG.airWinds
   const group = new THREE.Group()
@@ -754,30 +750,19 @@ export const createAirGroup = (
     const subGroup = new THREE.Group()
     subGroup.name = name
     for (let j = 0; j < list.length; j++) {
-      const { width, height, position: pos, rotation } = list[j]
+      const { position: pos, rotation } = list[j]
       const { x = 0, y = 0, z = 0 } = rotation
-      const mesh = !type
-        ? createParticleSmoke({
-            speed,
-            count: Math.floor(Math.random() * 100 + 50),
-            mixColor: 0xffffff,
-            offsetRangeMin: [-5, 2, 0],
-            offsetRangeMax: [5, 3, 3],
-            scaleMin: 0.1,
-            scaleMax: 1.2,
-            mixColorStart: 0.15,
-            textureSrc: DEFAULTCONFIG.airParticleTexture
-          })
-        : createStripSmoke({
-            width,
-            height,
-            speed,
-            color: 0x76b6ff,
-            twistNums: Math.floor(Math.random() * 4 + 1),
-            twistRange: Math.random() * 1,
-            offset: Math.random() * 1,
-            segment: 2
-          })
+      const mesh = createParticleSmoke({
+        speed,
+        count: Math.floor(Math.random() * 100 + 50),
+        mixColor: 0xffffff,
+        offsetRangeMin: [-5, 2, 0],
+        offsetRangeMax: [5, 3, 3],
+        scaleMin: 0.1,
+        scaleMax: 1.2,
+        mixColorStart: 0.15,
+        textureSrc: DEFAULTCONFIG.airParticleTexture
+      })
 
       // 角度、位置
       const sp = Math.PI / 180
@@ -859,20 +844,29 @@ export const hoverEmptyGroup = (interscts, callback, container, group) => {
  * @param target 需要移动的目标
  * @param options 巡航过渡回参
  */
-export const cruiseTargetMove = (target, options) => {
+export const cruiseTargetMove = (target, options, controls) => {
   let { position, lookAt, curve, progress } = options
   // 前置视角前 0.02
   progress = progress + 0.02
   if (progress > 1) progress = progress - 1
+  const up = new THREE.Vector3(0, 0.1, 0)
   // 当前曲线进度坐标
   const cPos = curve.getPointAt(progress)
-  position = cPos.clone().add(new THREE.Vector3(0, 0.1, 0))
+  position = cPos.clone().add(up)
   const oft = 0.001
   let ts = progress + oft
   if (ts > 1) ts = ts - 1
   lookAt = curve.getPointAt(ts)
+  if (controls?.target) {
+    const offect = new THREE.Vector3(
+      DEFAULTCONFIG.personSightOffset.x,
+      DEFAULTCONFIG.personSightOffset.y,
+      DEFAULTCONFIG.personSightOffset.z
+    )
+    controls.target.copy(lookAt.clone().add(offect))
+  }
 
-  target.position.copy(position.clone().add(new THREE.Vector3(0, 0.1, 0)))
+  target.position.copy(position.clone().add(up))
   // // 求正切值
   const angle = Math.atan2(-lookAt.z + position.z, lookAt.x - position.x)
   target.rotation.y = Math.PI * 0.5 + angle

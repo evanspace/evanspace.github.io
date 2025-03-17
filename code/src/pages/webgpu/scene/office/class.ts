@@ -266,7 +266,8 @@ export class OfficeScene extends ThreeScene.Scene {
       if (target instanceof THREE.Mesh) {
         if (this.frustumIntersectsBox(frustum, target)) {
           const ds = this.camera.position.distanceTo(object.position)
-          MS.updateDot3Visible(object, ds <= DEFAULTCONFIG.dotVisibleDistance)
+          const dis = DEFAULTCONFIG.dotVisibleDistance
+          MS.updateDot3Visible(object, ds <= dis.max && ds >= dis.min)
         } else {
           object.visible = false
         }
@@ -1278,6 +1279,7 @@ export class OfficeScene extends ThreeScene.Scene {
     }
 
     this.clsoePerson()
+    this.person && (this.person.visible = false)
     this.closeRoam()
     const runing = !(close ?? this.options.cruise.runing)
     // 即将运行则缓存人物坐标
@@ -1291,6 +1293,10 @@ export class OfficeScene extends ThreeScene.Scene {
       this.personWalk(false)
     }
     super.toggleCruise(close)
+    setTimeout(() => {
+      // 显示人物
+      this.person && (this.person.visible = true)
+    }, 30)
   }
   // 巡航状态回调
   cruiseStatusCall({ enabled, runing }) {
@@ -1300,7 +1306,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // 巡航过渡回调
   cruiseAnimateCall(options) {
     if (!options.enabled || !this.person) return
-    MS.cruiseTargetMove(this.person, options)
+    MS.cruiseTargetMove(this.person, options, this.controls)
   }
   // 关闭巡航
   closeCruise() {

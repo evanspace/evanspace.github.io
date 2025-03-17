@@ -242,6 +242,11 @@ export default {
   // 视角自动切换
   sightToggle: false,
 
-  // 巡航可视点位距离
-  dotVisibleDistance: 20
+  // 视角可视点位距离
+  dotVisibleDistance: {
+    max: 20,
+    min: 7
+  },
+  // 环境参数刷新频率限制时间
+  envRefreshLimitTime: 1000 * 10
 }
