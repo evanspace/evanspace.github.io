@@ -60,6 +60,102 @@ export const getIdentityNum = (_addres, _birt, _sex) => {
   return id_no_String
 }
 
+/**
+ * 验证18位数身份证号码中的生日是否是有效生日
+ * @param idCard 18位书身份证字符串
+ * @return
+ */
+const isValidityBrithBy18IdCard = idCard18 => {
+  const year = idCard18.substring(6, 10)
+  const month = idCard18.substring(10, 12)
+  const day = idCard18.substring(12, 14)
+  const temp_date = new Date(year, parseFloat(month) - 1, parseFloat(day))
+  // 这里用getFullYear()获取年份，避免千年虫问题
+  if (
+    temp_date.getFullYear() != parseFloat(year) ||
+    temp_date.getMonth() != parseFloat(month) - 1 ||
+    temp_date.getDate() != parseFloat(day)
+  ) {
+    return false
+  } else {
+    return true
+  }
+}
+
+/**
+ * 判断身份证号码为18位时最后的验证位是否正确
+ * @param a_idCard 身份证号码数组
+ * @return
+ */
+const isTrueValidateCodeBy18IdCard = a_idCard => {
+  const Wi = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1] // 加权因子
+  const ValideCode = [1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2] // 身份证验证位值.10代表X
+  let sum = 0 // 声明加权求和变量
+  if (a_idCard[17].toLowerCase() == 'x') {
+    a_idCard[17] = 10 // 将最后位为x的验证码替换为10方便后续操作
+  }
+  for (var i = 0; i < 17; i++) {
+    sum += Wi[i] * a_idCard[i] // 加权求和
+  }
+  const valCodePosition = sum % 11 // 得到验证码所位置
+  if (a_idCard[17] == ValideCode[valCodePosition]) {
+    return true
+  } else {
+    return false
+  }
+}
+
+/**
+ * 去掉字符串的头空格（左空格）
+ * @param _str 字符串
+ */
+const triml = _str => {
+  let i
+  for (i = 0; i < _str.length; i++) {
+    if (_str.charAt(i) != ' ') break
+  }
+  const str = _str.substring(i, _str.length)
+  return str
+}
+/**
+ * 去掉字符串的尾空格（右空格）
+ * @param _str 字符串
+ */
+const trimr = _str => {
+  let i
+  for (i = _str.length - 1; i >= 0; i--) {
+    if (_str.charAt(i) != ' ') break
+  }
+  const str = _str.substring(0, i + 1)
+  return str
+}
+/**
+ * 去掉字符串的头尾空格
+ * @param _str 字符串
+ */
+const trims = _str => {
+  return triml(trimr(_str))
+}
+
+/**
+ * 验证身份证号
+ * @param idCard 身份证号
+ */
+export const checkIdentity = idCard => {
+  idCard = trims(idCard.replace(/ /g, '')) //去掉字符串头尾空格
+  if (idCard.length == 18) {
+    var a_idCard = idCard.split('') // 得到身份证数组
+    if (isValidityBrithBy18IdCard(idCard) && isTrueValidateCodeBy18IdCard(a_idCard)) {
+      //进行18位身份证的基本验证和第18位的验证
+      return true
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+}
+
 // 身份证号码地址码
 export const identityAreaCode = [
   { name: '北京市东城区', value: '110101' },
