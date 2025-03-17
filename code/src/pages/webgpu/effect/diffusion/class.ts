@@ -12,7 +12,6 @@ const { pass, mrt, output, emissive, float } = THREE.TSL
 const { createDiffusion } = ThreeScene.Hooks.useDiffusion2()
 
 const bloomIntensity = THREE.TSL.uniform(1)
-console.log(bloomIntensity)
 
 export class Scene extends ThreeScene.Scene {
   group = new THREE.Group()
