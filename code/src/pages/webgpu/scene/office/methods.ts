@@ -137,10 +137,10 @@ export const updateDot3Visible = (object: ThreeModelItem, visible?) => {
   >
   // 限制 10 秒更新
   const ts = Date.now()
-  if (ts - (object._ts ?? 0) < 1000 * 10) {
+  if (ts - (object.userData._ts ?? 0) < 1000 * 10) {
     return
   }
-  object._ts = ts
+  object.userData._ts = ts
   if (!target) return
   const doms = target.element?.getElementsByClassName('env-item')
   if (doms.length) {
