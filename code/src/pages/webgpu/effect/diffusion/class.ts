@@ -2,6 +2,7 @@ import * as THREE from 'three/webgpu'
 import * as ThreeScene from 'three-scene'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
+import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
 const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
 const textureLoader = new THREE.TextureLoader()
@@ -10,10 +11,15 @@ const { pass, mrt, output, emissive, float } = THREE.TSL
 
 const { createDiffusion } = ThreeScene.Hooks.useDiffusion2()
 
+const bloomIntensity = THREE.TSL.uniform(1)
+console.log(bloomIntensity)
+
 export class Scene extends ThreeScene.Scene {
   group = new THREE.Group()
   // 场景合成渲染器
   postProcessing: InstanceType<typeof THREE.PostProcessing>
+
+  gui = new GUI()
 
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
@@ -27,6 +33,8 @@ export class Scene extends ThreeScene.Scene {
     this.addObject(this.group)
 
     this.addModel()
+
+    this.addGui()
   }
 
   render() {
@@ -89,7 +97,7 @@ export class Scene extends ThreeScene.Scene {
     const mesh2 = createDiffusion(
       {
         textureSrc: baseUrl + '/oss/textures/diffusion/101.png',
-        bloomIntensity: 0.2
+        bloomIntensity: bloomIntensity
       },
       THREE
     )
@@ -112,7 +120,7 @@ export class Scene extends ThreeScene.Scene {
     })
 
     material.mrtNode = THREE.TSL.mrt({
-      bloomIntensity: THREE.TSL.uniform(1)
+      bloomIntensity: bloomIntensity
     })
     const mesh = new THREE.Mesh(plane, material)
 
@@ -173,5 +181,14 @@ export class Scene extends ThreeScene.Scene {
       }
     })
     return visibleObjects
+  }
+
+  addGui() {
+    const gui = this.gui
+
+    gui.add(bloomIntensity, 'value', 0, 1, 0.01).name('发光强度')
+
+    gui.domElement.className += ' gui-wrap'
+    this.container.parentElement?.appendChild(gui.domElement)
   }
 }
