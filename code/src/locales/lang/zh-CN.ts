@@ -93,6 +93,7 @@ export default {
     orbit: '轨道',
     fly: '飞行',
     pointerLock: '指针锁定',
+    collision: '碰撞',
 
     geometry: '几何体',
     water: '水面',

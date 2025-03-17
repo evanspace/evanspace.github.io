@@ -93,6 +93,7 @@ export default {
     orbit: 'orbit',
     fly: 'fly',
     pointerLock: 'pointer Lock',
+    collision: 'collision',
 
     geometry: 'geometry',
     water: 'water',
