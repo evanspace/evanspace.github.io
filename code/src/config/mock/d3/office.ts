@@ -45,45 +45,45 @@ const dot3List = [
     name: '前台',
     type: 'DOT3',
     unit: '℃',
-    code: 'reception',
+    code: 'area_1',
     position: { x: 15.24, y: dot3Height, z: 48.6 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
-    name: '暖通区',
+    name: '综合办公区',
     type: 'DOT3',
     unit: '℃',
-    code: 'HVAC_area',
+    code: 'area_2',
     position: { x: -10.45, y: dot3Height, z: 44.6 }
   },
   {
     name: '大会议室',
     type: 'DOT3',
     unit: '℃',
-    code: 'large_conference_room',
+    code: 'area_3',
     position: { x: -33.55, y: dot3Height, z: 44.6 }
   },
   {
-    name: '副总裁室',
+    name: '副总办公室1',
     type: 'DOT3',
     unit: '℃',
-    code: 'Vice_President_Office_1',
+    code: 'area_4',
     position: { x: -40.3, y: dot3Height, z: 31.4 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
-    name: '副总裁室',
+    name: '副总办公室2',
     type: 'DOT3',
     unit: '℃',
-    code: 'Vice_President_Office_2',
+    code: 'area_5',
     position: { x: -40.3, y: dot3Height, z: 11.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
-    name: '财务室',
+    name: '财务部',
     type: 'DOT3',
     unit: '℃',
-    code: 'Accounting_office',
+    code: 'area_6',
     position: { x: -40.3, y: dot3Height, z: -9.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
@@ -91,7 +91,7 @@ const dot3List = [
     name: 'CFO办公室',
     type: 'DOT3',
     unit: '℃',
-    code: 'CFO_Office',
+    code: 'area_7',
     position: { x: -40.3, y: dot3Height, z: -18.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
@@ -99,15 +99,15 @@ const dot3List = [
     name: '洽谈室一',
     type: 'DOT3',
     unit: '℃',
-    code: 'Negotiation_Room_1',
+    code: 'area_8',
     position: { x: -32.2, y: dot3Height, z: -17.5 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
-    name: '人事区域',
+    name: '人事办公区',
     type: 'DOT3',
     unit: '℃',
-    code: 'personnel_area',
+    code: 'area_9',
     position: { x: -22.5, y: dot3Height, z: 5.2 },
     rotation: { x: 0, y: 90, z: 0 }
   },
@@ -115,7 +115,7 @@ const dot3List = [
     name: '小会议室',
     type: 'DOT3',
     unit: '℃',
-    code: 'small_conference_room',
+    code: 'area_10',
     position: { x: -10.9, y: dot3Height, z: 34.4 },
     rotation: { x: 0, y: 180, z: 0 }
   },
@@ -123,7 +123,7 @@ const dot3List = [
     name: '洽谈室二',
     type: 'DOT3',
     unit: '℃',
-    code: 'Negotiation_Room_2',
+    code: 'area_11',
     position: { x: 46.7, y: dot3Height, z: 23.3 },
     rotation: { x: 0, y: 270, z: 0 }
   },
@@ -131,7 +131,7 @@ const dot3List = [
     name: '茶室',
     type: 'DOT3',
     unit: '℃',
-    code: 'teahouse',
+    code: 'area_12',
     position: { x: 46.7, y: dot3Height, z: 16.7 },
     rotation: { x: 0, y: 270, z: 0 }
   },
@@ -139,15 +139,15 @@ const dot3List = [
     name: '总裁办公室',
     type: 'DOT3',
     unit: '℃',
-    code: 'Office_of_the_President',
+    code: 'area_13',
     position: { x: 49.1, y: dot3Height, z: 5.3 },
     rotation: { x: 0, y: 270, z: 0 }
   },
   {
-    name: '副总裁室',
+    name: '副总办公室4',
     type: 'DOT3',
     unit: '℃',
-    code: 'Vice_President_Office_3',
+    code: 'area_14',
     position: { x: 55.3, y: dot3Height, z: 19.6 },
     rotation: { x: 0, y: 90, z: 0 }
   },
@@ -155,15 +155,15 @@ const dot3List = [
     name: '大洽谈室',
     type: 'DOT3',
     unit: '℃',
-    code: 'Large_negotiation_room',
+    code: 'area_15',
     position: { x: 55.3, y: dot3Height, z: 28.2 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
-    name: '研发区',
+    name: '研发及商务办公区',
     type: 'DOT3',
     unit: '℃',
-    code: 'R&D_Zone',
+    code: 'area_16',
     position: { x: 55.2, y: dot3Height, z: 45.9 },
     rotation: { x: 0, y: 90, z: 0 }
   }
