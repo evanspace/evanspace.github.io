@@ -126,6 +126,7 @@ export default {
     station: '车站',
     office: '写字楼',
     collision: '碰撞',
+    personMove: '人物移动',
 
     hemisphere: '半球',
     spot: '聚光',

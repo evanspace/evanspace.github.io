@@ -126,6 +126,7 @@ export default {
     station: 'station',
     office: 'office',
     collision: 'collision',
+    personMove: 'person move',
 
     hemisphere: 'hemisphere',
     spot: 'spot',
