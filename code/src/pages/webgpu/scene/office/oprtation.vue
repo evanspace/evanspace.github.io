@@ -93,6 +93,7 @@
 
 <script lang="ts" setup>
 import Emitter from './emitter'
+import DEFAULTCONFIG from './config'
 import { OfficeScene } from './class'
 
 interface Item {
@@ -131,6 +132,15 @@ const onAllUpdate = () => {
   if (!props.scene) return
   updateDot3(props.scene.dot3Group?.children)
 }
+
+let timer: NodeJS.Timeout
+onMounted(() => {
+  timer = setInterval(onAllUpdate, DEFAULTCONFIG.envRefreshLimitTime)
+})
+
+onBeforeMount(() => {
+  clearInterval(timer)
+})
 </script>
 
 <style lang="scss">

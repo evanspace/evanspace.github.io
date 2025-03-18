@@ -3,8 +3,8 @@
     <!-- 操作按钮 -->
     <t-operation
       :list="cameraPositionList"
-      @change="onCameraTransition"
       :scene="scene"
+      @change="onCameraTransition"
     ></t-operation>
 
     <div class="h-100" ref="containerRef"></div>
