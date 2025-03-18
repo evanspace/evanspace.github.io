@@ -1,4 +1,4 @@
-import * as THREE from 'three/webgpu'
+// import * as THREE from 'three/webgpu'
 import * as ThreeScene from 'three-scene'
 
 export class Scene extends ThreeScene.Scene {
