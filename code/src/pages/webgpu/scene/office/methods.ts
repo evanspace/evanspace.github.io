@@ -5,7 +5,8 @@ import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
 
 import DEFAULTCONFIG from './config'
-import { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { UpdateDotItem } from './index'
 
 const Hooks = ThreeScene.Hooks
 const Utils = ThreeScene.Utils
@@ -14,7 +15,7 @@ const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { initCSS3DRender, createCSS3DDom } = Hooks.useCSS3D()
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting(THREE)
 const { raycaster, pointer, update: raycasterUpdate, style } = Hooks.useRaycaster()
-const { createStripSmoke, createParticleSmoke } = Hooks.useSmoke(THREE)
+const { createParticleSmoke } = Hooks.useSmoke(THREE)
 
 const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
@@ -130,56 +131,48 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
  * @param target 目标对象
  * @param visible 是否展示
  */
-export const updateDot3Visible = (object: ThreeModelItem, visible?) => {
-  object.visible = visible
+export const updateDot3Visible = (object: ThreeModelItem, data: UpdateDotItem) => {
   const target = object.getObjectByProperty('isCSS3DObject', true) as ReturnType<
     typeof createCSS3DDom
   >
-  // 限制 10 秒更新
-  const ts = Date.now()
-  if (ts - (object.userData._ts ?? 0) < DEFAULTCONFIG.envRefreshLimitTime) {
-    return
-  }
-  object.userData._ts = ts
+  // 限制刷新频率
+  // const ts = Date.now()
+  // if (ts - (object.userData._ts ?? 0) < DEFAULTCONFIG.envRefreshLimitTime) {
+  //   return
+  // }
+  // object.userData._ts = ts
   if (!target) return
   const doms = target.element?.getElementsByClassName('env-item')
-  if (doms.length) {
-    setEnvDomText(doms)
+  for (let i = 0; i < doms.length; i++) {
+    const env = doms[i]
+    const tDom = env.getElementsByClassName('value')[0] as HTMLElement
+    const { value, color } = getEnvOptions(i + 1, data)
+    tDom.textContent = value + ''
+    tDom.style.setProperty('--color', color)
   }
 }
 
 // 获取环境对应配置
-const getEnvOptions = type => {
+const getEnvOptions = (type, data: UpdateDotItem) => {
   let value = 0,
     color = '#fff'
   switch (type) {
     case 1:
-      value = 23 + Number((Math.random() * 1 - 0.7).toFixed(2))
+      value = data.temperature
       color = value > 23 ? '#f00' : '#008000'
       break
     case 2:
-      value = 70 + Number((Math.random() * 1 - 0.7).toFixed(2))
+      value = data.humidity
       color = value > 70 ? '#f00' : '#008000'
       break
     case 3:
-      value = 418 + Number((Math.random() * 5 - 3).toFixed(2))
+      value = data.co2
       color = value > 420 ? '#f00' : '#008000'
       break
   }
   return {
     value,
     color
-  }
-}
-
-// 设置环境节点文本
-const setEnvDomText = doms => {
-  for (let i = 0; i < doms.length; i++) {
-    const env = doms[i]
-    const tDom = env.getElementsByClassName('value')[0] as HTMLElement
-    const { value, color } = getEnvOptions(i + 1)
-    tDom.textContent = value + ''
-    tDom.style.setProperty('--color', color)
   }
 }
 
@@ -249,26 +242,26 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
         <div class="env-conten" style="${
           size != void 0 ? `--font-size: ${typeof size === 'string' ? size : size + 'px'};` : ''
         } ${color != void 0 ? `--color: ${color}` : ''}">
-          <div class="env-item">
+          <div class="env-item temp">
             <div class="name">温度</div>
             <span class="inner">
-              <span class="value">20</span>
+              <span class="value">0</span>
               <span class="unit">°C</span>
             </span>
           </div>
 
-          <div class="env-item">
+          <div class="env-item hum">
             <div class="name">湿度</div>
             <span class="inner">
-              <span class="value">20</span>
+              <span class="value">0</span>
               <span class="unit">%</span>
             </span>
           </div>
 
-          <div class="env-item">
+          <div class="env-item co2">
             <div class="name">CO₂</div>
             <span class="inner">
-              <span class="value">20</span>
+              <span class="value">0</span>
               <span class="unit">ppm</span>
             </span>
           </div>

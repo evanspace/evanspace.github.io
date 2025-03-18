@@ -247,6 +247,9 @@ export default {
     max: 20,
     min: 7
   },
+  // 节流时间
+  debounceDuration: 1000 * 1,
+
   // 环境参数刷新频率限制时间
   envRefreshLimitTime: 1000 * 10
 }

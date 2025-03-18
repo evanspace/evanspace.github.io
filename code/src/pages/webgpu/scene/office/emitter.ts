@@ -93,7 +93,10 @@ const eventNames = [
   'EFFECT:FLEETING',
 
   // 鸟瞰视角-公司
-  'BIRD:COMPANY'
+  'BIRD:COMPANY',
+
+  // 更新 3D 点位
+  'UPDATE:DOT3'
 ] as const
 type EventNames = (typeof eventNames)[number]
 

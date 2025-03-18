@@ -5,6 +5,16 @@
     <!-- <div class="btn" @click="() => Emitter.emit('SCENE:SCREENSHOT')">截图</div> -->
 
     <el-dropdown class="btn" placement="top" :hide-on-click="false">
+      <div>数据</div>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item @click="onUpdateDot3">视角数据更新</el-dropdown-item>
+          <el-dropdown-item @click="onAllUpdate">全数据更新</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
+
+    <el-dropdown class="btn" placement="top" :hide-on-click="false">
       <div @click="() => Emitter.emit('CAMERA:RESET')">视角重置</div>
       <template #dropdown>
         <el-dropdown-menu>
@@ -83,17 +93,44 @@
 
 <script lang="ts" setup>
 import Emitter from './emitter'
+import { OfficeScene } from './class'
 
 interface Item {
   name: string
 }
-defineProps<{
+const props = defineProps<{
   list: Item[]
+  scene?: InstanceType<typeof OfficeScene>
 }>()
 
 const emits = defineEmits<{
   change: [item: Item]
 }>()
+
+// dot3 数据更新
+const updateDot3 = list => {
+  for (let i = 0; i < list.length; i++) {
+    const data = list[i].userData.data
+    Emitter.emit('UPDATE:DOT3', {
+      code: data.code,
+      temperature: 23 + Number((Math.random() * 1 - 0.7).toFixed(2)),
+      humidity: 70 + Number((Math.random() * 1 - 0.7).toFixed(2)),
+      co2: 418 + Number((Math.random() * 5 - 3).toFixed(2))
+    })
+  }
+}
+
+const onUpdateDot3 = () => {
+  if (!props.scene) return
+  // 获取当前位置
+  const list = props.scene?.getLocation()
+  updateDot3(list)
+}
+
+const onAllUpdate = () => {
+  if (!props.scene) return
+  updateDot3(props.scene.dot3Group?.children)
+}
 </script>
 
 <style lang="scss">

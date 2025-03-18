@@ -1,7 +1,11 @@
 <template>
   <div class="three-page" :class="$style.page">
     <!-- 操作按钮 -->
-    <t-operation :list="cameraPositionList" @change="onCameraTransition"></t-operation>
+    <t-operation
+      :list="cameraPositionList"
+      @change="onCameraTransition"
+      :scene="scene"
+    ></t-operation>
 
     <div class="h-100" ref="containerRef"></div>
 
@@ -157,11 +161,6 @@ const createDotObject = item => {
   )
 }
 
-// 创建 dot3 点位
-const createDot3Object = item => {
-  MS.updateDot3Visible(scene.addDot3(item), true)
-}
-
 // 加载场景模型
 const loadSceneModel = () => {
   return initModels(modelConfigList.value, (item: ObjectItem) => {
@@ -176,7 +175,7 @@ const loadSceneModel = () => {
       }
       // 三维点位
       else if (type === KEYS.DOT3) {
-        createDot3Object(item)
+        scene.addDot3(item)
       }
       return Promise.resolve()
     }

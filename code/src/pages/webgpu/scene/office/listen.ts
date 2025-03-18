@@ -1,6 +1,8 @@
 import { OfficeScene } from './class'
 import Emitter from './emitter'
 
+import type { UpdateDotItem } from './index'
+
 export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
   // 漫游
   Emitter.on('CAMERA:ROAM', () => scene?.toggleRoam())
@@ -125,4 +127,7 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
 
   // 公司鸟瞰视角
   Emitter.on('BIRD:COMPANY', () => scene?.toggleBridCompany())
+
+  // 更新 3D 点位数据
+  Emitter.on('UPDATE:DOT3', (data: UpdateDotItem) => scene?.updateDot3(data))
 }

@@ -2,8 +2,8 @@ import * as ThreeScene from 'three-scene'
 
 import DEFAULTCONFIG from './config'
 import * as MS from './methods'
-import { ExtendOptions, Sky } from '.'
-import { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { ExtendOptions, Sky, UpdateDotItem } from '.'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
 const { Utils, Hooks, THREE } = MS
 
@@ -185,7 +185,7 @@ export class OfficeScene extends ThreeScene.Scene {
 
     this.setControlCache()
 
-    this.setDebounceDuration(1000)
+    this.setDebounceDuration(DEFAULTCONFIG.debounceDuration)
   }
 
   // 渲染器
@@ -258,6 +258,18 @@ export class OfficeScene extends ThreeScene.Scene {
 
   // 监测 3D 点位相机可视对象
   checkDot3CameraVisibleObjects() {
+    this.checkCameraVisibleDot(
+      object => {
+        object.visible = true
+      },
+      object => {
+        object.visible = false
+      }
+    )
+  }
+
+  // 检测视角可视点位
+  checkCameraVisibleDot(onVisible, onHidden?) {
     const frustum = this.getFrustum()
     const list = this.dot3Group?.children || []
     for (let i = 0; i < list.length; i++) {
@@ -267,12 +279,25 @@ export class OfficeScene extends ThreeScene.Scene {
         if (this.frustumIntersectsBox(frustum, target)) {
           const ds = this.camera.position.distanceTo(object.position)
           const dis = DEFAULTCONFIG.dotVisibleDistance
-          MS.updateDot3Visible(object, ds <= dis.max && ds >= dis.min)
+          if (ds <= dis.max && ds >= dis.min) {
+            if (typeof onVisible === 'function') onVisible(object)
+          } else {
+            if (typeof onHidden === 'function') onHidden(object)
+          }
         } else {
-          object.visible = false
+          if (typeof onHidden === 'function') onHidden(object)
         }
       }
     }
+  }
+
+  // 获取当前位置-当前点位
+  getLocation() {
+    let models: MS.THREE.Object3D[] = []
+    this.checkCameraVisibleDot(object => {
+      models.push(object)
+    })
+    return models
   }
 
   // 查找灯光
@@ -425,6 +450,13 @@ export class OfficeScene extends ThreeScene.Scene {
     // this.dot3Group?.children.forEach(el => {
     //   el.visible = false
     // })
+  }
+  // 更新
+  updateDot3(data: UpdateDotItem) {
+    // 查找对应的点位
+    const object = this.dot3Group?.children.find(item => item.userData.data.code === data.code)
+    if (!object) return
+    MS.updateDot3Visible(object, data)
   }
 
   // 添加灯光组
