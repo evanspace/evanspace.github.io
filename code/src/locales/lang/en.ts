@@ -93,7 +93,6 @@ export default {
     orbit: 'orbit',
     fly: 'fly',
     pointerLock: 'pointer Lock',
-    collision: 'collision',
 
     geometry: 'geometry',
     water: 'water',
@@ -126,6 +125,7 @@ export default {
     park: 'park',
     station: 'station',
     office: 'office',
+    collision: 'collision',
 
     hemisphere: 'hemisphere',
     spot: 'spot',

@@ -93,7 +93,6 @@ export default {
     orbit: '轨道',
     fly: '飞行',
     pointerLock: '指针锁定',
-    collision: '碰撞',
 
     geometry: '几何体',
     water: '水面',
@@ -126,6 +125,7 @@ export default {
     park: '园区',
     station: '车站',
     office: '写字楼',
+    collision: '碰撞',
 
     hemisphere: '半球',
     spot: '聚光',

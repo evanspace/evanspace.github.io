@@ -52,6 +52,36 @@ const options: ConstructorParameters<typeof Scene>[0] = {
 }
 let scene: InstanceType<typeof Scene>
 
+const onContainerMouseDown = () => {
+  scene.onContainerMouseDown()
+}
+
+const onDocumentMouseUp = () => {
+  scene.onDocumentMouseUp()
+}
+
+const onDocumentMouseDown = () => {
+  scene.onDocumentMouseDown()
+}
+
+const onBodyMouseMove = e => {
+  scene.onBodyMouseMove(e)
+}
+
+const bindEvent = () => {
+  scene.container.addEventListener('mousedown', onContainerMouseDown, false)
+  document.addEventListener('mouseup', onDocumentMouseUp, false)
+  document.addEventListener('mousedown', onDocumentMouseDown, false)
+  document.body.addEventListener('mousemove', onBodyMouseMove, false)
+}
+
+const removeEvent = () => {
+  scene.container.removeEventListener('mousedown', onContainerMouseDown, false)
+  document.removeEventListener('mouseup', onDocumentMouseUp, false)
+  document.removeEventListener('mousedown', onDocumentMouseDown, false)
+  document.body.removeEventListener('mousemove', onBodyMouseMove, false)
+}
+
 onMounted(() => {
   options.container = containerRef.value
   scene = new Scene(options).run()
@@ -59,7 +89,10 @@ onMounted(() => {
   useResize(scene).resize()
 
   initPage()
+  bindEvent()
 })
+
+onBeforeUnmount(removeEvent)
 </script>
 
 <style lang="scss" module>

@@ -22,7 +22,7 @@ const STEP = 5
 const sphereGeometry = new THREE.IcosahedronGeometry(SPHERE_RADIUS, 5) // 20面几何体
 const sphereMaterial = new THREE.MeshLambertMaterial({ color: 0xdede8d })
 
-const spheres: {
+let spheres: {
   mesh: THREE.Mesh
   // 碰撞
   collider: THREE.Sphere
@@ -55,6 +55,9 @@ export class Scene extends ThreeScene.Scene {
   constructor(options: ConstructorParameters<typeof ThreeScene.Scene>[0]) {
     super(options)
 
+    spheres = []
+    sphereIdx = 0
+
     this.createClock()
 
     // 设置相机坐标轴旋转顺序
@@ -62,33 +65,38 @@ export class Scene extends ThreeScene.Scene {
     this.camera.rotation.order = 'YXZ'
     this.addModel()
 
-    // 容器事件 - 鼠标按下 - 锁定鼠标
-    this.container.addEventListener('mousedown', () => {
-      // 鼠标锁定
-      document.body.requestPointerLock()
-    })
-
-    document.addEventListener('mouseup', () => {
-      // 判断是否锁定鼠标
-      if (document.pointerLockElement) {
-        // 投球
-        this.throwBall()
-      }
-    })
-    document.addEventListener('mousedown', () => {
-      // 记录时间
-      mouseTime = performance.now()
-    })
-    document.body.addEventListener('mousemove', e => {
-      // 判断body 是否锁定鼠标
-      if (document.pointerLockElement === document.body) {
-        // 旋转相机
-        this.camera.rotation.x -= e.movementY * 0.002
-        this.camera.rotation.y -= e.movementX * 0.002
-      }
-    })
-
     insertEvent()
+  }
+
+  // 容器事件 - 鼠标按下 - 锁定鼠标
+  onContainerMouseDown() {
+    // 鼠标锁定
+    document.body.requestPointerLock()
+  }
+
+  // dom 事件 - 鼠标抬起 - 投球
+  onDocumentMouseUp() {
+    // 判断是否锁定鼠标
+    if (document.pointerLockElement) {
+      // 投球
+      this.throwBall()
+    }
+  }
+
+  // dom 事件 - 鼠标按下 - 记录时间
+  onDocumentMouseDown() {
+    // 记录时间
+    mouseTime = performance.now()
+  }
+
+  // body 事件 - 鼠标移动 - 旋转相机
+  onBodyMouseMove(e) {
+    // 判断body 是否锁定鼠标
+    if (document.pointerLockElement === document.body) {
+      // 旋转相机
+      this.camera.rotation.x -= e.movementY * 0.002
+      this.camera.rotation.y -= e.movementX * 0.002
+    }
   }
 
   addWordModel(glb) {
@@ -138,11 +146,12 @@ export class Scene extends ThreeScene.Scene {
 
     // 复制球的中心点并加上 方向和速率的乘积
     sphere.collider.center
-      .copy(playerCollider.end /**相当于人物肩部位置高度 */)
+      .copy(playerCollider.end /**相当于玩家肩部位置高度 */)
       .addScaledVector(playerDirection, playerCollider.radius * 1.5)
 
     // 投球力度 长按时间越长力度越大
-    const impulse = 15 + 30 * (1 - Math.exp((mouseTime - performance.now()) * 0.001))
+    const impulse = 15 + 30 * (1 - Math.exp((mouseTime - performance.now()) * 0.01))
+    console.log('投球力度', impulse)
 
     // 复制相机方向并乘以投球力度
     sphere.velocity.copy(playerDirection).multiplyScalar(impulse)
@@ -151,8 +160,6 @@ export class Scene extends ThreeScene.Scene {
 
     // 索引相加
     sphereIdx = (sphereIdx + 1) % SPHERES_COUNT
-
-    console.log('当前球', sphere)
   }
 
   // 获取前进方向坐标
@@ -181,7 +188,7 @@ export class Scene extends ThreeScene.Scene {
 
     // 前进
     if (keyboardPressed('W')) {
-      // 人物速度 加上 跟随方向与速度的乘积
+      // 玩家速度 加上 跟随方向与速度的乘积
       playerVelocity.add(this.getForwardVector().multiplyScalar(speedDelta))
     }
     // 后退
@@ -206,6 +213,7 @@ export class Scene extends ThreeScene.Scene {
     }
   }
 
+  // 更新玩家
   updatePlayer(deltaTime) {
     // 阻尼 /丝滑的减速
     let damping = Math.exp(-4 * deltaTime) - 1
@@ -222,7 +230,7 @@ export class Scene extends ThreeScene.Scene {
 
     // 玩家位置 速率 * 时间
     const deltaPosition = playerVelocity.clone().multiplyScalar(deltaTime)
-    // 人物移动
+    // 玩家移动
     playerCollider.translate(deltaPosition)
 
     // 监测碰撞
@@ -232,6 +240,7 @@ export class Scene extends ThreeScene.Scene {
     this.camera.position.copy(playerCollider.end)
   }
 
+  // 玩家碰撞
   playerCollisions() {
     // 八叉树检测物体碰撞
     const result = worldOctree.capsuleIntersect(playerCollider)
@@ -247,12 +256,13 @@ export class Scene extends ThreeScene.Scene {
 
       // 深度 大于 1e-10 0.0000000001
       if (result.depth >= 1e-10) {
-        // 人物坐标转换 （结果坐标 * 深度）
+        // 玩家坐标转换 （结果坐标 * 深度）
         playerCollider.translate(result.normal.multiplyScalar(result.depth))
       }
     }
   }
 
+  // 更新球
   updateSpheres(deltaTime) {
     spheres.forEach(sphere => {
       // 中心点 速率 * 时间
@@ -286,13 +296,12 @@ export class Scene extends ThreeScene.Scene {
     }
   }
 
+  // 玩家和球碰撞
   playerSphereCollision(sphere) {
-    // 中心点 人物与球的距禮 * 0.5
+    // 中心点 玩家与球的距禮 * 0.5
     const center = vector1.addVectors(playerCollider.start, playerCollider.end).multiplyScalar(0.5)
-
     // 球中心点
     const sphereCenter = sphere.collider.center
-
     // 半径
     const r = (playerCollider.radius = sphere.collider.radius)
     const r2 = r * r
@@ -317,27 +326,35 @@ export class Scene extends ThreeScene.Scene {
     }
   }
 
+  // 检测球碰撞
   spheresCollisions() {
+    // 双向遍历球-球与球的碰撞
     for (let i = 0, length = spheres.length; i < length; i++) {
       const s1 = spheres[i]
-
       for (let j = i + 1; j < length; j++) {
         const s2 = spheres[j]
-
-        const d2 = s1.collider.center.distanceToSquared(s2.collider.center)
+        // 两球中心点平方距离
+        const distance = s1.collider.center.distanceToSquared(s2.collider.center)
         const r = s1.collider.radius + s2.collider.radius
+        // 半径和平方
         const r2 = r * r
 
-        if (d2 < r2) {
+        // 距离小于半径 - 相撞
+        if (distance < r2) {
+          // 计算差值
           const normal = vector1.subVectors(s1.collider.center, s2.collider.center).normalize()
+          // 点位与 球 1 速率的点积
           const v1 = vector2.copy(normal).multiplyScalar(normal.dot(s1.velocity))
+          // 点位与 球 2 速率的点积
           const v2 = vector3.copy(normal).multiplyScalar(normal.dot(s2.velocity))
 
           s1.velocity.add(v2).sub(v1)
           s2.velocity.add(v1).sub(v2)
 
-          const d = (r - Math.sqrt(d2)) / 2
+          // （半径 - 平方根距离） / 2
+          const d = (r - Math.sqrt(distance)) / 2
 
+          // 向外移动球位置
           s1.collider.center.addScaledVector(normal, d)
           s2.collider.center.addScaledVector(normal, -d)
         }
@@ -345,6 +362,7 @@ export class Scene extends ThreeScene.Scene {
     }
   }
 
+  // 传送玩家
   teleportPlayerIfOob() {
     // 相机下坠到一定位置 重置位置
     if (this.camera.position.y <= -25) {
@@ -363,7 +381,7 @@ export class Scene extends ThreeScene.Scene {
     for (let i = 0; i < STEP; i++) {
       // 更新控制按键
       this.updateControl(deltaTime)
-      // 更新人物
+      // 更新玩家
       this.updatePlayer(deltaTime)
 
       // 更新球
@@ -373,7 +391,7 @@ export class Scene extends ThreeScene.Scene {
     }
   }
 
-  dispose(): void {
+  dispose() {
     destroyEvent()
     super.dispose()
   }

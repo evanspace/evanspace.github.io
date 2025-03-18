@@ -1,4 +1,4 @@
 export default {
   title: 'collision',
-  order: 60
+  order: 90
 }
