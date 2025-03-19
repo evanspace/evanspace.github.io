@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import * as THREE from 'three'
-import * as UTILS from '@/mixins/common'
+import * as UTILS from './methods'
 
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
