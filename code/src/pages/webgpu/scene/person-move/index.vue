@@ -14,18 +14,18 @@ const options: ConstructorParameters<typeof Scene>[0] = {
     visible: true
   },
   grid: {
-    visible: true
+    visible: true,
+    fork: true
   },
   camera: {
     near: 1e-10,
-    position: [0, 5, 1]
+    position: [0, 500, 100]
   }
 }
 let scene: InstanceType<typeof Scene>
 
 onMounted(() => {
-  options.container = containerRef.value
-  scene = new Scene(options).run()
+  scene = new Scene(options, containerRef.value).run()
 
   useResize(scene).resize()
 })

@@ -292,7 +292,10 @@ export const getMapLinesCif = () => {
 }
 
 // 获取省份配置
-export const getCityMapOptions = (city = 'map', data) => {
+export const getCityMapOptions = (
+  city = 'map',
+  data
+): ConstructorParameters<typeof import('@/hooks/echarts').Echarts>[1] => {
   // 大地图
   const cityJson = data.cityJson || []
   // 散点
@@ -310,15 +313,15 @@ export const getCityMapOptions = (city = 'map', data) => {
 
   return {
     title: {},
-    tooltip: getMapTooltipCif(),
-    visualMap: getMapVisualMapCif(),
+    tooltip: getMapTooltipCif() as any,
+    visualMap: [getMapVisualMapCif()],
     globe: {
       show: false
     },
     geo: {
       ...getMapGeoCif(zoom, roam),
       map: city
-    },
+    } as any,
     series: [
       {
         type: 'map',
@@ -339,7 +342,7 @@ export const getCityMapOptions = (city = 'map', data) => {
         ...getMapLinesCif(),
         data: lines
       }
-    ]
+    ] as any
   }
 }
 

@@ -1,5 +1,4 @@
 import planeDevice from './plane-device/index.vue'
-import echarts from './echarts/index.vue'
 
 const components = [planeDevice]
 const install = function (app) {
