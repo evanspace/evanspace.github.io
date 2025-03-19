@@ -483,7 +483,6 @@ export class MapThreeScene extends ThreeScene.Scene {
   // 柱状
   initMapBar(citys: any[], labelRender: Function) {
     if (!this.config.mapBar) return
-    console.log(this.mapGroup)
     // 清除柱状
     if (!this.mapGroup) return
     this.clearMapBar()
@@ -684,9 +683,6 @@ export class MapThreeScene extends ThreeScene.Scene {
       )
       .easing(TWEEN.Easing.Quadratic.In)
       .start()
-      .onUpdate(pos => {
-        console.log(pos)
-      })
 
     // 控制器
     this.controls && (this.controls.target = new THREE.Vector3(x, y, z - 5 * this.config.scale))
