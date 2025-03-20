@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu'
-import * as ThreeScene from 'three-scene'
+import { Scene, Utils, Hooks } from 'three-scene'
 import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
 import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHelper'
@@ -7,9 +7,6 @@ import { RectAreaLightHelper } from 'three/examples/jsm/helpers/RectAreaLightHel
 import DEFAULTCONFIG from './config'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 import type { UpdateDotItem } from './index'
-
-const Hooks = ThreeScene.Hooks
-const Utils = ThreeScene.Utils
 
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 const { initCSS3DRender, createCSS3DDom } = Hooks.useCSS3D()
@@ -19,7 +16,7 @@ const { createParticleSmoke } = Hooks.useSmoke(THREE)
 
 const { pass, mrt, output, emissive, float, uniform } = THREE.TSL
 
-export { Hooks, Utils, THREE }
+export { Hooks, Utils, Scene, THREE }
 
 /**
  * 场景合成器

@@ -1,11 +1,9 @@
-import * as ThreeScene from 'three-scene'
-
 import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import type { ExtendOptions, Sky, UpdateDotItem } from '.'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
 
-const { Utils, Hooks, THREE } = MS
+const { Utils, Hooks, THREE, Scene } = MS
 
 const {
   createRoam,
@@ -32,7 +30,7 @@ const SIGHT_MAP = {
 // 地面网格名称
 const GROUND_MESH_NAMES = DEFAULTCONFIG.groundMeshName.concat(DEFAULTCONFIG.liftGroundMeshName)
 
-export class OfficeScene extends ThreeScene.Scene {
+export class OfficeScene extends Scene {
   // 扩展参数
   extend: Partial<ExtendOptions>
 
@@ -131,10 +129,7 @@ export class OfficeScene extends ThreeScene.Scene {
   // hover 组
   hoverGroup?: InstanceType<typeof THREE.Group>
 
-  constructor(
-    options: ConstructorParameters<typeof ThreeScene.Scene>[0],
-    extend: Partial<ExtendOptions>
-  ) {
+  constructor(options: ConstructorParameters<typeof Scene>[0], extend: Partial<ExtendOptions>) {
     super(options)
 
     this.extend = extend
