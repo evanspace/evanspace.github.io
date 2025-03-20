@@ -73,6 +73,8 @@ const initPage = () => {
   })
 
   const item1 = {
+    name: '',
+    type: '',
     key: '---3',
     width: 300,
     height: 100,
@@ -93,6 +95,8 @@ const initPage = () => {
   )
 
   const item2 = {
+    name: '',
+    type: '',
     key: '---4',
     width: 300,
     height: 100,

@@ -1,4 +1,5 @@
 import * as MS from './methods'
+import type { ObjectItem } from 'three-scene/types/model'
 
 const { Utils, THREE } = MS
 
@@ -48,7 +49,7 @@ export class Scene extends MS.Scene {
     this.css3DRender?.render(this.scene, this.camera)
   }
 
-  addEchartPlane(canvas, data) {
+  addEchartPlane(canvas, data: ObjectItem) {
     const obj = this.group.children.find(item => item.userData.data.key === data.key)
     if (obj) {
       this.group.remove(obj)
