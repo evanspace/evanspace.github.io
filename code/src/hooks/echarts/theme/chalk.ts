@@ -284,12 +284,15 @@ export default {
   tooltip: {
     axisPointer: {
       lineStyle: {
-        color: '#cccccc',
+        color: '#ccc',
         width: 1
       },
       crossStyle: {
-        color: '#cccccc',
+        color: '#ccc',
         width: 1
+      },
+      label: {
+        backgroundColor: '#999'
       }
     }
   },

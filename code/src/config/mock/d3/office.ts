@@ -1,4 +1,5 @@
 import { builder } from '../util'
+import { mock } from 'mockjs'
 
 const JsonList = [
   {
@@ -46,7 +47,7 @@ const dot3List = [
     type: 'DOT3',
     unit: '℃',
     code: 'area_1',
-    position: { x: 15.24, y: dot3Height, z: 48.6 },
+    position: { x: 11.5, y: dot3Height, z: 48.6 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
@@ -593,6 +594,7 @@ const lightSwitchs = [
   {
     name: '灯光总开关',
     type: 'LIGHT_SWITCH',
+    deviceCode: 'kg-01',
     // position: { x: 14.7, y: 188, z: 49 },
     position: { x: 12.7, y: anchorHeight, z: 49 },
     bind: '公司主灯光组'
@@ -835,6 +837,7 @@ const curtains = [
   {
     name: '窗帘开关',
     type: 'CURTAIN_SWITCH',
+    deviceCode: 'cl-01',
     position: { x: 12.1, y: anchorHeight, z: 49 },
     bind: '_GROUP_013_grp'
   }
@@ -970,5 +973,30 @@ export default [
           isAuto: 0
         }
       ])
+  },
+  {
+    // 区域用电量
+    url: '/d3/office_area_electric',
+    method: 'get',
+    response: () => {
+      const date = new Date()
+      const year = date.getFullYear() - 3
+      return builder(
+        mock({
+          'list|3': [
+            {
+              'year|+1': year,
+              'list|12': [
+                {
+                  'month|+1': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                  date: '@../../year @month',
+                  'value|300-500': 0
+                }
+              ]
+            }
+          ]
+        }).list
+      )
+    }
   }
 ]

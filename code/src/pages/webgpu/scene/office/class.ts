@@ -2,6 +2,7 @@ import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import type { ExtendOptions, Sky, UpdateDotItem } from '.'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import { disposeEcharts } from './echarts'
 
 const { Utils, Hooks, THREE, Scene } = MS
 
@@ -437,6 +438,13 @@ export class OfficeScene extends Scene {
   addDot3(item: ObjectItem, clickBack?) {
     if (!this.dot3Group) return new THREE.Mesh()
     const label = MS.createDotCSS3DDom(item, clickBack)
+    this.dot3Group.add(label)
+    return label
+  }
+  // 添加图表点位
+  addDot3Echarts(item: ObjectItem, clickBack?, isSprite?) {
+    if (!this.dot3Group) return new THREE.Mesh()
+    const label = MS.createDotCSS3DEchartsDom(item, clickBack, isSprite)
     this.dot3Group.add(label)
     return label
   }
@@ -1492,6 +1500,7 @@ export class OfficeScene extends Scene {
     this.videoModels = []
     this.disposeObj(this.buildingGroup)
     this.disposeObj(this.dotGroup)
+    this.disposeObj(this.dot3Group)
     this.disposeObj(this.anchorGroup)
     this.disposeObj(this.lightGroup)
     this.disposeObj(this.fleetingGroup)
@@ -1503,6 +1512,7 @@ export class OfficeScene extends Scene {
     this.css3DRender = void 0
     this.buildingGroup = void 0
     this.dotGroup = void 0
+    this.dot3Group = void 0
     this.anchorGroup = void 0
     this.lightGroup = void 0
     this.hoverGroup = void 0
@@ -1512,6 +1522,7 @@ export class OfficeScene extends Scene {
     this.extend = {}
 
     destroyEvent()
+    disposeEcharts()
     super.dispose()
   }
 }

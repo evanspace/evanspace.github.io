@@ -130,7 +130,7 @@ const onUpdateDot3 = () => {
 
 const onAllUpdate = () => {
   if (!props.scene) return
-  updateDot3(props.scene.dot3Group?.children)
+  updateDot3(props.scene.dot3Group?.children || [])
 }
 
 let timer: NodeJS.Timeout

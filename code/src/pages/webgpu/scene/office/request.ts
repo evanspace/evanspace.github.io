@@ -8,3 +8,8 @@ export const getConfig = () => {
 export const getModes = () => {
   return Axios.get(Api.d3.office_mode)
 }
+
+// 区域用电量查询
+export const getAreaUseElectric = () => {
+  return Axios.get(Api.d3.office_area_electric)
+}

@@ -57,6 +57,7 @@ import { OfficeScene } from './class'
 import * as MS from './methods'
 import { useResize } from '@/hooks/scene-resize'
 import { onListen } from './listen'
+import { renderEcharts } from './echarts'
 
 import DEFAULTCONFIG from './config'
 import * as request from './request'
@@ -115,7 +116,7 @@ const options: ConstructorParameters<typeof OfficeScene>[0] = {
     maxDistance: 1500
   },
   camera: {
-    near: 0.01,
+    near: 1e-10,
     fov: 52,
     position: [-799.2, 55, 376.3]
   },
@@ -296,6 +297,8 @@ const loadScene = async res => {
   scene.addAirWindMaterial(
     res.JsonList.filter(it => it.type === KEYS.M_AIR_SWITCH).map(it => it.bind)
   )
+  // 添加图表数据
+  renderEcharts(scene)
 }
 
 // 加载

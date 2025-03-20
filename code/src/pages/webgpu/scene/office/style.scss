@@ -56,6 +56,7 @@
         min-width: 150px;
         border-radius: 20px 0 20px 0;
         background-color: rgba($color: #000000, $alpha: 0.6);
+        backdrop-filter: saturate(50%) blur(2px);
       }
       .title {
         font-size: 1.5em;
@@ -77,10 +78,22 @@
           color: var(--color);
           font-size: var(--font-size);
           text-shadow: 0px -1px 6px rgba(#fff, 0.3);
+          pointer-events: all;
         }
         .unit {
           font-size: 10px;
         }
+      }
+    }
+
+    .dot-echarts-box {
+      position: relative;
+      .echarts-wrap {
+        bottom: 0;
+        position: absolute !important;
+        transform: translateX(-50%) scale(1);
+        transform-origin: 50% 100%;
+        border-radius: 3px;
       }
     }
   }

@@ -36,9 +36,11 @@ const visible = defineModel()
   .msg {
     padding: 3px 5px;
     border-radius: 5px;
-    background-color: rgba($color: #000000, $alpha: 0.5);
+    background-color: rgba($color: #000000, $alpha: 0.4);
+    backdrop-filter: saturate(50%) blur(2px);
     p {
-      line-height: 1.5;
+      margin-top: 10px;
+      line-height: 1;
     }
   }
 }

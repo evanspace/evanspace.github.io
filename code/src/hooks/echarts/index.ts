@@ -147,7 +147,6 @@ export class Echarts {
     this.Echarts = echarts.init(this.container, theme, initOpts)
 
     options && this.Echarts.setOption(options)
-    console.log(this)
   }
 
   // 获取配置
