@@ -248,8 +248,36 @@ export class OfficeScene extends Scene {
     this.personAnimate(delta)
 
     this.debounce(() => {
+      this.checkCameraVisibleArea()
       this.checkDot3CameraVisibleObjects()
     })
+  }
+
+  // 检测视角可视区域
+  checkCameraVisibleArea() {
+    const list = this.hoverGroup?.children || []
+    const virtual = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(2, 2),
+      new THREE.MeshBasicMaterial()
+    )
+    for (let i = 0; i < list.length; i++) {
+      const object = list[i]
+      if (object.isObject3D) {
+        const box1 = new THREE.Box3().setFromObject(object)
+        virtual.position.copy(this.camera.position)
+        const box2 = new THREE.Box3().setFromObject(virtual)
+        const isIntersecting = box1.intersectsBox(box2)
+        if (isIntersecting) {
+          const obj = DEFAULTCONFIG.cameraTransitionList.find(
+            it => it.name + DEFAULTCONFIG.hoverNameSuffix === object.name
+          )
+          if (obj && obj.id != void 0) {
+            if (typeof this.extend.intersectsArea === 'function') this.extend.intersectsArea(obj)
+            break
+          }
+        }
+      }
+    }
   }
 
   // 监测 3D 点位相机可视对象

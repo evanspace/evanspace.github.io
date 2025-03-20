@@ -147,96 +147,112 @@ export default {
     {
       name: '前台',
       areaCode: 1,
+      id: 86,
       to: { x: 15.3, y: 188, z: 33.2 },
       target: { x: 15.3, y: 188, z: 36.3 }
     },
     {
       name: '办公',
       areaCode: 2,
+      id: 82,
       to: { x: -29.82, y: 188, z: 41.52 },
       target: { x: -25.43, y: 188, z: 43.88 }
     },
     {
       name: '大会议室',
       areaCode: 3,
+      id: 75,
       to: { x: -28.8, y: 188, z: 52.7 },
       target: { x: -33.7, y: 188, z: 53.4 }
     },
     {
       name: '陈总办公室',
       areaCode: 4,
+      id: 71,
       to: { x: -41.79, y: 188, z: 27.52 },
       target: { x: -43.1, y: 188, z: 29.4 }
     },
     {
       name: '逄总办公室',
       areaCode: 5,
+      id: 72,
       to: { x: -43.1, y: 188, z: 8.2 },
       target: { x: -44.5, y: 188, z: 10.7 }
     },
     {
       name: '财务部',
       areaCode: 6,
+      id: 74,
       to: { x: -42.57, y: 188, z: -13.37 },
       target: { x: -43.2, y: 188, z: -12.2 }
     },
     {
       name: 'CFO',
       areaCode: 7,
+      id: 73,
       to: { x: -42.8, y: 188, z: -14.7 },
       target: { x: -44, y: 188, z: -17.2 }
     },
     {
       name: '洽谈室一',
       areaCode: 8,
+      id: 79,
       to: { x: -14.47, y: 188, z: -25.92 },
       target: { x: -16.8, y: 188, z: -24.6 }
     },
     {
       name: '人事部',
       areaCode: 9,
+      id: 181,
       to: { x: -16.35, y: 188, z: 32.75 },
       target: { x: -19.02, y: 188, z: 29.2 }
     },
     {
       name: '小会议室',
       areaCode: 10,
+      id: 76,
       to: { x: -9.9, y: 188, z: 28.9 },
       target: { x: -10, y: 188, z: 26 }
     },
     {
       name: '洽谈室二',
       areaCode: 11,
+      id: 78,
       to: { x: 46.3, y: 188, z: 28.9 },
       target: { x: 43.6, y: 188, z: 27.2 }
     },
     {
       name: '茶室',
       areaCode: 12,
+      id: 80,
       to: { x: 42.8, y: 188, z: 3.27 },
       target: { x: 42, y: 188, z: 4.3 }
     },
     {
       name: '总裁',
       areaCode: 13,
+      id: 85,
       to: { x: 69.4, y: 188, z: -0.4 },
       target: { x: 65, y: 188, z: -2.7 }
     },
     {
       name: '程总办公室',
       areaCode: 14,
+      id: 81,
       to: { x: 56.57, y: 188, z: 23.3 },
       target: { x: 58.4, y: 188, z: 21.8 }
     },
     {
       name: '大洽谈室',
       areaCode: 15,
+      id: 77,
       to: { x: 56.14, y: 188, z: 30.42 },
       target: { x: 59.1, y: 188, z: 30.3 }
     },
     {
       name: '研发及商务',
       areaCode: 16,
+      id: 84,
       to: { x: 70.5, y: 188, z: 42.16 },
       target: { x: 68.9, y: 188, z: 43.1 }
     }

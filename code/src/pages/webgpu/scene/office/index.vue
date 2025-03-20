@@ -486,7 +486,19 @@ onMounted(() => {
 
     // 空组点击
     emptyGroupClick: data => {
+      Emitter.emit('SCREEN:SWITCHAREA', {
+        name: data.name,
+        id: data.id
+      })
       scene.cameraTransition({ data })
+    },
+
+    // 检测区域
+    intersectsArea: data => {
+      Emitter.emit('SCREEN:CHECKAREA', {
+        name: data.name,
+        id: data.id
+      })
     }
   }).run()
 

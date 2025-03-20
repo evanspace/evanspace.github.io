@@ -65,6 +65,10 @@ const eventNames = [
   'SCREEN:SCR',
   // 大会议室大屏
   'SCREEN:LCR',
+  // 场景切换区域
+  'SCREEN:SWITCHAREA',
+  // 场景区域检测-轮训
+  'SCREEN:CHECKAREA',
 
   // 空调
   'AIR:MAIN',
@@ -107,6 +111,10 @@ class EventEmitter {
     obj[key] = new Set()
     return obj
   }, {})
+
+  constructor() {
+    console.log(this.listteners)
+  }
 
   // 添加事件监听器
   on(eventName: EventNames, listtener: Function) {

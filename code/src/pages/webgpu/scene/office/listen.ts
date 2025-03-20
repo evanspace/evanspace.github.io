@@ -130,4 +130,13 @@ export const onListen = (scene: InstanceType<typeof OfficeScene>) => {
 
   // 更新 3D 点位数据
   Emitter.on('UPDATE:DOT3', (data: UpdateDotItem) => scene?.updateDot3(data))
+
+  // 场景切换区域
+  Emitter.on('SCREEN:SWITCHAREA', data => {
+    console.log('切换区域', data)
+  })
+  // 场景区域检测-轮训
+  Emitter.on('SCREEN:CHECKAREA', data => {
+    console.log('切换区域', data)
+  })
 }

@@ -225,6 +225,7 @@ const addEcharts = (data: ObjectItem, dom?) => {
 
 // 渲染图表
 export const renderEcharts = (scene: InstanceType<typeof OfficeScene>) => {
+  echartsList = []
   for (let i = 0; i < ECHARTS_DOTS.length; i++) {
     const item = ECHARTS_DOTS[i]
     const dom = scene?.addDot3Echarts(

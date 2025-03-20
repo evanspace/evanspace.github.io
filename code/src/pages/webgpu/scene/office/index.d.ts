@@ -78,4 +78,9 @@ export interface ExtendOptions {
    * @returns
    */
   emptyGroupClick: (data) => void
+
+  /**
+   * 检测区域
+   */
+  intersectsArea: (data) => void
 }
