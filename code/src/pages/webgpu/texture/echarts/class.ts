@@ -80,7 +80,7 @@ export class Scene extends MS.Scene {
     this.dot3EchartsGroup = group
     this.scene.add(group)
   }
-  // 添加点位
+  // 添加图表点位
   addDot3Echarts(item: ObjectItem, clickBack?, isSprite?) {
     if (!this.dot3EchartsGroup) return new THREE.Mesh()
     const label = MS.createDotCSS3DEchartsDom(item, clickBack, isSprite)

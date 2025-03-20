@@ -17,9 +17,10 @@ export const createCSS3DRender = (options, container) => {
 }
 
 /**
- * 创建点位
+ * 创建3D图表点位
  * @param item 模型配置对象
  * @param clickBack 点击事件回调
+ * @param isSprite 是否精灵模式
  * @returns
  */
 export const createDotCSS3DEchartsDom = (item: ObjectItem, clickBack, isSprite) => {
