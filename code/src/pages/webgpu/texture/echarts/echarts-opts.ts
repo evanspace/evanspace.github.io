@@ -1,4 +1,5 @@
-export const data = [
+import type { ECOptions } from '../../../../hooks/echarts'
+const scatterData = [
   [
     [28604, 77, 17096869, 'Australia', 1990],
     [31163, 77.4, 27662440, 'Canada', 1990],
@@ -42,8 +43,12 @@ export const data = [
     [53354, 79.1, 321773631, 'United States', 2015]
   ]
 ]
-import type { ECOptions } from '../../../../hooks/echarts'
+
+// 散点图
 export const scatterOption: ECOptions = {
+  title: {
+    text: '散点图'
+  },
   backgroundColor: {
     type: 'radial',
     x: 0.3,
@@ -89,7 +94,7 @@ export const scatterOption: ECOptions = {
   series: [
     {
       name: '1990',
-      data: data[0],
+      data: scatterData[0],
       type: 'scatter',
       symbolSize: function (data) {
         return Math.sqrt(data[2]) / 5e2
@@ -128,7 +133,7 @@ export const scatterOption: ECOptions = {
     },
     {
       name: '2015',
-      data: data[1],
+      data: scatterData[1],
       type: 'scatter',
       symbolSize: function (data) {
         return Math.sqrt(data[2]) / 5e2
@@ -168,7 +173,11 @@ export const scatterOption: ECOptions = {
   ]
 }
 
+// 柱状图
 export const barOptions: ECOptions = {
+  title: {
+    text: '基础柱状图'
+  },
   legend: {},
   tooltip: {},
   backgroundColor: 'rgb(51, 51, 51)',
@@ -188,4 +197,120 @@ export const barOptions: ECOptions = {
   yAxis: {},
   // 声明多个 bar 系列，默认情况下，每个系列会自动对应到 dataset 的每一列。
   series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
+}
+
+const barData2 = [900, 345, 393, -108, -154, 135, 178, 286, -119, -361, -203]
+const help: number[] = []
+const positive: (string | number)[] = []
+const negative: (string | number)[] = []
+for (let i = 0, sum = 0; i < barData2.length; ++i) {
+  const cr = Number(barData2[i])
+  if (cr >= 0) {
+    positive.push(cr)
+    negative.push('-')
+  } else {
+    positive.push('-')
+    negative.push(-cr)
+  }
+
+  if (i === 0) {
+    help.push(0)
+  } else {
+    sum += barData2[i - 1]
+    if (cr < 0) {
+      help.push(sum + cr)
+    } else {
+      help.push(sum)
+    }
+  }
+}
+
+// 阶梯瀑布图
+export const barOptions2: ECOptions = {
+  title: {
+    text: '阶梯瀑布图'
+  },
+  grid: {
+    left: '3%',
+    right: '4%',
+    bottom: '3%',
+    containLabel: true
+  },
+  tooltip: {},
+  xAxis: {
+    type: 'category',
+    splitLine: { show: false },
+    data: (function () {
+      const list: string[] = []
+      for (let i = 1; i <= 11; i++) {
+        list.push('Oct/' + i)
+      }
+      return list
+    })()
+  },
+  yAxis: {
+    type: 'value'
+  },
+  series: [
+    {
+      type: 'bar',
+      stack: 'all',
+      itemStyle: {
+        borderColor: 'rgba(0,0,0,0)',
+        color: 'rgba(0,0,0,0)'
+      },
+      emphasis: {
+        itemStyle: {
+          borderColor: 'rgba(0,0,0,0)',
+          color: 'rgba(0,0,0,0)'
+        }
+      },
+      data: help
+    },
+    {
+      name: 'positive',
+      type: 'bar',
+      stack: 'all',
+      data: positive
+    },
+    {
+      name: 'negative',
+      type: 'bar',
+      stack: 'all',
+      data: negative,
+      itemStyle: {
+        color: '#f33'
+      }
+    }
+  ]
+}
+
+// 堆叠折线图
+export const lineOption: ECOptions = {
+  title: {
+    text: '堆叠折线图'
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross'
+    }
+  },
+  xAxis: {
+    data: ['A', 'B', 'C', 'D', 'E']
+  },
+  backgroundColor: '#fff',
+  yAxis: {},
+  series: [
+    {
+      data: [10, 22, 28, 43, 49],
+      type: 'line',
+      stack: 'x'
+    },
+    {
+      data: [5, 4, 3, 5, 10],
+      type: 'line',
+      stack: 'x'
+    }
+  ]
 }

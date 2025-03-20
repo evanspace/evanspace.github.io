@@ -11,7 +11,7 @@ import { Scene } from './class'
 import { Echarts } from '@/hooks/echarts'
 import { useResize } from '@/hooks/scene-resize'
 
-import { scatterOption, barOptions } from './echarts-opts'
+import * as EchartsOptions from './echarts-opts'
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof Scene>[0] = {
@@ -30,7 +30,7 @@ const options: ConstructorParameters<typeof Scene>[0] = {
   },
   camera: {
     near: 1e-10,
-    position: [0, 50, 800]
+    position: [0, 5, 50]
   }
 }
 let scene: InstanceType<typeof Scene>
@@ -38,36 +38,79 @@ let scene: InstanceType<typeof Scene>
 const echartsRef = ref()
 let echartsList: InstanceType<typeof Echarts>[] = []
 
-const addEcharts = (options, theme: ConstructorParameters<typeof Echarts>[2], data) => {
-  const dom = document.createElement('div')
-  const echarts = new Echarts(dom, options, theme, {
+const addEcharts = (options, theme: ConstructorParameters<typeof Echarts>[2], data, dom?) => {
+  const container = dom || document.createElement('div')
+  const echarts = new Echarts(container, options, theme, {
     width: data.width * 4,
     height: data.height * 4
   })
-  // 渲染结束
-  echarts.on('finished', () => {
-    scene.addEchartPlane(echarts.domElement, data)
-  })
+
+  if (!dom) {
+    // 渲染结束
+    echarts.on('finished', () => {
+      scene.addEchartPlane(echarts.domElement, data)
+    })
+  }
   echartsList.push(echarts)
 
   // echartsRef.value.appendChild(dom)
 }
 
 const initPage = () => {
-  addEcharts(barOptions, 'essos', {
+  addEcharts(EchartsOptions.barOptions, 'essos', {
     key: '---1',
     width: 300,
     height: 100,
-    position: { x: -150, y: 50, z: 0 },
+    position: { x: -12, y: 4, z: 0 },
     rotation: { x: 0, y: 30, z: 0 }
   })
-  addEcharts(scatterOption, 'dark', {
+  addEcharts(EchartsOptions.scatterOption, 'dark', {
     key: '---2',
     width: 300,
     height: 100,
-    position: { x: 150, y: 50, z: 0 },
+    position: { x: 12, y: 4, z: 0 },
     rotation: { x: 0, y: -30, z: 0 }
   })
+
+  const item1 = {
+    key: '---3',
+    width: 300,
+    height: 100,
+    position: { x: 12, y: 9, z: 0 },
+    rotation: { x: 0, y: -30, z: 0 }
+  }
+  addEcharts(
+    EchartsOptions.barOptions2,
+    'chalk',
+    item1,
+    scene.addDot3Echarts(
+      item1,
+      _e => {
+        // console.log(_e)
+      },
+      !true
+    ).userData.echartElement
+  )
+
+  const item2 = {
+    key: '---4',
+    width: 300,
+    height: 100,
+    position: { x: -12, y: 9, z: 0 },
+    rotation: { x: 0, y: 30, z: 0 }
+  }
+  addEcharts(
+    EchartsOptions.lineOption,
+    'wonderland',
+    item2,
+    scene.addDot3Echarts(
+      item2,
+      _e => {
+        // console.log(_e)
+      },
+      true
+    ).userData.echartElement
+  )
 }
 
 onMounted(() => {
