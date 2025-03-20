@@ -39,8 +39,12 @@ const visible = defineModel()
     background-color: rgba($color: #000000, $alpha: 0.4);
     backdrop-filter: saturate(50%) blur(2px);
     p {
-      margin-top: 10px;
+      margin: 5px 0;
+      font-size: 14px;
       line-height: 1;
+      &:nth-child(1) {
+        font-size: 16px;
+      }
     }
   }
 }
