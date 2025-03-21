@@ -481,7 +481,7 @@ export class OfficeScene extends Scene {
       label = MS.createDotCSS3DEchartsDom(
         item,
         true,
-        e => {
+        _e => {
           label && (label.visible = false)
         },
         true
