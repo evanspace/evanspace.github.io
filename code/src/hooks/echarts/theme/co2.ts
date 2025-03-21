@@ -48,7 +48,10 @@ const options: Parameters<typeof import('echarts/core').registerTheme>[1] = {
     },
     symbolSize: 4,
     symbol: 'circle',
-    smooth: true
+    smooth: true,
+    emphasis: {
+      focus: 'series'
+    }
   },
   radar: {
     itemStyle: {

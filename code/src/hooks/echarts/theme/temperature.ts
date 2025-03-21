@@ -62,6 +62,9 @@ const options: Parameters<typeof import('echarts/core').registerTheme>[1] = {
     itemStyle: {
       barBorderWidth: 0,
       barBorderColor: '#ccc'
+    },
+    emphasis: {
+      focus: 'series'
     }
   },
   pie: {
