@@ -10,6 +10,6 @@ export const getModes = () => {
 }
 
 // 区域用电量查询
-export const getAreaUseElectric = params => {
-  return Axios.get(Api.d3.office_area_electric, params)
+export const getAreaCount = params => {
+  return Axios.get(Api.d3.office_area_count, params)
 }

@@ -1,5 +1,5 @@
 import { Echarts } from '@/hooks/echarts'
-import { getAreaUseElectric } from './request'
+import { getAreaCount } from './request'
 import type { ObjectItem } from 'three-scene/types/model'
 
 type EchartsOptions = ConstructorParameters<typeof Echarts>
@@ -60,7 +60,7 @@ const requestUpdate = (echarts: InstanceType<typeof Echarts>, data: ObjectItem, 
     textColor: '#fff',
     maskColor: 'rgba(255, 255, 255, 0.1)'
   })
-  getAreaUseElectric({
+  getAreaCount({
     id: data.id,
     type
   }).then(list => {

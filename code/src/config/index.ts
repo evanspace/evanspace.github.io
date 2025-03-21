@@ -57,7 +57,7 @@ const Api = {
 
     office: '/d3/office',
     office_mode: '/d3/office_mode',
-    office_area_electric: '/d3/office_area_electric'
+    office_area_count: '/d3/office_area_count'
   },
 
   area: {

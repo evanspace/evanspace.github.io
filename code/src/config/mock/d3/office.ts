@@ -976,7 +976,7 @@ export default [
   },
   {
     // 区域用电量
-    url: '/d3/office_area_electric',
+    url: '/d3/office_area_count',
     method: 'get',
     response: () => {
       const date = new Date()
