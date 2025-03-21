@@ -330,14 +330,16 @@ const options: Parameters<typeof import('echarts/core').registerTheme>[1] = {
       type: 'cross',
       label: {
         fontSize: 9,
-        padding: [3, 6]
+        lineHeight: 9,
+        padding: [3, 3, 1, 3],
+        backgroundColor: '#0989FF'
       },
       lineStyle: {
-        color: '#eeeeee',
+        color: '#6F80BB',
         width: '1'
       },
       crossStyle: {
-        color: '#eeeeee',
+        color: '#6F80BB',
         width: '1'
       }
     }
