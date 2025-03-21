@@ -23,7 +23,8 @@ export class ParallaxScene extends ThreeScene.Scene {
 
     backgroundLoad(this.scene, '501')
     // @ts-ignore
-    this.scene.environment = this.scene.background
+    const envMap = this.convertPmremTexture(this.scene.background)
+    this.scene.environment = envMap
 
     this.gui = new GUI()
     this.addGui()

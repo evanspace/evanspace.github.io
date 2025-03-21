@@ -476,7 +476,8 @@ const createCharacter = () => {
     y: 184.6,
     z: 37.6
   }
-  obj.scale.setScalar(0.7)
+  obj.rotateY(Math.PI * 1)
+  obj.scale.setScalar(2)
 
   scene.addCharacter(obj, move)
 }

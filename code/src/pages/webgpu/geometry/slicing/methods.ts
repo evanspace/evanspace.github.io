@@ -84,8 +84,9 @@ export class SlicingScene extends ThreeScene.Scene {
   // 设置环境
   setEnv(texture: InstanceType<typeof THREE.DataTexture>) {
     texture.mapping = THREE.EquirectangularReflectionMapping
-    this.scene.environment = texture
-    this.scene.background = this.scene.environment
+    const envMap = this.convertPmremTexture(texture)
+    this.scene.environment = envMap
+    this.scene.background = texture
   }
 
   addModel(model) {

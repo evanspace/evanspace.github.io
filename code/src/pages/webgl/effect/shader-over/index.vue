@@ -6,7 +6,7 @@
 
 <script lang="ts" setup>
 import { NewThreeScene } from './methods'
-// import { Sketch } from './test'
+import { Sketch } from './test'
 
 import { useResize } from '@/hooks/scene-resize'
 
@@ -40,10 +40,12 @@ let scene: InstanceType<typeof NewThreeScene>
 
 onMounted(() => {
   options.container = containerRef.value
-  // new Sketch({
-  //   el: containerRef.value
-  // })
-  // return
+  if (false) {
+    new Sketch({
+      el: containerRef.value
+    })
+    return
+  }
   scene = new NewThreeScene(options)
   scene.run()
 

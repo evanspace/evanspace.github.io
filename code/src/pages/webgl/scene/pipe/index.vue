@@ -50,6 +50,7 @@
       @init="onInit"
       @click-dot="onClickDot"
       @dblclick="onDbclick"
+      @loaded="onLoaded"
     >
     </t-device-scene>
   </div>
@@ -126,6 +127,10 @@ const updateObjectCall = (_obj: ObjectItem, isRandom) => {
 
 const onInit = scene => {
   useResize(scene).resize()
+}
+
+const onLoaded = () => {
+  threeSceneRef.value.update(true)
 }
 
 const onClickDot = (item, e) => {

@@ -58,6 +58,8 @@ const onCellClick = event => {
   if (isOver.value) return
   const row = parseInt(event.target.dataset.row)
   const col = parseInt(event.target.dataset.col)
+  if (isNaN(row) || isNaN(col)) return
+
   if (board.value[row][col] !== 0) return
   board.value[row][col] = currentPlayer.value
 

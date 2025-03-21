@@ -47,6 +47,7 @@
       @init="onInit"
       @click-dot="onClickDot"
       @dblclick="onDbclick"
+      @loaded="onLoaded"
     >
       <template #dialog="{ data, title }">
         <div :class="$style['dialog-wrap']">
@@ -133,6 +134,10 @@ const updateObjectCall = (_obj: ObjectItem, isRandom) => {
 
 const onInit = scene => {
   useResize(scene).resize()
+}
+
+const onLoaded = () => {
+  threeSceneRef.value.update(true)
 }
 
 const onClickDot = (item, e) => {

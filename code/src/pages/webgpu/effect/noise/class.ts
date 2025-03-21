@@ -35,6 +35,17 @@ export class Scene extends ThreeScene.Scene {
   render() {
     this.renderer.renderAsync(this.scene, this.camera)
   }
+  createScene() {
+    return new THREE.Scene()
+  }
+
+  createDirectionalLight(color: string | number, intensity: number) {
+    return new THREE.DirectionalLight(color, intensity)
+  }
+
+  createAmbientLight(color: string | number, intensity: number) {
+    return new THREE.AmbientLight(color, intensity)
+  }
 
   createRender() {
     return new THREE.WebGPURenderer(this.options.render)

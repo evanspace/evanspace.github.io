@@ -1,7 +1,6 @@
 <template>
   <div class="page">
-    
-    <div 
+    <div
       :class="$style.wrap"
       :style="{
         '--x': opts.x + 'px',
@@ -14,7 +13,6 @@
         <div :class="$style.cursor"></div>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -45,36 +43,39 @@ const opts = reactive<{
   y: number
   time: number
   timer?: NodeJS.Timeout
-}>( {
+}>({
   x: 0,
   y: 0,
   time: 200
-} )
+})
 
 const contentRef = ref()
 
-const convertText = ( text: string = '' ) => {
-  return text.split( /[\r\n]+/ ).map( item => {
-    return `<p>${ item }</p>`
-  } ).join( '' )
+const convertText = (text: string = '') => {
+  return text
+    .split(/[\r\n]+/)
+    .map(item => {
+      return `<p>${item}</p>`
+    })
+    .join('')
 }
 
-const delay = ( time: number = 0 ) => {
-  return new Promise( ( resolve ) => {
-    opts.timer = setTimeout( resolve, time )
-  } )
+const delay = (time: number = 0) => {
+  return new Promise(resolve => {
+    opts.timer = setTimeout(resolve, time)
+  })
 }
 
-const getLastTextNode = ( node: HTMLElement ) => {
-  if ( node.nodeType == Node.TEXT_NODE ) {
+const getLastTextNode = (node: HTMLElement) => {
+  if (node.nodeType == Node.TEXT_NODE) {
     return node
   }
 
   const childs = node.childNodes
   // 倒序查找
-  for ( let i = childs.length - 1; i >= 0; i -- ) {
-    const childNode = getLastTextNode( childs[ i ] as HTMLElement )
-    if ( childNode ) {
+  for (let i = childs.length - 1; i >= 0; i--) {
+    const childNode = getLastTextNode(childs[i] as HTMLElement)
+    if (childNode) {
       return childNode
     }
   }
@@ -84,15 +85,15 @@ const getLastTextNode = ( node: HTMLElement ) => {
 const updateCursorPosition = () => {
   const dom = contentRef.value as HTMLElement
   // 查找最后一个文本节点
-  const lastTextNode = getLastTextNode( dom ) as HTMLElement
-  if ( !lastTextNode ) return
+  const lastTextNode = getLastTextNode(dom) as HTMLElement
+  if (!lastTextNode) return
   // 追加符号
-  const textNode = document.createTextNode( 'E' )
-  lastTextNode.parentNode?.appendChild( textNode )
+  const textNode = document.createTextNode('E')
+  lastTextNode.parentNode?.appendChild(textNode)
   // 创建选中对象
   const range = document.createRange()
   // 选中符号
-  range.setStart( textNode, 1 )
+  range.setStart(textNode, 1)
   // 获取位置信息
   const rect = range.getBoundingClientRect()
   const cRect = dom.getBoundingClientRect()
@@ -106,32 +107,32 @@ const updateCursorPosition = () => {
 
 const autoAppend = async () => {
   const dom = contentRef.value as HTMLElement
-  for ( let i = 1; i <= text.length; i ++ ) {
-    const tx = text.slice( 0, i )
+  for (let i = 1; i <= text.length; i++) {
+    const tx = text.slice(0, i)
     // 生成标签内容
-    const tagText = convertText( tx )
+    const tagText = convertText(tx)
     dom.innerHTML = tagText
     // 更新光标位置
     updateCursorPosition()
     // 等待
-    await delay( opts.time )
-  } 
+    await delay(opts.time)
+  }
 }
 
 const initPage = () => {
   const dom = contentRef.value as HTMLElement
   dom.innerHTML = ''
 
-  clearTimeout( opts.timer )
+  clearTimeout(opts.timer)
   autoAppend()
 }
 
-onMounted( initPage )
-onBeforeUnmount( () => {
-  clearTimeout( opts.timer )
-} )
+onMounted(initPage)
+onBeforeUnmount(() => {
+  clearTimeout(opts.timer)
+})
 </script>
-  
+
 <style lang="scss" module>
 .wrap {
   margin: 5px;
@@ -154,16 +155,17 @@ onBeforeUnmount( () => {
   width: 2px;
   height: 20px;
   position: absolute;
-  animation: flicker .5s linear infinite;
+  animation: flicker 0.5s linear infinite;
   transform: translate(var(--x, 0px), var(--y, 0px));
   border-radius: 2px;
-  background-color: #0a0d2b;
-  
+  background-color: var(--el-text-color-regular);
+
   @keyframes flicker {
     50% {
-      opacity: .3;
+      opacity: 0.3;
     }
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
   }
