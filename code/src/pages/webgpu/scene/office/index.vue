@@ -57,7 +57,6 @@ import { OfficeScene } from './class'
 import * as MS from './methods'
 import { useResize } from '@/hooks/scene-resize'
 import { onListen } from './listen'
-import { renderEcharts } from './echarts'
 
 import DEFAULTCONFIG from './config'
 import * as request from './request'
@@ -297,8 +296,6 @@ const loadScene = async res => {
   scene.addAirWindMaterial(
     res.JsonList.filter(it => it.type === KEYS.M_AIR_SWITCH).map(it => it.bind)
   )
-  // 添加图表数据
-  renderEcharts(scene)
 }
 
 // 加载

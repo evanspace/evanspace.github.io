@@ -45,126 +45,126 @@ const dot3List = [
   {
     name: '前台',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_1',
-    position: { x: 11.5, y: dot3Height, z: 48.6 },
+    id: 86,
+    position: { x: 14, y: dot3Height + 0.5, z: 48.6 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
     name: '综合办公区',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_2',
+    id: 82,
     position: { x: -10.45, y: dot3Height, z: 44.6 }
   },
   {
     name: '大会议室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_3',
+    id: 75,
     position: { x: -33.55, y: dot3Height, z: 44.6 }
   },
   {
     name: '副总办公室1',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_4',
+    id: 71,
     position: { x: -40.3, y: dot3Height, z: 31.4 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
     name: '副总办公室2',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_5',
+    id: 72,
     position: { x: -40.3, y: dot3Height, z: 11.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
     name: '财务部',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_6',
+    id: 74,
     position: { x: -40.3, y: dot3Height, z: -9.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
     name: 'CFO办公室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_7',
+    id: 73,
     position: { x: -40.3, y: dot3Height, z: -18.2 },
     rotation: { x: 0, y: -90, z: 0 }
   },
   {
     name: '洽谈室一',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_8',
+    id: 79,
     position: { x: -32.2, y: dot3Height, z: -17.5 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
     name: '人事办公区',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_9',
+    id: 181,
     position: { x: -22.5, y: dot3Height, z: 5.2 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
     name: '小会议室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_10',
+    id: 76,
     position: { x: -10.9, y: dot3Height, z: 34.4 },
     rotation: { x: 0, y: 180, z: 0 }
   },
   {
     name: '洽谈室二',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_11',
+    id: 78,
     position: { x: 46.7, y: dot3Height, z: 23.3 },
     rotation: { x: 0, y: 270, z: 0 }
   },
   {
     name: '茶室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_12',
+    id: 80,
     position: { x: 46.7, y: dot3Height, z: 16.7 },
     rotation: { x: 0, y: 270, z: 0 }
   },
   {
     name: '总裁办公室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_13',
+    id: 85,
     position: { x: 49.1, y: dot3Height, z: 5.3 },
     rotation: { x: 0, y: 270, z: 0 }
   },
   {
     name: '副总办公室4',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_14',
+    id: 81,
     position: { x: 55.3, y: dot3Height, z: 19.6 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
     name: '大洽谈室',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_15',
+    id: 77,
     position: { x: 55.3, y: dot3Height, z: 28.2 },
     rotation: { x: 0, y: 90, z: 0 }
   },
   {
     name: '研发及商务办公区',
     type: 'DOT3',
-    unit: '℃',
     code: 'area_16',
+    id: 84,
     position: { x: 55.2, y: dot3Height, z: 45.9 },
     rotation: { x: 0, y: 90, z: 0 }
   }
@@ -980,7 +980,7 @@ export default [
     method: 'get',
     response: () => {
       const date = new Date()
-      const year = date.getFullYear() - 3
+      const year = date.getFullYear() - 2
       return builder(
         mock({
           'list|3': [
@@ -989,7 +989,7 @@ export default [
               'list|12': [
                 {
                   'month|+1': [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-                  date: '@../../year @month',
+                  date: '@../../year - @month',
                   'value|300-500': 0
                 }
               ]

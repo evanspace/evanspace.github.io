@@ -96,7 +96,16 @@ echarts.use([
 })()
 
 // 主题
-type Theme = 'wonderland' | 'chalk' | 'westeros' | 'dark' | 'essos' | 'shine'
+type Theme =
+  | 'wonderland'
+  | 'westeros'
+  | 'dark'
+  | 'essos'
+  | 'shine'
+  | 'chalk'
+  | 'temperature'
+  | 'humidity'
+  | 'co2'
 
 // 地图注册
 export type RegisterMapParams = Parameters<typeof echarts.registerMap>

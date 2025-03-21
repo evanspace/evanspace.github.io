@@ -2,7 +2,7 @@ import DEFAULTCONFIG from './config'
 import * as MS from './methods'
 import type { ExtendOptions, Sky, UpdateDotItem } from '.'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
-import { disposeEcharts } from './echarts'
+import { renderEcharts, disposeEcharts } from './echarts'
 
 const { Utils, Hooks, THREE, Scene } = MS
 
@@ -284,7 +284,7 @@ export class OfficeScene extends Scene {
   checkDot3CameraVisibleObjects() {
     this.checkCameraVisibleDot(
       object => {
-        object.visible = true
+        object.visible = object.userData.isEchartsDot ? object.visible : true
       },
       object => {
         object.visible = false
@@ -465,16 +465,35 @@ export class OfficeScene extends Scene {
   // 添加点位
   addDot3(item: ObjectItem, clickBack?) {
     if (!this.dot3Group) return new THREE.Mesh()
-    const label = MS.createDotCSS3DDom(item, clickBack)
+    const label = MS.createDotCSS3DDom(item, clickBack, e => {
+      const type = e.target.dataset.type
+      this.addDot3Echarts(item, type)
+    })
     this.dot3Group.add(label)
     return label
   }
   // 添加图表点位
-  addDot3Echarts(item: ObjectItem, clickBack?, isSprite?) {
-    if (!this.dot3Group) return new THREE.Mesh()
-    const label = MS.createDotCSS3DEchartsDom(item, clickBack, isSprite)
-    this.dot3Group.add(label)
-    return label
+  addDot3Echarts(item: ObjectItem, type: string) {
+    if (!this.dot3Group) return
+    // 查找是否已经存在
+    let label = this.dot3Group.children.find(el => el.userData.isEchartsDot)
+    if (!label) {
+      label = MS.createDotCSS3DEchartsDom(
+        item,
+        true,
+        e => {
+          label && (label.visible = false)
+        },
+        true
+      )
+      this.dot3Group.add(label)
+    } else {
+      const { x = 0, y = 0, z = 0 } = item.position || {}
+      label.position.set(x, y, z)
+      label.visible = true
+    }
+    disposeEcharts()
+    renderEcharts(label.userData.echartElement, item, type)
   }
   // 关闭点位
   closeDot3() {
@@ -1072,10 +1091,7 @@ export class OfficeScene extends Scene {
 
       // 于目标距离
       if (intersect.distance < this.collisionSpace) {
-        ElMessage.warning({
-          message: '撞到了！',
-          grouping: true
-        })
+        this.log('撞到了！')
         return true
       }
     }

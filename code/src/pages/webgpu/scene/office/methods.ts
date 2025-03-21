@@ -227,7 +227,7 @@ export const createCSS3DRender = (options, container) => {
  * @param clickBack 点击事件回调
  * @returns
  */
-export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
+export const createDotCSS3DDom = (item: ObjectItem, clickBack, subClickBack) => {
   const pos = item.position
   const { size, color } = item.font || {}
   const { x = 0, y = 0, z = 0 } = pos || {}
@@ -242,7 +242,7 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
           <div class="env-item temp">
             <div class="name">温度</div>
             <span class="inner">
-              <span class="value">0</span>
+              <span class="value" data-type="01">0</span>
               <span class="unit">°C</span>
             </span>
           </div>
@@ -250,7 +250,7 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
           <div class="env-item hum">
             <div class="name">湿度</div>
             <span class="inner">
-              <span class="value">0</span>
+              <span class="value" data-type="02">0</span>
               <span class="unit">%</span>
             </span>
           </div>
@@ -258,7 +258,7 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
           <div class="env-item co2">
             <div class="name">CO₂</div>
             <span class="inner">
-              <span class="value">0</span>
+              <span class="value" data-type="03">0</span>
               <span class="unit">ppm</span>
             </span>
           </div>
@@ -267,7 +267,9 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
     `,
     className: 'dot-env-box',
     sprite: true,
-    onClick: clickBack
+    onClick: clickBack,
+    subClickSelector: '.value[data-type]',
+    onSubClick: subClickBack
   })
   label.rotateY(Math.PI * 0.5)
 
@@ -300,14 +302,21 @@ export const createDotCSS3DDom = (item: ObjectItem, clickBack) => {
  * @param isSprite 是否精灵模式
  * @returns
  */
-export const createDotCSS3DEchartsDom = (item: ObjectItem, clickBack, isSprite) => {
+export const createDotCSS3DEchartsDom = (item: ObjectItem, clickBack, subClickBack, isSprite) => {
   const pos = item.position
   const { x = 0, y = 0, z = 0 } = pos || {}
   const label = createCSS3DDom({
-    name: `<div class="echarts-wrap"></div>`,
+    name: `
+      <div class="echarts-wrap">
+        <div class="content"></div>
+        <div class="close">关闭</div>
+      </div>
+    `,
     className: 'dot-echarts-box',
     sprite: isSprite,
-    onClick: clickBack
+    onClick: clickBack,
+    subClickSelector: '.close',
+    onSubClick: subClickBack
   })
 
   const group = new THREE.Group()
@@ -329,7 +338,7 @@ export const createDotCSS3DEchartsDom = (item: ObjectItem, clickBack, isSprite) 
   // 原始点位 备用
   group.userData.position = { x, y, z }
   group.userData.isEchartsDot = true
-  const dom = label.element.getElementsByClassName('echarts-wrap')[0]
+  const dom = label.element.getElementsByClassName('content')[0]
   group.userData.echartElement = dom
   return group
 }
