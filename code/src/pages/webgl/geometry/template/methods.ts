@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js'
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 
 import * as ThreeScene from 'three-scene'
 
@@ -324,6 +325,15 @@ export class NewScene extends ThreeScene.Scene {
       ),
       position,
       THREE.LineSegments
+    )
+    this.addObject(group)
+
+    position.x += gap
+    group = createGroup(
+      '胶囊几何体(RoundedBoxGeometry)',
+      // 宽度、高度、深度、分段、半径
+      new RoundedBoxGeometry(size / 2, size, size / 2, 6, size / 2),
+      position
     )
     this.addObject(group)
 
