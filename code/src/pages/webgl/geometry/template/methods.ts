@@ -6,7 +6,6 @@ import * as ThreeScene from 'three-scene'
 
 import { GUI } from 'dat.gui'
 
-console.log(THREE)
 const material = new THREE.MeshPhongMaterial({
   color: 0xf1f1f1,
   specular: 0xffffff,
