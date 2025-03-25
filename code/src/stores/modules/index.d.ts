@@ -73,6 +73,7 @@ export interface AssetsStore {
   bucket: string
 
   wsIp?: string
+  git: string
 }
 
 export interface WsStore {

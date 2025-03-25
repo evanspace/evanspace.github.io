@@ -46,6 +46,11 @@ declare interface ImportMetaEnv {
    * 资源地址
    */
   readonly VITE_OSS_BUCKET: string
+
+  /**
+   * git 资源地址
+   */
+  readonly VITE_GIT_OSS: string
 }
 
 declare interface ImportMeta {

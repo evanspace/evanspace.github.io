@@ -19,7 +19,13 @@ const options: ConstructorParameters<typeof Scene>[0] = {
   },
   camera: {
     near: 1e-10,
-    position: [0, 500, 100]
+    position: [10, 10, -10]
+  },
+  controls: {
+    enablePan: false,
+    maxPolarAngle: Math.PI / 2,
+    minDistance: 10,
+    maxDistance: 200
   }
 }
 let scene: InstanceType<typeof Scene>
