@@ -504,7 +504,7 @@ const test = {
   c: '1'
 }
 
-function add<T, K extends keyof T>(obj: T, key: K): T[k]
+function add<T, K extends keyof T>(obj: T, key: K): T[K]
 function add<T, K extends KeyToValueOfType<T, number>>(object: T, property: K): number
 function add<T, K extends KeyToValueOfType<T, boolean>>(object: T, property: K): boolean
 function add<T, K extends KeyToValueOfType<T, string>>(object: T, property: K): string
