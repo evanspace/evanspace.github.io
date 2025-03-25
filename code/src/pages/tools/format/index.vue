@@ -23,6 +23,16 @@
             v-model="apiResponse.headResult"
           ></el-input>
         </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">
+            类型： <el-link @click="copy(apiResponse.headType)">复制</el-link>
+          </div>
+          <el-input
+            type="textarea"
+            placeholder="类型字段"
+            v-model="apiResponse.headType"
+          ></el-input>
+        </div>
       </div>
       <div :class="$style.content">
         <div :class="$style.item">
@@ -38,6 +48,12 @@
         <div :class="$style.item">
           <div :class="$style.desc">结果：</div>
           <el-input type="textarea" placeholder="转换结果" v-model="apiResponse.result"></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">
+            类型： <el-link @click="copy(apiResponse.type)">复制</el-link>
+          </div>
+          <el-input type="textarea" placeholder="类型字段" v-model="apiResponse.type"></el-input>
         </div>
       </div>
     </el-card>
@@ -150,7 +166,9 @@ const apiResponse = reactive({
   head: '',
   headResult: '',
   text: '',
-  result: ''
+  result: '',
+  type: '',
+  headType: ''
 })
 const getType = type => {
   type = String(type)
@@ -188,6 +206,11 @@ const onApiHeadResponse = () => {
       })
       .join('')
     apiResponse.headResult = result
+    apiResponse.headType = data
+      .map(it => it.field)
+      .filter(Boolean)
+      .map(it => `'${it}'`)
+      .join(' | ')
     copy(result)
   }, 100)
 }
@@ -217,6 +240,11 @@ const onApiResponse = () => {
       })
       .join('')
     apiResponse.result = result
+    apiResponse.type = data
+      .map(it => it.field)
+      .filter(Boolean)
+      .map(it => `'${it}'`)
+      .join(' | ')
     copy(result)
   }, 100)
 }

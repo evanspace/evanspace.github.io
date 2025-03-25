@@ -16,13 +16,12 @@
   .item {
     flex: 1 0 0;
     overflow: hidden;
-    &:nth-child(2) {
+    & + .item {
       margin-left: 10px;
       textarea {
         color: var(--el-color-success);
       }
     }
-    
   }
   .desc {
     line-height: 1.8;
