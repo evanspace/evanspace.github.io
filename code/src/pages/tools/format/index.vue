@@ -2,6 +2,48 @@
   <div :class="$style.page">
     <el-card>
       <template #header>
+        <div :class="$style.title">Api 文档响应参数转换 (ant UI)</div>
+      </template>
+      <div :class="$style.content">
+        <div :class="$style.item">
+          <div :class="$style.desc">头部 转换内容：</div>
+          <el-input
+            type="textarea"
+            v-model="apiResponse.head"
+            placeholder="请输入..."
+            @paste="onApiHeadResponse"
+            @dblclick="onApiHeadResponse"
+          ></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">结果：</div>
+          <el-input
+            type="textarea"
+            placeholder="转换结果"
+            v-model="apiResponse.headResult"
+          ></el-input>
+        </div>
+      </div>
+      <div :class="$style.content">
+        <div :class="$style.item">
+          <div :class="$style.desc">返回体 转换内容：</div>
+          <el-input
+            type="textarea"
+            v-model="apiResponse.text"
+            placeholder="请输入..."
+            @paste="onApiResponse"
+            @dblclick="onApiResponse"
+          ></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">结果：</div>
+          <el-input type="textarea" placeholder="转换结果" v-model="apiResponse.result"></el-input>
+        </div>
+      </div>
+    </el-card>
+
+    <el-card>
+      <template #header>
         <div :class="$style.title">字母大写转换</div>
       </template>
       <div :class="$style.content">
@@ -102,6 +144,82 @@
 
 <script lang="ts" setup>
 import { copy } from '@/common/utils/document'
+
+// api 响应参数转换
+const apiResponse = reactive({
+  head: '',
+  headResult: '',
+  text: '',
+  result: ''
+})
+const getType = type => {
+  type = String(type)
+  if (type.indexOf('number') > -1) return 'number'
+  if (type.indexOf('string') > -1) return 'string'
+  if (type.indexOf('integer') > -1) return 'number'
+  return 'string'
+}
+const onApiHeadResponse = () => {
+  setTimeout(() => {
+    const list = apiResponse.head
+      .replace(/[\r\n]/g, '	')
+      .split('	')
+      .filter(Boolean)
+
+    let data: {
+      field: string
+      desc: string
+      type: string
+      require: boolean
+    }[] = []
+    for (let i = 0; i < list.length; i += 5) {
+      data.push({
+        field: list[i],
+        desc: list[i + 1],
+        require: list[i + 3] == 'true',
+        type: getType(list[i + 4])
+      })
+    }
+    const result = data
+      .map(it => {
+        return `
+      // ${it.desc}
+      ${it.field}: ${it.type}`
+      })
+      .join('')
+    apiResponse.headResult = result
+    copy(result)
+  }, 100)
+}
+const onApiResponse = () => {
+  setTimeout(() => {
+    const list = apiResponse.text
+      .replace(/[\r\n]/g, '	')
+      .split('	')
+      .filter(Boolean)
+    let data: {
+      field: string
+      desc: string
+      type: string
+    }[] = []
+    for (let i = 0; i < list.length; i += 3) {
+      data.push({
+        field: list[i],
+        desc: list[i + 1],
+        type: getType(list[i + 2])
+      })
+    }
+    const result = data
+      .map(it => {
+        return `
+      // ${it.desc}
+      ${it.field}: ${it.type}`
+      })
+      .join('')
+    apiResponse.result = result
+    copy(result)
+  }, 100)
+}
 
 // 大小写转换
 const letterToUpper = reactive({
