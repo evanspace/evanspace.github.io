@@ -25,16 +25,23 @@
       </div>
 
       <div class="flex flex-ac">
+        <div class="name">图片大小占比</div>
+        <div class="f-x pl-sm">
+          <el-slider v-model="imgOpts.ratio" :max="200"></el-slider>
+        </div>
+      </div>
+
+      <div class="flex flex-ac">
         <div class="name">压缩等级</div>
         <div class="f-x pl-sm">
-          <el-slider v-model="imgOpts.compress" :max="1" :step="0.01"></el-slider>
+          <el-slider v-model="imgOpts.quality" :max="1" :step="0.01"></el-slider>
         </div>
       </div>
 
       <div class="flex flex-ac">
         <div class="name">导出格式</div>
         <div class="f-x pl-sm">
-          <el-select v-model="imgOpts.format">
+          <el-select v-model="imgOpts.type">
             <el-option
               v-for="item in imgOpts.options"
               :label="item.label"
@@ -51,11 +58,12 @@
 
 <script lang="ts" setup>
 const imgOpts = reactive({
-  compress: 1,
+  quality: 1,
+  ratio: 100,
   name: '',
   url: '',
   types: ['png', 'jpeg', 'jpg'],
-  format: 'image/jpg',
+  type: 'image/jpeg',
   options: [
     { label: 'png', value: 'image/png' },
     { label: 'jpg', value: 'image/jpg' },
@@ -96,24 +104,40 @@ const onExportImg = () => {
   const img = new Image()
   // 图片加载完成后，绘制到Canvas并转换格式
   img.onload = function () {
+    const s = imgOpts.ratio / 100
     // 创建Canvas元素
     const canvas = document.createElement('canvas')
-    canvas.width = img.width
-    canvas.height = img.height
+    canvas.width = img.width * s
+    canvas.height = img.height * s
     const ctx = canvas.getContext('2d')
     if (!ctx) return
     // 绘制图片到Canvas
-    ctx.drawImage(img, 0, 0)
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    // canvas.toBlob(
+    //   blob => {
+    //     console.log(blob)
+    //     if (blob) {
+    //       const newFile = new File([blob], imgOpts.name, { type: imgOpts.type })
+    //       console.log('now the file size is : ', (newFile.size / 1024 / 1024).toFixed(2) + 'M')
+    //       console.log(newFile)
+    //     } else {
+    //       // 压缩过程出错，直接返回原 file 对象和提示信息
+    //     }
+    //   },
+    //   imgOpts.type,
+    //   imgOpts.quality
+    // )
 
     // 获取 base
     // 转换为WebP格式
-    const dataURL = canvas.toDataURL(imgOpts.format, imgOpts.compress) // 压缩
+    const dataURL = canvas.toDataURL(imgOpts.type, imgOpts.quality) // 压缩
+    console.log(imgOpts.quality)
     // 创建一个 <a> 元素
     const link = document.createElement('a')
     // 将 DataURL 赋值给 <a> 元素的 href 属性
     link.href = dataURL
     // 设置下载的文件名
-    link.download = imgOpts.name + '.' + imgOpts.format.split('/')[1]
+    link.download = imgOpts.name + '.' + imgOpts.type.split('/')[1]
     // 触发 <a> 元素的点击事件，以便下载图片
     link.click()
   }
