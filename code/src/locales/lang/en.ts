@@ -149,6 +149,7 @@ export default {
 
     tool: 'tool',
     convert: 'convert',
+    medium: 'medium',
 
     modelConvert: '@:route.model @:route.convert',
     format: 'format',

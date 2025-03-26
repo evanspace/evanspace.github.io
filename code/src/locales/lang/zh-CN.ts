@@ -149,6 +149,7 @@ export default {
 
     tool: '工具',
     convert: '转换',
+    medium: '媒体',
 
     modelConvert: '@:route.model@:route.convert',
     format: '格式化',
