@@ -155,19 +155,19 @@ export class Scene extends ThreeScene.Scene {
       const toMerge = {}
       glb.traverse((c: any) => {
         if (
-          /Boss/.test(c.name) ||
+          // /Boss/.test(c.name) ||
           // 敌人
-          /Enemie/.test(c.name) ||
+          // /Enemie/.test(c.name) ||
           // 盾牌
-          /Shield/.test(c.name) ||
+          // /Shield/.test(c.name) ||
           // 刀剑
-          /Sword/.test(c.name) ||
+          // /Sword/.test(c.name) ||
           // 角色
-          /Character/.test(c.name) ||
+          // /Character/.test(c.name) ||
           // 闸门
           /Gate/.test(c.name) ||
           // 长矛
-          /Cube/.test(c.name) ||
+          // /Cube/.test(c.name) ||
           // pink brick
           (c.material && c.material.color.r === 1.0)
         ) {
@@ -404,10 +404,8 @@ export class Scene extends ThreeScene.Scene {
     const capsuleInfo = player.userData.capsuleInfo
     // 清空盒子
     tempBox.makeEmpty()
-    // 使用世界矩阵计算当前边界框
-    if (collider.geometry.boundingBox) {
-      tempBox.copy(collider.geometry.boundingBox).applyMatrix4(collider.matrixWorld)
-    }
+    // 将当前矩阵翻转为它的逆矩阵
+    tempMat.copy(collider.matrixWorld).invert()
     // 复制线段
     tempSegment.copy(capsuleInfo.segment)
 
