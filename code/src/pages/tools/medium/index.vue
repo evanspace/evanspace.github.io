@@ -10,20 +10,6 @@
         </div>
       </div>
 
-      <div class="mt-sm" v-if="imgOpts.url">
-        <el-image
-          :src="imgOpts.url"
-          style="width: 120px"
-          :zoom-rate="1.2"
-          :max-scale="7"
-          :min-scale="0.2"
-          :preview-src-list="[imgOpts.url]"
-          show-progress
-          :initial-index="4"
-          fit="cover"
-        />
-      </div>
-
       <div class="flex flex-ac">
         <div class="name">图片大小占比</div>
         <div class="f-x pl-sm">
@@ -52,6 +38,20 @@
       </div>
 
       <el-button type="success" @click="onExportImg">导出</el-button>
+
+      <div class="mt-sm" v-if="imgOpts.urls.length">
+        <el-image
+          v-for="url in imgOpts.urls"
+          :src="url"
+          :zoom-rate="1.2"
+          :max-scale="7"
+          :min-scale="0.2"
+          :preview-src-list="imgOpts.urls"
+          show-progress
+          :initial-index="4"
+          fit="cover"
+        />
+      </div>
     </el-card>
   </div>
 </template>
@@ -61,7 +61,7 @@ const imgOpts = reactive({
   quality: 1,
   ratio: 100,
   name: '',
-  url: '',
+  urls: [] as string[],
   types: ['png', 'jpeg', 'jpg'],
   type: 'image/jpeg',
   options: [
@@ -83,7 +83,7 @@ const judgeType = () => {
 
 const onImgFile = e => {
   const file = e.target.files[0]
-  console.log(file)
+  imgOpts.urls = []
   imgOpts.name = file.name
   if (!judgeType()) return
   // 创建一个文件读取器
@@ -92,7 +92,7 @@ const onImgFile = e => {
   // 文件读取完成后，创建DataURL
   reader.onload = (e: any) => {
     const result = e.target.result
-    imgOpts.url = result
+    imgOpts.urls.push(result)
   }
   // 读取文件内容
   reader.readAsDataURL(file)
@@ -136,12 +136,13 @@ const onExportImg = () => {
     const link = document.createElement('a')
     // 将 DataURL 赋值给 <a> 元素的 href 属性
     link.href = dataURL
+    imgOpts.urls[1] = dataURL
     // 设置下载的文件名
     link.download = imgOpts.name + '.' + imgOpts.type.split('/')[1]
     // 触发 <a> 元素的点击事件，以便下载图片
     link.click()
   }
-  img.src = imgOpts.url
+  img.src = imgOpts.urls[0]
 }
 </script>
 
