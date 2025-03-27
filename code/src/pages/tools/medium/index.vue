@@ -3,60 +3,84 @@
     <el-card>
       <template #header>图片转换</template>
 
-      <div class="flex flex-ac">
-        <div class="name">上传文件</div>
-        <div class="f-x pl-sm">
-          <input type="file" accept="image/png,image/jpeg,image/jpg" @change="onImgFile" />
+      <div>
+        <div class="flex flex-ac">
+          <div class="name">上传文件</div>
+          <div class="f-x pl-sm">
+            <input type="file" accept="image/png,image/jpeg,image/jpg" @change="onImgFile" />
+          </div>
+        </div>
+
+        <div class="flex flex-ac">
+          <div class="name">图片大小占比</div>
+          <div class="f-x pl-sm">
+            <el-slider v-model="imgOpts.ratio" :max="200"></el-slider>
+          </div>
+        </div>
+
+        <div class="flex flex-ac">
+          <div class="name">压缩等级</div>
+          <div class="f-x pl-sm">
+            <el-slider v-model="imgOpts.quality" :max="1" :step="0.01"></el-slider>
+          </div>
+        </div>
+
+        <div class="flex flex-ac">
+          <div class="name">导出格式</div>
+          <div class="f-x pl-sm">
+            <el-select v-model="imgOpts.type">
+              <el-option
+                v-for="item in imgOpts.options"
+                :label="item.label"
+                :value="item.value"
+              ></el-option>
+            </el-select>
+          </div>
+        </div>
+
+        <el-button type="success" @click="onExportImg">导出</el-button>
+
+        <div class="mt-sm" v-if="imgOpts.urls.length">
+          <el-image
+            v-for="url in imgOpts.urls"
+            :src="url"
+            :zoom-rate="1.2"
+            :max-scale="7"
+            :min-scale="0.2"
+            :preview-src-list="imgOpts.urls"
+            show-progress
+            :initial-index="4"
+            fit="cover"
+          />
         </div>
       </div>
+    </el-card>
 
-      <div class="flex flex-ac">
-        <div class="name">图片大小占比</div>
-        <div class="f-x pl-sm">
-          <el-slider v-model="imgOpts.ratio" :max="200"></el-slider>
-        </div>
-      </div>
+    <el-card>
+      <template #header>二维码转换</template>
+      <div>
+        <el-input v-model="qrcodeOpts.text" @change="onQrcodeChange"></el-input>
 
-      <div class="flex flex-ac">
-        <div class="name">压缩等级</div>
-        <div class="f-x pl-sm">
-          <el-slider v-model="imgOpts.quality" :max="1" :step="0.01"></el-slider>
-        </div>
-      </div>
-
-      <div class="flex flex-ac">
-        <div class="name">导出格式</div>
-        <div class="f-x pl-sm">
-          <el-select v-model="imgOpts.type">
-            <el-option
-              v-for="item in imgOpts.options"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-      </div>
-
-      <el-button type="success" @click="onExportImg">导出</el-button>
-
-      <div class="mt-sm" v-if="imgOpts.urls.length">
         <el-image
-          v-for="url in imgOpts.urls"
-          :src="url"
+          class="mt-sm"
+          v-if="qrcodeOpts.url"
+          :src="qrcodeOpts.url"
           :zoom-rate="1.2"
           :max-scale="7"
           :min-scale="0.2"
-          :preview-src-list="imgOpts.urls"
+          :preview-src-list="[qrcodeOpts.url]"
           show-progress
           :initial-index="4"
           fit="cover"
-        />
+        ></el-image>
       </div>
     </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
+import * as QRCode from 'qrcode'
+
 const imgOpts = reactive({
   quality: 1,
   ratio: 100,
@@ -144,6 +168,25 @@ const onExportImg = () => {
   }
   img.src = imgOpts.urls[0]
 }
+
+const qrcodeOpts = reactive({
+  text: 'hello world!',
+  url: ''
+})
+
+const onQrcodeChange = () => {
+  QRCode.toDataURL(qrcodeOpts.text)
+    .then(url => {
+      qrcodeOpts.url = url
+    })
+    .catch(er => {
+      console.log(er)
+    })
+}
+
+onMounted(() => {
+  onQrcodeChange()
+})
 </script>
 
 <style lang="scss" module>
