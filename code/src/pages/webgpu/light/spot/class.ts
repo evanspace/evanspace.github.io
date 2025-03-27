@@ -4,7 +4,7 @@ import * as ThreeScene from 'three-scene'
 import { IESLoader } from 'three/examples/jsm/loaders/IESLoader.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const iesLoader = new IESLoader().setPath(base)
 
@@ -59,12 +59,11 @@ export class SpotScene extends ThreeScene.Scene {
   async addLight() {
     const group = this.lightGroup
     const [iesTexture1, iesTexture2, iesTexture3, iesTexture4] = await Promise.all([
-      iesLoader.loadAsync('/oss/ies/101.ies'),
-      iesLoader.loadAsync('/oss/ies/102.ies'),
-      iesLoader.loadAsync('/oss/ies/103.ies'),
-      iesLoader.loadAsync('/oss/ies/104.ies')
+      iesLoader.loadAsync('/ies/101.ies'),
+      iesLoader.loadAsync('/ies/102.ies'),
+      iesLoader.loadAsync('/ies/103.ies'),
+      iesLoader.loadAsync('/ies/104.ies')
     ])
-    console.log(iesTexture1, iesTexture2, iesTexture3, iesTexture4)
     this.addObject(group)
 
     // 红

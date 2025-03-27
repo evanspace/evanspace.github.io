@@ -1,42 +1,55 @@
 <template>
   <div class="page">
-
-    <div style="padding: 20px;">
+    <div style="padding: 20px">
       <el-radio-group v-model="radio" @change="onTypeChange">
-        <el-radio v-for="( item, index ) in list" :value="item.key" :key="index">{{ item.name }}</el-radio>
+        <el-radio v-for="(item, index) in list" :value="item.key" :key="index">{{
+          item.name
+        }}</el-radio>
       </el-radio-group>
 
-
-      <div style="padding: 20px 0;">
+      <div style="padding: 20px 0">
         {{ current.join('') }}
       </div>
 
-      <video src="/video/005.mp4" ref="video" v-show="radio == 'Progress'" controls></video>
+      <video
+        :src="base + '/video/005.mp4'"
+        ref="video"
+        v-show="radio == 'Progress'"
+        controls
+      ></video>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+const base = import.meta.env.VITE_GIT_OSS
+
 const list = ref([
   {
     key: 'Moon',
-    name: '月亮脸',
-  }, {
+    name: '月亮脸'
+  },
+  {
     key: 'Clock',
-    name: '时钟',
-  }, {
+    name: '时钟'
+  },
+  {
     key: 'Boy',
-    name: '小男孩',
-  }, {
+    name: '小男孩'
+  },
+  {
     key: 'Earth',
-    name: '地球转动',
-  }, {
+    name: '地球转动'
+  },
+  {
     key: 'Wave',
     name: '波浪'
-  }, {
+  },
+  {
     key: 'Flex',
     name: '伸缩'
-  }, {
+  },
+  {
     key: 'Progress',
     name: '进度'
   }
@@ -46,7 +59,7 @@ const radio = ref('')
 const current = ref([])
 let __timer__: any
 
-const onTypeChange = (e) => {
+const onTypeChange = e => {
   clearTimeout(__timer__)
   current.value = []
   switch (e) {
@@ -76,7 +89,7 @@ const onTypeChange = (e) => {
 
 const hashKey = 'HASH_ANIM'
 
-const updateUrl = (list) => {
+const updateUrl = list => {
   current.value = list
   // 获取当前URL
   const url = window.location.href
@@ -121,7 +134,7 @@ const runBoy = () => {
     let i, m
     let list: string[] = []
     for (i = 0; i < 10; i++) {
-      m = Math.floor(items.length * ((Math.sin((Date.now() / 100) + i) + 1) / 2))
+      m = Math.floor(items.length * ((Math.sin(Date.now() / 100 + i) + 1) / 2))
       const d = '👶' + items[m]
       list.push(d)
     }
@@ -147,8 +160,7 @@ const runEarth = () => {
       else {
         d[x]++
       }
-    }
-    else {
+    } else {
       while (d[x] == 0) {
         x++
       }
@@ -158,7 +170,7 @@ const runEarth = () => {
         if (d[x] == 8) d[x] = 0
       }
     }
-    d.forEach((n) => {
+    d.forEach(n => {
       list.push(f[n])
     })
     updateUrl(list)
@@ -169,10 +181,12 @@ const runEarth = () => {
 
 const runWave = () => {
   const loop = () => {
-    let i, n, list: string[] = []
+    let i,
+      n,
+      list: string[] = []
     current.value = []
     for (i = 0; i < 10; i++) {
-      n = Math.floor(Math.sin((Date.now() / 200) + (i / 2)) * 4) + 4
+      n = Math.floor(Math.sin(Date.now() / 200 + i / 2) * 4) + 4
       const d = String.fromCharCode(0x2581 + n)
       list.push(d)
     }
@@ -184,7 +198,8 @@ const runWave = () => {
 
 const runFlex = () => {
   const loop = () => {
-    let list: string[] = [], p
+    let list: string[] = [],
+      p
     current.value = []
 
     p = Math.floor(((Math.sin(Date.now() / 300) + 1) / 2) * 100)
@@ -206,23 +221,21 @@ const runProgress = () => {
   const v = video.value
   const formatTime = seconds => {
     const minutes = Math.floor(seconds / 60)
-    seconds = Math.floor(seconds - (minutes * 60))
+    seconds = Math.floor(seconds - minutes * 60)
     return ('0' + minutes).substring(-2) + ':' + ('0' + seconds).substring(-2)
   }
 
   const renderProgressBar = () => {
     var s = '',
       l = 15,
-      p = Math.floor(v.currentTime / v.duration * (l - 1)),
+      p = Math.floor((v.currentTime / v.duration) * (l - 1)),
       i
     for (i = 0; i < l; i++) {
       if (i == p) s += '◯'
       else if (i < p) s += '─'
       else s += '┄'
     }
-    const list = [
-      '╭', s, '╮', formatTime(v.currentTime), '╱', formatTime(v.duration)
-    ]
+    const list = ['╭', s, '╮', formatTime(v.currentTime), '╱', formatTime(v.duration)]
     updateUrl(list)
   }
   renderProgressBar()

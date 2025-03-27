@@ -39,7 +39,7 @@
           </div>
 
           <div :class="$style.project" class="flex flex-ac" v-if="data.isScatter">
-            <img :src="`${pageOpts.baseUrl}/oss/img/map/pos.png`" alt="" />
+            <img :src="`${pageOpts.baseUrl}/imgs/map/pos.png`" alt="" />
             <span :class="$style.name">{{ data.name }}</span>
           </div>
 
@@ -84,12 +84,12 @@ const onInit = scene => {
   const base = pageOpts.baseUrl
 
   // 地图
-  load(`${base}/oss/map/china.json`).then(res => {
+  load(`${base}/map/china.json`).then(res => {
     pageOpts.mapJson = res
   })
 
   // 轮廓
-  load(`${base}/oss/map/china-outline.json`).then(res => {
+  load(`${base}/map/china-outline.json`).then(res => {
     pageOpts.outlineJson = res
   })
 

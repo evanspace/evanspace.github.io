@@ -52,7 +52,7 @@ export const useAssetsStore = defineStore({
       if ([DEVICE_TYPE.LDB, DEVICE_TYPE.LQB].includes(type)) type = 'LDB'
       else if ([DEVICE_TYPE.LXJ, DEVICE_TYPE.BSHLQ].includes(type)) type = 'LXJ'
       else if ([DEVICE_TYPE.LDFM, DEVICE_TYPE.LQFM].includes(type)) type = 'FM'
-      return `${assetsStore.oss}/img/device/${folder}/${type}.png`
+      return `${assetsStore.git}/imgs/device/${folder}/${type}.png`
     }
   }
 })

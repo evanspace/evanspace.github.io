@@ -4,7 +4,7 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
-const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
+const baseUrl = import.meta.env.VITE_GIT_OSS
 const textureLoader = new THREE.TextureLoader()
 
 const { pass, mrt, output, emissive, float } = THREE.TSL
@@ -95,7 +95,7 @@ export class Scene extends ThreeScene.Scene {
 
     const mesh2 = createDiffusion(
       {
-        textureSrc: baseUrl + '/oss/textures/diffusion/101.png',
+        textureSrc: baseUrl + '/textures/diffusion/101.png',
         bloomIntensity: bloomIntensity
       },
       THREE
@@ -112,7 +112,7 @@ export class Scene extends ThreeScene.Scene {
     const material = new THREE.MeshBasicNodeMaterial({
       color,
       opacity: 0.8,
-      map: textureLoader.load(baseUrl + '/oss/textures/diffusion/101.png'),
+      map: textureLoader.load(baseUrl + '/textures/diffusion/101.png'),
       transparent: true,
       depthTest: !false,
       side: THREE.DoubleSide

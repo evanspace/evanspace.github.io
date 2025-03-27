@@ -6,12 +6,12 @@ import { useSky } from '@/hooks/sky'
 
 import { getData } from './data'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 const textureLoader = new THREE.TextureLoader()
 
 const Hooks = ThreeScene.Hooks
-const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(base + '/sky/', skys)
 const { initCSS3DRender, createCSS3DDom } = Hooks.useCSS3D()
 
 // 创建地球
@@ -21,9 +21,9 @@ const createEarth = () => {
   const earthMaterial = new THREE.MeshPhongMaterial({
     specular: 0x333333,
     shininess: 5,
-    map: textureLoader.load(`${base}/oss/textures/planets/earth_atmos_2048.jpg`),
-    specularMap: textureLoader.load(`${base}/oss/textures/planets/earth_specular_2048.jpg`),
-    normalMap: textureLoader.load(`${base}/oss/textures/planets/earth_normal_2048.jpg`),
+    map: textureLoader.load(`${base}/textures/planets/earth_atmos_2048.jpg`),
+    specularMap: textureLoader.load(`${base}/textures/planets/earth_specular_2048.jpg`),
+    normalMap: textureLoader.load(`${base}/textures/planets/earth_normal_2048.jpg`),
     normalScale: new THREE.Vector2(0.85, 0.85)
   })
   const earth = new THREE.Mesh(earthGeometry, earthMaterial)

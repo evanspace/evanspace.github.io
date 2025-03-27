@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -61,11 +61,11 @@ export const getPageOpts = (): {} & import('@/components/map-scene/index').Props
     // bgOutFactor: 0.5,
     // bgInnerFactor: 0.3,
     map: {
-      // map: '/oss/textures/map/gz-map.jpg',
-      // normal: '/oss/textures/map/gz-map-fx.jpg',
-      // side: '/oss/textures/map/border.png',
-      // bgOutCircle: '/oss/textures/map/out-circle.png',
-      // bgInnerCircle: '/oss/textures/map/inner-circle.png'
+      // map: '/textures/map/gz-map.jpg',
+      // normal: '/textures/map/gz-map-fx.jpg',
+      // side: '/textures/map/border.png',
+      // bgOutCircle: '/textures/map/out-circle.png',
+      // bgInnerCircle: '/textures/map/inner-circle.png'
     }
   },
   camera: {

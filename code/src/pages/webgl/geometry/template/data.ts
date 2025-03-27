@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 export const getPageOpts = (): {
   baseUrl: string
@@ -12,7 +12,7 @@ export const getPageOpts = (): {
       type: 'font',
       name: '字体',
       size: 27.6,
-      url: '/oss/font/YaHei_Regular.json'
+      url: '/fonts/YaHei_Regular.json'
     }
   ]
 })

@@ -106,7 +106,7 @@ export default [
     response: () =>
       builder({
         JsonList: floorData,
-        ModelUrl: '/oss/model/floor/场景.glb',
+        ModelUrl: '/models/floor/场景.glb',
         Name: '楼层展示',
         ConfigJson: {
           // floorExpandIndex: 3,

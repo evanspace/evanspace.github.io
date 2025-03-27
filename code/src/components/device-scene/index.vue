@@ -83,7 +83,7 @@ const emits = defineEmits<{
 const COLORS = Utils.deepMerge(colors, props.colors)
 
 const { changeBackground, backgroundLoad } = Hooks.useBackground(
-  props.baseUrl + '/oss/sky/',
+  props.baseUrl + '/sky/',
   useSky().skys
 )
 const { progress, MODEL_MAP, loadModel, loadModels, getModel } = Hooks.useModelLoader({

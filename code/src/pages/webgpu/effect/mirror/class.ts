@@ -4,19 +4,19 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
 import { reflector, uv, texture, color, uniform } from 'three/tsl'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const textureLoader = new THREE.TextureLoader().setPath(base)
 
 // 背面贴图
-const backNormal = textureLoader.load('/oss/textures/gpu/FloorsCheckerboard_S_Normal.jpg')
+const backNormal = textureLoader.load('/textures/gpu/FloorsCheckerboard_S_Normal.jpg')
 backNormal.wrapS = THREE.RepeatWrapping
 backNormal.wrapT = THREE.RepeatWrapping
 
-const groundDiffuse = textureLoader.load('/oss/textures/gpu/decal-diffuse.png')
+const groundDiffuse = textureLoader.load('/textures/gpu/decal-diffuse.png')
 groundDiffuse.colorSpace = THREE.SRGBColorSpace
 
-const groundNormal = textureLoader.load('/oss/textures/gpu/decal-normal.jpg')
+const groundNormal = textureLoader.load('/textures/gpu/decal-normal.jpg')
 
 // 法线比例
 const groundNormalScale = uniform(-0.08)

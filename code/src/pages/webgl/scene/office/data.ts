@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -30,12 +30,12 @@ export const ROAM_POINT_UP = 186 // y 漫游轴向量
 export const getPageOpts = animateBack => ({
   devEnv,
   baseUrl: base,
-  bgSrc: base + '/oss/img/office/bg.jpg',
-  env: '/oss/textures/hdr/101.hdr',
+  bgSrc: base + '/imgs/office/bg.jpg',
+  env: '/textures/hdr/101.hdr',
   sky: {
-    day: '/oss/textures/hdr/101.hdr',
-    evening: '/oss/textures/hdr/201.hdr',
-    night: '/oss/textures/hdr/301.hdr'
+    day: '/textures/hdr/101.hdr',
+    evening: '/textures/hdr/201.hdr',
+    night: '/textures/hdr/301.hdr'
   },
 
   config: {},
@@ -165,13 +165,13 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/oss/model/common/机器人.glb'
+      url: '/models/common/机器人.glb'
     },
     {
       key: CHARACTER,
       name: '人物',
       size: 1.8,
-      url: '/oss/model/common/人物.glb'
+      url: '/models/common/人物.glb'
     },
 
     {
@@ -181,7 +181,7 @@ export const getPageOpts = animateBack => ({
       intensity: 8,
       color: 0xffffed,
       distance: 20
-      // mapUrl: '/oss/textures/disturb.jpg'
+      // mapUrl: '/texturess/disturb.jpg'
     },
     {
       key: 'spot_light_floor_2',
@@ -271,11 +271,11 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/mode.png'
     }
   ].map(item => {
-    if (item.url && item.url.indexOf('oss') < 0) {
-      item.url = '/oss/model/office' + item.url
+    if (item.url && item.url.indexOf('models') < 0) {
+      item.url = '/models/office' + item.url
     }
-    if (item.mapUrl && item.mapUrl.indexOf('oss') < 0) {
-      item.mapUrl = '/oss/textures/office' + item.mapUrl
+    if (item.mapUrl && item.mapUrl.indexOf('models') < 0) {
+      item.mapUrl = '/textures/office' + item.mapUrl
     }
     if (!item.range) {
       item.range = { x: 0.5, y: 0.5 } as any
@@ -286,8 +286,8 @@ export const getPageOpts = animateBack => ({
   cruise: {
     visible: true,
     auto: true,
-    mapUrl: '/oss/textures/cruise/line18.png', // 1-18
-    // mapUrl: '/oss/textures/cruise/diffuse.jpg', // 1-18
+    mapUrl: base + '/textures/cruise/line18.png', // 1-18
+    // mapUrl: base + '/textures/cruise/diffuse.jpg', // 1-18
     repeat: [1, 1],
     width: 2,
     segment: 100,

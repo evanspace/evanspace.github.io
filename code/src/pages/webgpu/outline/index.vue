@@ -19,7 +19,7 @@ const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
 const containerRef = ref()
 const options: ConstructorParameters<typeof OutlineScene>[0] = {
   baseUrl: pageOpts.base,
-  env: '/oss/textures/hdr/moonless_golf_1k.hdr',
+  env: '/textures/hdr/moonless_golf_1k.hdr',
   camera: {
     position: [0, 0, 15]
   }

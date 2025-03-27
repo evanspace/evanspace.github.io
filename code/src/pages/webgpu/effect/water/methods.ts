@@ -23,9 +23,9 @@ const {
   time
 } = TSL
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const textureLoader = new THREE.TextureLoader()
-const iceDiffuse = textureLoader.load(`${base}/oss/textures/gpu/water.jpg`)
+const iceDiffuse = textureLoader.load(`${base}/textures/gpu/water.jpg`)
 iceDiffuse.wrapS = THREE.RepeatWrapping
 iceDiffuse.wrapT = THREE.RepeatWrapping
 iceDiffuse.colorSpace = THREE.NoColorSpace

@@ -12,7 +12,7 @@ export default [
     response: () =>
       builder({
         JsonList: deviceJson,
-        ModelUrl: '/oss/model/ncl/场景.glb',
+        ModelUrl: '/models/ncl/场景.glb',
         Name: '宁波海曙印象城',
         ConfigJson: {
           cruise: [
@@ -34,7 +34,7 @@ export default [
       builder({
         JsonList: device2Json,
         PipeList: pipe2List,
-        ModelUrl: '/oss/pipe/001.glb',
+        ModelUrl: '/pipe/001.glb',
         Name: '制冷站监测系统',
         ConfigJson: {
           cruise: [

@@ -1,11 +1,5 @@
 
 
-.page {
-  overflow: hidden;
-  background: url(/imgs/music-bg.jpg) no-repeat;
-  background-position: center;
-  background-size: cover;
-}
 
 
 .music-box {
@@ -103,15 +97,15 @@
       margin: 0 5px;
     }
     .min {
-      background: url(/imgs/sk-dark.png) -21px -185px no-repeat;
+      background: var(--dark-bg) -21px -185px no-repeat;
       &:hover {
-        background: url(/imgs/sk-dark.png) -21px -217px no-repeat;
+        background: var(--dark-bg) -21px -217px no-repeat;
       }
     }
     .max {
-      background: url(/imgs/sk-dark.png) -21px -121px no-repeat;
+      background: var(--dark-bg) -21px -121px no-repeat;
       &:hover {
-        background: url(/imgs/sk-dark.png) -21px -153px no-repeat;
+        background: var(--dark-bg) -21px -153px no-repeat;
       }
     }
   }

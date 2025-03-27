@@ -22,7 +22,7 @@ const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 
 const { addLensflare } = Hooks.useLensflare()
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
+const base = import.meta.env.VITE_GIT_OSS
 
 const createWater = () => {
   // 创建水面
@@ -30,12 +30,9 @@ const createWater = () => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      base + '/oss/textures/waternormals.jpg',
-      texture => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      }
-    ),
+    waterNormals: new THREE.TextureLoader().load(base + '/textures/waternormals.jpg', texture => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    }),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,
@@ -53,14 +50,14 @@ const createWater = () => {
 // 创建视频元素
 const createVideoDom = (src?: string) => {
   const dom = document.createElement('video')
-  dom.src = base + (src || '/oss/textures/park/sintel.mp4')
+  dom.src = base + (src || '/textures/park/sintel.mp4')
   dom.loop = true
   // videoDom.autoplay = true
   return dom
 }
 
 // 视频封面
-const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/park/cover.jpeg')
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/textures/park/cover.jpeg')
 
 const sightMap = {
   full: 'FULL',

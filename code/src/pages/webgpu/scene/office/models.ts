@@ -44,7 +44,7 @@ export default [
     key: KEYS.M_PERSON,
     name: '人物',
     size: 1.8,
-    url: '/oss/model/common/人物.glb'
+    url: '/models/common/人物.glb'
   },
 
   // 灯光
@@ -67,7 +67,7 @@ export default [
     castShadow: true,
     distance: 20,
     penumbra: 0.5,
-    mapUrl: '/oss/textures/disturb.jpg'
+    mapUrl: '/textures/disturb.jpg'
   },
   {
     key: 'spot_light_floor_2',
@@ -79,7 +79,7 @@ export default [
     penumbra: 0.5,
     angle: Math.PI * 0.36,
     distance: 10,
-    iesMap: '/oss/ies/103.ies'
+    iesMap: '/ies/103.ies'
   },
 
   {
@@ -230,11 +230,11 @@ export default [
     mapUrl: '/mode.png'
   }
 ].map(item => {
-  if (item.url && item.url.indexOf('oss') < 0) {
-    item.url = '/oss/model/office' + item.url
+  if (item.url && item.url.indexOf('models') < 0) {
+    item.url = '/models/office' + item.url
   }
-  if (item.mapUrl && item.mapUrl.indexOf('oss') < 0) {
-    item.mapUrl = '/oss/textures/office' + item.mapUrl
+  if (item.mapUrl && item.mapUrl.split('/').length == 2) {
+    item.mapUrl = '/textures/office' + item.mapUrl
   }
   if (!item.range) {
     item.range = { x: 0.5, y: 0.5 } as any

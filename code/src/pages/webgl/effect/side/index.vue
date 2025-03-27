@@ -11,7 +11,7 @@ import { useResize } from '@/hooks/scene-resize'
 import { useSky } from '@/hooks/sky'
 import { Hooks } from 'three-scene'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 
 const containerRef = ref()
@@ -22,7 +22,7 @@ const options: ConstructorParameters<typeof NewThreeScene>[0] = {
 }
 let scene: InstanceType<typeof NewThreeScene>
 
-const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(base + '/sky/', skys)
 
 const initPage = () => {
   backgroundLoad(scene, '501')

@@ -4,9 +4,9 @@ import * as ThreeScene from 'three-scene'
 
 import { GUI } from 'dat.gui'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
-const textureLoader = new THREE.TextureLoader().setPath(`${base}/oss/textures/`)
+const textureLoader = new THREE.TextureLoader().setPath(`${base}/textures/`)
 const texture = textureLoader.load('disturb.jpg')
 
 export class LightScene extends ThreeScene.Scene {

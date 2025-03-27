@@ -35,19 +35,16 @@ const sightMap = {
   npc: 'NPC'
 }
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = DEFAULTCONFIG.baseUrl
 
 const createWater = (model?) => {
   const waterGeometry = model ? model.geometry : new THREE.PlaneGeometry(200, 200)
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      base + '/oss/textures/waternormals.jpg',
-      texture => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      }
-    ),
+    waterNormals: new THREE.TextureLoader().load(base + '/textures/waternormals.jpg', texture => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    }),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,

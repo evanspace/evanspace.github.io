@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -20,9 +20,9 @@ export const getPageOpts = animateBack => ({
   baseUrl: base,
   bgColor: '',
   skyCode: '104',
-  env: '/oss/textures/hdr/3.hdr',
+  env: '/textures/hdr/3.hdr',
 
-  bgSrc: base + '/oss/img/park/bg.jpg',
+  bgSrc: base + '/imgs/park/bg.jpg',
 
   // dot 点位类型值
   dotKey: 'DOT',
@@ -56,7 +56,7 @@ export const getPageOpts = animateBack => ({
     visible: true,
     auto: true,
     // helper: true,
-    mapUrl: '/oss/textures/cruise/line2.png', // 1-18
+    mapUrl: base + '/textures/cruise/line2.png', // 1-18
     repeat: [0.1, 1],
     width: 2,
     segment: 100,
@@ -240,13 +240,13 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/oss/model/common/机器人.glb'
+      url: '/models/common/机器人.glb'
     },
     {
       key: CHARACTER,
       name: '人物',
       size: 0.3,
-      url: '/oss/model/common/RootNode.glb'
+      url: '/models/common/RootNode.glb'
     },
 
     {
@@ -318,11 +318,11 @@ export const getPageOpts = animateBack => ({
       mapUrl: '/light.png'
     }
   ].map(item => {
-    if (item.url && item.url.indexOf('oss') < 0) {
-      item.url = '/oss/model/park' + item.url
+    if (item.url && item.url.indexOf('/models') < 0) {
+      item.url = '/models/park' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/park' + item.mapUrl
+      item.mapUrl = '/textures/park' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   })

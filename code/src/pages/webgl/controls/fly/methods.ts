@@ -4,10 +4,10 @@ import { FlyControls } from 'three/examples/jsm/controls/FlyControls'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { useSky } from '@/hooks/sky'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 
-const { backgroundLoad } = ThreeScene.Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = ThreeScene.Hooks.useBackground(base + '/sky/', skys)
 
 export class NewThreeScene extends ThreeScene.Scene {
   clock: InstanceType<typeof THREE.Clock>

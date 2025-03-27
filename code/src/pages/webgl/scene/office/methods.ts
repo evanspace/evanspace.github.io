@@ -30,7 +30,7 @@ const {
 const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PAT || ''
+const base = import.meta.env.VITE_GIT_OSS
 
 const sightMap = {
   full: 'FULL',
@@ -40,16 +40,16 @@ const sightMap = {
 // 创建视频元素
 const createVideoDom = (src?: string) => {
   const dom = document.createElement('video')
-  dom.src = base + (src || '/oss/textures/park/sintel.mp4')
+  dom.src = base + (src || '/textures/park/sintel.mp4')
   dom.loop = true
   // videoDom.autoplay = true
   return dom
 }
 
 // 视频封面
-const videoCoverTexture = new THREE.TextureLoader().load(base + '/oss/textures/office/cover.jpg')
+const videoCoverTexture = new THREE.TextureLoader().load(base + '/textures/office/cover.jpg')
 // 空调风纹理
-const windTexture = new THREE.TextureLoader().load(base + '/oss/textures/office/wind.png')
+const windTexture = new THREE.TextureLoader().load(base + '/textures/office/wind.png')
 
 export class OfficeThreeScene extends ThreeScene.Scene {
   // 建筑集合
@@ -383,7 +383,7 @@ export class OfficeThreeScene extends ThreeScene.Scene {
     for (let i = 0; i < list.length; i++) {
       const points = list[i]
       const line = createFleeting({
-        // textureUrl: this.options.baseUrl + '/oss/textures/office/arc.png',
+        // textureUrl: this.options.baseUrl + '/textures/office/arc.png',
         points,
         // color: 0x0053ff,
         color: '#' + (Math.random() + '000000').substring(2, 8),

@@ -4,12 +4,12 @@ import { GUI } from 'dat.gui'
 import { CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 import { useSky } from '@/hooks/sky'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 const textureLoader = new THREE.TextureLoader()
 
 const Hooks = ThreeScene.Hooks
-const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(base + '/sky/', skys)
 const { initCSS2DRender, createCSS2DDom } = Hooks.useCSS2D()
 
 // 创建地球
@@ -19,9 +19,9 @@ const createEarth = () => {
   const earthMaterial = new THREE.MeshPhongMaterial({
     specular: 0x333333,
     shininess: 5,
-    map: textureLoader.load(`${base}/oss/textures/planets/earth_atmos_2048.jpg`),
-    specularMap: textureLoader.load(`${base}/oss/textures/planets/earth_specular_2048.jpg`),
-    normalMap: textureLoader.load(`${base}/oss/textures/planets/earth_normal_2048.jpg`),
+    map: textureLoader.load(`${base}/textures/planets/earth_atmos_2048.jpg`),
+    specularMap: textureLoader.load(`${base}/textures/planets/earth_specular_2048.jpg`),
+    normalMap: textureLoader.load(`${base}/textures/planets/earth_normal_2048.jpg`),
     normalScale: new THREE.Vector2(0.85, 0.85)
   })
   const earth = new THREE.Mesh(earthGeometry, earthMaterial)
@@ -52,7 +52,7 @@ const createMoon = () => {
   const moonGeometry = new THREE.SphereGeometry(MOON_RADIUS, 160, 160)
   const moonMaterial = new THREE.MeshPhongMaterial({
     shininess: 5,
-    map: textureLoader.load(`${base}/oss/textures/planets/moon_1024.jpg`)
+    map: textureLoader.load(`${base}/textures/planets/moon_1024.jpg`)
   })
   const moon = new THREE.Mesh(moonGeometry, moonMaterial)
   moon.position.set(0, 100, 0)

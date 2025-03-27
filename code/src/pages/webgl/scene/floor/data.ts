@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -14,12 +14,7 @@ export const getPageOpts = (): {} & Omit<
     alpha: true,
     preserveDrawingBuffer: true
   },
-  // bgUrl: '/oss/img/map/earth.jpg',
-  // bgUrl: [`/posX.jpeg`, `/negX.jpeg`, `/posY.jpeg`, `/negY.jpeg`, `/posZ.jpeg`, `/negZ.jpeg`].map(
-  //   u => `/oss/img/sky/216${u}`
-  // ),
-  // env: '/oss/textures/hdr/skidpan_2k.hdr',
-  env: '/oss/textures/hdr/3.hdr',
+  env: '/textures/hdr/3.hdr',
   camera: {
     far: 1000000
   },
@@ -105,10 +100,10 @@ export const getPageOpts = (): {} & Omit<
     }
   ].map(item => {
     if (item.url) {
-      item.url = '/oss/model/floor' + item.url
+      item.url = '/models/floor' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/floor' + item.mapUrl
+      item.mapUrl = '/textures/floor' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),

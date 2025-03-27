@@ -6,7 +6,7 @@ import { Examples } from './examples'
 
 const TSL = THREE.TSL
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const textureLoader = new THREE.TextureLoader()
 
 const { createParticleSmoke } = ThreeScene.Hooks.useSmoke(THREE)
@@ -46,7 +46,7 @@ export class NewThreeScene extends ThreeScene.Scene {
     const fakeLightEffect = TSL.positionLocal.y.oneMinus().max(0.9)
 
     const textureNode = TSL.texture(
-      textureLoader.load(`${base}/oss/textures/effect/smokeparticle.png`),
+      textureLoader.load(`${base}/textures/effect/smokeparticle.png`),
       TSL.rotateUV(TSL.uv(), scaledTime.mul(roteRange))
     )
 
@@ -90,7 +90,7 @@ export class NewThreeScene extends ThreeScene.Scene {
       mixColor: [0xf00f00, 0xffffff],
       mixColorStart: 0.1,
       mixColorMinOpacity: 0.1,
-      textureSrc: `${base}/oss/textures/effect/snowflake.png`
+      textureSrc: `${base}/textures/effect/snowflake.png`
     })
     g1.position.set(-100, 0, 100)
 
@@ -99,7 +99,7 @@ export class NewThreeScene extends ThreeScene.Scene {
       // count: 1000,
       // speed: TSL.uniform(0.3),
       // mixColor: [0x1fab89, 0xffffff],
-      // textureSrc: `${base}/oss/textures/effect/spikey.png`
+      // textureSrc: `${base}/textures/effect/spikey.png`
     })
     g2.position.set(100, 0, 100)
     this.addObject(g1, g2)
@@ -221,7 +221,7 @@ export class NewThreeScene extends ThreeScene.Scene {
     const life = lifeTime.div(lifeRange)
     const fakeLightEffect = TSL.positionLocal.y.oneMinus().max(0.9)
 
-    const texture = textureLoader.load(textureSrc || `${base}/oss/textures/effect/snowflake.png`)
+    const texture = textureLoader.load(textureSrc || `${base}/textures/effect/snowflake.png`)
     const textureNode = TSL.texture(texture, TSL.rotateUV(TSL.uv(), scaledTime.mul(roteRange)))
 
     const opacityNode = textureNode.a.mul(life.oneMinus())

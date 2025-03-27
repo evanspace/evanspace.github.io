@@ -2,11 +2,11 @@ import * as THREE from 'three'
 import { gsap } from 'gsap'
 import * as ThreeScene from 'three-scene'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const textureLoader = new THREE.TextureLoader()
 
-const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/oss/textures/effect/${it}`)
+const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/textures/effect/${it}`)
 
 const loadImg = (): Promise<any[]> => {
   return new Promise(resolve => {

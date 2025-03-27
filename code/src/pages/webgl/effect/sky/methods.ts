@@ -5,9 +5,9 @@ import * as ThreeScene from 'three-scene'
 
 // const Hooks = ThreeScene.Hooks
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const textureload = new THREE.TextureLoader()
-const texture = textureload.load(`${base}/oss/textures/effect/sky.jpg`, tx => {
+const texture = textureload.load(`${base}/textures/effect/sky.jpg`, tx => {
   const repeat = [1, 1]
   tx.wrapT = THREE.RepeatWrapping
   tx.wrapS = THREE.RepeatWrapping
@@ -21,12 +21,9 @@ const createWater = () => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      base + '/oss/textures/waternormals.jpg',
-      texture => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      }
-    ),
+    waterNormals: new THREE.TextureLoader().load(base + '/textures/waternormals.jpg', texture => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    }),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,

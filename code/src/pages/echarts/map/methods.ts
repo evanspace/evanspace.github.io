@@ -92,7 +92,7 @@ const getMapTooltipCif = () => {
 
 // 获取地图提示 html
 const getMaptipHtml = (opts: import('.').MapTipOpts) => {
-  const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+  const base = import.meta.env.VITE_GIT_OSS
   let tipHtml = `
     <div class="map-tooltip">
     `
@@ -106,7 +106,7 @@ const getMaptipHtml = (opts: import('.').MapTipOpts) => {
   if (opts.title) {
     tipHtml += `
         <div class="project flex flex-ac">
-          <img src="${base}oss/img/map/pos.png" alt="">
+          <img src="${base}/imgs/map/pos.png" alt="">
           <span class="name">${opts.title}</span>
         </div>
       `
@@ -248,13 +248,13 @@ export const getMapEffectScatterCif = () => {
 
 // 获取 scatter 配置
 const getMapScatterCif = () => {
-  const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+  const base = import.meta.env.VITE_GIT_OSS
   return {
     // 散点（气泡）图
     type: 'scatter',
     showEffectOn: 'render',
     coordinateSystem: 'geo',
-    symbol: `image://${base}oss/img/map/map.png`,
+    symbol: `image://${base}/imgs/map/map.png`,
     symbolSize: 32,
     itemStyle: {
       color: '#ffffff',
@@ -424,14 +424,14 @@ export const getCityMap3DOptions = (city = 'map', data) => {
 
 // 地球配置
 export const getEarthOptions = () => {
-  const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+  const base = import.meta.env.VITE_GIT_OSS
   return {
     backgroundColor: '#000',
     globe: {
       globeRadius: 80,
-      baseTexture: `${base}oss/img/map/earth.jpg`,
+      baseTexture: `${base}/imgs/map/earth.jpg`,
       shading: 'lambert',
-      environment: `${base}oss/img/map/starfield.jpg`,
+      environment: `${base}/imgs/map/starfield.jpg`,
       atmosphere: {
         show: true
       },

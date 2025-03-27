@@ -15,7 +15,7 @@ import { Scene } from './class'
 import { useResize } from '@/hooks/scene-resize'
 import { Hooks } from 'three-scene'
 
-const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
+const baseUrl = import.meta.env.VITE_GIT_OSS
 
 const { progress, loadModel } = Hooks.useModelLoader({
   baseUrl
@@ -27,7 +27,7 @@ const initPage = () => {
     name: '碰撞世界',
     key: 'collision-world',
     size: 0.09,
-    url: '/oss/model/glb/碰撞世界.glb'
+    url: '/models/glb/碰撞世界.glb'
   }).then(glb => {
     scene.addWordModel(glb)
     progress.show = false

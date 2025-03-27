@@ -24,7 +24,7 @@ const {
   uniform
 } = TSL
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const textureLoader = new THREE.TextureLoader()
 
 // 速度
@@ -100,7 +100,7 @@ export class SmokeScene extends ThreeScene.Scene {
     const fakeLightEffect = TSL.positionLocal.y.oneMinus().max(0.2)
 
     const textureNode = TSL.texture(
-      textureLoader.load(`${base}/oss/textures/effect/smoke1.png`),
+      textureLoader.load(`${base}/textures/effect/smoke1.png`),
       TSL.rotateUV(TSL.uv(), scaledTime.mul(roteRange))
     )
 
@@ -176,7 +176,7 @@ export class SmokeScene extends ThreeScene.Scene {
     smokeGeometry.translate(0, 0.5, 0)
     smokeGeometry.scale(15, 60, 15)
 
-    const noiseTexture = textureLoader.load(`${base}/oss/textures/gpu/128x128.png`)
+    const noiseTexture = textureLoader.load(`${base}/textures/gpu/128x128.png`)
     noiseTexture.wrapS = THREE.RepeatWrapping
     noiseTexture.wrapT = THREE.RepeatWrapping
 
@@ -304,7 +304,7 @@ export class SmokeScene extends ThreeScene.Scene {
       depthWrite: false
     })
 
-    const noiseTexture = textureLoader.load(`${base}/oss/textures/gpu/128x128.png`)
+    const noiseTexture = textureLoader.load(`${base}/textures/gpu/128x128.png`)
     noiseTexture.wrapS = THREE.RepeatWrapping
     noiseTexture.wrapT = THREE.RepeatWrapping
 

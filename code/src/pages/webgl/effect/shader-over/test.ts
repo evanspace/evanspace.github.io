@@ -2,9 +2,9 @@ import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
-const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/oss/textures/effect/${it}`)
+const imgs = ['01.jpeg', '02.jpeg', '03.jpg'].map(it => `${base}/textures/effect/${it}`)
 
 export class Sketch {
   width: number

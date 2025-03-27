@@ -5,7 +5,7 @@ import { Water } from 'three/examples/jsm/objects/Water'
 import { GUI } from 'dat.gui'
 import { useSky } from '@/hooks/sky'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 const Utils = ThreeScene.Utils
 const Hooks = ThreeScene.Hooks
@@ -20,7 +20,7 @@ const {
   setGlassMaterial,
   centerBoxHelper
 } = Hooks.useMaterial()
-const { backgroundLoad } = Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(base + '/sky/', skys)
 const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
 
 const _ElMessage = opts => {
@@ -56,12 +56,9 @@ const createWater = (model?) => {
   const water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load(
-      base + '/oss/textures/waternormals.jpg',
-      texture => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-      }
-    ),
+    waterNormals: new THREE.TextureLoader().load(base + '/textures/waternormals.jpg', texture => {
+      texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+    }),
     sunDirection: new THREE.Vector3(),
     sunColor: 0xf00f00,
     waterColor: 0x01688b,
@@ -681,7 +678,7 @@ export class ConvertThreeScene extends ThreeScene.Scene {
       )
       .name('Hdr环境')
       .onChange(e => {
-        this.loadEnvTexture(`/oss/textures/hdr/${e}.hdr`)
+        this.loadEnvTexture(`/textures/hdr/${e}.hdr`)
       })
 
     group.open()

@@ -6,14 +6,14 @@ import { GUI } from 'dat.gui'
 
 const { uniform, texture, parallaxUV, uv, blendOverlay } = THREE.TSL
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 const { skys } = useSky()
 
-const textureLoader = new THREE.TextureLoader().setPath(`${base}/oss/textures/gpu/`)
+const textureLoader = new THREE.TextureLoader().setPath(`${base}/textures/gpu/`)
 
 const parallaScale = uniform(0.3)
 
-const { backgroundLoad } = ThreeScene.Hooks.useBackground(base + '/oss/sky/', skys)
+const { backgroundLoad } = ThreeScene.Hooks.useBackground(base + '/sky/', skys)
 
 export class ParallaxScene extends ThreeScene.Scene {
   gui: InstanceType<typeof GUI>

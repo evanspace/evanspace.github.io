@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -9,11 +9,6 @@ export const getPageOpts = (): {} & Omit<
   devEnv,
   baseUrl: base,
   bgColor: '',
-  // skyCode: '221',
-  // bgUrl: '/oss/img/map/earth.jpg',
-  // bgUrl: [`/posX.jpeg`, `/negX.jpeg`, `/posY.jpeg`, `/negY.jpeg`, `/posZ.jpeg`, `/negZ.jpeg`].map(
-  //   u => `/oss/img/sky/216${u}`
-  // ),
 
   colors: {
     normal: {
@@ -202,8 +197,8 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷冻回水',
       size: 0.01,
-      url: '/oss/model/pipe/冷冻回.glb',
-      mapUrl: '/oss/model/pipe/002.png',
+      url: '/models/pipe/冷冻回.glb',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -211,9 +206,9 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷冻回-弯头',
       size: 0.12,
-      url: '/oss/model/pipe/冷冻回-弯头.glb',
+      url: '/models/pipe/冷冻回-弯头.glb',
       repeat: [1, 0.25],
-      mapUrl: '/oss/model/pipe/002.png',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -221,8 +216,8 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷冻供水',
       size: 0.01,
-      url: '/oss/model/pipe/冷冻供.glb',
-      mapUrl: '/oss/model/pipe/002.png',
+      url: '/models/pipe/冷冻供.glb',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -230,9 +225,9 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷冻供-弯头',
       size: 0.12,
-      url: '/oss/model/pipe/冷冻供-弯头.glb',
+      url: '/models/pipe/冷冻供-弯头.glb',
       repeat: [1, 0.25],
-      mapUrl: '/oss/model/pipe/002.png',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -240,8 +235,8 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷却供水',
       size: 0.01,
-      url: '/oss/model/pipe/冷却供.glb',
-      mapUrl: '/oss/model/pipe/002.png',
+      url: '/models/pipe/冷却供.glb',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -250,8 +245,8 @@ export const getPageOpts = (): {} & Omit<
       name: '冷却供-弯头',
       size: 0.12,
       repeat: [1, 0.25],
-      url: '/oss/model/pipe/冷却供-弯头.glb',
-      mapUrl: '/oss/model/pipe/002.png',
+      url: '/models/pipe/冷却供-弯头.glb',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -259,8 +254,8 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷却回水',
       size: 0.01,
-      url: '/oss/model/pipe/冷却回.glb',
-      mapUrl: '/oss/model/pipe/002.png',
+      url: '/models/pipe/冷却回.glb',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
     {
@@ -268,9 +263,9 @@ export const getPageOpts = (): {} & Omit<
       type: 'pipe',
       name: '冷却回-弯头',
       size: 0.12,
-      url: '/oss/model/pipe/冷却回-弯头.glb',
+      url: '/models/pipe/冷却回-弯头.glb',
       repeat: [1, 0.25],
-      mapUrl: '/oss/model/pipe/002.png',
+      mapUrl: '/models/pipe/002.png',
       mapMeshName: '贴图'
     },
 
@@ -279,14 +274,14 @@ export const getPageOpts = (): {} & Omit<
       name: '微软雅黑字体',
       type: 'font',
       size: 26.35,
-      url: '/oss/font/YaHei_Regular.json'
+      url: '/fonts/YaHei_Regular.json'
     }
   ].map(item => {
-    if (item.type !== 'sprite' && item.url && item.url.indexOf('/oss') < 0) {
-      item.url = '/oss/model/cool' + item.url
+    if (item.type !== 'sprite' && item.url && item.url.split('/').length == 2) {
+      item.url = '/models/cool' + item.url
     }
-    if (item.mapUrl && item.mapUrl.indexOf('/oss') < 0) {
-      item.mapUrl = '/oss/textures/floor' + item.mapUrl
+    if (item.mapUrl && item.mapUrl.indexOf('/models') < 0) {
+      item.mapUrl = '/textures/floor' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),

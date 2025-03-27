@@ -1,40 +1,42 @@
 <template>
   <div class="page">
-
     <div class="box">
       <div class="modal" v-show="!play">
         <el-button type="primary" @click="onPlay">打开声音</el-button>
       </div>
-      <video src="/video/005.mp4" ref="video" loop controls></video>
+      <video :src="base + '/video/005.mp4'" ref="video" loop controls></video>
     </div>
 
     <div class="bg"></div>
-
   </div>
 </template>
 
 <script lang="ts" setup>
+const base = import.meta.env.VITE_GIT_OSS
 
-const play = ref( false )
+const play = ref(false)
 const video = ref()
 
 const initPage = () => {
   playVideo()
 
-  const ob = new IntersectionObserver( list => {
-    const el: any = list[ 0 ]
-    if ( el.isIntersecting ) {
-      playVideo()
-    } else {
-      el.target.pause()
+  const ob = new IntersectionObserver(
+    list => {
+      const el: any = list[0]
+      if (el.isIntersecting) {
+        playVideo()
+      } else {
+        el.target.pause()
+      }
+    },
+    {
+      root: null,
+      // rootMargin: 0,
+      threshold: 0.9
     }
-  }, {
-    root: null,
-    // rootMargin: 0,
-    threshold: .9
-  } )
+  )
 
-  ob.observe( video.value )
+  ob.observe(video.value)
 }
 
 const playVideo = () => {
@@ -48,7 +50,7 @@ const playVideo = () => {
   const canAutoPlay = ctx.state === 'running'
   ctx.close()
   console.log(ctx)
-  if ( canAutoPlay ) {
+  if (canAutoPlay) {
     play.value = true
     $video.muted = false
   } else {
@@ -60,11 +62,11 @@ const onPlay = () => {
   playVideo()
 }
 
-onMounted( () => {
+onMounted(() => {
   initPage()
-} )
+})
 </script>
-  
+
 <style scoped>
 .box {
   position: relative;
@@ -83,13 +85,13 @@ video {
   position: absolute;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .bg {
   width: 100%;
   height: 2000px;
-  background-image: linear-gradient( 45deg, green, Purple, orange );
+  background-image: linear-gradient(45deg, green, Purple, orange);
   background-size: 400%;
   animation: linearBg 10s linear infinite;
 }

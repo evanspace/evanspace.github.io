@@ -74,7 +74,7 @@ const onConfirm = () => {
     backdrop-filter: blur(5px);
   }
   .body {
-    background: url('/oss/img/scene/edit-bg.png') no-repeat;
+    background: url('/imgs/scene/edit-bg.png') no-repeat;
     background-size: 100% 100%;
   }
 
@@ -131,7 +131,7 @@ const onConfirm = () => {
       height: 42px;
       cursor: pointer;
       display: inline-block;
-      background: url('/oss/img/scene/edit-btn.png');
+      background: url('/imgs/scene/edit-btn.png');
       background-size: 100% 100%;
       &:hover {
         opacity: 0.85;

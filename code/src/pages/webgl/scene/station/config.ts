@@ -1,4 +1,4 @@
-const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
+const baseUrl = import.meta.env.VITE_GIT_OSS
 
 // 配置
 export default {
@@ -28,7 +28,7 @@ export default {
   machineRoomName: '机房',
 
   // 背景图
-  bgSrc: baseUrl + '/oss/img/station/bg.jpg',
+  bgSrc: baseUrl + '/imgs/station/bg.jpg',
 
   data: [
     { name: '1#主机', value: 64092 },

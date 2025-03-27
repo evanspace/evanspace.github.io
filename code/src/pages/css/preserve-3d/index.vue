@@ -1,14 +1,15 @@
 <template>
   <div class="page">
-
     <div :class="$style.wrap">
-
       <div :class="[$style.demo]">
-        <el-radio-group v-model="opts.active" class="pl-sm" style="position: relative; z-index: 2;">
+        <el-radio-group v-model="opts.active" class="pl-sm" style="position: relative; z-index: 2">
           <el-radio v-for="it in opts.list" :value="it"></el-radio>
         </el-radio-group>
         <div class="wrap">
-          <div :class="$style.cylinder" :style="{ '--bg-img': `url(/imgs/${opts.active}.jpg)` }">
+          <div
+            :class="$style.cylinder"
+            :style="{ '--bg-img': `url(${base}/imgs/common/${opts.active}.jpg)` }"
+          >
             <div v-for="_i in 24" class="item"></div>
           </div>
         </div>
@@ -25,18 +26,18 @@
           <div class="object"></div>
         </div>
       </div>
-
     </div>
-
   </div>
 </template>
 
 <script lang="ts" setup>
-
 const opts = reactive({
   active: '09',
   list: ['09', '10', '11']
 })
+
+const base = import.meta.env.VITE_GIT_OSS
+const bg = `url(${base}/imgs/common/08.jpg)`
 </script>
 
 <style lang="scss" module>
@@ -79,9 +80,8 @@ $circleDeg: calc(360 / $circleLen);
 
       @for $i from 1 through $circleLen {
         &:nth-child(#{ $i }) {
-          transform: rotateY(#{ $circleDeg * $i }deg) translateZ(90px);
-          background-position:-#{ 25 * $i }px 0;
-
+          transform: rotateY(#{$circleDeg * $i}deg) translateZ(90px);
+          background-position: -#{25 * $i}px 0;
         }
       }
     }
@@ -95,7 +95,7 @@ $circleDeg: calc(360 / $circleLen);
       height: 100%;
       border: 1px solid #ccc;
       display: flex;
-      opacity: .7;
+      opacity: 0.7;
       position: absolute;
       align-items: center;
       justify-content: center;
@@ -144,7 +144,7 @@ $circleDeg: calc(360 / $circleLen);
 }
 
 .cylinder {
-  --bg-img: url(/imgs/08.ipg);
+  --bg-img: v-bind(bg);
   width: 1px;
   height: 350px;
   margin: 40px auto;

@@ -93,13 +93,14 @@ const opts = reactive({
   color: 'rgb(0 0 0)',
   imgIndex: 0,
   imgs: [
-    { src: '/imgs/06.jpg', name: '墙面1' },
-    { src: '/imgs/07.jpg', name: '墙面2' },
-    { src: '/imgs/08.jpg', name: '毛绒' }
+    { src: '/imgs/common/06.jpg', name: '墙面1' },
+    { src: '/imgs/common/07.jpg', name: '墙面2' },
+    { src: '/imgs/common/08.jpg', name: '毛绒' }
   ]
 })
 
-const imgSrc = computed(() => opts.imgs[opts.imgIndex]?.src)
+const base = import.meta.env.VITE_GIT_OSS
+const imgSrc = computed(() => base + opts.imgs[opts.imgIndex]?.src)
 </script>
 <style lang="scss"></style>
 <style lang="scss" scoped>

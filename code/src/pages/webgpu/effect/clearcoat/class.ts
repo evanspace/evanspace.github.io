@@ -3,9 +3,9 @@ import * as ThreeScene from 'three-scene'
 import { HDRCubeTextureLoader } from 'three/examples/jsm/loaders/HDRCubeTextureLoader.js'
 import { FlakesTexture } from 'three/examples/jsm/textures/FlakesTexture.js'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
-const textureLoader = new THREE.TextureLoader().setPath(base + '/oss/textures')
+const textureLoader = new THREE.TextureLoader().setPath(base + '/textures')
 
 export class ClearcoatScene extends ThreeScene.Scene {
   group = new THREE.Group()
@@ -19,7 +19,7 @@ export class ClearcoatScene extends ThreeScene.Scene {
     this.pmremGenerator.compileEquirectangularShader()
 
     new HDRCubeTextureLoader()
-      .setPath(base + '/oss/textures/cube/hdr/601/')
+      .setPath(base + '/textures/cube/hdr/601/')
       .load(['px.hdr', 'nx.hdr', 'py.hdr', 'ny.hdr', 'pz.hdr', 'nz.hdr'], texture => {
         this.scene.background = texture
         this.scene.environment = this.convertPmremTexture(texture)

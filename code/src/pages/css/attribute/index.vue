@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const [color1, color2] = ['#0960bd', '#ff6600']
 
@@ -129,7 +129,7 @@ const list = reactive([
     tagStyle: {
       padding: '20px 0',
       color: '#f00',
-      background: `url(${base}/imgs/01.jpg)`,
+      background: `url(${base}/imgs/common/01.jpg)`,
       backgroundSize: 'contain'
     }
   },
@@ -191,7 +191,7 @@ const list = reactive([
         backgroundColor: 'var(--el-color-primary)'
       }
     },
-    content: `<img src="${base}/imgs/01.jpg" style="mix-blend-mode: inherit" />`
+    content: `<img src="${base}/imgs/common/01.jpg" style="mix-blend-mode: inherit" />`
   },
   {
     name: 'image-rendering',
@@ -199,7 +199,7 @@ const list = reactive([
     active: 'auto',
     activeValue: 'auto',
     inactiveValue: 'pixelated',
-    content: `<img src="${base}/imgs/icon-48.png" style="width: 300px; height: 300px;" />`
+    content: `<img src="/imgs/icon-48.png" style="width: 300px; height: 300px;" />`
   },
   {
     name: 'scroll-snap-type',
@@ -289,8 +289,8 @@ const list = reactive([
   {
     name: 'poster',
     desc: '设置视频预览图（封面）',
-    active: `${base}/imgs/01.jpg`,
-    activeValue: `${base}/imgs/01.jpg`,
+    active: `${base}/imgs/common/01.jpg`,
+    activeValue: `${base}/imgs/common/01.jpg`,
     inactiveValue: '',
     tag: 'video',
     attrs: {
@@ -335,13 +335,13 @@ const list = reactive([
     desc: '通常用于超链接，设置此属性后，打开链接会触发下载行为',
     tag: 'a',
     attrs: {
-      href: `${base}/imgs/01.jpg`,
+      href: `${base}/imgs/common/01.jpg`,
       download: '自定义名称.jpg',
       style: {
         width: '500px'
       }
     },
-    content: `<img src="${base}/imgs/01.jpg" />`
+    content: `<img src="${base}/imgs/common/01.jpg" />`
   },
   {
     name: 'dir',

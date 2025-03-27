@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 export const getPageOpts = () => ({
   base,
@@ -8,7 +8,7 @@ export const getPageOpts = () => ({
       key: 'helmet',
       name: '头盔',
       size: 3.4,
-      url: '/oss/model/gpu/头盔.glb'
+      url: '/models/gpu/头盔.glb'
     }
   ],
 

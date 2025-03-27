@@ -1,6 +1,5 @@
 <template>
   <div class="page">
-
     <div class="wrap">
       <div class="demo-1">
         <h1>文字滚动实心</h1>
@@ -12,28 +11,19 @@
         <h1>文字颜色与背景相反</h1>
       </div>
     </div>
-    
 
     <div class="wrap">
       <div class="demo-3">
-        <svg
-          width="600"
-          height="200"
-        >
+        <svg width="600" height="200">
           <path
             id="path"
             fill="transparent"
             stroke="red"
-            stroke-width="1" 
+            stroke-width="1"
             d="M 50 120 Q 90 10 130 120 T 210 120 T 290 120 T 370 120 T 450 120 T 530 120"
           ></path>
-          <text
-            font-size="28"
-            textLength="600"
-          >
-            <textPath href="#path">
-              路径上的文本
-            </textPath>
+          <text font-size="28" textLength="600">
+            <textPath href="#path">路径上的文本</textPath>
           </text>
         </svg>
       </div>
@@ -41,17 +31,17 @@
 
     <div class="wrap">
       <div class="demo-4">
-        <video src="/video/005.mp4" autoplay muted loop></video>
+        <video :src="base + '/video/005.mp4'" autoplay muted loop></video>
         <h1>视频文字特效</h1>
       </div>
     </div>
-
   </div>
 </template>
 
 <script lang="ts" setup>
+const base = import.meta.env.VITE_GIT_OSS
 </script>
-  
+
 <style lang="scss" scoped>
 .wrap {
   margin: 5px;
@@ -94,7 +84,7 @@ h1 {
     color: #fff;
     // 混合模式
     mix-blend-mode: difference;
-    transition: all .3s linear;
+    transition: all 0.3s linear;
   }
   &:hover h1 {
     transform: translateX(-200px);

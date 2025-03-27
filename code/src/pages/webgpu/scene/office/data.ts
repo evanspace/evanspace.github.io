@@ -56,7 +56,7 @@ export const getPageOpts = (): {
     visible: true,
     auto: false,
     alway: !true,
-    // mapUrl: '/oss/textures/cruise/line2.png', // 1-18
+    // mapUrl: base + '/textures/cruise/line2.png', // 1-18
     repeat: [0.1, 1],
     width: 1.2,
     segment: 100,

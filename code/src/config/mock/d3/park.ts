@@ -615,7 +615,7 @@ export default [
     response: () =>
       builder({
         JsonList: parkData,
-        ModelUrl: '/oss/model/floor/场景.glb',
+        ModelUrl: '/model/floor/场景.glb',
         Name: '园区展示',
         ConfigJson: {
           // floorExpandIndex: 3,

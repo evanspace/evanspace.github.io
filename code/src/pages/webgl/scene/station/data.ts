@@ -1,4 +1,5 @@
 const devEnv = import.meta.env.VITE_MODE !== 'production'
+const base = import.meta.env.VITE_GIT_OSS
 
 export const ANCHOR_POS = 'ANCHOR_POS' // 定位
 export const ANCHOR_TARGET = 'ANCHOR_TARGET' // 锚点
@@ -17,7 +18,7 @@ export const getPageOpts = animateBack => ({
   devEnv,
   bgColor: '',
   skyCode: '104',
-  env: '/oss/textures/hdr/6.hdr',
+  env: '/textures/hdr/6.hdr',
 
   // dot 点位类型值
   dotKey: 'DOT',
@@ -103,13 +104,13 @@ export const getPageOpts = animateBack => ({
       key: ROBOT,
       name: '机器人',
       size: 0.3,
-      url: '/oss/model/common/机器人.glb'
+      url: '/models/common/机器人.glb'
     },
     {
       key: CHARACTER,
       name: '人物',
       size: 0.3,
-      url: '/oss/model/common/RootNode.glb'
+      url: '/models/common/RootNode.glb'
     },
 
     {
@@ -131,11 +132,11 @@ export const getPageOpts = animateBack => ({
       range: { x: 2, y: 2 }
     }
   ].map(item => {
-    if (item.url && item.url.indexOf('oss') < 0) {
-      item.url = '/oss/model/station' + item.url
+    if (item.url && item.url.indexOf('models') < 0) {
+      item.url = '/models/station' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/station' + item.mapUrl
+      item.mapUrl = '/textures/station' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),
@@ -144,7 +145,7 @@ export const getPageOpts = animateBack => ({
     visible: true,
     auto: true,
     // helper: true,
-    mapUrl: '/oss/textures/cruise/line5.png', // 1-18
+    mapUrl: base + '/textures/cruise/line5.png', // 1-18
     repeat: [0.1, 1],
     width: 2,
     segment: 100,

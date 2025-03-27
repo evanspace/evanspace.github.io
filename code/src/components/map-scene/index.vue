@@ -39,7 +39,7 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
 
 const containerRef = ref()
 
-const { backgroundLoad } = Hooks.useBackground(props.baseUrl + '/oss/sky/', useSky().skys)
+const { backgroundLoad } = Hooks.useBackground(props.baseUrl + '/sky/', useSky().skys)
 
 // 加载完成
 const emits = defineEmits<{

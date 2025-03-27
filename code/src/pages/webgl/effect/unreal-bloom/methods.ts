@@ -9,7 +9,7 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass'
 
 const Hooks = ThreeScene.Hooks
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const { loadModel } = Hooks.useModelLoader({
   baseUrl: base,
@@ -22,8 +22,8 @@ const { loadModel } = Hooks.useModelLoader({
 })
 
 const params = {
-  glb: `${base}/oss/model/gltf/PrimaryIonDrive.glb`,
-  // glb: `${base}/oss/model/station/楼宇.glb`,
+  glb: `${base}/models/gltf/PrimaryIonDrive.glb`,
+  // glb: `${base}/models/station/楼宇.glb`,
   threshold: 0,
   strength: 1,
   radius: 0,

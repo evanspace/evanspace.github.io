@@ -27,7 +27,7 @@ const { progress, loadModels, initModels, getModel } = Hooks.useModelLoader({
 const containerRef = ref()
 const options: ConstructorParameters<typeof SlicingScene>[0] = {
   baseUrl: pageOpts.base,
-  env: '/oss/textures/hdr/8.hdr',
+  env: '/textures/hdr/8.hdr',
   directionalLight: {
     intensity: 4
   }

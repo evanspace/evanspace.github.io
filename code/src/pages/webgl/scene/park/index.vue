@@ -106,10 +106,7 @@ const containerRef = ref()
 const COLORS = Utils.deepMerge(colors, pageOpts.colors)
 
 const { skys } = useSky()
-const { changeBackground, backgroundLoad } = Hooks.useBackground(
-  pageOpts.baseUrl + '/oss/sky/',
-  skys
-)
+const { changeBackground, backgroundLoad } = Hooks.useBackground(pageOpts.baseUrl + '/sky/', skys)
 const { progress, loadModels, getModel, virtualization, closeVirtualization } =
   Hooks.useModelLoader({
     baseUrl: pageOpts.baseUrl,
@@ -125,7 +122,8 @@ const { progress, loadModels, getModel, virtualization, closeVirtualization } =
   })
 
 const options: ConstructorParameters<typeof ParkThreeScene>[0] = {
-  env: '/oss/textures/hdr/3.hdr',
+  baseUrl: pageOpts.baseUrl,
+  env: '/textures/hdr/3.hdr',
   controls: {
     maxDistance: 1500,
     // maxPolarAngle: Math.PI * 0.45,

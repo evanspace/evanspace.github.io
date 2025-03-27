@@ -1,7 +1,7 @@
 import fleetings from './fleetings'
 import airWinds from './air-winds'
 
-const baseUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
+const baseUrl = import.meta.env.VITE_GIT_OSS
 
 // 配置
 export default {
@@ -9,13 +9,13 @@ export default {
   baseUrl,
 
   // 背景图
-  bgSrc: baseUrl + '/oss/img/office/bg.jpg',
+  bgSrc: baseUrl + '/imgs/office/bg.jpg',
 
   // 天空风格 hdr
   sky: {
-    day: '/oss/textures/hdr/101.hdr',
-    evening: '/oss/textures/hdr/201.hdr',
-    night: '/oss/textures/hdr/301.hdr'
+    day: '/textures/hdr/101.hdr',
+    evening: '/textures/hdr/201.hdr',
+    night: '/textures/hdr/301.hdr'
   },
 
   // 本地数据库
@@ -128,14 +128,14 @@ export default {
   airWinds,
 
   // 波纹图
-  diffusionImg: baseUrl + '/oss/textures/diffusion/101.png',
+  diffusionImg: baseUrl + '/textures/diffusion/101.png',
 
   // 屏幕视频
-  screenVideo: baseUrl + '/oss/textures/park/sintel.mp4',
+  screenVideo: baseUrl + '/textures/park/sintel.mp4',
   // 视频封面
-  videoCover: baseUrl + '/oss/textures/office/cover.jpg',
+  videoCover: baseUrl + '/textures/office/cover.jpg',
   // 空调粒子纹理
-  airParticleTexture: baseUrl + '/oss/textures/effect/snowflake.png',
+  airParticleTexture: baseUrl + '/textures/effect/snowflake.png',
 
   // 相机转场列表
   cameraTransitionList: [

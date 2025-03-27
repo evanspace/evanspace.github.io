@@ -18,10 +18,10 @@ import { MeshoptDecoder } from 'three/examples/jsm/libs/meshopt_decoder.module.j
 import { MeshSurfaceSampler } from 'three/examples/jsm/math/MeshSurfaceSampler.js'
 import * as ThreeScene from 'three-scene'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const params = {
-  glb: `${base}/oss/model/csg/bunny.glb`,
+  glb: `${base}/models/csg/bunny.glb`,
 
   operation: SUBTRACTION,
   wireframe: false,

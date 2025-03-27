@@ -66,7 +66,7 @@ const props = withDefaults(defineProps<import('./index').Props>(), {
 const COLORS = Utils.deepMerge(colors, props.colors)
 
 const { changeBackground, backgroundLoad } = Hooks.useBackground(
-  props.baseUrl + '/oss/sky/',
+  props.baseUrl + '/sky/',
   useSky().skys
 )
 const { progress, loadModel, loadModels, getModel } = Hooks.useModelLoader({

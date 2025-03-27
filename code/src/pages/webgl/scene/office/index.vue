@@ -161,6 +161,7 @@ const { progress, loadModels, getModel } = Hooks.useModelLoader({
 const containerRef = ref()
 const canvasTextureRef = ref()
 const options: ConstructorParameters<typeof OfficeThreeScene>[0] = {
+  baseUrl: pageOpts.baseUrl,
   // env: pageOpts.env,
   cruise: pageOpts.cruise,
   controls: {

@@ -108,7 +108,7 @@ const pageOpts = reactive(
 const tipOpts = reactive(getTipOpts())
 
 const { skys } = useSky()
-const { backgroundLoad } = Hooks.useBackground(DEFAULTCONFIG.baseUrl + '/oss/sky/', skys)
+const { backgroundLoad } = Hooks.useBackground(DEFAULTCONFIG.baseUrl + '/sky/', skys)
 const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
   baseUrl: DEFAULTCONFIG.baseUrl,
   indexDB: DEFAULTCONFIG.indexDB

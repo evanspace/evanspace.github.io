@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production'
 
@@ -7,8 +7,8 @@ export const getPageOpts = () => ({
   baseUrl: base,
   bgColor: '',
   skyCode: '221',
-  // env: '/oss/textures/hdr/6.hdr'
-  env: '/oss/textures/exr/piz_compressed.exr'
+  // env: '/textures/hdr/6.hdr'
+  env: '/textures/exr/piz_compressed.exr'
 })
 
 export const getUploadOpts = () => ({

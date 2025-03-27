@@ -16,7 +16,7 @@ import * as request from './request'
 import { Echarts, echarts } from '@/hooks/echarts'
 import { useResize } from '@/hooks/echarts/resize'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const earthRef = ref()
 const renderEarth = () => {
@@ -33,7 +33,7 @@ const renderMap = async (DATA, max) => {
   const map = mapRef.value
   // 名称不为 china 则不显示南海诸岛
   const cityPy = 'china'
-  const response = await fetch(base + 'oss/map/china.json')
+  const response = await fetch(base + '/map/china.json')
   const mapJson = await response.json()
 
   // 全局

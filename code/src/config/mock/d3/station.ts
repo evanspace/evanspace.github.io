@@ -460,7 +460,7 @@ export default [
     response: () => {
       return builder({
         JsonList,
-        ModelUrl: '/oss/model/floor/场景.glb',
+        ModelUrl: '/models/floor/场景.glb',
         Name: '车站展示',
         ConfigJson: {
           target: { x: 0, y: 1, z: 114.2 },

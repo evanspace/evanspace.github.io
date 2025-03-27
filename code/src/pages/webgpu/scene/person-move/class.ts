@@ -6,11 +6,12 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { MeshBVH, MeshBVHHelper, StaticGeometryGenerator } from 'three-mesh-bvh'
 
 const Hooks = ThreeScene.Hooks
-const { insertEvent, destroyEvent, keyboardPressed } = Hooks.useKeyboardState()
-const { loadModel, openDB } = Hooks.useModelLoader()
-const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
-
 const base = import.meta.env.VITE_GIT_OSS
+const { insertEvent, destroyEvent, keyboardPressed } = Hooks.useKeyboardState()
+const { loadModel, openDB } = Hooks.useModelLoader({
+  baseUrl: base
+})
+const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
 
 // 速度
 let playerVelocity = new THREE.Vector3()
@@ -219,7 +220,7 @@ export class Scene extends ThreeScene.Scene {
       key: 'company',
       name: '场景',
       size: 13.6,
-      url: '/oss/model/office/公司总部.glb'
+      url: '/models/office/公司总部.glb'
     }).then(glb => {
       this.addObject(glb)
       this.createCollider(glb)

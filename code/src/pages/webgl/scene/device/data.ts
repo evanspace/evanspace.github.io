@@ -1,4 +1,4 @@
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = import.meta.env.VITE_GIT_OSS
 
 const devEnv = import.meta.env.VITE_MODE !== 'production-'
 
@@ -9,12 +9,7 @@ export const getPageOpts = (): {} & Omit<
   devEnv,
   baseUrl: base,
   bgColor: '',
-  // skyCode: '221',
-  // bgUrl: '/oss/img/map/earth.jpg',
-  // bgUrl: [`/posX.jpeg`, `/negX.jpeg`, `/posY.jpeg`, `/negY.jpeg`, `/posZ.jpeg`, `/negZ.jpeg`].map(
-  //   u => `/oss/img/sky/216${u}`
-  // ),
-  env: '/oss/textures/hdr/skidpan_2k.hdr',
+  env: '/textures/hdr/skidpan_2k.hdr',
 
   colors: {
     normal: {
@@ -183,14 +178,14 @@ export const getPageOpts = (): {} & Omit<
       name: '微软雅黑字体',
       type: 'font',
       size: 26.35,
-      url: '/oss/font/YaHei_Regular.json'
+      url: '/fonts/YaHei_Regular.json'
     }
   ].map(item => {
-    if (item.type !== 'sprite' && item.url && item.url.indexOf('/oss') < 0) {
-      item.url = '/oss/model/ncl' + item.url
+    if (item.type !== 'sprite' && item.url && item.url.indexOf('/fonts') < 0) {
+      item.url = '/models/ncl' + item.url
     }
     if (item.mapUrl) {
-      item.mapUrl = '/oss/textures/floor' + item.mapUrl
+      item.mapUrl = '/textures/floor' + item.mapUrl
     }
     return item as import('three-scene/types/model').ModelItem
   }),
