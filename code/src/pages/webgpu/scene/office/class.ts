@@ -679,7 +679,6 @@ export class OfficeScene extends Scene {
               this.person.position.setY(pos.y)
               // 获取前进坐标
               const newPos = MS.getForwardPosition(personModel, 0.1)
-              this.camera.position.y = pos.y + this.personSightOffset.y
               this.setControlTarget(newPos)
             }
           })
@@ -872,29 +871,28 @@ export class OfficeScene extends Scene {
       // 检测碰撞
       if (!this.checkCharacterCollide(newPos)) {
         personModel?.position.copy(newPos)
-        if (isS) {
-          // 定位后一步
-          const ds = dir.clone().multiplyScalar(-steep * 2)
-          this.camera.position.copy(this.camera.position.clone().add(ds))
-        }
         this.setControlTarget(personModel?.position)
       }
     }
   }
   // 按键转向
-  keyboardToTotation() {
+  keyboardToTotation(setTarget?: boolean) {
     const personModel = this.person
+    if (!personModel) return
     // 向量
     const dir = new THREE.Vector3()
     // 目标视线方向坐标
     personModel?.getWorldDirection(dir)
-    const mds = this.controls?.maxDistance || 1.1
+
+    const cPos = this.camera.position.clone()
+    const y = cPos.y
+    const mds = cPos.sub(personModel.position.clone().setY(y)).length()
     const dis = dir.clone().multiplyScalar(-mds)
-    // 复制相机 y 与向量相加
-    const newPos =
-      personModel?.position.clone().setY(this.camera.position.y).add(dis) || new THREE.Vector3()
-    this.camera.position.copy(newPos)
-    this.setControlTarget(personModel?.position)
+    this.camera.position.copy(personModel.position.clone().setY(y).add(dis))
+
+    if (setTarget) {
+      this.setControlTarget(personModel?.position)
+    }
   }
   // 人物视角
   togglePersonSight(type?: number) {
@@ -983,7 +981,8 @@ export class OfficeScene extends Scene {
     if (!this.person || !this.controls) return
     // 人物视角
     const isPerson = this.isPersonSight()
-    const position = this.person.position
+    const personModel = this.person
+    const position = personModel.position
 
     let { target, to } = this.getControlsCache()
     // 向量
@@ -1002,7 +1001,7 @@ export class OfficeScene extends Scene {
 
       // 第一人称相机角度
       if (this.isFirstPersonSight()) {
-        this.keyboardToTotation()
+        this.keyboardToTotation(true)
       } else {
         this.camera.lookAt(pos)
         this.controls.target.copy(position.clone().add(up))
@@ -1311,8 +1310,13 @@ export class OfficeScene extends Scene {
   // 设置控制中心点
   setControlTarget(position) {
     if (!this.controls) return
-    this.controls.target.copy(position.clone().add(this.personSightOffset.clone()))
-    this.camera.lookAt(this.controls.target)
+    const camera = this.camera
+    const controls = this.controls
+    const newPos = position.clone().add(this.personSightOffset.clone())
+
+    camera.position.sub(controls.target)
+    controls.target.copy(newPos)
+    camera.position.add(newPos)
   }
 
   // 漫游
