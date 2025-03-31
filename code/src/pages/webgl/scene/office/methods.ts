@@ -31,6 +31,7 @@ const { createFleeting, fleetingAnimate } = Hooks.useFleeting()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
 
 const base = import.meta.env.VITE_GIT_OSS
+const staticSrc = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const sightMap = {
   full: 'FULL',
@@ -40,7 +41,7 @@ const sightMap = {
 // 创建视频元素
 const createVideoDom = (src?: string) => {
   const dom = document.createElement('video')
-  dom.src = base + (src || '/textures/park/sintel.mp4')
+  dom.src = staticSrc + (src || '/video/sintel.mp4')
   dom.loop = true
   // videoDom.autoplay = true
   return dom

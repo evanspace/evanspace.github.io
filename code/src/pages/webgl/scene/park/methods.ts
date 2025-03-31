@@ -23,6 +23,7 @@ const { createMove, moveAnimate } = Hooks.useMoveAnimate()
 const { addLensflare } = Hooks.useLensflare()
 
 const base = import.meta.env.VITE_GIT_OSS
+const staticSrc = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 const createWater = () => {
   // 创建水面
@@ -50,7 +51,7 @@ const createWater = () => {
 // 创建视频元素
 const createVideoDom = (src?: string) => {
   const dom = document.createElement('video')
-  dom.src = base + (src || '/textures/park/sintel.mp4')
+  dom.src = staticSrc + (src || '/video/sintel.mp4')
   dom.loop = true
   // videoDom.autoplay = true
   return dom
