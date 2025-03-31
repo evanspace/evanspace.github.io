@@ -751,11 +751,20 @@ export class OfficeScene extends Scene {
 
     this.canvasTextures = []
     for (let i = 0; i < names.length; i++) {
-      const dbObj = this.scene.getObjectByName(names[i]) as any
+      const dbObj = this.buildingGroup?.getObjectByName(names[i]) as any
       if (!dbObj) continue
-      dbObj.material = material.clone()
-      dbObj.__cover_texture__ = material.map?.clone()
-      this.canvasTextures.push(dbObj.material.map)
+      const nObj = dbObj.clone()
+      nObj.material = material.clone()
+      nObj.name = dbObj.name + '_canvas'
+      dbObj.add(nObj)
+      dbObj.__cover_texture__ = nObj
+      const dir = new THREE.Vector3()
+      dbObj.getWorldDirection(dir)
+      const dis = dir.clone().multiplyScalar(1e-3)
+      const pos = dbObj.position.clone().add(dis) || new THREE.Vector3()
+      pos.sub(dbObj.position)
+      nObj.position.copy(pos)
+      this.canvasTextures.push(nObj.material.map)
     }
   }
 

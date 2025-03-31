@@ -671,7 +671,8 @@ export const addVideoMaterial = dbObj => {
   dbObj.__video_texture__ = videoTexture2
   dbObj.__cover_texture__ = videoCoverTexture.clone()
   dbObj.material = new THREE.MeshPhongMaterial({
-    map: videoCoverTexture
+    map: videoCoverTexture,
+    side: THREE.DoubleSide
   })
   dbObj.__video__ = videoDom2
   return dbObj
@@ -688,9 +689,16 @@ export const videoMaterilPlay = (vobj, isPlay?: boolean) => {
     if ((isPlay != void 0 && !isPlay) || __video__.paused) {
       vobj.material.map = vobj.__video_texture__
       __video__?.play()
+      if (vobj.__cover_texture__.isMesh) {
+        vobj.__cover_texture__.visible = false
+      }
     } else {
       __video__?.pause()
-      vobj.material.map = vobj.__cover_texture__
+      if (vobj.__cover_texture__.isMesh) {
+        vobj.__cover_texture__.visible = true
+      } else {
+        vobj.material.map = vobj.__cover_texture__
+      }
     }
   }
 }
