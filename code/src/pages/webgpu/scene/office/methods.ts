@@ -714,7 +714,11 @@ export const clearVideo = videos => {
     if (__video__) {
       __video__.pause()
       __video__.remove()
-      __cover_texture__?.dispose()
+      if (__cover_texture__.isMesh) {
+        __cover_texture__?.clear()
+      } else {
+        __cover_texture__?.dispose()
+      }
       __video_texture__?.dispose()
     }
   }
