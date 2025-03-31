@@ -19,12 +19,12 @@ const options: ConstructorParameters<typeof Scene>[0] = {
   },
   camera: {
     near: 1e-10,
-    position: [10, 10, -10]
+    position: [100, 100, -100]
   },
   controls: {
-    // enablePan: false,
+    enablePan: false,
     maxPolarAngle: Math.PI / 2,
-    minDistance: 10,
+    minDistance: 1e-4,
     maxDistance: 200
   }
 }

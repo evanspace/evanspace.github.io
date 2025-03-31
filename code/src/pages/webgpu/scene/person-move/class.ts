@@ -1,4 +1,4 @@
-import * as THREE from 'three/webgpu'
+import * as THREE from 'three'
 import * as ThreeScene from 'three-scene'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -74,7 +74,7 @@ export class Scene extends ThreeScene.Scene {
       // 空格跳
       if (e.code === 'Space') {
         if (this.playerIsOnGround) {
-          playerVelocity.y = 10 * 2
+          playerVelocity.y = 10 * 3
           this.playerIsOnGround = false
         }
       }
@@ -84,10 +84,10 @@ export class Scene extends ThreeScene.Scene {
   }
 
   // 渲染器  - 使用 webgpu 时改变可视化深度会报错
-  createRender() {
-    const render = new THREE.WebGPURenderer(this.options.render)
-    return render
-  }
+  // createRender() {
+  //   const render = new THREE.WebGPURenderer(this.options.render)
+  //   return render
+  // }
 
   createScene() {
     return new THREE.Scene()
@@ -102,9 +102,9 @@ export class Scene extends ThreeScene.Scene {
   }
 
   // 渲染
-  render() {
-    this.renderer.renderAsync(this.scene, this.camera)
-  }
+  // render() {
+  //   this.renderer.renderAsync(this.scene, this.camera)
+  // }
 
   createPerson() {
     const player = new THREE.Mesh(
@@ -117,14 +117,11 @@ export class Scene extends ThreeScene.Scene {
     player.geometry.translate(0, 0.5, 0)
     const size = 5
     player.geometry.computeBoundingBox()
-    console.log(player.geometry)
+
     player.userData.capsuleInfo = {
       radius: 0.5 * size,
       // 长度-相当于人物的高度-检测碰撞的边界高度
-      segment: new THREE.Line3(
-        new THREE.Vector3(),
-        new THREE.Vector3(0, 0.5, 0).multiplyScalar(size)
-      )
+      segment: new THREE.Line3(new THREE.Vector3(), new THREE.Vector3(0, 2, 0).multiplyScalar(size))
     }
 
     player.castShadow = true
@@ -240,7 +237,6 @@ export class Scene extends ThreeScene.Scene {
         obj.material.opacity = 1
         obj.parent.remove(obj)
         obj.clear()
-        console.log(obj)
       }
       glb.position.y -= 25
       // 更新世界坐标，否则碰撞器使用的是旧坐标
@@ -322,11 +318,9 @@ export class Scene extends ThreeScene.Scene {
             .add(controls.target)
 
           controls.maxPolarAngle = Math.PI / 2
-          controls.minDistance = 1
           controls.maxDistance = 200
         } else {
           controls.maxPolarAngle = Math.PI
-          controls.minDistance = 1e-4
           controls.maxDistance = 1e-4
         }
       })
@@ -545,8 +539,9 @@ export class Scene extends ThreeScene.Scene {
 
     // 相机位置更新
     camera.position.sub(controls.target)
-    controls.target.copy(player.position)
-    camera.position.add(player.position)
+    const pos = player.position.clone().add(new THREE.Vector3(0, 10, 0))
+    controls.target.copy(pos)
+    camera.position.add(pos)
 
     // 当人物 y 轴小于 -25 重置
     if (player.position.y < -25) {
