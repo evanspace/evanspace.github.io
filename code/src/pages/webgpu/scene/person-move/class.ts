@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three/webgpu'
 import * as ThreeScene from 'three-scene'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -36,9 +36,9 @@ export class Scene extends ThreeScene.Scene {
     // 可视化深度
     visualizeDepth: 10,
     // 重力
-    gravity: -30,
+    gravity: -30 * 2,
     // 速度
-    playerSpeed: 10,
+    playerSpeed: 20,
     // 物理步骤
     physicsSteps: 5
   }
@@ -71,9 +71,10 @@ export class Scene extends ThreeScene.Scene {
     this.loadModel()
 
     insertEvent(e => {
+      // 空格跳
       if (e.code === 'Space') {
         if (this.playerIsOnGround) {
-          playerVelocity.y = 10
+          playerVelocity.y = 10 * 2
           this.playerIsOnGround = false
         }
       }
@@ -83,10 +84,10 @@ export class Scene extends ThreeScene.Scene {
   }
 
   // 渲染器  - 使用 webgpu 时改变可视化深度会报错
-  // createRender() {
-  //   const render = new THREE.WebGPURenderer(this.options.render)
-  //   return render
-  // }
+  createRender() {
+    const render = new THREE.WebGPURenderer(this.options.render)
+    return render
+  }
 
   createScene() {
     return new THREE.Scene()
@@ -101,9 +102,9 @@ export class Scene extends ThreeScene.Scene {
   }
 
   // 渲染
-  // render() {
-  //   this.renderer.renderAsync(this.scene, this.camera)
-  // }
+  render() {
+    this.renderer.renderAsync(this.scene, this.camera)
+  }
 
   createPerson() {
     const player = new THREE.Mesh(
@@ -111,15 +112,25 @@ export class Scene extends ThreeScene.Scene {
       new RoundedBoxGeometry(1, 2, 1, 10, 0.5),
       new THREE.MeshStandardMaterial()
     )
-    player.geometry.translate(0, -0.5, 0)
+    // player.geometry.translate(0, -0.5, 0)
+    // 控制碰撞关键参数
+    player.geometry.translate(0, 0.5, 0)
+    const size = 5
+    player.geometry.computeBoundingBox()
+    console.log(player.geometry)
     player.userData.capsuleInfo = {
-      radius: 0.5,
-      segment: new THREE.Line3(new THREE.Vector3(), new THREE.Vector3(0, -1.0, 0.0))
+      radius: 0.5 * size,
+      // 长度-相当于人物的高度-检测碰撞的边界高度
+      segment: new THREE.Line3(
+        new THREE.Vector3(),
+        new THREE.Vector3(0, 0.5, 0).multiplyScalar(size)
+      )
     }
+
     player.castShadow = true
     player.receiveShadow = true
     player.material.shadowSide = 2
-    // player.scale.setScalar(10)
+    player.scale.setScalar(size)
     this.player = player
     this.addObject(player)
 
@@ -128,7 +139,7 @@ export class Scene extends ThreeScene.Scene {
 
   async loadModel() {
     await openDB()
-    // return this.loadCompany()
+    return this.loadCompany()
     loadModel({
       key: 'OSG_Scene',
       name: '',
@@ -142,7 +153,7 @@ export class Scene extends ThreeScene.Scene {
       const glb = new THREE.Group()
       res.position.y += 19
       glb.add(res)
-      glb.scale.setScalar(0.1)
+      // glb.scale.setScalar(0.1)
       const box = new THREE.Box3()
       // 用来计算包围盒的3D对象
       box.setFromObject(glb)
@@ -150,7 +161,7 @@ export class Scene extends ThreeScene.Scene {
       // negate 向量取反，即： x = -x, y = -y , z = -z
       box.getCenter(glb.position).negate()
       // 更新物体及其后代的全局变换
-      glb.updateMatrixWorld(true)
+      // glb.updateMatrixWorld(true)
 
       // 网格可视化-分类
       const toMerge = {}
@@ -209,6 +220,7 @@ export class Scene extends ThreeScene.Scene {
           modelGroup.add(newMesh)
         }
       }
+      modelGroup.name = '重组场景'
       this.addObject(modelGroup)
 
       this.createCollider(modelGroup)
@@ -222,6 +234,17 @@ export class Scene extends ThreeScene.Scene {
       size: 13.6,
       url: '/models/office/公司总部.glb'
     }).then(glb => {
+      // 处理透明边界
+      const obj = glb.getObjectByName('透明_边界')
+      if (obj) {
+        obj.material.opacity = 1
+        obj.parent.remove(obj)
+        obj.clear()
+        console.log(obj)
+      }
+      glb.position.y -= 25
+      // 更新世界坐标，否则碰撞器使用的是旧坐标
+      glb.updateMatrixWorld(true)
       this.addObject(glb)
       this.createCollider(glb)
     })
@@ -235,13 +258,12 @@ export class Scene extends ThreeScene.Scene {
     modelFolder.add(model.position, 'y').name('上下位置').listen()
     modelFolder.add(params, 'physicsSteps', 0, 30, 1).name('步骤')
     modelFolder
-      .add(params, 'gravity', -100, 100, 0.01)
+      .add(params, 'gravity', -200, 100, 0.01)
       .name('重力')
       .onChange(v => {
         params.gravity = Number(v)
       })
-    modelFolder.add(params, 'playerSpeed', 1, 20).name('人物速度')
-    console.log(this)
+    modelFolder.add(params, 'playerSpeed', 1, 100).name('人物速度')
 
     // 静态几何体生成器
     const staticGenerator = new StaticGeometryGenerator(model)
@@ -301,13 +323,23 @@ export class Scene extends ThreeScene.Scene {
 
           controls.maxPolarAngle = Math.PI / 2
           controls.minDistance = 1
-          controls.maxDistance = 20
+          controls.maxDistance = 200
         } else {
           controls.maxPolarAngle = Math.PI
           controls.minDistance = 1e-4
           controls.maxDistance = 1e-4
         }
       })
+
+    gui
+      .add(
+        {
+          log: () => console.log(this)
+        },
+        'log'
+      )
+      .name('场景数据')
+
     gui
       .add(
         {
@@ -336,8 +368,7 @@ export class Scene extends ThreeScene.Scene {
     // 速度
     playerVelocity.set(0, 0, 0)
     // 人物位置重置
-    const pos = new THREE.Vector3(15.75, -3, 30).multiplyScalar(1)
-    // player.position.set(152, -20.5, 298)
+    const pos = new THREE.Vector3(155, -20, 304).multiplyScalar(1)
     player.position.copy(pos)
 
     // 相机位置（位置-控制器target）
@@ -348,30 +379,15 @@ export class Scene extends ThreeScene.Scene {
     controls.update()
   }
 
-  // 更新人物
-  updatePlayer(delta) {
+  // 键盘控制
+  keyboardPressedControl(delta) {
     const params = this.params
     const player = this.player
-    const collider = this.collider
-    const camera = this.camera
     const controls = this.controls
-    if (!controls || !collider) return
+    if (!controls) return
 
-    // 是否在地面
-    if (this.playerIsOnGround) {
-      // y 速度 = 时间 * 重力
-      playerVelocity.y = delta * params.gravity
-    } else {
-      // 不在地面则相加(重力是负数，会一直往下掉)
-      playerVelocity.y += delta * params.gravity
-    }
-
-    // 位置变化 （原坐标+（速度*时间））
-    player.position.addScaledVector(playerVelocity, delta)
-
-    if (!this.controls) return
     // 获取控制器方位角度
-    const angle = this.controls.getAzimuthalAngle()
+    const angle = controls.getAzimuthalAngle()
 
     // 前进
     if (keyboardPressed('W')) {
@@ -397,9 +413,13 @@ export class Scene extends ThreeScene.Scene {
       tempVector.set(1, 0, 0).applyAxisAngle(upVector, angle)
       player.position.addScaledVector(tempVector, params.playerSpeed * delta)
     }
+  }
 
-    // 更新人物的世界坐标
-    player.updateMatrixWorld()
+  // 更新计算变量
+  updateCalcVar() {
+    const player = this.player
+    const collider = this.collider
+    if (!collider) return
 
     // 调整碰撞位置
     const capsuleInfo = player.userData.capsuleInfo
@@ -421,8 +441,17 @@ export class Scene extends ThreeScene.Scene {
     // 最大最小 分别 加减 半径
     tempBox.min.addScalar(-capsuleInfo.radius)
     tempBox.max.addScalar(capsuleInfo.radius)
+  }
 
-    if (collider.geometry.boundsTree && !false) {
+  // bvh 碰撞检测
+  bvhCollionCheck() {
+    const player = this.player
+    const collider = this.collider
+    if (!collider) return
+
+    if (collider.geometry.boundsTree) {
+      // 调整碰撞位置
+      const capsuleInfo = player.userData.capsuleInfo
       // 检测  bvh 和人物是否相交
       collider.geometry.boundsTree.shapecast({
         intersectsBounds: box => box.intersectsBox(tempBox),
@@ -441,6 +470,13 @@ export class Scene extends ThreeScene.Scene {
         }
       })
     }
+  }
+
+  // 人物移动
+  playerMove(delta) {
+    const player = this.player
+    const collider = this.collider
+    if (!collider) return
 
     // 检测人物在碰撞器世界空间中的调整位置
     const newPosition = tempVector
@@ -452,15 +488,16 @@ export class Scene extends ThreeScene.Scene {
     // 新坐标-人物坐标
     deltaVector.subVectors(newPosition, player.position)
 
-    // 移动位置 y 轴 大于 速度的绝对值咋在地面
-    this.playerIsOnGround = deltaVector.y > Math.abs(delta * playerVelocity.y * 0.25)
-
     // 最大值 （0， 距 0 点长度-0.0001）
     const offset = Math.max(0.0, deltaVector.length() - 1e-5)
+    // 转为向量 * 移动的长度
     deltaVector.normalize().multiplyScalar(offset)
 
     // 移动人物
     player.position.add(deltaVector)
+
+    // 移动位置 y 轴 大于 速度的绝对值咋在地面
+    this.playerIsOnGround = deltaVector.y > Math.abs(delta * playerVelocity.y * 0.25)
 
     if (!this.playerIsOnGround) {
       deltaVector.normalize()
@@ -468,8 +505,45 @@ export class Scene extends ThreeScene.Scene {
     } else {
       playerVelocity.set(0, 0, 0)
     }
+  }
 
-    // adjust the camera
+  // 更新人物
+  updatePlayer(delta) {
+    const params = this.params
+    const player = this.player
+    const collider = this.collider
+    const camera = this.camera
+    const controls = this.controls
+    if (!controls || !collider) return
+
+    // 是否在地面
+    if (this.playerIsOnGround) {
+      // y 速度 = 时间 * 重力
+      playerVelocity.y = delta * params.gravity
+    } else {
+      // 不在地面则相加(重力是负数，会一直往下掉)
+      playerVelocity.y += delta * params.gravity
+    }
+
+    // 位置变化 （原坐标+（速度*时间））
+    player.position.addScaledVector(playerVelocity, delta)
+
+    // 键盘控制
+    this.keyboardPressedControl(delta)
+
+    // 更新人物的世界坐标
+    player.updateMatrixWorld()
+
+    // 更新计算变量
+    this.updateCalcVar()
+
+    // bvh 碰撞检测
+    this.bvhCollionCheck()
+
+    // 人物移动
+    this.playerMove(delta)
+
+    // 相机位置更新
     camera.position.sub(controls.target)
     controls.target.copy(player.position)
     camera.position.add(player.position)

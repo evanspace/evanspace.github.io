@@ -22,7 +22,7 @@ const options: ConstructorParameters<typeof Scene>[0] = {
     position: [10, 10, -10]
   },
   controls: {
-    enablePan: false,
+    // enablePan: false,
     maxPolarAngle: Math.PI / 2,
     minDistance: 10,
     maxDistance: 200
