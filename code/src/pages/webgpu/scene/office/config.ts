@@ -2,6 +2,7 @@ import fleetings from './fleetings'
 import airWinds from './air-winds'
 
 const baseUrl = import.meta.env.VITE_GIT_OSS
+const staticUrl = import.meta.env.VITE_BEFORE_STATIC_PATH
 
 // 配置
 export default {
@@ -130,8 +131,8 @@ export default {
   // 波纹图
   diffusionImg: baseUrl + '/textures/diffusion/101.png',
 
-  // 屏幕视频
-  screenVideo: baseUrl + '/textures/park/sintel.mp4',
+  // 屏幕视频 - 跨域问题，使用本地资源
+  screenVideo: staticUrl + '/video/sintel.mp4',
   // 视频封面
   videoCover: baseUrl + '/textures/office/cover.jpg',
   // 空调粒子纹理
