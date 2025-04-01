@@ -1,5 +1,12 @@
 <template>
-  <div class="three-page" :class="$style.page">
+  <div
+    class="three-page"
+    :class="$style.page"
+    @dragenter="onDragenter"
+    @dragover="onDragover"
+    @dragleave="onDragleave"
+    @drop="onDrop"
+  >
     <div :class="$style['model-operate']">
       <div :class="$style.item">
         <div :class="$style.label">当前坐标</div>
@@ -36,12 +43,15 @@
       轴切换；空格：控制器锁定；
     </div>
 
+    <drop-upload v-if="dropOpts.droping" />
+
     <div class="h-100" ref="containerRef"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { Delete } from '@element-plus/icons-vue'
+import dropUpload from './drop-upload.vue'
 import { modelOpts, ConvertThreeScene } from './class'
 import { base } from './methods'
 
@@ -72,6 +82,43 @@ const options: ConstructorParameters<typeof ConvertThreeScene>[0] = {
 }
 let scene: InstanceType<typeof ConvertThreeScene>
 
+const dropOpts = reactive({
+  droping: false
+})
+// 阻止默认事件
+const preventDefaults = e => {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+// 拖拽上传
+const onDragenter = e => {
+  preventDefaults(e)
+  dropOpts.droping = true
+}
+// 拖进
+const onDragover = e => {
+  preventDefaults(e)
+  dropOpts.droping = true
+}
+// 离开
+const onDragleave = e => {
+  preventDefaults(e)
+  dropOpts.droping = false
+}
+// 拖拽
+const onDrop = e => {
+  preventDefaults(e)
+  dropOpts.droping = false
+
+  const dt = e.dataTransfer
+  const files = dt.files
+  console.log(files)
+  for (let i = 0; i < files.length; i++) {
+    upload(files[i])
+  }
+}
+
 // 树结构点击
 const onTreeClick = e => {
   scene?.selectModel(e)
@@ -82,31 +129,43 @@ const onTreeDelete = e => {
   scene?.deleteModel(e)
 }
 
-const uploadOpts = reactive(getUploadOpts())
-const onFileChange = e => {
-  const files = e.target.files
-  const file = files[0]
-  let filename = file.name
+// 校验文件类型
+const validateFileType = filename => {
   const type = filename.split('.').pop().toLowerCase()
   if (!uploadOpts.accept.includes(type)) {
-    return ElMessage.error({
-      message: `文件格式不正确,转换格式支持 ${uploadOpts.accept.join('、')}！`,
+    ElMessage.error({
+      message: `${filename} 文件格式不正确,转换格式支持 ${uploadOpts.accept.join('、')}！`,
       grouping: true
     })
+    return false
   }
+  return true
+}
+
+// 上传
+const upload = file => {
+  let filename = file.name
+  if (!validateFileType(filename)) return
 
   filename = file.name.substring(0, file.name.lastIndexOf('.'))
   uploadOpts.fileName = filename
   uploadModel(
-    files,
+    [file],
     model => {
-      console.log(type, ' 模型', model)
+      console.log(file.name, model)
       scene.uploadedModel(model, filename)
     },
     ({ progress, size, filename }) => {
       console.log('Loading', filename, size, progress)
     }
   )
+}
+
+const uploadOpts = reactive(getUploadOpts())
+const onFileChange = e => {
+  const files = e.target.files
+  const file = files[0]
+  upload(file)
   e.target.value = ''
 }
 
