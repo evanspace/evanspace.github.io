@@ -1,21 +1,49 @@
 <template>
   <div class="three-page" :class="$style.page">
-    <textarea
-      class="gui-text"
-      :class="$style['gui-text']"
-      rows="4"
-      cols="30"
-      v-model="guiOpts.dotText"
-    ></textarea>
+    <div :class="$style['model-operate']">
+      <div :class="$style.item">
+        <div :class="$style.label">当前坐标</div>
+        <div :class="$style.value">
+          <el-input class="gui-text" type="textarea" v-model="modelOpts.dotText"></el-input>
+        </div>
+      </div>
+
+      <div :class="$style.tree">
+        <el-tree
+          :data="modelOpts.uploadList"
+          :expand-on-click-node="false"
+          @node-click="onTreeClick"
+        >
+          <template #default="{ node, data }">
+            <div :class="$style['tree-node']">
+              <span :class="$style.label">{{ node.label }}</span>
+              <el-link
+                :class="$style.btn"
+                type="danger"
+                :icon="Delete"
+                @click="onTreeDelete(data)"
+              ></el-link>
+            </div>
+          </template>
+        </el-tree>
+      </div>
+    </div>
 
     <input :class="$style.upload" type="file" @change="onFileChange" />
+
+    <div :class="$style.tip">
+      控制器键盘操作 W：位移；E：旋转；R：缩放；+、-：控制器大小；X：x 轴切换；Y：y 轴切换；Z：z
+      轴切换；空格：控制器锁定；
+    </div>
 
     <div class="h-100" ref="containerRef"></div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { guiOpts, ConvertThreeScene } from './methods'
+import { Delete } from '@element-plus/icons-vue'
+import { modelOpts, ConvertThreeScene } from './class'
+import { base } from './methods'
 
 import { getPageOpts, getUploadOpts } from './data'
 
@@ -24,15 +52,16 @@ import { Hooks } from 'three-scene/build/three-scene.module'
 
 const pageOpts = reactive(getPageOpts())
 const { uploadModel } = Hooks.useUpload({
-  baseUrl: pageOpts.baseUrl
+  baseUrl: base
 })
 
 const containerRef = ref()
 const options: ConstructorParameters<typeof ConvertThreeScene>[0] = {
-  baseUrl: pageOpts.baseUrl,
+  baseUrl: base,
   env: pageOpts.env,
   grid: {
-    visible: true
+    visible: true,
+    fork: true
   },
   camera: {
     position: [-50, 50, 100]
@@ -42,6 +71,16 @@ const options: ConstructorParameters<typeof ConvertThreeScene>[0] = {
   }
 }
 let scene: InstanceType<typeof ConvertThreeScene>
+
+// 树结构点击
+const onTreeClick = e => {
+  scene?.selectModel(e)
+}
+
+// 删除树结构
+const onTreeDelete = e => {
+  scene?.deleteModel(e)
+}
 
 const uploadOpts = reactive(getUploadOpts())
 const onFileChange = e => {
@@ -73,8 +112,14 @@ const onFileChange = e => {
 
 onMounted(() => {
   options.container = containerRef.value
-  scene = new ConvertThreeScene(options)
+  scene = new ConvertThreeScene(options, {
+    addGroupCall: list => {
+      console.log(list)
+    }
+  })
   scene.run()
+
+  console.log(scene)
 
   useResize(scene).resize()
 })
