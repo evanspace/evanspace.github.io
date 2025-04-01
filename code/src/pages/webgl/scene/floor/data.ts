@@ -58,19 +58,19 @@ export const getPageOpts = (): {} & Omit<
     {
       key: 'FLOOR_ONE',
       name: '大堂', // 高 140
-      size: 8.5,
+      size: 10.4,
       url: '/1楼.glb'
     },
     {
       key: 'FLOOR_COMMON',
       name: '楼层', // 高 60
-      size: 13.7,
+      size: 1.02,
       url: '/楼层.glb'
     },
     {
       key: 'FLOOR_ATTIC',
       name: '楼顶', // 高 350
-      size: 0.1,
+      size: 0.02,
       url: '/楼顶.glb'
     },
 
@@ -114,7 +114,7 @@ export const getPageOpts = (): {} & Omit<
     cache: true,
     dbName: 'THREE__FLOOR__DB',
     tbName: 'TB',
-    version: 1
+    version: 2
   },
   dotShowStrict: !true,
   colorMeshName: [],

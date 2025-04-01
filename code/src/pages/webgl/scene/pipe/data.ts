@@ -29,7 +29,7 @@ export const getPageOpts = (): {} & Omit<
     cache: true,
     dbName: 'THREE__DEVICE__DB',
     tbName: 'TB',
-    version: 3
+    version: 4
   },
   camera: {
     far: 1000000
@@ -205,7 +205,7 @@ export const getPageOpts = (): {} & Omit<
       key: 'LDH_PIPE_RIGHT_ANGLE',
       type: 'pipe',
       name: '冷冻回-弯头',
-      size: 0.12,
+      size: 0.01,
       url: '/models/pipe/冷冻回-弯头.glb',
       repeat: [1, 0.25],
       mapUrl: '/models/pipe/002.png',
@@ -224,7 +224,7 @@ export const getPageOpts = (): {} & Omit<
       key: 'LDG_PIPE_RIGHT_ANGLE',
       type: 'pipe',
       name: '冷冻供-弯头',
-      size: 0.12,
+      size: 0.01,
       url: '/models/pipe/冷冻供-弯头.glb',
       repeat: [1, 0.25],
       mapUrl: '/models/pipe/002.png',
@@ -243,7 +243,7 @@ export const getPageOpts = (): {} & Omit<
       key: 'LQG_PIPE_RIGHT_ANGLE',
       type: 'pipe',
       name: '冷却供-弯头',
-      size: 0.12,
+      size: 0.01,
       repeat: [1, 0.25],
       url: '/models/pipe/冷却供-弯头.glb',
       mapUrl: '/models/pipe/002.png',
@@ -262,7 +262,7 @@ export const getPageOpts = (): {} & Omit<
       key: 'LQH_PIPE_RIGHT_ANGLE',
       type: 'pipe',
       name: '冷却回-弯头',
-      size: 0.12,
+      size: 0.01,
       url: '/models/pipe/冷却回-弯头.glb',
       repeat: [1, 0.25],
       mapUrl: '/models/pipe/002.png',

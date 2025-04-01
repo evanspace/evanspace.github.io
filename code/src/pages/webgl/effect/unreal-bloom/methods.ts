@@ -22,7 +22,7 @@ const { loadModel } = Hooks.useModelLoader({
 })
 
 const params = {
-  glb: `${base}/models/gltf/PrimaryIonDrive.glb`,
+  glb: `${base}/models/glb/PrimaryIonDrive.glb`,
   // glb: `${base}/models/station/楼宇.glb`,
   threshold: 0,
   strength: 1,

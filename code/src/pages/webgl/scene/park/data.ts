@@ -135,7 +135,7 @@ export const getPageOpts = animateBack => ({
     {
       key: 'building_4',
       name: '楼栋4',
-      size: 2.8,
+      size: 2.01,
       url: '/楼栋4.glb'
     },
     {

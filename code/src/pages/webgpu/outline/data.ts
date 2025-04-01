@@ -7,7 +7,7 @@ export const getPageOpts = () => ({
     {
       key: 'tree',
       name: '大树',
-      size: 0.1,
+      size: 0.01,
       url: '/models/gpu/tree.glb'
     }
   ],

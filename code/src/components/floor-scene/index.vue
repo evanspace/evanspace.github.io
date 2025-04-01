@@ -44,6 +44,10 @@ import type { ObjectItem, ThreeModelItem, XYZ } from 'three-scene/types/model'
 
 const props = withDefaults(defineProps<import('./index').Props>(), {
   dracoUrl: '',
+  // draco 解压文件目录
+  dracoPath: '/three/draco/gltf/',
+  // basis 解压文件目录
+  basisPath: '/three/basis/',
   dotKey: 'DOT',
   dotShowStrict: true,
   colors: () => ({}),
