@@ -84,7 +84,7 @@ export const modelConvertTree = (group: THREE.Group) => {
         children: []
       }
       deep(el.children, obj)
-      data.children.push(obj)
+      data.children?.push(obj)
     }
   }
 

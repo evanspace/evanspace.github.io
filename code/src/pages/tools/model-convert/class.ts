@@ -25,7 +25,8 @@ const { raycaster, pointer, update: raycasterUpdate } = Hooks.useRaycaster()
 // 响应式配置
 export const modelOpts = reactive<ModelOpts>({
   dotText: '',
-  uploadList: []
+  uploadList: [],
+  uuid: ''
 })
 
 export class ConvertThreeScene extends Scene {
