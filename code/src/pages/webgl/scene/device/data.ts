@@ -59,7 +59,7 @@ export const getPageOpts = (): {} & Omit<
     visible: !true,
     gridColor: 0x00adb5,
     centerLineColor: 0x00adb5,
-    fork: true,
+    fork: !true,
     forkColor: 0x00adb5
   },
   axes: {

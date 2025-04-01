@@ -29,7 +29,7 @@ export const getPageOpts = (): {} & Omit<
     cache: true,
     dbName: 'THREE__DEVICE__DB',
     tbName: 'TB',
-    version: 2
+    version: 3
   },
   camera: {
     far: 1000000
@@ -58,7 +58,7 @@ export const getPageOpts = (): {} & Omit<
     visible: !true,
     gridColor: 0x00adb5,
     centerLineColor: 0x00adb5,
-    fork: true,
+    fork: !true,
     forkColor: 0x00adb5
   },
   axes: {
@@ -107,62 +107,62 @@ export const getPageOpts = (): {} & Omit<
     {
       key: 'JSQ',
       name: '分集水器',
-      size: 2,
+      size: 0.02,
       url: '/分集水器.glb'
     },
     {
       key: 'LXJ',
       name: '离心机',
-      size: 1.4,
+      size: 0.03,
       url: '/离心机.glb'
     },
     {
       key: 'LGJ',
       name: '螺杆机',
-      size: 1.2,
+      size: 0.08,
       url: '/螺杆机.glb'
     },
     {
       key: 'LGJ_3',
       name: '螺杆机',
-      size: 1.2,
+      size: 0.2,
       url: '/螺杆机-三机头.glb'
     },
     {
       key: 'LQT',
       name: '冷却塔',
-      size: 0.8,
+      size: 0.07,
       url: '/冷却塔.glb'
     },
     {
       key: 'LDB',
       name: '冷冻泵',
-      size: 2.5,
+      size: 0.05,
       url: '/冷冻泵.glb'
     },
     {
       key: 'LQB',
       name: '冷却泵',
-      size: 2.5,
+      size: 0.06,
       url: '/冷却泵.glb'
     },
     {
       key: 'FM',
       name: '阀门',
-      size: 0.05,
+      size: 0.0,
       url: '/阀门.glb'
     },
     {
       key: 'BSHLQ',
       name: '板式换热器-制冷',
-      size: 0.4,
+      size: 0.04,
       url: '/板式换热器-制冷.glb'
     },
 
     {
       key: 'JGBS',
       name: '警告标识',
-      size: 0.2,
+      size: 0.01,
       type: 'warning',
       url: '/警告标识.glb'
     },
