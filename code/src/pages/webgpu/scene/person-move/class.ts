@@ -4,6 +4,7 @@ import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeom
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { MeshBVH, MeshBVHHelper, StaticGeometryGenerator } from 'three-mesh-bvh'
+import * as MD from './methods'
 
 const Hooks = ThreeScene.Hooks
 const base = import.meta.env.VITE_GIT_OSS
@@ -48,7 +49,7 @@ export class Scene extends ThreeScene.Scene {
   group = new THREE.Group()
 
   // 人物
-  player = new THREE.Mesh()
+  player?: InstanceType<typeof THREE.Object3D>
 
   // 是否在地面
   playerIsOnGround = false
@@ -70,15 +71,27 @@ export class Scene extends ThreeScene.Scene {
 
     this.loadModel()
 
-    insertEvent(e => {
-      // 空格跳
-      if (e.code === 'Space') {
-        if (this.playerIsOnGround) {
-          playerVelocity.y = 10 * 3
-          this.playerIsOnGround = false
+    // 人物控制按键
+    const keys = ['w', 's', 'a', 'd']
+    insertEvent(
+      e => {
+        // 空格跳
+        if (e.code === 'Space') {
+          if (this.playerIsOnGround) {
+            playerVelocity.y = 10 * 5
+            this.playerIsOnGround = false
+          }
+        }
+        if (keys.includes(e.key)) {
+          this.personWalk()
+        }
+      },
+      e => {
+        if (keys.includes(e.key)) {
+          this.personWalk(false)
         }
       }
-    })
+    )
 
     this.bindEvent()
   }
@@ -107,6 +120,49 @@ export class Scene extends ThreeScene.Scene {
   // }
 
   createPerson() {
+    const size = 5
+
+    loadModel({
+      key: 'person',
+      name: '人物',
+      size: 1.73,
+      url: '/models/common/人物.glb'
+    }).then(glb => {
+      console.log(glb)
+
+      glb.position.setY(-0.5)
+      glb.rotateY(Math.PI * 1)
+      const player = new THREE.Group()
+      player.add(glb)
+      player.scale.setScalar(size)
+      this.player = player
+      this.addObject(player)
+
+      // 模型动画
+      const { action } = MD.createModelAnimate(player, glb.animations, false)
+      if (action) {
+        // 默认状态
+        const defaultAction = action['PlayOne-Headnod']
+        // 步行
+        const runging = action['PlayOne-Walk']
+        player.userData.defaultAction = defaultAction
+        player.userData.runging = runging
+        this.personWalk(false)
+      }
+
+      // 胶囊（人物）碰撞参数
+      player.userData.capsuleInfo = {
+        radius: 0.5 * size,
+        // 长度-相当于人物的高度-检测碰撞的边界高度
+        segment: new THREE.Line3(
+          new THREE.Vector3(),
+          new THREE.Vector3(0, 2, 0).multiplyScalar(size)
+        )
+      }
+
+      this.reset()
+    })
+    return
     const player = new THREE.Mesh(
       // 胶囊（宽度、高度、深度、分段、半径）
       new RoundedBoxGeometry(1, 2, 1, 10, 0.5),
@@ -115,23 +171,25 @@ export class Scene extends ThreeScene.Scene {
     // player.geometry.translate(0, -0.5, 0)
     // 控制碰撞关键参数
     player.geometry.translate(0, 0.5, 0)
-    const size = 5
     player.geometry.computeBoundingBox()
-
-    player.userData.capsuleInfo = {
-      radius: 0.5 * size,
-      // 长度-相当于人物的高度-检测碰撞的边界高度
-      segment: new THREE.Line3(new THREE.Vector3(), new THREE.Vector3(0, 2, 0).multiplyScalar(size))
-    }
 
     player.castShadow = true
     player.receiveShadow = true
     player.material.shadowSide = 2
-    player.scale.setScalar(size)
-    this.player = player
-    this.addObject(player)
+  }
 
-    this.reset()
+  // 人物行走
+  personWalk(isWalk = true) {
+    const personModel = this.player
+    if (!personModel) return
+    const { defaultAction, runging } = personModel.userData
+    if (isWalk) {
+      runging.play()
+      defaultAction.stop()
+    } else {
+      defaultAction.play()
+      runging.stop()
+    }
   }
 
   async loadModel() {
@@ -348,17 +406,25 @@ export class Scene extends ThreeScene.Scene {
   }
 
   onPointerUp(e) {
+    super.onPointerUp(e)
     raycasterUpdate(e, this.container, 1)
     raycaster.setFromCamera(pointer, this.camera)
     let interscts = raycaster.intersectObjects(this.group.children, true /* 是否检查所有后代 */)
     console.log(interscts[0])
   }
 
+  onPointerMove(e: PointerEvent) {
+    // 点击未弹起 且第一视角
+    if (this.pointer.isClick && this.player) {
+      this.player.rotation.y -= this.movementXToAngle(e.movementX)
+    }
+  }
+
   reset() {
     const player = this.player
     const camera = this.camera
     const controls = this.controls
-    if (!controls) return
+    if (!controls || !player) return
     // 速度
     playerVelocity.set(0, 0, 0)
     // 人物位置重置
@@ -371,6 +437,19 @@ export class Scene extends ThreeScene.Scene {
     // 相机坐标+人物坐标
     camera.position.add(player.position)
     controls.update()
+
+    // // 获取相机方向向量
+    // const dir = new THREE.Vector3()
+    // // 获取相机的视线方向
+    // camera.getWorldDirection(dir)
+    // // 设置高度
+    // dir.setY(-20)
+    // // 计算相机到人物的距离
+    // const length = player.position.distanceTo(camera.position.clone().setY(player.position.y))
+    // console.log(length)
+    // const dis = dir.multiplyScalar(length + 1e-4)
+    // console.log(dis, player.position)
+    // player.lookAt(dis)
   }
 
   // 键盘控制
@@ -378,7 +457,7 @@ export class Scene extends ThreeScene.Scene {
     const params = this.params
     const player = this.player
     const controls = this.controls
-    if (!controls) return
+    if (!controls || !player) return
 
     // 获取控制器方位角度
     const angle = controls.getAzimuthalAngle()
@@ -413,7 +492,7 @@ export class Scene extends ThreeScene.Scene {
   updateCalcVar() {
     const player = this.player
     const collider = this.collider
-    if (!collider) return
+    if (!collider || !player) return
 
     // 调整碰撞位置
     const capsuleInfo = player.userData.capsuleInfo
@@ -441,7 +520,7 @@ export class Scene extends ThreeScene.Scene {
   bvhCollionCheck() {
     const player = this.player
     const collider = this.collider
-    if (!collider) return
+    if (!collider || !player) return
 
     if (collider.geometry.boundsTree) {
       // 调整碰撞位置
@@ -470,7 +549,7 @@ export class Scene extends ThreeScene.Scene {
   playerMove(delta) {
     const player = this.player
     const collider = this.collider
-    if (!collider) return
+    if (!collider || !player) return
 
     // 检测人物在碰撞器世界空间中的调整位置
     const newPosition = tempVector
@@ -508,7 +587,7 @@ export class Scene extends ThreeScene.Scene {
     const collider = this.collider
     const camera = this.camera
     const controls = this.controls
-    if (!controls || !collider) return
+    if (!controls || !collider || !player) return
 
     // 是否在地面
     if (this.playerIsOnGround) {
@@ -539,7 +618,7 @@ export class Scene extends ThreeScene.Scene {
 
     // 相机位置更新
     camera.position.sub(controls.target)
-    const pos = player.position.clone().add(new THREE.Vector3(0, 10, 0))
+    const pos = player.position.clone().add(new THREE.Vector3(0, 8, 0))
     controls.target.copy(pos)
     camera.position.add(pos)
 
@@ -558,6 +637,11 @@ export class Scene extends ThreeScene.Scene {
       for (let i = 0; i < physicsSteps; i++) {
         this.updatePlayer(delta / physicsSteps)
       }
+    }
+
+    // 人物动画
+    if (this.player && this.player.userData.__mixer__) {
+      this.player.userData.__mixer__.update(delta)
     }
   }
 

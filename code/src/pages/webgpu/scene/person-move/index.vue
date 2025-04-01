@@ -19,7 +19,7 @@ const options: ConstructorParameters<typeof Scene>[0] = {
   },
   camera: {
     near: 1e-10,
-    position: [100, 100, -100]
+    position: [0, 100, -100]
   },
   controls: {
     enablePan: false,
