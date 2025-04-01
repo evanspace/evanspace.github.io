@@ -24,7 +24,7 @@ export default {
     cache: true,
     dbName: 'THREE__OFFICE__GPU_DB',
     tbName: 'TB',
-    version: 46
+    version: 47
   },
 
   // hover 距离配置

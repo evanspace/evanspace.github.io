@@ -18,13 +18,13 @@ export default [
   {
     key: 'floor_low',
     name: '低层',
-    size: 6.1,
+    size: 4.76,
     url: '/低层.glb'
   },
   {
     key: KEYS.M_CURTAIN,
     name: '窗帘',
-    size: 0.2,
+    size: 0.1,
     url: '/窗帘.glb'
   },
   {
