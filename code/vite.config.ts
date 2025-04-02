@@ -147,7 +147,7 @@ export default ({ mode }) => {
       // process: {},
     },
 
-    base: '/',
+    base: './',
     // 起个别名，在引用资源时，可以用‘@/资源路径’直接访问
     resolve: {
       alias: {
