@@ -18,7 +18,7 @@ $variables: map.merge(
 
 @include block( $name ) {
   @include set-component-css-var( $name, $variables );
-  @include bg-image('/imgs/login-bg-default.jpg');
+  @include bg-image('./imgs/login-bg-default.jpg');
 
   height: 100%;
 
