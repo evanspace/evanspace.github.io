@@ -1,7 +1,9 @@
 import { Action, ElMessageBox } from 'element-plus'
 import router from '../router'
 
-const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const { origin, pathname } = window.location
+// const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+const base = origin + (pathname === '/' ? '' : pathname)
 
 const url = base + '/sys/manifest.json'
 let lastETag = ''
