@@ -11,7 +11,7 @@ import tLoading from '@/components/loading/index.vue'
 
 import { NewScene } from './methods'
 import { useResize } from '@/hooks/scene-resize'
-import * as ThreeScene from 'three-scene/build/three-scene.module'
+import * as ThreeScene from 'three-scene'
 
 import { getPageOpts } from './data'
 

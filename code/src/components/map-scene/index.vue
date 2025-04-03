@@ -13,7 +13,7 @@ import { ref, onMounted, watch, withDefaults, toRaw } from 'vue'
 import { MapThreeScene } from './methods'
 import { useSky } from '@/hooks/sky'
 
-import { Utils, Hooks } from 'three-scene/build/three-scene.module'
+import { Utils, Hooks } from 'three-scene'
 
 const { transformGeoJSON } = Hooks.useConvertData()
 const { show, dialog } = Hooks.useDialog({

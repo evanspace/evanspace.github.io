@@ -58,7 +58,7 @@ import { base } from './methods'
 import { getPageOpts, getUploadOpts } from './data'
 
 import { useResize } from '@/hooks/scene-resize'
-import { Hooks } from 'three-scene/build/three-scene.module'
+import { Hooks } from 'three-scene'
 
 const pageOpts = reactive(getPageOpts())
 const { uploadModel } = Hooks.useUpload({

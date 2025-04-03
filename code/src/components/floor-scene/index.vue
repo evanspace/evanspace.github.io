@@ -35,7 +35,7 @@ import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 
 import { FloorThreeScene } from './methods'
 import { colors } from './colors'
-import { Utils, Hooks } from 'three-scene/build/three-scene.module'
+import { Utils, Hooks } from 'three-scene'
 import { useSky } from '@/hooks/sky'
 
 import DEFAULTCONFIG from './config.ts'

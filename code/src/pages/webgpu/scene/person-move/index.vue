@@ -17,6 +17,9 @@ const options: ConstructorParameters<typeof Scene>[0] = {
     visible: true,
     fork: true
   },
+  render: {
+    alpha: true
+  },
   camera: {
     near: 1e-10,
     position: [-100, 100, -100]
