@@ -51,10 +51,10 @@ export default ({ mode }) => {
         jsonPath: './public/sys/manifest.json'
       }),
       // 压缩配置
-      // viteCompression({
-      //   algorithm: 'brotliCompress', // gzip 压缩，br 压缩
-      //   ext: '.br'
-      // }),
+      viteCompression({
+        algorithm: 'brotliCompress', // gzip 压缩，br 压缩
+        ext: '.br'
+      }),
       // 压缩配置
       viteCompression({
         algorithm: 'gzip', // gzip 压缩，br 压缩

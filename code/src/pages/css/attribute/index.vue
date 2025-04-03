@@ -199,7 +199,7 @@ const list = reactive([
     active: 'auto',
     activeValue: 'auto',
     inactiveValue: 'pixelated',
-    content: `<img src="/imgs/icon-48.png" style="width: 300px; height: 300px;" />`
+    content: `<img src="./imgs/icon-48.png" style="width: 300px; height: 300px;" />`
   },
   {
     name: 'scroll-snap-type',
