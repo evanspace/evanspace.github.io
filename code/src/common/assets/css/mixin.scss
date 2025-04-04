@@ -1,4 +1,4 @@
-@forward '../mixins/function.scss';
+@use '../mixins/function.scss' as *;
 @use '../mixins/config.scss' as *;
 
 @mixin clearfix {
@@ -36,6 +36,8 @@
 }
 
 
+$B: null;
+$E: null;
 // 块
 @mixin block( $block) {
   $B: $block !global;

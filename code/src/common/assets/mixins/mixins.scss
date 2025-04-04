@@ -1,6 +1,9 @@
-@forward 'function';
-@forward 'utils';
+@use 'function' as *;
+@use 'utils' as *;
 @use 'config' as *;
+
+$B: null;
+$E: null;
 // 块
 @mixin b( $block ) {
   $B: $namespace + $common-separator + $block !global;

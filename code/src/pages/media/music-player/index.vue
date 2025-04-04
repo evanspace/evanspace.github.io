@@ -367,6 +367,7 @@ const onCutSong = (cut = 1) => {
 }
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
+// const base = import.meta.env.VITE_GIT_OSS
 // 指定歌曲
 const onAssinSong = (index = 0) => {
   if (audio.index == index) return
@@ -552,6 +553,7 @@ const dark = `url(${import.meta.env.VITE_GIT_OSS}/imgs/common/sk-dark.png)`
 </script>
 
 <style lang="scss" scoped>
+@use './style.scss';
 .page {
   --dark-bg: v-bind(dark);
   overflow: hidden;
@@ -559,5 +561,4 @@ const dark = `url(${import.meta.env.VITE_GIT_OSS}/imgs/common/sk-dark.png)`
   background-position: center;
   background-size: cover;
 }
-@import './style.scss';
 </style>

@@ -198,5 +198,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" module>
-@import './style.scss';
+@use './style.scss';
 </style>

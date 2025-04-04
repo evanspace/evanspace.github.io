@@ -1,3 +1,6 @@
+@use 'sass:color';
+@use 'sass:list';
+
 $colors:
   #67c23a,
   #f56c6c,
@@ -40,11 +43,11 @@ $colors:
         border-bottom: 1px solid transparent;
       }
       @each $c in $colors {
-        $i: index($list: $colors, $value: $c);
+        $i: list.index($list: $colors, $value: $c);
         &:nth-child(#{ $i }) {
           color: $c;
           &:hover {
-            color: darken($color: $c, $amount: 20%);
+            color: color.adjust($color: $c, $lightness: 20%);
             &::after {
               display: block;
               border-color: $c;
