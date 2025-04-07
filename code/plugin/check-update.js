@@ -47,9 +47,9 @@ export function checkUpdate(options) {
     // },
 
     // 正式开始构建流程
-    buildStart() {
-      console.log('buildStart')
-    },
+    // buildStart() {
+    //   console.log('buildStart')
+    // },
 
     // build 构建结束
     // buildEnd() {
