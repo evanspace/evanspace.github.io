@@ -1,7 +1,8 @@
+@use 'sass:map';
 
 // 文字大小
 $font-sizes: () !default;
-$font-sizes: map-merge(
+$font-sizes: map.merge(
   (
     xs: 12px,
     sm: 14px,

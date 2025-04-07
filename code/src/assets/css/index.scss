@@ -1,6 +1,6 @@
 
-@import './reset.scss';
-@import '../font/index.scss';
+@use './reset.scss';
+@use '../font/index.scss';
 
 .page {
   height: 100%;

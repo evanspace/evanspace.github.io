@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
 
-    "target": "ES2020",
+    "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
 
     // 当使用第三方库时 需要配置这个选项。否则会有红色波浪线错误提示
     "types":[
       "node",
-      "mockjs",
-      "element-plus"
+      // "mockjs",
+      // "element-plus"
     ],
-    "lib": ["ES2020", "DOM", "DOM.Iterable", "WebWorker"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "skipLibCheck": true,
 
     /* Bundler mode */

@@ -1,4 +1,4 @@
-
+@use 'sass:list';
 .page {
   display: flex;
   flex-wrap: wrap;
@@ -17,9 +17,9 @@
   justify-content: center;
 
   $types: solid dashed dotted double groove;
-  @for $i from 1 through length( $types ) {
+  @for $i from 1 through list.length( $types ) {
     &:nth-child(#{ $i }) {
-      border-style: nth($types, $i );
+      border-style: list.nth($types, $i );
     }
   }
 }

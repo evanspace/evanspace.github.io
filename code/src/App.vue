@@ -1,6 +1,6 @@
 <template>
-  <el-config-provider :locale="locales[ locale ]" namespace="el">
-    <router-view/>
+  <el-config-provider :locale="locales[locale]" namespace="el">
+    <router-view />
   </el-config-provider>
 </template>
 
@@ -16,50 +16,49 @@ const appStore = useAppStore()
 const locales = {
   zhCN: {
     ...zhCN,
-    ...dZhCn,
+    ...dZhCn
   },
   en: {
     ...en,
     ...dEn
-  },
+  }
 }
-const locale = computed( () => appStore.language )
-
+const locale = computed(() => appStore.language)
 
 const base = import.meta.env.VITE_BEFORE_STATIC_PATH
-const getDataHref = ( el, name = 'href' ) => {
-  const href = el.dataset[ name ]
-  el.removeAttribute( 'data-' + name )
+const getDataHref = (el, name = 'href') => {
+  const href = el.dataset[name]
+  el.removeAttribute('data-' + name)
   return base + href
 }
 
 // 更换图标、PWA 路径
 const changeLinkHref = () => {
   // 图标
-  const icon = <HTMLLinkElement>document.querySelector( 'link[rel="icon"]' )
-  icon.href = getDataHref( icon )
+  const icon = <HTMLLinkElement>document.querySelector('link[rel="icon"]')
+  icon.href = getDataHref(icon)
   // PWA
-  const manifest = <HTMLLinkElement>document.querySelector( 'link[rel="manifest"]' )
-  manifest.href = getDataHref( manifest )
+  const manifest = <HTMLLinkElement>document.querySelector('link[rel="manifest"]')
+  manifest.href = getDataHref(manifest)
 }
 changeLinkHref()
 
-onMounted( () => {
+onMounted(() => {
   windowResize()
-  window.addEventListener( 'resize', windowResize, false )
-} )
+  window.addEventListener('resize', windowResize, false)
+})
 
-onBeforeUnmount( () => {
-  window.removeEventListener( 'resize', windowResize )
-} )
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', windowResize)
+})
 
 const windowResize = () => {
   // 菜单是否展开
   let opened = appStore.sidebar.opened
-  if ( opened ) {
+  if (opened) {
     let w = document.body.clientWidth
     // 宽度是否小于 1200
-    if ( w < 1200 ) {
+    if (w < 1200) {
       // 收起
       // appStore.toggleSideBar()
     }
@@ -68,12 +67,12 @@ const windowResize = () => {
 }
 
 // 获取界面字体大小
-const screen = reactive( {
+const screen = reactive({
   width: 1920,
-  size: 14,
-} )
+  size: 14
+})
 const pageFontSize = () => {
-  const app: any = document.getElementById( 'app' )
+  const app: any = document.getElementById('app')
   // 容器宽度
   let containerWidth = app.clientWidth || screen.width
   // 字体大小比例
@@ -86,5 +85,4 @@ const pageFontSize = () => {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

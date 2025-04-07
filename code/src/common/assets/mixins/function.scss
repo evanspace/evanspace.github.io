@@ -1,4 +1,7 @@
+@use 'sass:string';
+@use 'sass:meta';
 @use 'config';
+
 // 拼接变量名称
 // joinVarName( ( 'button', 'text-color' ) ) => '--el-button-text-color'
 @function joinVarName( $list ) {
@@ -25,8 +28,8 @@
 
 // 选择器转换做字符串
 @function selectorToString( $selector ) {
-  $selector: inspect( $selector );
-  $selector: str-slice( $selector, 2, -2);
+  $selector: meta.inspect( $selector );
+  $selector: string.slice( $selector, 2, -2);
   @return $selector;
 }
 
@@ -34,7 +37,7 @@
 @function containsModifier( $selector ) {
   $selector: selectorToString( $selector );
   // 返回 substring 子字符串第一次在 string 中出现的位置。
-  @if str-index( $selector, config.$modifier-separator ) {
+  @if string.index( $selector, config.$modifier-separator ) {
     @return true;
   } @else {
     @return false;
@@ -45,7 +48,7 @@
 @function containWhenFlag( $selector ) {
   $selector: selectorToString( $selector );
 
-  @if str-index( $selector, '.' + config.$state-prefix ) {
+  @if string.index( $selector, '.' + config.$state-prefix ) {
     @return true;
   } @else {
     @return false;
@@ -56,7 +59,7 @@
 @function containPseudoClass( $selector ) {
   $selector: selectorToString( $selector );
 
-  @if str-index( $selector, ':' ) {
+  @if string.index( $selector, ':' ) {
     @return true;
   } @else {
     @return false;
