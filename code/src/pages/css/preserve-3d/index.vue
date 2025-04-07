@@ -2,7 +2,11 @@
   <div class="page">
     <div :class="$style.wrap">
       <div :class="[$style.demo]">
-        <el-radio-group v-model="opts.active" class="pl-sm" style="position: relative; z-index: 2">
+        <el-radio-group
+          v-model="(opts.active as string | number | boolean | undefined)"
+          class="pl-sm"
+          style="position: relative; z-index: 2"
+        >
           <el-radio v-for="it in opts.list" :value="it"></el-radio>
         </el-radio-group>
         <div class="wrap">

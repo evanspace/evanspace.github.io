@@ -56,7 +56,7 @@
 
         <el-color-picker
           title="歌词颜色"
-          v-model="color"
+          v-model="(color as any)"
           show-alpha
           size="small"
           :style="{ marginLeft: '4px' }"

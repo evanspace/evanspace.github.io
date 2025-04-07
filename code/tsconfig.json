@@ -8,8 +8,9 @@
     // 当使用第三方库时 需要配置这个选项。否则会有红色波浪线错误提示
     "types":[
       "node",
+      "vite/client",
       // "mockjs",
-      // "element-plus"
+      "element-plus/global"
     ],
     "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "skipLibCheck": true,

@@ -1,8 +1,12 @@
 <template>
   <div class="navbar">
-
     <!-- 切换按钮 -->
-    <hamburger v-if="sidebar.hasToggleBtn" class="hamburger-container" :is-active="sidebar.opened" @toggleClick="toggleSideBar" />
+    <hamburger
+      v-if="sidebar.hasToggleBtn"
+      class="hamburger-container"
+      :is-active="sidebar.opened"
+      @toggleClick="toggleSideBar"
+    />
 
     <div class="center-menu">
       <!-- 面包屑 -->
@@ -14,12 +18,11 @@
 
     <!-- 右边用户菜单 -->
     <div class="right-menu">
-
       <!-- 下拉企业列表 -->
       <transition name="el-zoom-in-center" v-if="userStore.showProject">
         <div class="project-select">
-          <el-select 
-            v-model="projectId" 
+          <el-select
+            v-model="projectId"
             v-if="!$route.meta?.noProject"
             filterable
             placeholder="请选择"
@@ -38,7 +41,7 @@
       <!-- 皮肤 -->
       <div class="right-menu-item skin" v-if="hasSkin">
         <el-switch
-          v-model="skin"
+          v-model="(skin as string | number | boolean)"
           inline-prompt
           active-value="dark"
           inactive-value="light"
@@ -58,7 +61,13 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item v-for="item in langs" :key="item.key" :disabled="item.key == locale" @click="changeLanguage( item )">{{ item.title }}</el-dropdown-item>
+              <el-dropdown-item
+                v-for="item in langs"
+                :key="item.key"
+                :disabled="item.key == locale"
+                @click="changeLanguage(item)"
+                >{{ item.title }}</el-dropdown-item
+              >
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -78,10 +87,17 @@
 
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item :icon="House" @click="onRouteTo( linkMap.home )">{{ $t( 'user.home' ) }}</el-dropdown-item>
-              <el-dropdown-item v-if="userStore.changePassword" :icon="Lock" @click="onRouteTo( linkMap.password )">{{ $t( 'user.changePwd' ) }}</el-dropdown-item>
-              <el-dropdown-item divided :icon="SwitchButton" @click="onRouteTo( linkMap.logout )">
-                <span>{{ $t( 'user.logout' ) }}</span>
+              <el-dropdown-item :icon="House" @click="onRouteTo(linkMap.home)">{{
+                $t('user.home')
+              }}</el-dropdown-item>
+              <el-dropdown-item
+                v-if="userStore.changePassword"
+                :icon="Lock"
+                @click="onRouteTo(linkMap.password)"
+                >{{ $t('user.changePwd') }}</el-dropdown-item
+              >
+              <el-dropdown-item divided :icon="SwitchButton" @click="onRouteTo(linkMap.logout)">
+                <span>{{ $t('user.logout') }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -101,41 +117,46 @@ import { useAppStore, useUserStore } from '@/stores'
 
 import { langs } from '@/locales'
 
-
-defineComponent( {
-  ArrowDown, Moon, Sunny, House, Lock, Avatar, SwitchButton
-} )
+defineComponent({
+  ArrowDown,
+  Moon,
+  Sunny,
+  House,
+  Lock,
+  Avatar,
+  SwitchButton
+})
 
 const appStore = useAppStore()
 const userStore = useUserStore()
-const skin = ref( appStore.skin )
-const sidebar: any = computed( () => appStore.sidebar )
-const hasModule: any = computed( () => appStore.module.show )
-const navbar: any = computed( () => appStore.navbar )
-const userInfo: any = computed( () => userStore.userInfo )
-const showAvatar = computed( () => userStore.showAvatar )
+const skin = ref(appStore.skin)
+const sidebar: any = computed(() => appStore.sidebar)
+const hasModule: any = computed(() => appStore.module.show)
+const navbar: any = computed(() => appStore.navbar)
+const userInfo: any = computed(() => userStore.userInfo)
+const showAvatar = computed(() => userStore.showAvatar)
 
-const locale = computed( () => appStore.language )
-const hasI18n = computed( () => appStore.i18n )
-const hasSkin = computed( () => appStore.toggleSkin )
+const locale = computed(() => appStore.language)
+const hasI18n = computed(() => appStore.i18n)
+const hasSkin = computed(() => appStore.toggleSkin)
 
 const toggleSideBar = () => {
   appStore.toggleSideBar()
 }
 
-const projectId = ref( userStore.projectId )
-const projects = computed( () => userStore.projects )
+const projectId = ref(userStore.projectId)
+const projects = computed(() => userStore.projects)
 
-const onChangeProject = ( e ) => {
-  userStore.updateProjectId( e )
+const onChangeProject = e => {
+  userStore.updateProjectId(e)
 }
 
-const changeSkin = ( e: any ) => {
-  appStore.updateSkin( e )
+const changeSkin = (e: any) => {
+  appStore.updateSkin(e)
 }
 
-const changeLanguage = ( e: any ) => {
-  appStore.updateLangeuage( e.key )
+const changeLanguage = (e: any) => {
+  appStore.updateLangeuage(e.key)
 }
 
 const router = useRouter()
@@ -147,16 +168,16 @@ const linkMap = {
   password: '/changepwd',
   logout: 'LOGOUT'
 }
-const onRouteTo = ( path: string ) => {
-  if ( path === 'LOGOUT' ) {
+const onRouteTo = (path: string) => {
+  if (path === 'LOGOUT') {
     logout()
   } else {
-    router.push( `${ base }${ path }` )
+    router.push(`${base}${path}`)
   }
 }
 const logout = async () => {
   await userStore.logout()
-  router.push( `${ base }/login?redirect=${ route.fullPath }` )
+  router.push(`${base}/login?redirect=${route.fullPath}`)
 }
 </script>
 
@@ -173,12 +194,12 @@ const logout = async () => {
     float: left;
     height: 100%;
     cursor: pointer;
-    transition: background .3s;
+    transition: background 0.3s;
     line-height: 60px;
     -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025);
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -214,7 +235,7 @@ const logout = async () => {
       }
     }
     &:focus {
-      outline: none
+      outline: none;
     }
     .right-menu-item {
       margin: 0 5px;
@@ -269,5 +290,3 @@ const logout = async () => {
   }
 }
 </style>
-
-

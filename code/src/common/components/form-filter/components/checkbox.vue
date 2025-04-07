@@ -1,15 +1,16 @@
 <template>
   <el-checkbox-group
-    v-model="input"
+    v-model="(input as import('element-plus/es/components/checkbox').CheckboxGroupValueType)"
     :style="style"
     @change="onChange"
   >
-    <el-checkbox 
-      v-for="item in items" 
+    <el-checkbox
+      v-for="item in items"
       v-bind="attrs"
-      :value="item[ custom?.value || 'value' ]"
-      :disabled="item[ custom?.disabled || 'disabled' ]"
-    >{{ t( item[ custom?.label || 'label' ] ) }}</el-checkbox>
+      :value="item[custom?.value || 'value']"
+      :disabled="item[custom?.disabled || 'disabled']"
+      >{{ t(item[custom?.label || 'label']) }}</el-checkbox
+    >
   </el-checkbox-group>
 </template>
 
@@ -18,42 +19,44 @@ import type { EFormItemCustom } from '../../type'
 import { useLocale } from '../../../mixins/use-locale'
 const { t } = useLocale()
 
-const props = withDefaults( defineProps<{
-  modelValue?: string[] | number[]
-  // 自定义展示字段
-  custom?: Partial<EFormItemCustom>
-  // 选项
-  items?: any[]
-  // 过滤 style
-  style?: import('vue').StyleValue | string
-} >(), {
-  items: () => ( [] ),
-} )
+const props = withDefaults(
+  defineProps<{
+    modelValue?: string[] | number[]
+    // 自定义展示字段
+    custom?: Partial<EFormItemCustom>
+    // 选项
+    items?: any[]
+    // 过滤 style
+    style?: import('vue').StyleValue | string
+  }>(),
+  {
+    items: () => []
+  }
+)
 
 const attrs = useAttrs()
 
-const emit = defineEmits( [ 'blur', 'change', 'focus', 'update:modelValue' ] )
-const input = ref( props.modelValue )
-const options = ref( props.items )
+const emit = defineEmits(['blur', 'change', 'focus', 'update:modelValue'])
+const input = ref(props.modelValue)
+const options = ref(props.items)
 watch(
   () => props.modelValue,
-  ( val ) => {
+  val => {
     input.value = val
   }
 )
 watch(
   () => props.items,
-  ( val ) => {
+  val => {
     options.value.length = 0
     options.value = val
   }
 )
 
-const onChange = ( _e ) => {
-  emit( 'update:modelValue', input.value )
-  emit( 'change', input.value )
+const onChange = _e => {
+  emit('update:modelValue', input.value)
+  emit('change', input.value)
 }
 </script>
-  
-<style>
-</style>
+
+<style></style>

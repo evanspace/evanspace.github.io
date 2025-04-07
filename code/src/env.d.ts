@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-/// <reference types="element-plus/global" />
 /// <reference types="./common/global.d.ts" />
 /// <reference types="./components/index.d.ts" />
 

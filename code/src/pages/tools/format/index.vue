@@ -110,7 +110,10 @@
       <template #header>
         <div :class="$style.title">JSON 序列化</div>
 
-        <el-checkbox v-model="jsonSerialize.empty">过滤空字符串</el-checkbox>
+        <el-checkbox
+          v-model="(jsonSerialize.empty as import('element-plus/es/components/checkbox').CheckboxValueType)"
+          >过滤空字符串</el-checkbox
+        >
       </template>
       <div :class="$style.content">
         <div :class="$style.item">
@@ -139,7 +142,10 @@
     <el-card>
       <template #header>
         <div :class="$style.title">base 64 转换</div>
-        <el-checkbox v-model="base64.replace">去除前缀</el-checkbox>
+        <el-checkbox
+          v-model="(base64.replace as import('element-plus/es/components/checkbox').CheckboxValueType)"
+          >去除前缀</el-checkbox
+        >
         <br />
         <input type="file" @change="onBase64Change" />
       </template>

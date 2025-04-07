@@ -48,7 +48,10 @@
               :value="MS.addstrnums(i, 2)"
             ></el-option>
           </el-select>
-          <el-radio-group class="ml-sm" v-model="pageOpts.sex">
+          <el-radio-group
+            class="ml-sm"
+            v-model="(pageOpts.sex as number | string | boolean | undefined)"
+          >
             <el-radio :value="0">男</el-radio>
             <el-radio :value="1">女</el-radio>
           </el-radio-group>
@@ -98,7 +101,7 @@ const pageOpts = reactive({
   year,
   month: MS.addstrnums(month, 2),
   day: MS.addstrnums(day, 2),
-  sex: 0,
+  sex: 0 as number | string | boolean,
   area: MS.identityAreaCode[0].value,
   checkId: '',
   checked: false

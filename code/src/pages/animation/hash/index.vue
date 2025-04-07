@@ -55,7 +55,7 @@ const list = ref([
   }
 ])
 
-const radio = ref('')
+const radio = ref<string | number | boolean | undefined>('')
 const current = ref([])
 let __timer__: any
 

@@ -78,9 +78,17 @@
       <div :class="$style['drag-info']">
         <div class="flex flex-ac">
           <span>画布大小：</span>
-          <el-input-number size="small" v-model="pageOpts.drag.width" @keyup.stop />
+          <el-input-number
+            size="small"
+            v-model="(pageOpts.drag.width as number | undefined)"
+            @keyup.stop
+          />
           <span class="pl-xs pr-xs"> X </span>
-          <el-input-number size="small" v-model="pageOpts.drag.height" @keyup.stop />
+          <el-input-number
+            size="small"
+            v-model="(pageOpts.drag.height as number | undefined)"
+            @keyup.stop
+          />
         </div>
       </div>
 
@@ -140,7 +148,7 @@
               <span>角度：</span>
               <el-slider
                 class="f-x"
-                v-model="checkedInfo.rotate"
+                v-model="(checkedInfo.rotate as number | number[])"
                 :min="0"
                 :max="360"
                 show-input
@@ -154,7 +162,7 @@
               <span class="pt-xs">关联：</span>
               <el-checkbox-group
                 class="f-x"
-                v-model="(checkedInfo.bind as string[])"
+                v-model="(checkedInfo.bind as import('element-plus/es/components/checkbox').CheckboxGroupValueType)"
                 @change="addRecord"
               >
                 <el-checkbox v-for="item in checkboxList" :value="item.deviceCode">
@@ -177,13 +185,20 @@
                     <el-button size="small" circle plain @click="onDelParallel(i)">
                       <icon-ep:delete />
                     </el-button>
-                    <el-checkbox-group class="f-x" v-model="its[0]" @change="addRecord">
+                    <el-checkbox-group
+                      class="f-x"
+                      v-model="(its[0] as import('element-plus/es/components/input-number').CheckboxGroupValueType)"
+                      @change="addRecord"
+                    >
                       <el-checkbox v-for="item in checkboxPumps" :value="item.deviceCode">
                         {{ item.name }}
                       </el-checkbox>
                     </el-checkbox-group>
                     <span>阀门：</span>
-                    <el-checkbox-group class="f-x" v-model="its[1]">
+                    <el-checkbox-group
+                      class="f-x"
+                      v-model="(its[1] as import('element-plus/es/components/input-number').CheckboxGroupValueType)"
+                    >
                       <el-checkbox v-for="item in checkboxValves" :value="item.deviceCode">
                         {{ item.name }}
                       </el-checkbox>

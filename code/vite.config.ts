@@ -144,7 +144,7 @@ export default ({ mode }) => {
 
     // 定义全局变量
     define: {
-      // process: {},
+      process: {}
     },
 
     base: './',

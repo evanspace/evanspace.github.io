@@ -4,7 +4,10 @@
       <div class="flex flex-ac flex-jc">
         <input type="text" v-model="opts.text" />
         <input type="color" v-model="opts.color" />
-        <el-radio-group v-model="opts.imgIndex" style="margin-left: 5px">
+        <el-radio-group
+          v-model="(opts.imgIndex as string | number | boolean | undefined)"
+          style="margin-left: 5px"
+        >
           <el-radio v-for="(item, index) in opts.imgs" :value="index">{{ item.name }}</el-radio>
         </el-radio-group>
       </div>
