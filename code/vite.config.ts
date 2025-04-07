@@ -167,8 +167,8 @@ export default ({ mode }) => {
       preprocessorOptions: {
         // 全局样式，存放一些主题等变量
         scss: {
-          javascriptEnabled: true,
           // 解决 sass 版本升级后 api 发生变化
+          javascriptEnabled: true,
           api: 'modern-compiler',
           silenceDeprecations: ['legacy-js-api'],
           // 替换 Element Plus 内置的 scss 变量
