@@ -56,7 +56,7 @@
 
         <el-color-picker
           title="歌词颜色"
-          v-model="(color as any)"
+          v-model="color"
           show-alpha
           size="small"
           :style="{ marginLeft: '4px' }"
@@ -169,7 +169,7 @@ const lrcObj = reactive<any>({
 })
 
 // 颜色
-const color = ref('#ff4500')
+const color = ref<any>('#ff4500')
 const predefineColors = ref([
   '#0add31',
   '#ff4500',

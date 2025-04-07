@@ -23,7 +23,7 @@
         <div class="project-select">
           <el-select
             v-model="projectId"
-            v-if="!$route.meta?.noProject"
+            v-if="!route.meta?.noProject"
             filterable
             placeholder="请选择"
             @change="onChangeProject"
@@ -41,7 +41,7 @@
       <!-- 皮肤 -->
       <div class="right-menu-item skin" v-if="hasSkin">
         <el-switch
-          v-model="(skin as string | number | boolean)"
+          v-model="skin"
           inline-prompt
           active-value="dark"
           inactive-value="light"
@@ -114,8 +114,10 @@ import hamburger from './top-module/hamburger.vue'
 import breadcrumb from './top-module/breadcrumb.vue'
 
 import { useAppStore, useUserStore } from '@/stores'
-
 import { langs } from '@/locales'
+
+import { useI18n } from 'vue-i18n'
+const { t: $t } = useI18n()
 
 defineComponent({
   ArrowDown,

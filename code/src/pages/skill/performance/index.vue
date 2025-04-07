@@ -2,7 +2,7 @@
   <div class="page p-sm h-100 col-flex">
     <div class="pb-sm">
       <div>
-        <el-input-number v-model="(count as number | undefined)" :min="5000"></el-input-number>
+        <el-input-number v-model="count" :min="5000"></el-input-number>
         个元素
       </div>
       <div class="pt-sm">当前第：{{ current }} 个</div>

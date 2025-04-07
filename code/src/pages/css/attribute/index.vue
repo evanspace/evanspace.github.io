@@ -9,7 +9,7 @@
         </el-select>
         <el-switch
           v-else-if="item.active != void 0"
-          v-model="(item.active as string | number | boolean)"
+          v-model="item.active"
           :active-value="item.activeValue"
           :inactive-value="item.inactiveValue"
           :inline-prompt="true"

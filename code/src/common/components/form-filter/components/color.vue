@@ -1,6 +1,6 @@
 <template>
   <el-color-picker
-    v-model="(input as any)"
+    v-model="input"
     :predefine="predefine"
     v-bind="attrs"
     @change="onChange"

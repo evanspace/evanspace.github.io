@@ -78,17 +78,9 @@
       <div :class="$style['drag-info']">
         <div class="flex flex-ac">
           <span>画布大小：</span>
-          <el-input-number
-            size="small"
-            v-model="(pageOpts.drag.width as number | undefined)"
-            @keyup.stop
-          />
+          <el-input-number size="small" v-model="pageOpts.drag.width" @keyup.stop />
           <span class="pl-xs pr-xs"> X </span>
-          <el-input-number
-            size="small"
-            v-model="(pageOpts.drag.height as number | undefined)"
-            @keyup.stop
-          />
+          <el-input-number size="small" v-model="pageOpts.drag.height" @keyup.stop />
         </div>
       </div>
 
@@ -148,7 +140,7 @@
               <span>角度：</span>
               <el-slider
                 class="f-x"
-                v-model="(checkedInfo.rotate as number | number[])"
+                v-model="checkedInfo.rotate"
                 :min="0"
                 :max="360"
                 show-input

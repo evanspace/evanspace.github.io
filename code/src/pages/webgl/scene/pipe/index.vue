@@ -4,7 +4,7 @@
       <div class="flex flex-ac">
         <span>点位：</span>
         <el-switch
-          v-model.boolean="(pageOpts.dotShowStrict as string | number | boolean)"
+          v-model="pageOpts.dotShowStrict"
           active-text="严格"
           inactive-text="全显"
           inline-prompt

@@ -1,9 +1,5 @@
 <template>
-  <el-checkbox-group
-    v-model="(input as import('element-plus/es/components/checkbox').CheckboxGroupValueType)"
-    :style="style"
-    @change="onChange"
-  >
+  <el-checkbox-group v-model="input" :style="style" @change="onChange">
     <el-checkbox
       v-for="item in items"
       v-bind="attrs"

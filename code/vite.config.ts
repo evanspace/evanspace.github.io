@@ -51,10 +51,10 @@ export default ({ mode }) => {
         jsonPath: './public/sys/manifest.json'
       }),
       // 压缩配置
-      viteCompression({
-        algorithm: 'brotliCompress', // gzip 压缩，br 压缩
-        ext: '.br'
-      }),
+      // viteCompression({
+      //   algorithm: 'brotliCompress', // gzip 压缩，br 压缩
+      //   ext: '.br'
+      // }),
       // 压缩配置
       viteCompression({
         algorithm: 'gzip', // gzip 压缩，br 压缩
@@ -144,7 +144,8 @@ export default ({ mode }) => {
 
     // 定义全局变量
     define: {
-      process: {}
+      // 禁止使用，编译报错
+      // process: {}
     },
 
     base: './',

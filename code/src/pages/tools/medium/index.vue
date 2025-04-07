@@ -14,18 +14,14 @@
         <div class="flex flex-ac">
           <div class="name">图片大小占比</div>
           <div class="f-x pl-sm">
-            <el-slider v-model="(imgOpts.ratio as number | number[])" :max="200"></el-slider>
+            <el-slider v-model="imgOpts.ratio" :max="200"></el-slider>
           </div>
         </div>
 
         <div class="flex flex-ac">
           <div class="name">压缩等级</div>
           <div class="f-x pl-sm">
-            <el-slider
-              v-model="(imgOpts.quality as number | number[])"
-              :max="1"
-              :step="0.01"
-            ></el-slider>
+            <el-slider v-model="imgOpts.quality" :max="1" :step="0.01"></el-slider>
           </div>
         </div>
 

@@ -48,10 +48,7 @@
               :value="MS.addstrnums(i, 2)"
             ></el-option>
           </el-select>
-          <el-radio-group
-            class="ml-sm"
-            v-model="(pageOpts.sex as number | string | boolean | undefined)"
-          >
+          <el-radio-group class="ml-sm" v-model="pageOpts.sex">
             <el-radio :value="0">男</el-radio>
             <el-radio :value="1">女</el-radio>
           </el-radio-group>
