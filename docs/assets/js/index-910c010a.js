@@ -1,0 +1,1 @@
+import{_ as s}from"./index-ca31967b.js";import{o,f as d,g as r}from"./vendor-d07051c1.js";const a={class:"index"};const n=s({},[["render",function(s,n){return o(),d("div",a,n[0]||(n[0]=[r("div",{class:"sword"},null,-1)]))}],["__scopeId","data-v-87df1044"]]);export{n as default};
