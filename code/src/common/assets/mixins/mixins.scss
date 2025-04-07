@@ -1,12 +1,11 @@
-@use 'function' as *;
-@use 'utils' as *;
-@use 'config' as *;
+@use './function';
+@use './config';
 
 $B: null;
 $E: null;
 // 块
 @mixin b( $block ) {
-  $B: $namespace + $common-separator + $block !global;
+  $B: config.$namespace + config.$common-separator + $block !global;
 
   .#{ $B } {
     @content;
@@ -22,12 +21,12 @@ $E: null;
     $currentSelector: #{ $currentSelector +
       '.' +
       $B +
-      $element-separator +
+      config.$element-separator +
       $unit +
       ',' };
   }
 
-  @if hitAllSpecialNestRule( $selector ) {
+  @if function.hitAllSpecialNestRule( $selector ) {
     @at-root {
       #{ $selector } {
         #{ $currentSelector } {
@@ -51,7 +50,7 @@ $E: null;
   @each $unit in $modifier {
     $currentSelector: #{ $currentSelector +
       $selector +
-      $modifier-separator +
+      config.$modifier-separator +
       $unit +
       ',' };
   }
@@ -69,12 +68,12 @@ $E: null;
   $interpolation: '';
 
   @if $E-flag {
-    $interpolation: $element-separator + $E-flag;
+    $interpolation: config.$element-separator + $E-flag;
   }
 
   @at-root {
     #{ $selector } {
-      .#{ $B + $interpolation + $modifier-separator + $modifier } {
+      .#{ $B + $interpolation + config.$modifier-separator + $modifier } {
         @content;
       }
     }
@@ -84,7 +83,7 @@ $E: null;
 // 状态
 @mixin when( $state ) {
   @at-root {
-    &.#{ $state-prefix + $state } {
+    &.#{ config.$state-prefix + $state } {
       @content;
     }
   }

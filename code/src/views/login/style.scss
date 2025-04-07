@@ -1,7 +1,7 @@
 @use 'sass:map';
 @use '@assets/css/mixin.scss' as *;
-@use '@assets/mixins/mixins.scss' as *;
-@use '@assets/mixins/var.scss' as *;
+@use '@assets/mixins/var.scss';
+@use '@assets/mixins/function.scss';
 
 
 $name: 'login-page' !default;
@@ -17,7 +17,7 @@ $variables: map.merge(
 );
 
 @include block( $name ) {
-  @include set-component-css-var( $name, $variables );
+  @include var.set-component-css-var( $name, $variables );
   @include bg-image('../../imgs/login-bg-default.jpg');
 
   height: 100%;
@@ -36,7 +36,7 @@ $variables: map.merge(
     padding: 50px 30px;
     overflow: hidden;
     transition: all .3s;
-    box-shadow: getCssVar( $name, 'box-shadow' );
+    box-shadow: function.getCssVar( $name, 'box-shadow' );
     border-radius: 10px;
     backdrop-filter: blur(5px);
     .bg {
@@ -44,12 +44,12 @@ $variables: map.merge(
       left: 0;
       width: 100%;
       height: 100%;
-      border: 1px solid getCssVar( $name, 'border-color' );
+      border: 1px solid function.getCssVar( $name, 'border-color' );
       z-index: -1;
       opacity: .3;
       position: absolute;
       border-radius: 10px;
-      background-color: getCssVar( $name, 'bg-color' );
+      background-color: function.getCssVar( $name, 'bg-color' );
     }
     .title {
       position: relative;

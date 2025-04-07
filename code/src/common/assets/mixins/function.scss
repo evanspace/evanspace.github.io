@@ -1,6 +1,6 @@
 @use 'sass:string';
 @use 'sass:meta';
-@use 'config';
+@use './config';
 
 // 拼接变量名称
 // joinVarName( ( 'button', 'text-color' ) ) => '--el-button-text-color'
