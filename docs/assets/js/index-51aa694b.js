@@ -1,1 +1,0 @@
-import{_ as s}from"./index-ca31967b.js";import{o as a,f as o,g as d}from"./vendor-d07051c1.js";const t={class:"page"};const n=s({},[["render",function(s,n){return a(),o("div",t,n[0]||(n[0]=[d("div",{class:"dot"},null,-1),d("div",{class:"dot"},null,-1)]))}],["__scopeId","data-v-cc98761a"]]);export{n as default};
