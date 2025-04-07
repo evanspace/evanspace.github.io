@@ -26,14 +26,17 @@ export function checkUpdate(options) {
 
     // Vite 独有钩子 配置开发服务器 常见的用例是在内部 connect 应用程序中添加自定义中间件
     configureServer(server) {
-      // 读取文件
-      const json = readFileSync( options.jsonPath, 'utf-8' )
-      const dateObj = JSON.parse( json )
-      dateObj.timestamp = new Date().getTime()
-      // 写入文件
-      writeFileSync( options.jsonPath, JSON.stringify( dateObj, void 0, 2 ), 'utf-8', err => {
-        console.log( '写入文件出错', err )
-      } )
+      if ( server.config.mode ===  'production') {
+        console.log( '正式服务，更改更新配置文件' )
+        // 读取文件
+        const json = readFileSync( options.jsonPath, 'utf-8' )
+        const dateObj = JSON.parse( json )
+        dateObj.timestamp = new Date().getTime()
+        // 写入文件
+        writeFileSync( options.jsonPath, JSON.stringify( dateObj, void 0, 2 ), 'utf-8', err => {
+          console.log( '写入文件出错', err )
+        } )
+      }
       console.log('configureServer')
     },
 
@@ -44,9 +47,9 @@ export function checkUpdate(options) {
     // },
 
     // 正式开始构建流程
-    // buildStart() {
-    //   console.log('buildStart')
-    // },
+    buildStart() {
+      console.log('buildStart')
+    },
 
     // build 构建结束
     // buildEnd() {
