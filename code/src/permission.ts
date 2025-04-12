@@ -11,7 +11,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { base } from '@/router/utils'
 
-NProgress.configure({ showSpinner: false })
+NProgress.configure({ showSpinner: true })
 
 import { useAuthStore, useAppStore, useUserStore } from '@/stores'
 import i18n from '@/locales'
@@ -80,13 +80,11 @@ router.beforeEach(async (to, _from, next) => {
     if (to.path == loginPath) {
       // 已登录直接重定向到首页
       next({ path: `${base}/` })
-      NProgress.done()
     } else {
       // 判断路由是否指向 系统
       if (to.path == `${base}/index`) {
         // 重定向到首页
         next({ path: `${base}/` })
-        NProgress.done()
         return
       }
 
@@ -116,7 +114,6 @@ router.beforeEach(async (to, _from, next) => {
           console.log('路由守卫：', error)
           await userStore.resetToken()
           next(`${loginPath}?redirect=${to.path}`)
-          NProgress.done()
         }
       }
     }
@@ -126,7 +123,6 @@ router.beforeEach(async (to, _from, next) => {
     } else {
       // 跳转登录页面
       next(`${loginPath}?redirect=${to.path}`)
-      NProgress.done()
     }
   }
 })
