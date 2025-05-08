@@ -6,11 +6,12 @@
       </template>
       <div :class="$style.content">
         <div :class="$style.item">
-          <div :class="$style.desc">头部 转换内容：</div>
+          <div :class="$style.desc">get 请求参数 转换内容：</div>
           <el-input
             type="textarea"
             v-model="apiResponse.head"
             placeholder="请输入..."
+            resize="vertical"
             @paste="onApiHeadResponse"
             @dblclick="onApiHeadResponse"
           ></el-input>
@@ -19,6 +20,7 @@
           <div :class="$style.desc">结果：</div>
           <el-input
             type="textarea"
+            resize="vertical"
             placeholder="转换结果"
             v-model="apiResponse.headResult"
           ></el-input>
@@ -29,17 +31,54 @@
           </div>
           <el-input
             type="textarea"
+            resize="vertical"
             placeholder="类型字段"
             v-model="apiResponse.headType"
           ></el-input>
         </div>
       </div>
+
+      <div :class="$style.content">
+        <div :class="$style.item">
+          <div :class="$style.desc">post 请求参数 转换内容：</div>
+          <el-input
+            type="textarea"
+            v-model="apiResponse.post"
+            placeholder="请输入..."
+            resize="vertical"
+            @paste="onApiPostResponse"
+            @dblclick="onApiPostResponse"
+          ></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">结果：</div>
+          <el-input
+            type="textarea"
+            resize="vertical"
+            placeholder="转换结果"
+            v-model="apiResponse.postResult"
+          ></el-input>
+        </div>
+        <div :class="$style.item">
+          <div :class="$style.desc">
+            类型： <el-link @click="copy(apiResponse.postType)">复制</el-link>
+          </div>
+          <el-input
+            type="textarea"
+            resize="vertical"
+            placeholder="类型字段"
+            v-model="apiResponse.postType"
+          ></el-input>
+        </div>
+      </div>
+
       <div :class="$style.content">
         <div :class="$style.item">
           <div :class="$style.desc">返回体 转换内容：</div>
           <el-input
             type="textarea"
             v-model="apiResponse.text"
+            resize="vertical"
             placeholder="请输入..."
             @paste="onApiResponse"
             @dblclick="onApiResponse"
@@ -47,13 +86,23 @@
         </div>
         <div :class="$style.item">
           <div :class="$style.desc">结果：</div>
-          <el-input type="textarea" placeholder="转换结果" v-model="apiResponse.result"></el-input>
+          <el-input
+            type="textarea"
+            resize="vertical"
+            placeholder="转换结果"
+            v-model="apiResponse.result"
+          ></el-input>
         </div>
         <div :class="$style.item">
           <div :class="$style.desc">
             类型： <el-link @click="copy(apiResponse.type)">复制</el-link>
           </div>
-          <el-input type="textarea" placeholder="类型字段" v-model="apiResponse.type"></el-input>
+          <el-input
+            type="textarea"
+            resize="vertical"
+            placeholder="类型字段"
+            v-model="apiResponse.type"
+          ></el-input>
         </div>
       </div>
     </el-card>
@@ -68,6 +117,7 @@
           <el-input
             type="textarea"
             v-model="letterToUpper.text"
+            resize="vertical"
             placeholder="请输入..."
             @paste="onLetterToUpper"
             @dblclick="onLetterToUpper"
@@ -77,6 +127,7 @@
           <div :class="$style.desc">结果：</div>
           <el-input
             type="textarea"
+            resize="vertical"
             placeholder="转换结果"
             v-model="letterToUpper.result"
           ></el-input>
@@ -93,6 +144,7 @@
           <div :class="$style.desc">转换内容：</div>
           <el-input
             type="textarea"
+            resize="vertical"
             v-model="spaceReplace.text"
             placeholder="请输入..."
             @paste="onSpaceReplace"
@@ -101,7 +153,12 @@
         </div>
         <div :class="$style.item">
           <div :class="$style.desc">结果：</div>
-          <el-input type="textarea" placeholder="转换结果" v-model="spaceReplace.result"></el-input>
+          <el-input
+            type="textarea"
+            resize="vertical"
+            placeholder="转换结果"
+            v-model="spaceReplace.result"
+          ></el-input>
         </div>
       </div>
     </el-card>
@@ -118,6 +175,7 @@
           <el-input
             type="textarea"
             v-model="jsonSerialize.text"
+            resize="vertical"
             placeholder="请输入..."
             :rows="4"
             @paste="onJsonSerialize"
@@ -128,6 +186,7 @@
           <div :class="$style.desc">结果：</div>
           <el-input
             type="textarea"
+            resize="vertical"
             placeholder="转换结果"
             v-model="jsonSerialize.result"
             :rows="4"
@@ -148,6 +207,7 @@
           <div :class="$style.desc">结果：</div>
           <el-input
             type="textarea"
+            resize="vertical"
             placeholder="转换结果"
             v-model="base64.result"
             :rows="4"
@@ -168,7 +228,12 @@ const apiResponse = reactive({
   text: '',
   result: '',
   type: '',
-  headType: ''
+  headType: '',
+
+  // post 请求
+  post: '',
+  postType: '',
+  postResult: ''
 })
 const getType = type => {
   type = String(type)
@@ -177,6 +242,8 @@ const getType = type => {
   if (type.indexOf('integer') > -1) return 'number'
   return 'string'
 }
+
+// get 请求头
 const onApiHeadResponse = () => {
   setTimeout(() => {
     const list = apiResponse.head
@@ -214,6 +281,47 @@ const onApiHeadResponse = () => {
     copy(result)
   }, 100)
 }
+
+// post 请求头
+const onApiPostResponse = () => {
+  setTimeout(() => {
+    const list = apiResponse.post
+      .replace(/[\r\n]/g, '	')
+      .split('	')
+      .filter(Boolean)
+
+    let data: {
+      field: string
+      desc: string
+      type: string
+      require: boolean
+    }[] = []
+    for (let i = 0; i < list.length; i += 4) {
+      data.push({
+        field: list[i],
+        desc: list[i + 1],
+        require: list[i + 3] == 'true',
+        type: getType(list[i + 4])
+      })
+    }
+    const result = data
+      .map(it => {
+        return `
+      // ${it.desc}
+      ${it.field}: ${it.type}`
+      })
+      .join('')
+    apiResponse.postResult = result
+    apiResponse.postType = data
+      .map(it => it.field)
+      .filter(Boolean)
+      .map(it => `'${it}'`)
+      .join(' | ')
+    copy(result)
+  }, 100)
+}
+
+// 返回体
 const onApiResponse = () => {
   setTimeout(() => {
     const list = apiResponse.text
