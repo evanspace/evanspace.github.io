@@ -119,6 +119,7 @@ export default {
     selective: '选择性',
     emissive: '放射',
     outline: '轮廓',
+    fance: '围栏',
 
     device: '设备',
     floor: '楼层',

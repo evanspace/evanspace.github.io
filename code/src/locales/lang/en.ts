@@ -119,6 +119,7 @@ export default {
     selective: 'selective',
     emissive: 'emissive',
     outline: 'outline',
+    fance: 'fance',
 
     device: 'device',
     floor: 'floor',
