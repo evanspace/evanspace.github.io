@@ -13,7 +13,7 @@ import * as TGPU from 'three/webgpu'
 import { fenceMap0, fenceMap1, fenceMap2 } from './imgs'
 
 // 电子围栏 fence
-export const useFence = (opts: { imgs: string[] }) => {
+export const useFence = (opts: { imgs?: string[] } = {}) => {
   const imgs = opts.imgs || [fenceMap0, fenceMap1, fenceMap2]
   const repeat = [1, 0.8]
   const offsetY = 0.2
@@ -85,7 +85,15 @@ export const useFence = (opts: { imgs: string[] }) => {
     const group = new THREE.Group()
     const mesh2 = new THREE.Mesh(geometry, material2)
     const mesh3 = new THREE.Mesh(geometry, material3)
-    group.add(mesh, mesh2, mesh3)
+    if (imgs[0]) {
+      group.add(mesh)
+    }
+    if (imgs[1]) {
+      group.add(mesh2)
+    }
+    if (imgs[2]) {
+      group.add(mesh3)
+    }
     return group
   }
 

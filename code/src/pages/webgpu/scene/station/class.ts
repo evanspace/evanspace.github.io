@@ -20,7 +20,8 @@ const { createDiffusion } = Hooks.useDiffusion2()
 const { checkCollide } = Hooks.useCollide()
 const { oddRotate } = Hooks.useOpenTheDoor()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
-const { createFence, fenceAnimate } = Hooks.useFence({
+import { useFence } from '../../bloom/fance/fence'
+const { createFence, fenceAnimate } = useFence({
   imgs: ['oss/textures/station/fance.png']
 })
 
