@@ -56,3 +56,10 @@ declare interface ImportMetaEnv {
 declare interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+/**
+ * 未知对象类型
+ */
+declare interface AnyObject {
+  [key: string]: any
+}

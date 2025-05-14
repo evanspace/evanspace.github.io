@@ -226,7 +226,7 @@ export class OfficeScene extends Scene {
     this.css3DRender?.render(this.scene, this.camera)
 
     // 场景风格
-    this.autoChangeStyle()
+    // this.autoChangeStyle()
 
     // 锚点动画
     this.anchorAnimateUpdate(delta)

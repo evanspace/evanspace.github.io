@@ -358,12 +358,12 @@ const anchors = [
   {
     name: '右侧光伏',
     type: 'ANCHOR_TARGET',
-    position: { x: 249.5, y: 60.4, z: 8900.5 }
+    position: { x: 249.5, y: 60.4, z: 89.5 }
   },
   {
     name: '左侧光伏',
     type: 'ANCHOR_TARGET',
-    position: { x: -249.5, y: 60.4, z: 10100.4 }
+    position: { x: -249.5, y: 60.4, z: 101.4 }
   }
 ]
 JsonList.push(...anchors)
