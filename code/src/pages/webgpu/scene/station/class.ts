@@ -20,7 +20,9 @@ const { createDiffusion } = Hooks.useDiffusion2()
 const { checkCollide } = Hooks.useCollide()
 const { oddRotate } = Hooks.useOpenTheDoor()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
-const { createFence, fenceAnimate } = Hooks.useFence()
+const { createFence, fenceAnimate } = Hooks.useFence({
+  imgs: ['oss/textures/station/fance.png']
+})
 
 // 视角映射
 const SIGHT_MAP = {
@@ -848,7 +850,7 @@ export class Scene extends MS.Scene {
 
     if (model) {
       // 围栏
-      const fence = createFence(model, 0x52ffae)
+      const fence = createFence(model, 0x52ffae, true, THREE)
       this.fence = fence
       this.addObject(fence)
     }
