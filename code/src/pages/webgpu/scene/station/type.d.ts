@@ -1,4 +1,4 @@
-/* *
+/**
  * @description:
  * @file: type.d.ts
  * @author: Evan
@@ -69,5 +69,11 @@ export declare interface ExtendOptions {
   /**
    * 锚点悬浮
    */
-  onHoverCall: (object, style) => void
+  onHoverCall: (
+    intersct: AnyObject,
+    style: {
+      left: number
+      top: number
+    }
+  ) => void
 }

@@ -1,4 +1,4 @@
-/* *
+/**
  * @description:
  * @file: models.ts
  * @author: Evan
@@ -93,5 +93,5 @@ export default [
   if (!item.range) {
     item.range = { x: 0.5, y: 0.5 } as any
   }
-  return item as import('three-scene/types/model').ModelItem
+  return item as import('three-scene/types/model.d.ts').ModelItem
 })

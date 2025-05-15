@@ -34,7 +34,7 @@ class EventEmitter {
   private listteners: Record<string, Set<Function>> = eventNames.reduce((obj, key) => {
     obj[key] = new Set()
     return obj
-  }, {})
+  }, {} as Record<string, Set<Function>>)
 
   on(eventName: EventNames, listtener: Function) {
     this.listteners[eventName].forEach(it => {

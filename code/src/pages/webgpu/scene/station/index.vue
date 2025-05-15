@@ -42,9 +42,9 @@ import * as request from './data/request'
 import * as MS from './data/methods'
 import { onListen } from './data/listen'
 
-import type { ObjectItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model.d.ts'
 
-const { Hooks, Utils } = MS
+const { Hooks, Utils, THREE } = MS
 
 const container = useTemplateRef('containerRef')
 const operationRef = useTemplateRef('operationRef')
@@ -170,7 +170,7 @@ const createPerson = () => {
   }
   model.position.set(x, y, z)
   model.rotateY(Math.PI * 1)
-  model.scale.setScalar(2)
+  model.scale.setScalar(3)
 
   scene.addPerson(model)
 }
@@ -197,13 +197,14 @@ const assemblyScenario = async () => {
 }
 
 // 创建 dot 点位
-const createDotObject = item => {
+const createDotObject = (item: ObjectItem) => {
   MS.updateDotVisible(
     scene,
     scene.addDot(item, (_e, label) => {
       dialog.select = [label]
       dialogShowData()
-      scene.cameraLookatMoveTo(item.position)
+      const { x = 0, y = 0, z = 0 } = item.position || {}
+      scene.cameraLookatMoveTo(new THREE.Vector3(x, y, z))
     }),
     __CONFOG__.dotShowStrict
   )
@@ -283,9 +284,10 @@ const loopLoadObject = async (item: ObjectItem) => {
 }
 
 // 相机转场
-const onCameraTransition = item => {
+const onCameraTransition = (item: ObjectItem) => {
+  const { x = 0, y = 0, z = 0 } = item.position || {}
   scene.cameraTransition({
-    position: item.position,
+    position: new THREE.Vector3(x, y, z),
     data: item
   })
 }
@@ -297,8 +299,10 @@ const initPage = () => {
   onListen(scene)
 }
 
+type TypeHoverCall = Parameters<import('./type.d.ts').ExtendOptions['onHoverCall']>
+
 // 鼠标悬浮
-const onHoverCall = (object, style) => {
+const onHoverCall = (object: TypeHoverCall[0], style: TypeHoverCall[1]) => {
   const isShow = !!object && object.object._isAnchor_
   tipOpts.show = isShow
   if (isShow) {
@@ -313,11 +317,14 @@ const onHoverCall = (object, style) => {
   }
 }
 
-const onClickLeft = object => {
+const onClickLeft = (object: ThreeModelItem) => {
   const data = object.data
   switch (data?.type) {
     case KEYS.M_ANCHOR_POS: // 定位
-      scene.cameraTransition(object)
+      scene.cameraTransition({
+        position: object.position,
+        data: object.data as AnyObject
+      })
       break
     case KEYS.M_ANCHOR_TARGET: // 锚点
       dialog.select = [object]
@@ -349,7 +356,7 @@ const dialogShowData = () => {
 }
 
 // 更新 dialog 坐标
-const updateDialogPosition = object => {
+const updateDialogPosition = (object: ThreeModelItem) => {
   const dom = container.value as HTMLElement
   const pos = Utils.getPlanePosition(dom, object, scene.camera as any)
   dialog.position = pos
@@ -390,7 +397,7 @@ onMounted(() => {
       // 弹窗位置
       if (dialog.show && dialog.select && !!dialog.select.length) {
         // 设备弹窗信息
-        const object = dialog.select[0]
+        const object = dialog.select[0] as ThreeModelItem
         updateDialogPosition(object)
       }
     },

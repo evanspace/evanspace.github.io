@@ -1,7 +1,8 @@
 import { onBeforeUnmount, watch } from 'vue'
 import { useAppStore } from '@/stores'
+import * as ThreeScene from 'three-scene'
 
-export const useResize = threeScene => {
+export const useResize = (threeScene: InstanceType<typeof ThreeScene.Scene>) => {
   const resize = () => {
     const _resize = () => threeScene?.resize()
 

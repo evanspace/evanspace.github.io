@@ -42,29 +42,28 @@
 </template>
 
 <script lang="ts" setup>
+import * as THREE from 'three/webgpu'
 import { Scene } from '../class'
 import Emitter from '../emitter'
 import * as MS from '../data/methods'
 import KEYS from '../data/keys'
 import __CONFIG__ from '../data/config'
+import type { ObjectItem } from 'three-scene/types/model.js'
 
-interface Item {
-  name: string
-}
 const props = defineProps<{
-  list: Item[]
+  list: ObjectItem[]
   scene?: InstanceType<typeof Scene>
 }>()
 
 const emits = defineEmits<{
-  change: [item: Item]
+  change: [item: ObjectItem]
 }>()
 
 // 更新
 const updateObject = () => {
   props.scene?.getAll().forEach((el: any, _i) => {
     const data = el.data || el.userData?.data
-    if (!data) return
+    if (!data || !props.scene) return
     // 数据参数
     let type = data.type
 
@@ -78,13 +77,12 @@ const updateObject = () => {
 }
 
 // 设备更新
-const deviceUpdate = data => {
+const deviceUpdate = (data: AnyObject) => {
   const { show, name } = data
-  const model = props.scene?.deviceGroup?.getObjectByName(name) as any
-
-  if (model && model.__action__) {
-    Object.keys(model.__action__).forEach(key => {
-      const obj = model.__action__[key]
+  const model = props.scene?.deviceGroup?.getObjectByName(name) as THREE.Object3D
+  if (model && model.userData.actions) {
+    Object.keys(model.userData.actions).forEach(key => {
+      const obj = model.userData.actions[key]
       const isRun = show
       if (isRun) {
         if (obj.isRunning()) {

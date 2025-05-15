@@ -1,6 +1,6 @@
 import * as MS from './data/methods'
 import type { ExtendOptions, Sky } from './type'
-import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model'
+import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model.d.ts'
 
 import __CONFOG__ from './data/config'
 
@@ -20,9 +20,8 @@ const { createDiffusion } = Hooks.useDiffusion2()
 const { checkCollide } = Hooks.useCollide()
 const { oddRotate } = Hooks.useOpenTheDoor()
 const { virtualization, closeVirtualization } = Hooks.useModelLoader({})
-import { useFence } from '../../bloom/fance/fence'
-const { createFence, fenceAnimate } = useFence({
-  imgs: ['oss/textures/station/fance.png']
+const { createFence, fenceAnimate } = Hooks.useFence({
+  imgs: __CONFOG__.fanceImgs
 })
 
 // 视角映射
@@ -66,18 +65,10 @@ export class Scene extends MS.Scene {
   diffusion: InstanceType<typeof THREE.Mesh> = new THREE.Mesh()
 
   // 动画模型集合
-  animateModels: ThreeModelItem[] = []
+  animateModels: InstanceType<typeof THREE.Object3D>[] = []
 
   // 行走的人物
-  person?: InstanceType<typeof THREE.Group> & {
-    __runing__?: boolean
-    extra: {
-      mixer: InstanceType<typeof THREE.AnimationMixer>
-      actions: Record<string, InstanceType<typeof THREE.AnimationAction>>
-      defaultAction: InstanceType<typeof THREE.AnimationAction>
-      runging: InstanceType<typeof THREE.AnimationAction>
-    }
-  }
+  person?: InstanceType<typeof THREE.Group>
 
   // 人物偏移向量
   personSightOffset = new THREE.Vector3(
@@ -175,7 +166,7 @@ export class Scene extends MS.Scene {
     this.modelAnimateUpdate(delta)
 
     // 场景风格
-    this.autoChangeStyle()
+    // this.autoChangeStyle()
 
     // 执行漫游
     executeRoam(this.camera, this.controls)
@@ -211,7 +202,7 @@ export class Scene extends MS.Scene {
     this.addDotGroup()
   }
   // 添加点位
-  addDot(item: ObjectItem, clickBack) {
+  addDot(item: ObjectItem, clickBack: Parameters<typeof MS.createDotCSS2DDom>[1]) {
     if (!this.dotGroup) return new THREE.Mesh()
     const label = MS.createDotCSS2DDom(item, clickBack)
     this.dotGroup.add(label)
@@ -239,7 +230,7 @@ export class Scene extends MS.Scene {
     this.clearFloor()
   }
   // 添加建筑
-  addBuilding(...obj) {
+  addBuilding(...obj: ThreeModelItem[]) {
     if (this.buildingGroup) {
       this.buildingGroup.add(...obj)
     }
@@ -260,7 +251,7 @@ export class Scene extends MS.Scene {
     this.addDeviceGroup()
   }
   // 添加设备
-  addDevice(...obj) {
+  addDevice(...obj: ThreeModelItem[]) {
     if (this.deviceGroup) {
       this.deviceGroup.add(...obj)
     }
@@ -281,7 +272,7 @@ export class Scene extends MS.Scene {
     this.addFloorGroup()
   }
   // 添加楼层
-  addFloor(...obj) {
+  addFloor(...obj: ThreeModelItem[]) {
     if (this.floorGroup) {
       this.floorGroup.add(...obj)
     }
@@ -302,7 +293,7 @@ export class Scene extends MS.Scene {
     this.addAnchorGroup()
   }
   // 添加锚点
-  addAnchor(obj, isAnimate) {
+  addAnchor(obj: ThreeModelItem, isAnimate: boolean) {
     if (this.anchorGroup) {
       this.anchorGroup.add(obj)
     }
@@ -313,8 +304,8 @@ export class Scene extends MS.Scene {
     Utils.createSpriteAnimate(obj, [x, y, z], 1, 8)
   }
   // 锚点动画
-  anchorAnimateUpdate(delta) {
-    this.anchorGroup?.children.forEach((el: any) => {
+  anchorAnimateUpdate(delta: number) {
+    this.anchorGroup?.children.forEach((el: ThreeModelItem) => {
       if (el.__mixer__) {
         el.__mixer__.update(delta)
       }
@@ -329,13 +320,17 @@ export class Scene extends MS.Scene {
     this.addObject(group)
   }
   // 添加灯光
-  addLight(item: ObjectItem, obj, hasHelper?: boolean) {
+  addLight(
+    item: ObjectItem,
+    obj: InstanceType<typeof THREE.RectAreaLight> | InstanceType<typeof THREE.SpotLight>,
+    hasHelper?: boolean
+  ) {
     if (!this.lightGroup) return
     const group = MS.createLightGroup(item, obj, hasHelper)
     this.lightGroup.add(group)
   }
   // 开关灯
-  lightSwitch(object, isOpen?: boolean, max?: number) {
+  lightSwitch(object: ThreeModelItem, isOpen?: boolean, max?: number) {
     const light = this.lightGroup?.getObjectsByProperty('name', object.data?.bind)
     if (!light) return
     // console.log('控制灯数量:', max != void 0 && max >= 0 ? max : '全部')
@@ -361,7 +356,7 @@ export class Scene extends MS.Scene {
   /////////// 人物 ///////////
   ///////////////////////////
   // 添加人物
-  addPerson(model) {
+  addPerson(model: InstanceType<typeof THREE.Group>) {
     this.person = model
     const { mixer, actions } = MS.getModelAction(model)
     // 默认状态
@@ -369,12 +364,10 @@ export class Scene extends MS.Scene {
     defaultAction.play()
     // 步行
     const runging = actions[__CONFOG__.personRuningAnimateName]
-    model.extra = {
-      mixer,
-      actions,
-      runging,
-      defaultAction
-    }
+    model.userData.mixer = mixer
+    model.userData.actions = actions
+    model.userData.runging = runging
+    model.userData.defaultAction = defaultAction
     this.addObject(model)
     this.addPersonEvent()
   }
@@ -382,7 +375,7 @@ export class Scene extends MS.Scene {
   personWalk(isWalk = true) {
     const personModel = this.person
     if (!personModel) return
-    const { defaultAction, runging } = personModel.extra
+    const { defaultAction, runging } = personModel.userData
     if (isWalk) {
       runging.play()
       defaultAction.stop()
@@ -397,11 +390,13 @@ export class Scene extends MS.Scene {
     if (!personModel) return
     const keys = ['W', 'S'].map(key => key.toUpperCase().charCodeAt(0)).concat([38, 40])
 
+    const { __runing__ } = personModel.userData
+
     // 插入事件 播放/暂停 动作
     insertEvent(
       e => {
         // 人物运行中或者巡航激活或者非人物视角则不处理
-        if (personModel.__runing__ || this.isCruise() || !this.isPersonSight()) return
+        if (__runing__ || this.isCruise() || !this.isPersonSight()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk()
         }
@@ -415,7 +410,7 @@ export class Scene extends MS.Scene {
         }
       },
       e => {
-        if (personModel.__runing__ || this.isCruise() || !this.isPersonSight()) return
+        if (__runing__ || this.isCruise() || !this.isPersonSight()) return
         if (keys.includes(e.keyCode)) {
           this.personWalk(false)
         }
@@ -446,9 +441,9 @@ export class Scene extends MS.Scene {
   clsoePerson() {
     this.currentSight = SIGHT_MAP.SCREEN
     // 是否行走中
-    if (this.person?.__runing__) {
+    if (this.person?.userData.__runing__) {
       moveStop(false)
-      this.person.__runing__ = false
+      this.person.userData.__runing__ = false
       this.diffusion.visible = false
       // 关闭行走动作
       this.personWalk(false)
@@ -574,16 +569,16 @@ export class Scene extends MS.Scene {
     this.person && (this.person.visible = !isPersonFirst)
   }
   // 人物动画
-  personAnimate(delta) {
+  personAnimate(delta: number) {
     const personModel = this.person
     if (personModel) {
-      const mixer = personModel.extra.mixer
+      const mixer = personModel.userData.mixer
       mixer.update(delta)
       // 人物移动
       moveAnimate(0.2 * this.moveFactor)
 
       // 人物视角
-      if (this.isPersonSight() && !personModel.__runing__) {
+      if (this.isPersonSight() && !personModel.userData.__runing__) {
         const factor = 1 + this.moveFactor / 5
         // 移动速度
         const steep = __CONFOG__.personRuningSpeed * delta * factor
@@ -604,8 +599,9 @@ export class Scene extends MS.Scene {
     }
   }
   // 按键前进
-  keyboardToMove(steep) {
+  keyboardToMove(steep: number) {
     const personModel = this.person
+    if (!personModel) return
     // 前进后退
     const isS = keyboardPressed(['S', 'down'])
     if (keyboardPressed(['W', 'up']) || isS) {
@@ -620,12 +616,12 @@ export class Scene extends MS.Scene {
       // 检测碰撞
       if (!this.checkCharacterCollide(newPos)) {
         personModel?.position.copy(newPos)
-        this.setControlTarget(personModel?.position)
+        this.setControlTarget(personModel.position)
       }
     }
   }
   // 检测人物碰撞
-  checkCharacterCollide(pos, y = 0.3) {
+  checkCharacterCollide(pos: InstanceType<typeof THREE.Vector3>, y = 0.3) {
     if (!this.person) return
     // 检测碰撞
     const intersects = checkCollide(
@@ -646,7 +642,7 @@ export class Scene extends MS.Scene {
     }
   }
   // 人物移动
-  personMove(intersct) {
+  personMove(intersct: AnyObject) {
     // 巡航中不可操作
     if (this.judgeCruise()) return Promise.reject()
     // 非人物视角
@@ -664,7 +660,7 @@ export class Scene extends MS.Scene {
     obj.visible = true
 
     return new Promise(resolve => {
-      personModel.__runing__ = true
+      personModel.userData.__runing__ = true
       // 创建移动
       createMove(
         personModel,
@@ -674,14 +670,14 @@ export class Scene extends MS.Scene {
           if (this.checkCharacterCollide(pos, 0.3)) {
             stop()
             this.personWalk(false)
-            personModel.__runing__ = false
+            personModel.userData.__runing__ = false
             obj.visible = false
           }
         },
         pos => {
           this.setControlTarget(pos)
           this.personWalk(false)
-          personModel.__runing__ = false
+          personModel.userData.__runing__ = false
           obj.visible = false
           resolve(personModel)
         }
@@ -693,8 +689,9 @@ export class Scene extends MS.Scene {
   ////////// 楼层 //////////
   ///////////////////////////
   // 楼层展开
-  floorExpand(object) {
+  floorExpand(object: ThreeModelItem) {
     const data = object.data
+    if (!data) return
     const list = this.getFloorByGroup(data.group) as any[]
     if (!list.length) return
     const index = list.findIndex(el => object.uuid === el.uuid)
@@ -705,7 +702,7 @@ export class Scene extends MS.Scene {
   ////////// 机房 //////////
   ///////////////////////////
   // 获取机房
-  getMachineRoomStatus(name) {
+  getMachineRoomStatus(name: string) {
     const room = this.scene.getObjectByName(name) as ThreeModelItem
     return {
       isFocus: room?.__isFocus__,
@@ -744,7 +741,7 @@ export class Scene extends MS.Scene {
     })
   }
   // 机房聚焦
-  toggleCoolMachineRoomFocus(isFocus) {
+  toggleCoolMachineRoomFocus(isFocus: boolean) {
     if (!this.controls) return
     let { target, to, maxDistance } = this.getControlsCache()
     // 聚焦移动 暂存场景参数
@@ -797,7 +794,8 @@ export class Scene extends MS.Scene {
   /////////// 开门 ///////////
   ///////////////////////////
   // 单旋转开门
-  oddRotateDoor(object) {
+  oddRotateDoor(object: ThreeModelItem) {
+    if (!object.data) return
     const { bind, axle = 'y', internal, autoClose = false } = object.data
     return oddRotate(this.scene, {
       value: bind,
@@ -811,13 +809,14 @@ export class Scene extends MS.Scene {
   /////////// 相机 ///////////
   ///////////////////////////
   // 相机移动聚焦点
-  cameraLookatMoveTo(pos) {
+  cameraLookatMoveTo(pos: InstanceType<typeof THREE.Vector3>) {
     if (!this.controls) return
     Utils.cameraLookatAnimate(this.camera, pos, this.controls.target)
   }
 
   // 相机转场
-  cameraTransition(object) {
+  cameraTransition(object: { data: AnyObject; position?: InstanceType<typeof THREE.Vector3> }) {
+    if (!object.data) return
     const { to, target = object.position } = object.data
     if (!to) return
     if (!this.isCameraMove(to) && this.controls) {
@@ -831,7 +830,12 @@ export class Scene extends MS.Scene {
         new THREE.Vector3(target.x, target.y, target.z)
       )
       this.controls.maxDistance = dis
-      Utils.cameraLinkageControlsAnimate(this.controls, this.camera, to, target)
+      Utils.cameraLinkageControlsAnimate(
+        this.controls,
+        this.camera,
+        to,
+        new THREE.Vector3(target.x, target.y, target.z)
+      )
     }
 
     const { bind } = object.data
@@ -839,10 +843,10 @@ export class Scene extends MS.Scene {
       return
     }
     const obj = this.buildingGroup?.getObjectByName(bind)
-    this.addFence(obj)
+    obj && this.addFence(obj)
   }
   // 添加围栏
-  addFence(model?) {
+  addFence(model: InstanceType<typeof THREE.Object3D>) {
     // 先删除
     if (this.fence) {
       this.disposeObj(this.fence)
@@ -857,7 +861,7 @@ export class Scene extends MS.Scene {
     }
   }
   // 相机名称转场
-  cameraTransitionByModelname(name) {
+  cameraTransitionByModelname(name: string) {
     const cameraTransitionList = __CONFOG__.cameraTransitionList
     const obj = cameraTransitionList.find(it => it.name === name)
     if (!obj) return
@@ -868,16 +872,21 @@ export class Scene extends MS.Scene {
   /////////// 模型动画 ///////////
   ///////////////////////////
   // 添加模型动画
-  addModelAnimate(model, animations = [], play: boolean = true, timeScale: number = 1) {
+  addModelAnimate(
+    model: ThreeModelItem,
+    animations = [],
+    play: boolean = true,
+    timeScale: number = 1
+  ) {
     MS.createModelAnimate(model, animations, play, timeScale)
     this.animateModels.push(model)
   }
   // 模型动画
-  modelAnimateUpdate(delta) {
+  modelAnimateUpdate(delta: number) {
     if (this.animateModels.length) {
-      this.animateModels.forEach((el: any) => {
-        if (el.__mixer__) {
-          el.__mixer__.update(delta)
+      this.animateModels.forEach((el: InstanceType<typeof THREE.Object3D>) => {
+        if (el.userData && el.userData.mixer) {
+          el.userData.mixer.update(delta)
         }
       })
     }
@@ -895,7 +904,7 @@ export class Scene extends MS.Scene {
     if (!this.controls) return
     const controls = this.options.controls
     Object.keys(controls).forEach(key => {
-      this.controls && (this.controls[key] = controls[key])
+      this.controls && (this.controls[key] = controls[key as keyof typeof controls])
     })
     super.controlReset()
   }
@@ -917,7 +926,7 @@ export class Scene extends MS.Scene {
     }
   }
   // 设置控制中心点
-  setControlTarget(position) {
+  setControlTarget(position: InstanceType<typeof THREE.Vector3>) {
     if (!this.controls) return
     const camera = this.camera
     const controls = this.controls
@@ -960,12 +969,12 @@ export class Scene extends MS.Scene {
     }, 30)
   }
   // 巡航状态回调
-  cruiseStatusCall({ enabled, runing }) {
+  cruiseStatusCall({ enabled, runing }: { enabled: boolean; runing: boolean }) {
     if (!enabled) return
     this.personWalk(runing)
   }
   // 巡航过渡回调
-  cruiseAnimateCall(options) {
+  cruiseAnimateCall(options: Parameters<typeof MS.cruiseTargetMove>[1]) {
     if (!options.enabled || !this.person) return
     MS.cruiseTargetMove(this.person, options, this.controls)
   }
@@ -1025,7 +1034,7 @@ export class Scene extends MS.Scene {
     roamPlay()
   }
   // 设置漫游点位
-  setRoamPoint(points) {
+  setRoamPoint(points: number[][]) {
     this.extend.roamPoints = points
   }
   // 关闭漫游
@@ -1116,7 +1125,7 @@ export class Scene extends MS.Scene {
 
     if (!isClick) {
       // 处理锚点类型-精灵材质
-      MS.hoverAnchor(interscts, this.extend.onHoverCall, this.container, this.anchorGroup)
+      MS.hoverAnchor(interscts, this.container, this.anchorGroup, this.extend.onHoverCall)
     }
     if (!isClick) return
     if (interscts.length) {
@@ -1157,12 +1166,12 @@ export class Scene extends MS.Scene {
   }
 
   // 获取楼层组
-  getFloorByGroup(name) {
+  getFloorByGroup(name: string) {
     return this.floorGroup?.children.filter((it: any) => it.data.group === name)
   }
 
   // 获取跟随目标集合
-  getFlowMark(mark) {
+  getFlowMark(mark: string) {
     return this.getAll().filter((el: any) => el.data?.followMark === mark)
   }
 
@@ -1242,7 +1251,7 @@ export class Scene extends MS.Scene {
   }
 
   // 设置环境贴图
-  setEnv(texture) {
+  setEnv(texture: InstanceType<typeof THREE.Texture>) {
     // this.scene.background = texture
     const envMap = this.convertPmremTexture(texture)
     this.scene.environment = envMap
@@ -1250,7 +1259,7 @@ export class Scene extends MS.Scene {
   }
 
   // 设置 sky 参数 (环境光强度，平行光强度，hdr，可见)
-  setStyleOptions(ambIntensity, dirIntensity, hdr, _visible = false) {
+  setStyleOptions(ambIntensity: number, dirIntensity: number, hdr: string, _visible = false) {
     this.ambientLight.intensity = ambIntensity
     this.directionalLight.intensity = dirIntensity
 
@@ -1280,11 +1289,11 @@ export class Scene extends MS.Scene {
     destroyEvent()
     this.animateModels = []
     this.disposeObj(this.buildingGroup)
-    // this.disposeObj(this.character)
+    this.disposeObj(this.person)
     this.disposeObj(this.dotGroup)
     this.disposeObj(this.anchorGroup)
     this.disposeObj(this.fence)
-    // this.disposeObj(this.mouseClickDiffusion)
+    this.disposeObj(this.diffusion)
     this.disposeObj(this.floorGroup)
     this.disposeObj(this.lightGroup)
 
@@ -1292,12 +1301,12 @@ export class Scene extends MS.Scene {
     // @ts-ignore
     this.css2DRender = void 0
     this.buildingGroup = void 0
-    // this.character = void 0
+    this.person = void 0
     this.dotGroup = void 0
     this.anchorGroup = void 0
     this.fence = void 0
     // @ts-ignore
-    this.mouseClickDiffusion = void 0
+    this.diffusion = void 0
     this.floorGroup = void 0
     this.lightGroup = void 0
     this.extend = {}

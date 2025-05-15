@@ -31,12 +31,12 @@ export const getPageOpts = (): {
   /**
    * 模型列表
    */
-  models: import('three-scene/types/model').ModelItem[]
+  models: import('three-scene/types/model.d.ts').ModelItem[]
 
   /**
    * 巡航
    */
-  cruise: Partial<import('three-scene/types/options').Cruise>
+  cruise: Partial<import('three-scene/types/options.d.ts').Cruise>
   /**
    * 漫游
    */
@@ -55,7 +55,6 @@ export const getPageOpts = (): {
     visible: true,
     auto: false,
     alway: !true,
-    // mapUrl: base + '/textures/cruise/line2.png', // 1-18
     repeat: [0.1, 1],
     width: 1.2,
     segment: 100,

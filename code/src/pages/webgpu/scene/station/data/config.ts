@@ -8,6 +8,7 @@
  * */
 
 const baseUrl = import.meta.env.VITE_GIT_OSS
+const localUrl = import.meta.env.VITE_OSS_BUCKET
 
 export default {
   baseUrl,
@@ -28,6 +29,9 @@ export default {
   env: '/textures/hdr/6.hdr',
   // 背景图
   bgSrc: baseUrl + '/imgs/station/bg.jpg',
+
+  // 围栏贴图
+  fanceImgs: [localUrl + '/textures/station/fance.png'],
 
   // 天空风格 hdr
   sky: {

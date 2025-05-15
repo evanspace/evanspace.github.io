@@ -1,3 +1,12 @@
+/**
+ * @description:
+ * @file: listen.ts
+ * @author: Evan
+ * @date: 2025.05.15 10:58:14
+ * @week: 周四
+ * @version: V
+ */
+
 import { Scene } from '../class'
 import Emitter from '../emitter'
 
@@ -19,9 +28,6 @@ export const onListen = (scene: InstanceType<typeof Scene>) => {
   Emitter.on('person:add', () => scene?.personSpeed())
   // 减速
   Emitter.on('person:sub', () => scene?.personSpeed(-1))
-
-  // 大门
-  // Emitter.on('CAMERA:GATE', () => scene?.cameraTransitionByModelname('一楼大门'))
 
   // 场景坐标
   Emitter.on('scene:pos', () => scene?.getPosition())

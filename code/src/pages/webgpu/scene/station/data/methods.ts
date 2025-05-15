@@ -1,4 +1,4 @@
-/* *
+/**
  * @description:
  * @file: methods.ts
  * @author: Evan
@@ -28,7 +28,12 @@ const { pass, mrt, output, emissive, float } = THREE.TSL
  * @param isEnv 是否环境发光
  * @returns 合成渲染器
  */
-export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) => {
+export const createPostProcessing = (
+  scene: InstanceType<typeof THREE.Scene>,
+  camera: InstanceType<typeof Scene>['camera'],
+  renderer: InstanceType<typeof Scene>['renderer'],
+  isEnv?: boolean
+) => {
   // 场景合成
   const scenePass = pass(scene, camera)
   if (isEnv) {
@@ -77,7 +82,10 @@ export const createPostProcessing = (scene, camera, renderer, isEnv?: boolean) =
  * @param container 容器
  * @returns
  */
-export const createCSS2DRender = (options, container) => {
+export const createCSS2DRender = (
+  options: Parameters<typeof initCSS2DRender>[0],
+  container: HTMLElement
+) => {
   return initCSS2DRender(options, container)
 }
 
@@ -87,7 +95,10 @@ export const createCSS2DRender = (options, container) => {
  * @param clickBack 点击事件回调
  * @returns
  */
-export const createDotCSS2DDom = (item: ObjectItem, clickBack) => {
+export const createDotCSS2DDom = (
+  item: ObjectItem,
+  clickBack: boolean | ((e: Event, label: ThreeModelItem) => void)
+) => {
   const pos = item.position
   const { size, color } = item.font || {}
   const { x = 0, y = 0, z = 0 } = pos || {}
@@ -115,12 +126,16 @@ export const createDotCSS2DDom = (item: ObjectItem, clickBack) => {
  * @param obj 场景对象
  * @param hasHelper 是否舒服辅助
  */
-export const createLightGroup = (item: ObjectItem, obj, hasHelper?: boolean) => {
+export const createLightGroup = (
+  item: ObjectItem,
+  obj: InstanceType<typeof THREE.RectAreaLight> | InstanceType<typeof THREE.SpotLight>,
+  hasHelper?: boolean
+) => {
   const group = new THREE.Group()
   obj.name = item.name
   const pos = item.position || { x: 0, y: 0, z: 0 }
   const { to = { x: pos.x, y: pos.y - 2, z: pos.z } } = item
-  if (!obj.isRectAreaLight) {
+  if (!(obj instanceof THREE.RectAreaLight)) {
     obj.target.position.set(to.x, to.y, to.z)
     group.add(obj.target)
   }
@@ -128,7 +143,7 @@ export const createLightGroup = (item: ObjectItem, obj, hasHelper?: boolean) => 
   obj.visible = !true
   group.add(obj)
   if (hasHelper) {
-    if (obj.isRectAreaLight) {
+    if (obj instanceof THREE.RectAreaLight) {
       const rectLightHelper = new RectAreaLightHelper(obj)
       group.add(rectLightHelper)
     } else {
@@ -145,7 +160,7 @@ export const createLightGroup = (item: ObjectItem, obj, hasHelper?: boolean) => 
  * @param _group 场景模型组
  * @returns
  */
-export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
+export const dotUpdateObjectCall = (obj: ObjectItem, _group?: InstanceType<typeof THREE.Group>) => {
   const val = Math.random() * 2 - 4 + 26
   if (val !== void 0) {
     obj.value = val
@@ -169,12 +184,16 @@ export const dotUpdateObjectCall = (obj: ObjectItem, _group) => {
  * @param target 目标对象
  * @param dotShowStrict 是否严格模式
  */
-export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) => {
+export const updateDotVisible = (
+  scene: InstanceType<typeof import('../class').Scene>,
+  target: ThreeModelItem,
+  dotShowStrict?: Boolean
+) => {
   const item = (target.data || target.userData.data) as ObjectItem
   const res = dotUpdateObjectCall(item, scene.dotGroup)
   if (typeof res === 'object') {
     Object.keys(res).forEach(key => {
-      item[key] = res[key]
+      item[key] = res[key as keyof typeof res]
     })
   }
 
@@ -201,7 +220,7 @@ export const updateDotVisible = (scene, target: ThreeModelItem, dotShowStrict?) 
  * @returns
  */
 export const createModelAnimate = (
-  model,
+  model: InstanceType<typeof THREE.Object3D>,
   animations = [],
   play: boolean = true,
   timeScale: number = 1
@@ -216,10 +235,10 @@ export const createModelAnimate = (
     }
     ob[key].timeScale = timeScale
     return ob
-  }, {})
+  }, {} as AnyObject)
 
-  model.__action__ = obj
-  model.__mixer__ = mixer
+  model.userData.actions = obj
+  model.userData.mixer = mixer
 }
 
 /**
@@ -230,12 +249,17 @@ export const createModelAnimate = (
  * @param group 锚点组
  * @returns
  */
-export const hoverAnchor = (interscts, callback, container, anchorGroup) => {
+export const hoverAnchor = (
+  interscts: ReturnType<typeof raycaster.intersectObjects>,
+  container: HTMLElement,
+  anchorGroup?: InstanceType<typeof THREE.Group>,
+  callback?: (intersct: AnyObject, style: ReturnType<typeof Hooks.useRaycaster>['style']) => void
+) => {
   if (typeof callback === 'function') callback(interscts[0], style)
 
   if (interscts.length) {
     const intersct = interscts[0]
-    const object = intersct.object
+    const object = intersct.object as ThreeModelItem
     container.style.cursor = object._isAnchor_ ? 'pointer' : 'auto'
     if (!object._isAnchor_) {
       anchorGroup?.children.forEach((el: any) => {
@@ -264,7 +288,7 @@ export const hoverAnchor = (interscts, callback, container, anchorGroup) => {
  * 恢复锚点材质
  * @param anchorGroup 锚点组
  */
-export const restoreAnchorMaterial = anchorGroup => {
+export const restoreAnchorMaterial = (anchorGroup?: InstanceType<typeof THREE.Group>) => {
   anchorGroup?.children.forEach((el: any) => {
     if (!el.__change_color__ && el.__mat_color__) {
       el.material.color = el.__mat_color__
@@ -277,10 +301,10 @@ export const restoreAnchorMaterial = anchorGroup => {
  * @param object 场景对象
  * @returns
  */
-export const findParentIsBuilding = (object, filterNames: string[] = []) => {
-  const _find = obj => {
+export const findParentIsBuilding = (object: ThreeModelItem, filterNames: string[] = []) => {
+  const _find = (obj: ThreeModelItem) => {
     if (obj._isBuilding_ || filterNames.includes(obj.name)) return obj
-    let parent = obj.parent
+    let parent = obj.parent as ThreeModelItem
     if (!parent) {
       return
     }
@@ -297,11 +321,11 @@ export const findParentIsBuilding = (object, filterNames: string[] = []) => {
  * @param model 模型
  * @returns
  */
-export const getModelAction = model => {
+export const getModelAction = (model: InstanceType<typeof THREE.Object3D>) => {
   // 动画
   const animations = model.animations
   const mixer = new THREE.AnimationMixer(model)
-  const actions = {}
+  const actions = {} as AnyObject
 
   for (let i = 0; i < animations.length; i++) {
     const clip = animations[i]
@@ -318,8 +342,13 @@ export const getModelAction = model => {
  * 巡航目标移动
  * @param target 需要移动的目标
  * @param options 巡航过渡回参
+ * @param controls 控制器
  */
-export const cruiseTargetMove = (target, options, controls) => {
+export const cruiseTargetMove = (
+  target: InstanceType<typeof THREE.Object3D>,
+  options: import('three-scene/types/cruise.d.ts').AnimateBackOptions,
+  controls: InstanceType<typeof Scene>['controls']
+) => {
   let { position, lookAt, curve, progress } = options
   // 前置视角前 0.02
   progress = progress + 0.02
@@ -359,15 +388,14 @@ export const cruiseTargetMove = (target, options, controls) => {
  */
 export const getIntersectObjects = (
   e: PointerEvent,
-  container,
-  scale,
-  camera,
-  objects,
+  container: HTMLElement,
+  scale: number,
+  camera: InstanceType<typeof Scene>['camera'],
+  objects: ThreeModelItem[],
   deepCheck?: boolean
 ) => {
   raycasterUpdate(e, container, scale)
   // 设置新的原点和方向向量更新射线, 用照相机的原点和点击的点构成一条直线
   raycaster.setFromCamera(pointer, camera)
-  let interscts = raycaster.intersectObjects(objects, deepCheck /* 是否检查所有后代 */)
-  return interscts
+  return raycaster.intersectObjects(objects, deepCheck /* 是否检查所有后代 */)
 }
