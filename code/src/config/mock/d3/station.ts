@@ -379,7 +379,7 @@ const tags = [
   {
     name: '商业体 2',
     type: 'TAG_BUILDING',
-    position: { x: -149.5, y: 60.4, z: 101.4 }
+    position: { x: -249.5, y: 60.4, z: 101.4 }
   },
 
   // 监控

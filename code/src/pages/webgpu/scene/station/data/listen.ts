@@ -35,6 +35,6 @@ export const onListen = (scene: InstanceType<typeof Scene>) => {
 
   // 标签-监控
   Emitter.on('tag:status', (item: ListItem) => {
-    scene?.anchorToggle(item.key as srting, item.value == 1)
+    scene?.anchorToggle(item.key as string, item.value == 1)
   })
 }
