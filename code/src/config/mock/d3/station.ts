@@ -26,7 +26,7 @@ const buildings = [
   // [950, -500]
 ]
 
-const getListByPos = (pos, type, name) => {
+const getListByPos = (pos: number[][], type: string, name: string) => {
   let data: any[] = []
   for (let i = 0; i < pos.length; i++) {
     const [x, z] = pos[i]
@@ -368,6 +368,46 @@ const anchors = [
 ]
 JsonList.push(...anchors)
 
+// 标签
+const tags = [
+  // 建筑楼栋
+  {
+    name: '商业体 1',
+    type: 'TAG_BUILDING',
+    position: { x: 249.5, y: 60.4, z: 89.5 }
+  },
+  {
+    name: '商业体 2',
+    type: 'TAG_BUILDING',
+    position: { x: -149.5, y: 60.4, z: 101.4 }
+  },
+
+  // 监控
+  {
+    name: '监控1',
+    type: 'TAG_CAMERA',
+    position: { x: -129.5, y: 50.4, z: 101.4 }
+  },
+  {
+    name: '监控2',
+    type: 'TAG_CAMERA',
+    position: { x: -109.5, y: 50.4, z: 101.4 }
+  },
+
+  // 站房
+  {
+    name: '站房 1',
+    type: 'TAG_ROOM',
+    position: { x: -89.5, y: 50.4, z: 101.4 }
+  },
+  {
+    name: '站房 2',
+    type: 'TAG_ROOM',
+    position: { x: -69.5, y: 50.4, z: 101.4 }
+  }
+]
+JsonList.push(...tags)
+
 // 开门锚点
 const openDoors = [
   {
@@ -402,7 +442,7 @@ const list = [
 ]
 let y = 0.2
 for (let i = 0; i < list.length; i++) {
-  y += floorMap[list[i - 1]] ?? 0
+  y += floorMap[list[i - 1] as keyof typeof floorMap] ?? 0
   floors.push({
     name: `${i + 1}楼`,
     type: list[i],
@@ -460,11 +500,10 @@ export default [
     response: () => {
       return builder({
         JsonList,
-        ModelUrl: '/models/floor/场景.glb',
         Name: '车站展示',
         ConfigJson: {
           target: { x: 0, y: 1, z: 114.2 },
-          to: { x: 222.54, y: 150.82, z: 589.31 },
+          to: { x: 0, y: 87, z: 429 },
           cruise: [
             [102.5, CRUISE_POINT_UP, 9.9],
             [102.5, CRUISE_POINT_UP, 291.9],

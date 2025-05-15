@@ -14,8 +14,8 @@ export default [
     key: KEYS.M_MAIN_SCENE,
     name: '场景',
     size: 78.8,
-    url: '/深圳北站.glb'
-    // url: '/公司总部.glb'
+    // url: '/深圳北站.glb'
+    url: '/公司总部.glb'
   },
   {
     key: KEYS.M_MACHINE_ROOM,
@@ -37,14 +37,14 @@ export default [
     url: '/楼层.glb'
   },
   {
-    key: KEYS.M_ANCHOR_POS,
+    key: KEYS.S_ANCHOR_POS,
     name: '定位',
     type: 'sprite',
     range: { x: 4, y: 4 },
     mapUrl: '/dw.png'
   },
   {
-    key: KEYS.M_ANCHOR_TARGET,
+    key: KEYS.S_ANCHOR_TARGET,
     name: '锚点',
     type: 'sprite',
     range: { x: 4, y: 4 },
@@ -56,6 +56,29 @@ export default [
     type: 'sprite',
     range: { x: 2, y: 2 },
     mapUrl: '/pos.png'
+  },
+  {
+    key: KEYS.S_TAG_BUILDING,
+    name: '建筑楼栋标签',
+    type: 'sprite',
+    range: { x: 22.7, y: 9.2 },
+    mapUrl: '/tag-business.png'
+  },
+  {
+    key: KEYS.S_TAG_CAMERA,
+    name: '监控标签',
+    type: 'sprite',
+    range: { x: 8.8, y: 11.1 },
+    mapUrl: '/tag-camera.png',
+    mapUrl2: '/tag-camera-2.png'
+  },
+  {
+    key: KEYS.S_TAG_ROOM,
+    name: '站房标签',
+    type: 'sprite',
+    range: { x: 8.8, y: 11.1 },
+    mapUrl: '/tag-room.png',
+    mapUrl2: '/tag-room-2.png'
   },
 
   {
@@ -89,6 +112,9 @@ export default [
   }
   if (item.mapUrl && item.mapUrl.split('/').length == 2) {
     item.mapUrl = '/textures/station' + item.mapUrl
+  }
+  if (item.mapUrl2 && item.mapUrl2.split('/').length == 2) {
+    item.mapUrl2 = '/textures/station' + item.mapUrl2
   }
   if (!item.range) {
     item.range = { x: 0.5, y: 0.5 } as any

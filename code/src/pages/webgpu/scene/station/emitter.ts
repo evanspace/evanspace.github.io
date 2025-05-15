@@ -1,3 +1,12 @@
+/**
+ * @description:
+ * @file: emitter.ts
+ * @author: Evan
+ * @date: 2025.05.15 18:42:57
+ * @week: 周四
+ * @version: V
+ */
+
 // 事件
 const eventNames = [
   // 漫游
@@ -26,7 +35,10 @@ const eventNames = [
   'scene:test',
 
   // 设备更新
-  'dev:update'
+  'dev:update',
+
+  // 标签状态
+  'tag:status'
 ] as const
 type EventNames = (typeof eventNames)[number]
 

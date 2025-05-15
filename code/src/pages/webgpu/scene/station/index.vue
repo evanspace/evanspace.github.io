@@ -8,6 +8,8 @@
       @change="onCameraTransition"
     ></t-operation>
 
+    <t-type></t-type>
+
     <div :class="$style.container" ref="containerRef"></div>
 
     <t-loading
@@ -31,6 +33,7 @@ import tOperation from './components/oprtation.vue'
 import tFirstPerson from './components/first-person.vue'
 import tTipMsg from './components/tip-msg.vue'
 import tDialog from './components/dialog.vue'
+import tType from './components/type.vue'
 import { Scene } from './class'
 import { getPageOpts, getTipOpts } from './data'
 
@@ -71,14 +74,13 @@ const options: ConstructorParameters<typeof Scene>[0] = {
   camera: {
     near: 1e-10,
     fov: 52,
-    position: [-799.2, 55, 376.3]
+    position: [0, 87, 429]
   },
   ambientLight: {
     intensity: 2
   },
   directionalLight: {
     intensity: 1.5,
-    // light2: false,
     position: [0, 7000, 2000],
     position2: [0, 7000, -2000],
     shadow: {
@@ -106,7 +108,7 @@ const modelConfigList = ref<ObjectItem[]>([])
 
 // 定位点位列表
 const cameraPositionList = computed(() =>
-  modelConfigList.value.filter(it => it.type === KEYS.M_ANCHOR_POS)
+  modelConfigList.value.filter(it => it.type === KEYS.S_ANCHOR_POS)
 )
 
 // 初始化场景模型
@@ -134,6 +136,7 @@ const initSceneModel = () => {
 
       // 配置
       Object.keys(json).forEach(key => {
+        // @ts-ignore
         pageOpts.config && (pageOpts.config[key] = json[key])
       })
 
@@ -215,7 +218,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   if (!item) return
   const { type } = item
   // 隐藏机位锚点
-  if (type === KEYS.M_ANCHOR_POS) return
+  if (type === KEYS.S_ANCHOR_POS) return
 
   const obj = getModel(type)
   if (!obj) {
@@ -257,8 +260,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
-
-    scene.addAnchor(model, type !== KEYS.M_ANCHOR_TARGET)
+    scene.addAnchor(model, type !== KEYS.S_ANCHOR_TARGET)
   }
   // 聚光灯
   else if (model.isSpotLight) {
@@ -320,13 +322,13 @@ const onHoverCall = (object: TypeHoverCall[0], style: TypeHoverCall[1]) => {
 const onClickLeft = (object: ThreeModelItem) => {
   const data = object.data
   switch (data?.type) {
-    case KEYS.M_ANCHOR_POS: // 定位
+    case KEYS.S_ANCHOR_POS: // 定位
       scene.cameraTransition({
         position: object.position,
         data: object.data as AnyObject
       })
       break
-    case KEYS.M_ANCHOR_TARGET: // 锚点
+    case KEYS.S_ANCHOR_TARGET: // 锚点
       dialog.select = [object]
       dialogShowData()
       break

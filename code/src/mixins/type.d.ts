@@ -1,5 +1,3 @@
-
-
 export type SectionCountItem = Partial<import('@/components/section/index').Count>
 
 interface Extra {
@@ -45,13 +43,12 @@ export interface SectionFilters {
 
 export type TableCol = import('@/components/table-list/index').Col
 
-// table 
+// table
 export interface TableType {
   title?: string
   col: TableCol[]
   data: any[]
 }
-
 
 export interface ExportDialogType {
   title: string
@@ -74,27 +71,18 @@ export interface ListItem {
   color?: string
   ratio?: number
   isStatus?: boolean
+  icon?: string
 }
-
-
-
-
-
-
-
-
-
 
 // section 功能配置
 export interface SectionType {
   icon: string
   title: string
   filters: SectionFilters
-  count: SectionCountItem | SectionCountItem[],
+  count: SectionCountItem | SectionCountItem[]
   ec: SectionEc
   table: TableType
 }
-
 
 // 请求参数
 export interface RequestPas {
@@ -103,7 +91,7 @@ export interface RequestPas {
   EndTime: number
   Type: number
   Interval: string
-  
+
   projectCode: string
   groupCode: string
   type: number | string
@@ -112,13 +100,12 @@ export interface RequestPas {
 
 type ObjectItem = import('@/components/three-scene/index').ObjectItem
 
-
-
 export type PipePath = Pick<import('./index').XYZ, 'x' | 'y'>
 
-
-
-export type PlaneDevice = Pick<ObjectItem, 'name' | 'deviceCode' | 'type' | 'unit' | 'value' | 'status' | 'error'> & {
+export type PlaneDevice = Pick<
+  ObjectItem,
+  'name' | 'deviceCode' | 'type' | 'unit' | 'value' | 'status' | 'error'
+> & {
   style: Pick<import('./index').XYZ, 'x' | 'y'>
   color?: string
   rotate?: number
@@ -134,7 +121,7 @@ export type Pipe = {
   height?: number
   color?: string
   status?: number
-  bind?: ( string | string[] | string[][] )[]
+  bind?: (string | string[] | string[][])[]
 }
 
 // 返回参数
@@ -152,12 +139,10 @@ export interface ReturnPas extends RequestPas {
   pointCode: string
   pointName: string
   msg: string
-  
 }
 
-
 interface EchartPieces {
-  gt: number,
+  gt: number
   lte: number
   color: string
   _type_: string

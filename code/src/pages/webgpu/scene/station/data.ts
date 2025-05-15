@@ -1,4 +1,4 @@
-/* *
+/**
  * @description:
  * @file: data.ts
  * @author: Evan
@@ -42,7 +42,15 @@ export const getPageOpts = (): {
    */
   roamPoints: number[][]
 } => ({
-  anchorType: [KEYS.M_ANCHOR_POS, KEYS.M_ANCHOR_TARGET, KEYS.S_OPEN_DOOR, KEYS.S_LIGHT_SWITCH],
+  anchorType: [
+    KEYS.S_ANCHOR_POS,
+    KEYS.S_ANCHOR_TARGET,
+    KEYS.S_OPEN_DOOR,
+    KEYS.S_LIGHT_SWITCH,
+    KEYS.S_TAG_CAMERA,
+    KEYS.S_TAG_ROOM,
+    KEYS.S_TAG_BUILDING
+  ],
   animationModelType: [KEYS.M_MAIN_SCENE, KEYS.M_MACHINE_ROOM, KEYS.M_WATER_PUMP],
   floorModelType: [KEYS.M_FLOOR],
 
