@@ -17,7 +17,8 @@
 
 <script lang="ts" setup>
 import { request } from '@/api'
-defineProps<{
+
+const props = defineProps<{
   id?: number | string
 }>()
 
@@ -31,16 +32,16 @@ const onClickItem = (item: ListItem) => {
 }
 
 const initPage = () => {
-  if (visible.value) {
-    request.getSelectList('-L01空调冷站').then(res => {
-      list.value = res.map(item => {
-        return {
-          ...item,
-          value: Math.random() > 0.5 ? 1 : 0
-        }
-      })
+  if (!visible.value) return
+  console.log(props.id)
+  request.getSelectList('-L01空调冷站').then(res => {
+    list.value = res.map(item => {
+      return {
+        ...item,
+        value: Math.random() > 0.5 ? 1 : 0
+      }
     })
-  }
+  })
 }
 
 watch(

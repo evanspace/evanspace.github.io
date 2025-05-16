@@ -8,24 +8,43 @@
       @change="onCameraTransition"
     ></t-operation>
 
+    <!-- 类型-标签 -->
     <t-type></t-type>
 
     <div :class="$style.container" ref="containerRef"></div>
 
+    <!-- 加载 -->
     <t-loading
       v-model="progress.show"
       :progress="progress.percentage"
       :bg-src="__CONFOG__.bgSrc"
+      :zindex="1"
+      progress-width="50%"
     ></t-loading>
 
+    <!-- 第一视角效果 -->
     <t-first-person />
 
+    <!-- 提示框 -->
     <t-tip-msg v-model="tipOpts.show" :style="tipOpts.style" :msg="tipOpts.msg"></t-tip-msg>
 
+    <!-- 弹窗 -->
     <t-dialog v-model="dialog.show" :title="dialog.title" :style="dialog.style" :list="dialog.list">
     </t-dialog>
 
-    <t-room-dialog v-model="dialog.extend.roomShow" :style="dialog.style"></t-room-dialog>
+    <!-- 站房弹窗 -->
+    <t-room-dialog
+      v-model="dialog.extend.roomShow"
+      :id="dialog.extend.id"
+      :style="dialog.style"
+    ></t-room-dialog>
+
+    <!-- 监控视频弹窗 -->
+    <t-dialog-camera
+      v-model="dialog.extend.cameraShow"
+      :id="dialog.extend.id"
+      :style="dialog.style"
+    ></t-dialog-camera>
   </div>
 </template>
 
@@ -37,6 +56,7 @@ import tTipMsg from './components/tip-msg.vue'
 import tDialog from './components/dialog.vue'
 import tType from './components/type.vue'
 import tRoomDialog from './components/dialog-room.vue'
+import tDialogCamera from './components/dialog-camera.vue'
 import { Scene } from './class'
 import { getPageOpts, getTipOpts } from './data'
 
@@ -106,9 +126,11 @@ const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
 })
 const { options: dialog } = Hooks.useDialog({
   extend: {
-    // 站房 id
-    roomId: '',
-    roomShow: false
+    id: '',
+    // 站房 显示
+    roomShow: false,
+    // 视频 显示
+    cameraShow: false
   }
 })
 
@@ -269,7 +291,7 @@ const loopLoadObject = async (item: ObjectItem) => {
   // 锚点
   if (anchorType.includes(type)) {
     model._isAnchor_ = true
-    scene.addAnchor(model, type !== KEYS.S_ANCHOR_TARGET)
+    scene.addAnchor(model, false)
   }
   // 聚光灯
   else if (model.isSpotLight) {
@@ -358,7 +380,12 @@ const onClickLeft = (object: ThreeModelItem) => {
     case KEYS.S_TAG_ROOM: // 站房标签
       dialog.select = [object]
       dialog.extend.roomShow = true
-      dialog.extend.roomId = object.data?.id
+      dialog.extend.id = object.data?.id
+      break
+    case KEYS.S_TAG_CAMERA: // 监控标签
+      dialog.select = [object]
+      dialog.extend.cameraShow = true
+      dialog.extend.id = object.data?.id
       break
     case KEYS.S_OPEN_DOOR: // 开门-90° 旋转开门
       scene.oddRotateDoor(object)
@@ -411,6 +438,7 @@ onMounted(() => {
       dialog.select = []
       dialog.show = false
       dialog.extend.roomShow = false
+      dialog.extend.cameraShow = false
       if (object && object.data) {
         onClickLeft(object)
       }

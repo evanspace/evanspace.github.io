@@ -1,6 +1,5 @@
-
 .wrap {
-  --bg-color: rgba(0, 0, 0, .5);
+  --bg-color: rgba(0, 0, 0, 0.5);
   --bg-filter: 10px;
   top: 50%;
   left: 50%;
@@ -8,14 +7,14 @@
   height: 100%;
   z-index: 9;
   position: absolute;
-  transform: translate( -50%, -50% );
+  transform: translate(-50%, -50%);
 }
 
 .bg {
   width: 100%;
   height: 100%;
   position: absolute;
-  object-fit: cover
+  object-fit: cover;
 }
 
 .loading {
@@ -28,10 +27,7 @@
   justify-content: center;
   background-color: var(--bg-color);
   backdrop-filter: saturate(80%) blur(var(--bg-filter));
-  // backdrop-filter: saturate(80%) blur(10px);
 }
-
-
 
 .progress {
   width: 60%;
@@ -41,21 +37,30 @@
     height: 15px;
     overflow: hidden;
     border-radius: 20px;
-    background-color: var( --el-border-color-lighter );
+    background-color: var(--el-border-color-lighter);
   }
   .bar {
-    width: var( --percentage );
+    width: var(--percentage);
     height: 100%;
     animation: striped-flow 30s linear infinite;
     border-radius: 20px;
-    background-color: var( --el-color-primary );
+    background-color: var(--el-color-primary);
     background-size: 1.25em 1.25em;
-    background-image: linear-gradient(45deg,rgba(0,0,0,.1) 25%,transparent 25%,transparent 50%,rgba(0,0,0,.1) 50%,rgba(0,0,0,.1) 75%,transparent 75%,transparent);
+    background-image: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(0, 0, 0, 0.1) 50%,
+      rgba(0, 0, 0, 0.1) 75%,
+      transparent 75%,
+      transparent
+    );
   }
 
   @keyframes striped-flow {
     0% {
-      background-position: -100%
+      background-position: -100%;
     }
     100% {
       background-position: 100%;

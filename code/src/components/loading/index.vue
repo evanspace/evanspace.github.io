@@ -4,14 +4,21 @@
     :class="$style.wrap"
     :style="{
       '--bg-color': bgColor ? String(bgColor) : '',
-      '--bg-filter': ((100 - progress) / 100) * 30 + 'px'
+      '--bg-filter': ((100 - progress) / 100) * 30 + 'px',
+      'z-index': zindex
     }"
     @dblclick.stop
     v-if="modelValue"
   >
     <img v-if="bgSrc" :src="bgSrc" :class="$style.bg" />
     <div :class="$style.loading">
-      <div :class="$style.progress" :style="{ '--percentage': progress + '%' }">
+      <div
+        :class="$style.progress"
+        :style="{
+          '--percentage': progress + '%',
+          width: progressWidth
+        }"
+      >
         <div :class="$style['bar-out']">
           <div :class="$style.bar"></div>
         </div>
