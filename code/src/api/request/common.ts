@@ -11,6 +11,6 @@ import { Axios } from '@axios'
 import { Api } from '@/config'
 
 // 获取下拉列表
-export const getSelectList = (name: string): Promise<AnyObject[]> => {
+export const getSelectList = (name: string): Promise<any[]> => {
   return Axios.get(Api.common.select_list, { name })
 }

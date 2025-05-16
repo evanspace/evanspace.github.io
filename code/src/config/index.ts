@@ -16,7 +16,8 @@ const apiRoot = {
   user: '/mock',
   monitor: '/mock',
   area: '/mock',
-  test: '/mock'
+  test: '/mock',
+  common: '/mock'
 }
 
 const hostname = location.hostname

@@ -24,6 +24,8 @@
 
     <t-dialog v-model="dialog.show" :title="dialog.title" :style="dialog.style" :list="dialog.list">
     </t-dialog>
+
+    <t-room-dialog v-model="dialog.extend.roomShow" :style="dialog.style"></t-room-dialog>
   </div>
 </template>
 
@@ -34,6 +36,7 @@ import tFirstPerson from './components/first-person.vue'
 import tTipMsg from './components/tip-msg.vue'
 import tDialog from './components/dialog.vue'
 import tType from './components/type.vue'
+import tRoomDialog from './components/dialog-room.vue'
 import { Scene } from './class'
 import { getPageOpts, getTipOpts } from './data'
 
@@ -41,7 +44,7 @@ import KEYS from './data/keys'
 import __CONFOG__ from './data/config'
 import { useResize } from '@/hooks/scene-resize'
 import { useSky } from '@/hooks/sky'
-import * as request from './data/request'
+import { request } from '@/api'
 import * as MS from './data/methods'
 import { onListen } from './data/listen'
 
@@ -101,7 +104,13 @@ const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
   baseUrl: base,
   indexDB: __CONFOG__.indexDB
 })
-const { options: dialog } = Hooks.useDialog()
+const { options: dialog } = Hooks.useDialog({
+  extend: {
+    // 站房 id
+    roomId: '',
+    roomShow: false
+  }
+})
 
 // 模型配置列表
 const modelConfigList = ref<ObjectItem[]>([])
@@ -114,7 +123,7 @@ const cameraPositionList = computed(() =>
 // 初始化场景模型
 const initSceneModel = () => {
   loadModels(pageOpts.models, () => {
-    request.getConfig().then(res => {
+    request.d3.getStation().then(res => {
       let json: any = {}
       if (res.ConfigJson instanceof Object) {
         json = res.ConfigJson
@@ -161,7 +170,7 @@ const loadScene = async () => {
 // 创建人物
 const createPerson = () => {
   const model = getModel(KEYS.M_PERSON)
-  model.traverse(el => {
+  model.traverse((el: InstanceType<typeof THREE.Mesh>) => {
     if (el.isMesh) {
       el.castShadow = true
     }
@@ -304,17 +313,27 @@ const initPage = () => {
 type TypeHoverCall = Parameters<import('./type.d.ts').ExtendOptions['onHoverCall']>
 
 // 鼠标悬浮
-const onHoverCall = (object: TypeHoverCall[0], style: TypeHoverCall[1]) => {
+const onHoverCall = (object: TypeHoverCall[0]) => {
   const isShow = !!object && object.object._isAnchor_
   tipOpts.show = isShow
   if (isShow) {
-    tipOpts.style.top = style.top
-    tipOpts.style.left = style.left
+    const dom = container.value as HTMLElement
+    const obj = object.object as ThreeModelItem
+    const pos = Utils.getPlanePosition(
+      dom,
+      obj,
+      scene.camera,
+      // y 轴偏移 增减间距
+      new THREE.Vector3(0, -obj.scale.y / 2, 0)
+    )
+
+    tipOpts.style.top = pos.top
+    tipOpts.style.left = pos.left
     const data = object.object.data
     tipOpts.msg = `
-      <p>${data.name}</p>
-      <p>类型：${data.type}</p>
-      <p>绑定：${data.bind || '无'}</p>
+      <div>${data.name}</div>
+      <div><span>类型：</span>${data.type}</div>
+      <div><span>绑定：</span>${data.bind || '无'}</div>
     `
   }
 }
@@ -331,6 +350,15 @@ const onClickLeft = (object: ThreeModelItem) => {
     case KEYS.S_ANCHOR_TARGET: // 锚点
       dialog.select = [object]
       dialogShowData()
+      break
+    case KEYS.S_TAG_BUILDING: // 建筑标签
+      dialog.select = [object]
+      dialogShowData()
+      break
+    case KEYS.S_TAG_ROOM: // 站房标签
+      dialog.select = [object]
+      dialog.extend.roomShow = true
+      dialog.extend.roomId = object.data?.id
       break
     case KEYS.S_OPEN_DOOR: // 开门-90° 旋转开门
       scene.oddRotateDoor(object)
@@ -360,7 +388,13 @@ const dialogShowData = () => {
 // 更新 dialog 坐标
 const updateDialogPosition = (object: ThreeModelItem) => {
   const dom = container.value as HTMLElement
-  const pos = Utils.getPlanePosition(dom, object, scene.camera as any)
+  const pos = Utils.getPlanePosition(
+    dom,
+    object,
+    scene.camera,
+    // y 轴偏移 增减间距
+    new THREE.Vector3(0, object.scale.y / 2 + 0.01, 0)
+  )
   dialog.position = pos
   if (dialog.style) {
     dialog.style.left = pos.left + 'px'
@@ -376,6 +410,7 @@ onMounted(() => {
     onClickLeft: (object, _intersct) => {
       dialog.select = []
       dialog.show = false
+      dialog.extend.roomShow = false
       if (object && object.data) {
         onClickLeft(object)
       }
@@ -397,7 +432,7 @@ onMounted(() => {
     },
     animateCall: () => {
       // 弹窗位置
-      if (dialog.show && dialog.select && !!dialog.select.length) {
+      if (dialog.select && !!dialog.select.length) {
         // 设备弹窗信息
         const object = dialog.select[0] as ThreeModelItem
         updateDialogPosition(object)

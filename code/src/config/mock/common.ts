@@ -13,7 +13,7 @@ import { builder } from './util'
 export default [
   // 列表
   {
-    url: '/test/list',
+    url: '/select/list',
     method: 'get',
     response: e => {
       const name = e.query.name || ''

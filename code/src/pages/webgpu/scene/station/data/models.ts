@@ -13,14 +13,15 @@ export default [
   {
     key: KEYS.M_MAIN_SCENE,
     name: '场景',
-    size: 78.8,
+    // size: 78.8,
     // url: '/深圳北站.glb'
+    size: 13.6,
     url: '/公司总部.glb'
   },
   {
     key: KEYS.M_MACHINE_ROOM,
     name: '机房',
-    size: 3.8,
+    size: 4.4,
     url: '/机房.glb'
   },
   {
@@ -29,13 +30,19 @@ export default [
     size: 0.1,
     url: '/水泵.glb'
   },
-
   {
     key: KEYS.M_FLOOR,
     name: '楼层',
     size: 6.3,
     url: '/楼层.glb'
   },
+  {
+    key: KEYS.M_PERSON,
+    name: '人物',
+    size: 1.8,
+    url: '/models/common/人物.glb'
+  },
+
   {
     key: KEYS.S_ANCHOR_POS,
     name: '定位',
@@ -68,7 +75,7 @@ export default [
     key: KEYS.S_TAG_CAMERA,
     name: '监控标签',
     type: 'sprite',
-    range: { x: 8.8, y: 11.1 },
+    range: { x: 9.6, y: 10.4 },
     mapUrl: '/tag-camera.png',
     mapUrl2: '/tag-camera-2.png'
   },
@@ -76,16 +83,9 @@ export default [
     key: KEYS.S_TAG_ROOM,
     name: '站房标签',
     type: 'sprite',
-    range: { x: 8.8, y: 11.1 },
+    range: { x: 9.6, y: 10.4 },
     mapUrl: '/tag-room.png',
     mapUrl2: '/tag-room-2.png'
-  },
-
-  {
-    key: KEYS.M_PERSON,
-    name: '人物',
-    size: 1.8,
-    url: '/models/common/人物.glb'
   },
 
   {

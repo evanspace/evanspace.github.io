@@ -7,4 +7,5 @@
  * @version: V
  */
 
+export * from './common'
 export * as d3 from './d3'

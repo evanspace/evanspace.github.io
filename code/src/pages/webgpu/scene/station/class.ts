@@ -12,7 +12,6 @@ import type { ExtendOptions, Sky } from './type'
 import type { ObjectItem, ThreeModelItem } from 'three-scene/types/model.d.ts'
 
 import __CONFOG__ from './data/config'
-import KEYS from './data/keys'
 
 const { Utils, Hooks, THREE } = MS
 
@@ -323,7 +322,6 @@ export class Scene extends MS.Scene {
   }
   // 锚点状态切换
   anchorToggle(type: string, visible: boolean) {
-    console.log(type, KEYS, visible)
     this.anchorGroup?.children.forEach((el: ThreeModelItem) => {
       const data = el.data
       if (data?.type === type) {

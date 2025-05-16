@@ -34,21 +34,31 @@ const visible = defineModel<boolean>()
 .dialog {
   color: #fff;
   height: 0;
-  z-index: 5;
   position: absolute;
-  transform: translate(-50%, -50%);
+  font-size: 12px;
   white-space: nowrap;
   pointer-events: none;
   .wrap {
-    bottom: 10px;
-    border: 1px solid #a9eee6;
-    padding: 5px 10px;
+    bottom: 8px;
+    padding: 8px 12px;
     position: absolute;
     font-size: 16px;
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
     white-space: nowrap;
-    border-radius: 8px;
-    background-color: rgba($color: #000000, $alpha: 0.3);
+    border-radius: 4px;
+    backdrop-filter: saturate(50%) blur(2px);
+    background-color: rgba($color: #000000, $alpha: 0.4);
+    &::after {
+      top: 100%;
+      left: 50%;
+      width: 16px;
+      height: 8px;
+      content: '';
+      position: absolute;
+      transform: translateX(-50%);
+      clip-path: polygon(00% 0%, 100% 0%, 50% 100%);
+      background-color: inherit;
+    }
   }
   .title {
     font-size: 24px;
@@ -59,8 +69,11 @@ const visible = defineModel<boolean>()
       & + .item {
         margin-top: 10px;
       }
+      span:nth-child(1) {
+        color: rgba($color: #fff, $alpha: 0.6);
+      }
       span:nth-child(2) {
-        color: #ff7e67;
+        color: #08d9e4;
       }
     }
   }
