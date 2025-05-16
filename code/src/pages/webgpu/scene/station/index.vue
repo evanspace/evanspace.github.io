@@ -19,7 +19,6 @@
       :progress="progress.percentage"
       :bg-src="__CONFOG__.bgSrc"
       :zindex="1"
-      progress-width="50%"
     ></t-loading>
 
     <!-- 第一视角效果 -->

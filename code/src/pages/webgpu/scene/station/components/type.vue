@@ -52,7 +52,9 @@ const onClick = (item: ListItem) => {
   bottom: calc(94px * var(--z-scale, 1));
   z-index: 4;
   position: absolute;
+  transform: scale(var(--z-scale, 1));
   transition: right 0.15s linear;
+  transform-origin: 100% 100%;
   &.is-open {
     right: calc(21px + calc(var(--z-side-width, 370px) * var(--z-scale, 1)));
   }

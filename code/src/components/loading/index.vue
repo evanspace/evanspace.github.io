@@ -19,10 +19,15 @@
           width: progressWidth
         }"
       >
-        <div :class="$style['bar-out']">
-          <div :class="$style.bar"></div>
+        <div :class="$style.img">
+          <img :src="loadingImg" alt="" />
         </div>
-        <div :class="$style.text">{{ progress }}%</div>
+        <div :class="$style['progress-wrap']">
+          <div :class="$style['bar-out']">
+            <div :class="$style.bar"></div>
+          </div>
+          <div :class="$style.text">{{ progress }}%</div>
+        </div>
       </div>
     </div>
   </div>
@@ -34,6 +39,10 @@ import type { Props } from './index'
 defineProps<Props>()
 
 const modelValue = defineModel()
+
+const loadingImg = computed(() => {
+  return import.meta.env.VITE_BEFORE_STATIC_PATH + '/imgs/loading.png'
+})
 </script>
 
 <style lang="scss" module>

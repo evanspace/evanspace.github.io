@@ -1,12 +1,10 @@
 <template>
   <div :class="$style.page">
-    
     <div :class="$style.demo">
       <div :class="$style.dashed">
         <span v-for="i in 15" :style="{ '--i': i }"></span>
       </div>
     </div>
-
 
     <div :class="$style.demo">
       <div :class="$style.cylinder">
@@ -16,39 +14,30 @@
       </div>
     </div>
 
-    <div :class="[ $style.demo, $style.demo3 ]">
-      <i></i><i></i><i></i><i></i><i></i>
-    </div>
+    <div :class="[$style.demo, $style.demo3]"><i></i><i></i><i></i><i></i><i></i></div>
 
-    <div :class="[ $style.demo, $style.demo4 ]">
+    <div :class="[$style.demo, $style.demo4]">
       <i></i>
     </div>
 
-    <div :class="[ $style.demo, $style.demo5 ]">
-      <i></i><i></i><i></i>
-    </div>
+    <div :class="[$style.demo, $style.demo5]"><i></i><i></i><i></i></div>
 
-    <div :class="[ $style.demo, $style.demo6 ]">
+    <div :class="[$style.demo, $style.demo6]">
       <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
     </div>
-    
-    <div :class="[ $style.demo ]">
+
+    <div :class="[$style.demo]">
       <div :class="$style.demo7">
         <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
     </div>
 
-    <div :class="[ $style.demo ]">
-      <div :class="$style.demo8">
-        <i></i><i></i><i></i><i></i>
-      </div>
+    <div :class="[$style.demo]">
+      <div :class="$style.demo8"><i></i><i></i><i></i><i></i></div>
     </div>
-
   </div>
 </template>
 
-<script lang="ts" setup>
-</script>
+<script lang="ts" setup></script>
 
-<style lang="scss" src="./style.scss" module>
-</style>
+<style lang="scss" src="./style.scss" module></style>

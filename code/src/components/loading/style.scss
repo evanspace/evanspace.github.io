@@ -30,47 +30,39 @@
 }
 
 .progress {
-  width: 60%;
-  display: flex;
+  width: 206px;
+
+  .img {
+    $size: 165px;
+    text-align: center;
+    img {
+      width: $size;
+      height: $size;
+    }
+  }
+
+  &-wrap {
+  }
+
   .bar-out {
     flex: 1;
-    height: 15px;
+    height: 6px;
     overflow: hidden;
     border-radius: 20px;
-    background-color: var(--el-border-color-lighter);
+    background-color: rgba($color: #fff, $alpha: 0.2);
   }
   .bar {
     width: var(--percentage);
     height: 100%;
-    animation: striped-flow 30s linear infinite;
+    transition: width 0.15s linear;
     border-radius: 20px;
-    background-color: var(--el-color-primary);
-    background-size: 1.25em 1.25em;
-    background-image: linear-gradient(
-      45deg,
-      rgba(0, 0, 0, 0.1) 25%,
-      transparent 25%,
-      transparent 50%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.1) 75%,
-      transparent 75%,
-      transparent
-    );
-  }
-
-  @keyframes striped-flow {
-    0% {
-      background-position: -100%;
-    }
-    100% {
-      background-position: 100%;
-    }
+    background-color: #fff;
   }
   .text {
-    color: #fff;
-    width: 80px;
-    padding: 0 10px;
-    font-size: 16px;
+    color: #a8bad5;
+    font-size: 18px;
+    margin-top: 22px;
+    text-align: center;
     font-weight: bold;
   }
 }
