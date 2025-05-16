@@ -72,6 +72,9 @@ const Api = {
     del: '/test/del',
     items: '/test/items',
     group: '/test/group'
+  },
+  common: {
+    select_list: '/select/list'
   }
 }
 
