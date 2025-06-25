@@ -13,10 +13,10 @@ export default [
   {
     key: KEYS.M_MAIN_SCENE,
     name: '场景',
-    // size: 78.8,
-    // url: '/深圳北站.glb'
-    size: 13.6,
-    url: '/公司总部.glb'
+    size: 78.8,
+    url: '/深圳北站.glb'
+    // size: 13.6,
+    // url: '/公司总部.glb'
   },
   {
     key: KEYS.M_MACHINE_ROOM,

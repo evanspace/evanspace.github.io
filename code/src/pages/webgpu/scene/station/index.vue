@@ -117,7 +117,8 @@ let scene: InstanceType<typeof Scene>
 
 const { skys } = useSky()
 const { backgroundLoad } = Hooks.useBackground(__CONFOG__.baseUrl + '/sky/', skys)
-const base = import.meta.env.VITE_OSS_BUCKET
+// const base = import.meta.env.VITE_OSS_BUCKET
+const base = import.meta.env.VITE_GIT_OSS
 const { progress, loadModels, getModel, initModels } = Hooks.useModelLoader({
   // baseUrl: __CONFOG__.baseUrl,
   baseUrl: base,

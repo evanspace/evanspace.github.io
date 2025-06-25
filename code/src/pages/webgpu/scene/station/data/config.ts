@@ -1,4 +1,4 @@
-/* *
+/**
  * @description:
  * @file: config.ts
  * @author: Evan
@@ -8,7 +8,6 @@
  * */
 
 const baseUrl = import.meta.env.VITE_GIT_OSS
-const localUrl = import.meta.env.VITE_OSS_BUCKET
 
 export default {
   baseUrl,
@@ -31,7 +30,7 @@ export default {
   bgSrc: baseUrl + '/imgs/station/bg.jpg',
 
   // 围栏贴图
-  fanceImgs: [localUrl + '/textures/station/fance.png'],
+  fanceImgs: [baseUrl + '/textures/station/fance.png'],
 
   // 天空风格 hdr
   sky: {

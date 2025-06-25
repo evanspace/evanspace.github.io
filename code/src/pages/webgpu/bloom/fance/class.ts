@@ -12,8 +12,10 @@ import * as ThreeScene from 'three-scene'
 import { useFence } from './fence'
 import { bloom } from 'three/examples/jsm/tsl/display/BloomNode'
 
+const baseUrl = import.meta.env.VITE_GIT_OSS
+
 const { createFence, fenceAnimate } = useFence({
-  imgs: ['oss/textures/station/fance.png']
+  imgs: [baseUrl + '/textures/station/fance.png']
 })
 
 const { pass, mrt, output, float } = THREE.TSL
