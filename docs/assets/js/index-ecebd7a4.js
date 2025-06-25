@@ -1,1 +1,0 @@
-import{_ as s}from"./index-8d96952a.js";import{o as a,f as c,g as d}from"./vendor-0648fc2e.js";const o={class:"page"};const r=s({},[["render",function(s,r){return a(),c("div",o,r[0]||(r[0]=[d("div",{class:"cup"},[d("div",{class:"cup-body"},[d("div",{class:"layer"}),d("div",{class:"layer"})])],-1)]))}],["__scopeId","data-v-00c32c94"]]);export{r as default};
