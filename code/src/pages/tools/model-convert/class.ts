@@ -377,23 +377,27 @@ export class ConvertThreeScene extends Scene {
     const gui = this.gui
     const params = {
       check: false,
+      checkName: '金属',
       metalness: 0.5,
       roughness: 0,
+      waterName: '水流',
       water: () => {
-        this.addWater('水流')
+        this.addWater(params.waterName)
       }
     }
     const group = gui.addFolder('名称包含处理')
-    group.add(params, 'water').name('水面(水流)')
+    group.add(params, 'waterName').name('水面网格名称')
+    group.add(params, 'water').name('水面')
 
     group
       .add(params, 'check')
-      .name('金属材质(金属)')
+      .name('金属材质')
       .onChange(e => {
         params.metalness = e ? 0.5 : 0
         params.roughness = e ? 0 : 0.5
         this.metalnessMaterialUpdate(params)
       })
+    group.add(params, 'checkName').name('金属网格名称')
     group
       .add(params, 'metalness', 0, 1)
       .name('金属权重')
@@ -409,6 +413,7 @@ export class ConvertThreeScene extends Scene {
 
     const params2 = {
       check: false,
+      checkName: '玻璃',
       roughness: 0, // 玻璃表面光滑
       envMapIntensity: 1, //环境贴图对Mesh表面影响程度
       transmission: 1, //透射度(透光率)
@@ -416,7 +421,7 @@ export class ConvertThreeScene extends Scene {
     }
     group
       .add(params2, 'check')
-      .name('玻璃材质(玻璃)')
+      .name('玻璃材质')
       .onChange(e => {
         params2.roughness = e ? 0 : 0.5
         params2.envMapIntensity = e ? 1 : 0
@@ -424,6 +429,7 @@ export class ConvertThreeScene extends Scene {
         params2.ior = e ? 2.1 : 1.5
         this.glassMaterialUpdate(params2)
       })
+    group.add(params2, 'checkName').name('玻璃网格名称')
     group
       .add(params2, 'roughness', 0, 1)
       .name('玻璃光滑度')
@@ -451,6 +457,7 @@ export class ConvertThreeScene extends Scene {
 
     const params3 = {
       blurring: false,
+      blurringName: '线框',
       wireframe: false,
       color: 0x00e0ff,
       opacity: 0.5,
@@ -458,10 +465,11 @@ export class ConvertThreeScene extends Scene {
     }
     group
       .add(params3, 'blurring')
-      .name('虚化材质(虚化)')
+      .name('虚化材质')
       .onChange(() => {
         this.blurringMaterialUpdate(params3)
       })
+    group.add(params3, 'blurringName').name('虚化网格名称')
     group
       .add(params3, 'all')
       .name('全部虚化')
@@ -897,11 +905,12 @@ export class ConvertThreeScene extends Scene {
   }
 
   // 金属材质更新
-  metalnessMaterialUpdate = ({ metalness, roughness }) => {
+  metalnessMaterialUpdate = ({ metalness, roughness, checkName }) => {
+    const reg = new RegExp(`(${checkName})`)
     this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
-        if (/[金属]/.test(el.name) || model.children.length == 0) {
+        if (reg.test(el.name) || model.children.length == 0) {
           if (Array.isArray(el.material)) {
             el.material = el.material.map(mat => {
               return setMetalnessMaterial(mat, metalness, roughness)
@@ -917,10 +926,11 @@ export class ConvertThreeScene extends Scene {
 
   // 玻璃材质更新
   glassMaterialUpdate = opts => {
+    const reg = new RegExp(`(${opts.checkName})`)
     this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
-        if (/[玻璃]/.test(el.name) || model.children.length == 0) {
+        if (reg.test(el.name) || model.children.length == 0) {
           if (Array.isArray(el.material)) {
             el.material = el.material.map(mat => {
               return setGlassMaterial(mat, opts)
@@ -936,10 +946,11 @@ export class ConvertThreeScene extends Scene {
 
   // 线框材质更新
   blurringMaterialUpdate = opts => {
+    const reg = new RegExp(`(${opts.blurringName})`)
     this.modelGroup?.children.forEach((model: any) => {
       model.traverse(el => {
         // 检索指定名称或者 无子级
-        if (opts.all || model.children.length == 0 || /[线框]/.test(el.name)) {
+        if (opts.all || model.children.length == 0 || reg.test(el.name)) {
           if (el.isMesh) {
             if (opts.blurring || opts.all) {
               if (!el.__material__) {
