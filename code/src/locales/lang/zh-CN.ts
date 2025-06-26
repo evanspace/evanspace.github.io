@@ -105,6 +105,7 @@ export default {
     rain: '雨',
     smoke: '烟',
     sky: '天空',
+    ocean: '大海',
 
     fog: '雾化',
     parallax: '视差',

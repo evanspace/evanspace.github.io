@@ -105,6 +105,7 @@ export default {
     rain: 'rain',
     smoke: 'smoke',
     sky: 'sky',
+    ocean: 'ocean',
 
     fog: 'fog',
     parallax: 'parallax',
