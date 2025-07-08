@@ -4,6 +4,12 @@
       <el-form-item label="拼接字符">
         <el-input v-model="replaceStr" placeholder="请输入" @change="onTransContent"></el-input>
       </el-form-item>
+      <el-form-item label="指定字符分割">
+        <el-checkbox v-model="assign"></el-checkbox>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="assignStr" placeholder="请输入" @change="onTransContent"></el-input>
+      </el-form-item>
     </el-form>
     <div class="content">
       <div class="group">
@@ -40,13 +46,17 @@
 <script lang="ts" setup>
 import { copy } from '@/common/utils/document'
 
-const replaceStr = ref('-')
+const replaceStr = ref('_')
 const text = ref('')
 const result = ref('')
+const assign = ref(true)
+const assignStr = ref('-')
 
 const onTransContent = () => {
   setTimeout(() => {
-    const str = text.value.replace(/\ /g, replaceStr.value)
+    const str = assign.value
+      ? text.value.replace(new RegExp(`${assignStr.value}|/`, 'g'), replaceStr.value)
+      : text.value.replace(/\ /g, replaceStr.value)
     result.value = str
 
     // copy(str)
