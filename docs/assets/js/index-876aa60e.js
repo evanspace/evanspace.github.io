@@ -1,0 +1,1 @@
+import{_ as s}from"./index-12944fbd.js";import{o as a,f as o,g as n}from"./vendor-d7caeb87.js";const r={class:"page"};const e=s({},[["render",function(s,e){return a(),o("div",r,e[0]||(e[0]=[n("div",{class:"box"},[n("span",null,"CSS")],-1)]))}],["__scopeId","data-v-82a06bf8"]]);export{e as default};
