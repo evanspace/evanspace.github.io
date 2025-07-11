@@ -1,13 +1,14 @@
 import * as MD from './methods'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
 import { GUI } from 'dat.gui'
-// import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { useSky } from '@/hooks/sky'
 
 import type { ExtendOptions, ModelOpts } from '.'
 
 const { skys } = useSky()
 import DefaultConfig from './config'
+
+import { request } from '@/api'
 
 const { THREE, Utils, Hooks, Scene, Message } = MD
 const {
@@ -67,6 +68,9 @@ export class ConvertThreeScene extends Scene {
   // 水面
   water?: ReturnType<typeof MD.createWater>
 
+  // 文本
+  text?: ReturnType<typeof MD.createText>
+
   constructor(options: ConstructorParameters<typeof Scene>[0], extend: Partial<ExtendOptions>) {
     super(options)
 
@@ -79,7 +83,9 @@ export class ConvertThreeScene extends Scene {
 
     this.addGround()
 
+    // 点位球
     this.setPiece = MD.createPointSphere()
+    this.setPiece.visible = false
     this.addObject(this.setPiece)
 
     this.addGui()
@@ -182,6 +188,9 @@ export class ConvertThreeScene extends Scene {
 
     // 网格名称处理
     this.addNameGroupGui()
+
+    // 文本
+    this.addText()
 
     // 重置
     this.addResetGui()
@@ -380,14 +389,14 @@ export class ConvertThreeScene extends Scene {
       checkName: '金属',
       metalness: 0.5,
       roughness: 0,
-      waterName: '水流',
+      waterName: '水面',
       water: () => {
         this.addWater(params.waterName)
       }
     }
     const group = gui.addFolder('名称包含处理')
     group.add(params, 'waterName').name('水面网格名称')
-    group.add(params, 'water').name('水面')
+    group.add(params, 'water').name('生成水面')
 
     group
       .add(params, 'check')
@@ -494,6 +503,66 @@ export class ConvertThreeScene extends Scene {
       .onChange(() => {
         this.blurringMaterialUpdate(params3)
       })
+  }
+
+  // 文本
+  addText() {
+    const gui = this.gui
+    const options = {
+      size: 12,
+      color: 0xffffff,
+      depth: 0, // s深度
+      curveSegments: 12, // 曲线分段
+      bevelThickness: 1, // 斜面厚度
+      bevelSize: 0.1, // 斜角大小
+      bevelEnabled: true // 斜角
+    }
+    const params = {
+      text: 'Evan',
+      create: () => {
+        this.createText(params.text, params.ttf, options)
+      },
+      ttf: 'You_She'
+    }
+    const group = gui.addFolder('文本处理')
+
+    group.add(params, 'text').name('文本')
+
+    group
+      .add(params, 'ttf', [
+        'kenpixel',
+        'You_She',
+        'SiYuan',
+        'SHANGSHOUPOBINGTI-2',
+        'SourceHanSansCN-Bold'
+      ])
+      .name('字体文件')
+      .onChange(() => {
+        this.createText(params.text, params.ttf, options)
+      })
+    group.add(options, 'size', 8, 200).name('字体大小')
+    group.addColor(options, 'color').name('颜色')
+    group.add(options, 'depth', 0, 20).name('深度')
+    group.add(options, 'curveSegments', 2, 36).name('曲线分段')
+    group.add(options, 'bevelThickness', 0.1, 10).name('斜面厚度')
+    group.add(options, 'bevelSize', 0.1, 2).name('斜角大小')
+    group.add(options, 'bevelEnabled').name('斜角')
+
+    group.add(params, 'create').name('生成')
+  }
+
+  // 创建文本
+  createText(text, ttf, options) {
+    // 清除
+    if (this.text) {
+      this.scene.remove(this.text)
+    }
+
+    const url = this.options.baseUrl + `/fonts/${ttf}.ttf`
+    MD.loadTTFFont(url).then(font => {
+      this.text = MD.createText(font, text, options)
+      this.addObject(this.text)
+    })
   }
 
   // 重置
@@ -726,6 +795,7 @@ export class ConvertThreeScene extends Scene {
 
     if (list.length) {
       model = obj
+      // 骨骼动画
       // let model = new THREE.Group()
       // const object = obj
       // let rootBone = object.children[1].clone()
@@ -788,6 +858,9 @@ export class ConvertThreeScene extends Scene {
       model.__mixer__ = mixer
     }
     console.log(this)
+
+    // 上传接口提醒
+    request.uploadModel()
   }
 
   // 视角重置
@@ -1021,6 +1094,13 @@ export class ConvertThreeScene extends Scene {
   }
 
   clearModelGroup() {
+    if (this.text) {
+      this.scene.remove(this.text)
+    }
+    if (this.water) {
+      this.scene.remove(this.water)
+    }
+
     if (!this.modelGroup) {
       this.addModelGroup()
       return
@@ -1089,18 +1169,30 @@ export class ConvertThreeScene extends Scene {
   // 添加水面
   addWater(waterName) {
     const obj = this.scene.getObjectByName(waterName)
-    if (!obj) return
-    console.log(obj)
+    if (!obj) {
+      Message.error('未找到网格！')
+      return
+    }
     const water = MD.createWater(obj)
-    // water.rotation.x = -Math.PI / 2
-    // water.position.y += 50
+
     // 获取世界坐标
-    const v = obj.getWorldPosition(new THREE.Vector3())
-    water.position.copy(v)
+    water.position.copy(obj.getWorldPosition(new THREE.Vector3()))
+    // 转换世界旋转角度
+    const worldMatrix = obj.matrixWorld
+    const position = new THREE.Vector3()
+    const quaternion = new THREE.Quaternion()
+    const scale = new THREE.Vector3()
+    worldMatrix.decompose(position, quaternion, scale)
+    const euler = new THREE.Euler().setFromQuaternion(quaternion)
+    water.rotation.copy(euler)
+    // 转换世界缩放大小
+    water.scale.copy(obj.getWorldScale(new THREE.Vector3()))
+
     obj.position.y -= 0.2
     if (this.water) {
       this.scene.remove(this.water)
     }
+    console.log(this, obj)
     this.water = water
     this.addObject(this.water)
   }
@@ -1191,6 +1283,9 @@ export class ConvertThreeScene extends Scene {
   // 设置控制器对象
   setControlObject(object) {
     if (object !== this.transformControls?.object) {
+      if (!this.setPiece.visible) {
+        Message.success(`当前选中对象名称[${object.name}]`)
+      }
       // 转换控制器 设置当前对象
       this.transformControls?.attach(object)
     }

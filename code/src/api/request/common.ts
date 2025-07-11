@@ -14,3 +14,8 @@ import { Api } from '@/config'
 export const getSelectList = (name: string): Promise<any[]> => {
   return Axios.get(Api.common.select_list, { name })
 }
+
+// 模型上传操心
+export const uploadModel = (): Promise<any> => {
+  return Axios.get(Api.common.model_upload)
+}

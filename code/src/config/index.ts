@@ -75,7 +75,8 @@ const Api = {
     group: '/test/group'
   },
   common: {
-    select_list: '/select/list'
+    select_list: '/select/list',
+    model_upload: '/model/upload'
   }
 }
 

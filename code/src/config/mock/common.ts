@@ -30,5 +30,15 @@ export default [
         }).list
       )
     }
+  },
+
+  // 模型转换上传文件
+  {
+    url: '/model/upload',
+    method: 'get',
+    response: () => {
+      console.log('上传操作', new Date())
+      return builder('上传操作')
+    }
   }
 ]
