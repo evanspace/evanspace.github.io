@@ -130,6 +130,8 @@ export const createText = (
     bevelSize?: number
     // 斜角
     bevelEnabled?: boolean
+    // 斜角分段
+    bevelSegments?: number
   } = {},
   offset?: any
 ) => {
@@ -145,7 +147,8 @@ export const createText = (
     curveSegments: opts?.curveSegments, // 曲线分段
     bevelThickness: opts?.bevelThickness, // 斜面厚度
     bevelSize: opts?.bevelSize, // 斜角大小
-    bevelEnabled: opts?.bevelEnabled // 斜角
+    bevelEnabled: opts?.bevelEnabled, // 斜角
+    bevelSegments: opts?.bevelSegments // 斜角分段
   })
   const rot = obj.rotation
   textGeo.rotateX(rot.x)

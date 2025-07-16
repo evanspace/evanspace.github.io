@@ -515,7 +515,8 @@ export class ConvertThreeScene extends Scene {
       curveSegments: 12, // 曲线分段
       bevelThickness: 1, // 斜面厚度
       bevelSize: 0.1, // 斜角大小
-      bevelEnabled: true // 斜角
+      bevelEnabled: true, // 斜角
+      bevelSegments: 3 // 斜角分段
     }
     const params = {
       text: 'Evan',
@@ -547,6 +548,7 @@ export class ConvertThreeScene extends Scene {
     group.add(options, 'bevelThickness', 0.1, 10).name('斜面厚度')
     group.add(options, 'bevelSize', 0.1, 2).name('斜角大小')
     group.add(options, 'bevelEnabled').name('斜角')
+    group.add(options, 'bevelSegments', 1, 30).step(1).name('斜角分段')
 
     group.add(params, 'create').name('生成')
   }
